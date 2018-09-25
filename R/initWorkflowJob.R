@@ -20,7 +20,7 @@ initWorkflowJob <- function(config){
     dir.create(file.path(mainDir, subDir))
   }
   setwd(file.path(mainDir, subDir))
-  jobDir <- format(Sys.time(),paste0("%Y%m%d-%H%M%S"))
+  jobDir <- format(Sys.time(),paste0("%Y%m%d%H%M%S"))
   config$logger.info(sprintf("Initialize workflow job '%s'", jobDir))
   
   #create directories
