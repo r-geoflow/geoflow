@@ -17,7 +17,7 @@ executeWorkflowJob <- function(config){
     if(is.null(tasks)){
       config$logger.warn("No actions enabled for this workflow!")
     }else{
-      for(task in tasks) source(task)
+      for(task in tasks) source(paste0("../../", task))
     }
   },file = file.path(getwd(), "logs", "job.log"))
 }
