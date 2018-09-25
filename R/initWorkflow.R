@@ -111,5 +111,11 @@ initWorkflow <- function(file){
 		config$sdi$csw <- ows4R::CSWClient$new(url = csw$url, user = csw$user, pwd = csw$pwd, serviceVersion = csw$version, logger = config$sdi$loggerLevel)
 	  }
   }
+  
+  #Actions
+  if(!is.null(config$actions)){
+    config$tasks <- names(config$actions)[unlist(config$actions)]
+  }
+
   return(config)
 }

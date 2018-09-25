@@ -12,7 +12,12 @@
 #'    
 executeWorkflowJob <- function(config){
   capture.output({
-    config$logger.info(sprintf("Executing workflow job with main R function '%s'...", config$main))
-    eval(parse(text = sprintf("%s(config)", config$main)))
+    config$logger.info("Executing workflow job...")
+    tasks <- config$tasks
+    if(is.null(tasks)){
+      config$logger.warn("No actions enabled for this workflow!")
+    }else{
+      for(task in tasks) source(task)
+    }
   },file = file.path(getwd(), "logs", "job.log"))
 }
