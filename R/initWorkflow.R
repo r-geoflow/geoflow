@@ -25,7 +25,7 @@ initWorkflow <- function(file){
   config$logger.info("========================================================================")
   
   #working dir
-  if(!is.null(config$wd)) config$wd <- getwd()
+  if(is.null(config$wd)) config$wd <- getwd()
   
   #load packages
   #-------------
