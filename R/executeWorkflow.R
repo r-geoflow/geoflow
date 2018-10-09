@@ -23,7 +23,10 @@ executeWorkflow <- function(file){
   jobDir <- initWorkflowJob(CFG)
   
   #3. Execute the workflow job
-  executeWorkflowJob(CFG)
+  exec <- try(executeWorkflowJob(CFG))
+  if(class(exec)=="try-error"){
+    setwd("../..")
+  }
   
   #4. close workflow
   closeWorkflow(CFG)
