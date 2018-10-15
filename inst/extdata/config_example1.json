@@ -1,0 +1,56 @@
+{
+  
+  "id": "my-workflow",
+  
+  "dependencies": {
+    "packages": {
+      "cran": [
+        "sp","raster", "maptools", "rgdal", "rgeos", "geosphere",
+        "cleangeo", "geometa", "geosapi", "geonapi", "ows4R"
+      ],
+      "cran_force_install" : false,
+      "github": ["openfigis/RFigisGeo"],
+      "github_force_install": false
+    },
+    "scripts": []
+  },
+  
+  "sdi": {
+    "loggerLevel": "DEBUG",
+    
+    "geoserver": {
+      "url": "http://somehost/geoserver",
+      "user": "user",
+      "pwd": "pwd",
+      "workspace": "ws",
+      "namespace": "http://somehost/ws",
+      "datastore": "ds"
+    },
+    
+    "geonetwork": {
+      "url": "http://somehost/geonetwork",
+      "user": "user",
+      "pwd": "pwd",
+      "version": "3.0"
+    },
+    
+    "wfs": {
+      "url": "http://somehost/geoserver/wfs",
+      "version": "1.0.0"
+      
+    },
+    
+    "csw": {
+      "url": "http://somehost/csw",
+      "user": "user",
+      "pwd": "pwd",
+      "version": "2.0.2"
+    }
+  },
+  
+  "actions": {
+    "myscript_action_1.R": true,
+    "myscript_action_2.R": true,
+    "myscript_action_3.R": false
+  }
+}
