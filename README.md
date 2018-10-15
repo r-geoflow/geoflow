@@ -85,12 +85,16 @@ The configuration file used for defining a workflow is structured in a JSON file
 
 ### Workflow Execution
 
+#### R Code
+
 The execution of a workflow job is done simply by performing the following R code, specifying as parameter the name of the configuration file:
 
 ```{r}
 library(geoflow)
 executeWorkflow("my_config.json")
 ```
+
+#### Business logic understanding
 
 When executing the workflow the following actions will be triggered:
 * at first execution, a directory named ``jobs`` will be created with the current working directory
@@ -101,6 +105,13 @@ When executing the workflow the following actions will be triggered:
 3. ``metadata`` as subdirectory where metadata resources processed through scripts will be writen as outputs of the workflow tasks.
 
 In case of failure of the workflow, the working directory will be set back to the current working directory used when executing the workflow.
+
+#### Main business logic code
+
+By default, there is no need of handling a ``main`` R script to handle the whole flow (sequence of tasks). The workflow configuration loader takes care of configuring the sequence of tasks for those ``actions`` scripts that are enabled (set to ``true`` in the configuration file).
+
+Further flexibility may be required to enable the execution of a ``main`` script instead to fine-tune the sequence of actions (TODO)
+
 
 # Developments
 
