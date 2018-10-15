@@ -17,7 +17,7 @@ tasks configuration file.
 ### Configuration File
 
 The configuration file used for defining a workflow is structured in a JSON file containing several building blocks (Please note that these building blocks are currently reviewed and ``geoflow`` is currently used as initiative to further standardize such building blocks):
-* ``id`: a simple workflow identifier.
+* ``id``: a simple workflow identifier.
 * ``dependencies``: a list of package and/or scripts dependencies. These can be CRAN packages, Github packages or individual (local or remote) scripts. The parameters ``cran_force_install`` and ``github_force_install`` set to TRUE will force the installation of packages prior to the workflow execution.
 * ``sdi``: lists the Spatial Data Infrastructure components. Here as well this list will be growing with the support of additional SDI components. For the time being, The following components are supported: GeoServer (REST API), with package [``geosapi``](https://github.com/eblondel/geosapi)), GeoNetwork (Legacy API) with package [``geonapi``](https://github.com/eblondel/geonapi), and [``ows4R``](https://github.com/eblondel/ows4R) for R interfaces to OGC Web-Services such as WFS and CSW.
 * ``actions``: one ore more actions, handled by script names, and true/false whether they should be run by the workflow. At this stage, no particular action will be embedded, but in the future some pre-defined actions (e.g. write/publish ISO/OGC metadata, create/publish Geoserver layer) might be embedded and available for users.
