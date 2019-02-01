@@ -24,12 +24,14 @@ initWorkflowJob <- function(config){
   config$logger.info(sprintf("Initialize workflow job '%s'", jobDir))
   
   #create directories
+  jobDirPath <- file.path(mainDir, subDir, jobDir)
   if (file.exists(subDir)){
-    setwd(file.path(mainDir, subDir, jobDir))
+    setwd(jobDirPath)
   } else {
-    dir.create(file.path(mainDir, subDir, jobDir))
-    setwd(file.path(mainDir, subDir, jobDir))
+    dir.create(jobDirPath)
+    setwd(jobDirPath)
   }
+  config$logger.info(sprintf("Workflow job directory:", jobDirPath))
   
   #copy configuration file
   file.copy(from = file.path(mainDir, config_file), to = getwd())
@@ -40,7 +42,14 @@ initWorkflowJob <- function(config){
   directories <- c("data", "metadata", "logs")
   for(directory in directories){
     if (!file.exists(directory)){
+      config$logger.info(sprintf("Creating '%s' directory: %s",directory, 
+                                 file.path(getwd(), directory)))
       dir.create(file.path(getwd(), directory))
     }
+  }
+  config$logger.info("Copying action scripts to job directory")
+  for(task in config$tasks){
+    config$logger.info(sprintf("Copying %s ...", task))
+    file.copy(from = file.path(config$wd, task), to = getwd())
   }
 }

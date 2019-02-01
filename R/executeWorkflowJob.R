@@ -17,7 +17,15 @@ executeWorkflowJob <- function(config){
     if(is.null(tasks)){
       config$logger.warn("No actions enabled for this workflow!")
     }else{
-      for(task in tasks) eval(expr = parse(paste0("../../", task)))
+      if(length(tasks)==0){
+        config$logger.warn("No actions enabled for this workflow!")
+      }else{
+        config$logger.info(sprintf("Workflow with %s actions", length(tasks)))
+        for(i in 1:length(tasks)){config$logger.info(sprintf("Action %s: %s", i, tasks[[i]]))}
+        for(i in 1:length(tasks)){
+          eval(expr = parse(tasks[[i]]))
+        } 
+      }
     }
   },file = file.path(getwd(), "logs", "job.log"))
 }
