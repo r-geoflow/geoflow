@@ -3,6 +3,7 @@
 #' @aliases geoflow
 #' @docType package
 #' 
+#' @import R6
 #' @import jsonlite
 #' @import DBI
 #' @import sp
