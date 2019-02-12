@@ -63,6 +63,55 @@ initWorkflow <- function(file){
     source(script)
   }))
   
+  #SDI components
+  if(!is.null(config$sdi)){
+    
+    #connect to database
+    #--------------------
+    db <- config$sdi$db
+    if(!is.null(db)){
+      config$logger.info(sprintf("Connect to database '%s'...", db$name))
+      config$db[["con"]] <- try(dbConnect(db$drv, dbname=db$name, user=db$user, password=db$pwd, host=db$host))
+      
+      #specific to PG for now
+      if(db$drv == "PostgresSQL"){
+        config$db[["dbpath"]] <- paste("PG:", paste(lapply(names(db), function(x){return(paste(x,db[[x]],sep="="))}), collapse=" "), sep="")
+      }
+    }
+    #Geoserver API manager
+    #--------------------
+    gs <- config$sdi$geoserver 
+    if(!is.null(gs)){
+      config$logger.info("Connect to GeoServer API...")
+      config$sdi$geoserver_config <- config$sdi$geoserver
+      config$sdi$geoserver <- geosapi::GSManager$new(url = gs$url, user = gs$user, pwd = gs$pwd, logger = config$sdi$loggerLevel)
+    }
+    #Geonetwork API manager
+    #--------------------
+    gn <- config$sdi$geonetwork
+    if(!is.null(gn)){
+      config$logger.info("Connect to GeoNetwork API...")
+      config$sdi$geonetwork_config <- config$sdi$geonetwork
+      config$sdi$geonetwork <- geonapi::GNManager$new(url = gn$url, user = gn$user, pwd = gn$pwd, version = gn$version, logger = config$sdi$loggerLevel)
+    }
+    #WFS Client
+    #--------------------
+    wfs <- config$sdi$wfs
+    if(!is.null(wfs)){
+      config$logger.info("Connect to OGC Web Feature Server (WFS)...")
+      config$sdi$wfs_config <- config$sdi$wfs
+      config$sdi$wfs <- ows4R::WFSClient$new(url = wfs$url, user = wfs$user, pwd = wfs$pwd, serviceVersion = wfs$version, logger = config$sdi$loggerLevel)
+    }
+    #CSW Client
+    #---------------------
+    csw <- config$sdi$csw
+    if(!is.null(csw)){
+      config$logger.info("Connect to OGC Catalogue Service (CSW)...")
+      config$sdi$csw_config <- config$sdi$csw
+      config$sdi$csw <- ows4R::CSWClient$new(url = csw$url, user = csw$user, pwd = csw$pwd, serviceVersion = csw$version, logger = config$sdi$loggerLevel)
+    }
+  }
+  
   #metadata elements
   config$metadata$content <- list()
   if(!is.null(config$metadata)){
@@ -130,55 +179,6 @@ initWorkflow <- function(file){
       config$logger.info(sprintf("Successfuly loaded %s entities!",length(entities)))
     }
     
-  }
-  
-  #SDI components
-  if(!is.null(config$sdi)){
-  
-	  #connect to database
-	  #--------------------
-      db <- config$sdi$db
-	  if(!is.null(db)){
-  		config$logger.info(sprintf("Connect to database '%s'...", db$name))
-  		config$db[["con"]] <- try(dbConnect(db$drv, dbname=db$name, user=db$user, password=db$pwd, host=db$host))
-  		  
-  		#specific to PG for now
-  		if(db$drv == "PostgresSQL"){
-  			config$db[["dbpath"]] <- paste("PG:", paste(lapply(names(db), function(x){return(paste(x,db[[x]],sep="="))}), collapse=" "), sep="")
-  		}
-    }
-	  #Geoserver API manager
-	  #--------------------
-	  gs <- config$sdi$geoserver 
-	  if(!is.null(gs)){
-  		config$logger.info("Connect to GeoServer API...")
-  		config$sdi$geoserver_config <- config$sdi$geoserver
-  		config$sdi$geoserver <- geosapi::GSManager$new(url = gs$url, user = gs$user, pwd = gs$pwd, logger = config$sdi$loggerLevel)
-	  }
-	  #Geonetwork API manager
-	  #--------------------
-	  gn <- config$sdi$geonetwork
-	  if(!is.null(gn)){
-  		config$logger.info("Connect to GeoNetwork API...")
-  		config$sdi$geonetwork_config <- config$sdi$geonetwork
-  		config$sdi$geonetwork <- geonapi::GNManager$new(url = gn$url, user = gn$user, pwd = gn$pwd, version = gn$version, logger = config$sdi$loggerLevel)
-	  }
-	  #WFS Client
-	  #--------------------
-	  wfs <- config$sdi$wfs
-	  if(!is.null(wfs)){
-  		config$logger.info("Connect to OGC Web Feature Server (WFS)...")
-  		config$sdi$wfs_config <- config$sdi$wfs
-  		config$sdi$wfs <- ows4R::WFSClient$new(url = wfs$url, user = wfs$user, pwd = wfs$pwd, serviceVersion = wfs$version, logger = config$sdi$loggerLevel)
-	  }
-	  #CSW Client
-	  #---------------------
-	  csw <- config$sdi$csw
-	  if(!is.null(csw)){
-	    config$logger.info("Connect to OGC Catalogue Service (CSW)...")
-  		config$sdi$csw_config <- config$sdi$csw
-  		config$sdi$csw <- ows4R::CSWClient$new(url = csw$url, user = csw$user, pwd = csw$pwd, serviceVersion = csw$version, logger = config$sdi$loggerLevel)
-	  }
   }
   
   #Actions

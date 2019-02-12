@@ -2,10 +2,16 @@
 #'@export
 geoflow_entity <- R6Class("geoflow_entity",
   public = list(
+    id = NULL,
     title = NULL,
     abstract = NULL,
     contacts = list(),
     initialize = function(){},
+    
+    #setId
+    setId = function(id){
+      self$id <- id
+    },
     
     #setTitle
     setTitle = function(title){
