@@ -63,6 +63,75 @@ initWorkflow <- function(file){
     source(script)
   }))
   
+  #metadata elements
+  config$metadata$content <- list()
+  if(!is.null(config$metadata)){
+    config$logger.info("Loading metadata elements...")
+    
+    #metadata contacts
+    cfg_md_contacts <- config$metadata$contacts
+    if(!is.null(cfg_md_contacts)){
+      config$logger.info("Loading metadata contacts...")
+      md_contact_handler <- loadHandler(config, "contacts")
+      config$logger.info("Execute contact handler to load contacts...")
+      contacts <- md_contact_handler(config, source = cfg_md_contacts$source)
+      
+      if(!is(contacts, "list") | !all(sapply(contacts, is, "geoflow_entity_contact"))){
+        errMsg <- "The output of the contacts handler should return a list of objects of class 'geoflow_entity_contact'"
+        config$logger.error(errMsg)
+        stop(errMsg)
+      }
+      config$logger.info(sprintf("Successfuly fetched %s contacts!",length(contacts)))
+      config$metadata$content$contacts <- contacts
+      config$logger.info(sprintf("Successfuly loaded %s contacts!",length(contacts)))
+    }
+    
+    #metadata entities
+    cfg_md_entities <- config$metadata$entities
+    if(!is.null(cfg_md_entities)){
+      config$logger.info("Loading metadata entities...")
+      md_entity_handler <- loadHandler(config, "entities")
+      config$logger.info("Execute handler to load entities...")
+      entities <- md_entity_handler(config, source = cfg_md_entities$source)
+      
+      if(!is(entities, "list") | !all(sapply(entities, is, "geoflow_entity"))){
+        errMsg <- "The output of the entities handler should return a list of objects of class 'geoflow_entity'"
+        config$logger.error(errMsg)
+        stop(errMsg)
+      }
+      
+      config$logger.info(sprintf("Successfuly fetched %s entities!",length(entities)))
+      if(!is.null(config$metadata$content$contacts)){
+        config$logger.info("Enrich metadata entities from directory of contacts")
+        directory_of_contacts <- config$metadata$content$contacts
+        #enrich entity contacts from contacts directory
+        invisible(lapply(entities, function(entity){
+          entity$contacts <- lapply(entity$contacts, function(contact){
+            if(is(contact,"geoflow_entity_contact")){
+              id <- contact$id
+              role <- contact$role
+              contact_from_directory <- directory_of_contacts[sapply(directory_of_contacts, function(x){x$id == id})]
+              if(!is.null(contact_from_directory)){
+                if(length(contact_from_directory)>0){
+                  if(length(contact_from_directory)>1){
+                    config$logger.warn("Warning: 2 contacts identified with same id! Check your contacts")
+                  }
+                  contact_from_directory <- contact_from_directory[[1]]
+                  contact <- contact_from_directory
+                  contact$setRole(role)
+                }
+              }
+            }
+            return(contact)
+          })
+        }))
+      }
+      config$metadata$content$entities <- entities
+      config$logger.info(sprintf("Successfuly loaded %s entities!",length(entities)))
+    }
+    
+  }
+  
   #SDI components
   if(!is.null(config$sdi)){
   
@@ -118,4 +187,62 @@ initWorkflow <- function(file){
   }
 
   return(config)
+}
+
+#loadHandler
+loadHandler <- function(config, elem){
+  md_handler <- NULL
+  config_md_elem <- config$metadata[[elem]]
+  if(is.null(config_md_elem)) return(md_handler)
+
+  h <- config_md_elem$handler
+  if(is.null(h)){
+    errMsg <- "Missing 'handler' for metadata contacts (default handler id, or function name from custom script)"
+    config$logger.error(errMsg)
+    stop(errMsg)
+  }
+  
+  #type of handler
+  isHandlerId <- is.null(config_md_elem$script)
+  if(isHandlerId){
+    config$logger.info("Try to use embedded contacts handler")
+    #in case handler id is specified
+    md_default_handlers <- c("gsheet")
+    if(!(h %in% md_default_handlers)){
+      errMsg <- sprintf("Unknown handler '%s'. Available handlers are: %s",
+                        h, paste(md_default_handlers, collapse=","))
+    }
+    h_src <- config_md_elem$source
+    if(is.null(h_src)){
+      errMsg <- sprintf("Missing 'source' for handler '%s'", h)
+    }
+    md_contact_handler <- switch(h,
+                                 "gsheet" = geoflow_handler_gsheet_contacts
+    )
+  }else{
+    #in case handler is a script
+    h_script <- config_md_elem$script
+    config$logger.info(sprintf("Try to use custom handler '%s' from script '%s'", h, h_script))
+    if(!file.exists(h_script)){
+      errMsg <- sprintf("File '%s' does not exist in current directory!", h_script)
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+    source(h_script) #load script
+    md_contact_handler <- try(eval(parse(text = h)))
+    if(class(md_contact_handler)=="try-error"){
+      errMsg <- sprintf("Failed loading function '%s. Please check the script '%s'", h, h_script)
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+    
+    #check custom handler arguments
+    args <- names(formals(md_contact_handler))
+    if(!all(c("config", "source") %in% args)){
+      errMsg <- "The handler function should at least include the parameters (arguments) 'config' and 'source'"
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+  }
+  return(md_contact_handler)
 }

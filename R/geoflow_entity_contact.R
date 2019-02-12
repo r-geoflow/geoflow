@@ -2,6 +2,7 @@
 #'@export
 geoflow_entity_contact <- R6Class("geoflow_entity_contact",
   public = list(
+    id = NULL,
     individualName = NULL,
     organizationName = NULL,
     positionName = NULL,
@@ -20,6 +21,11 @@ geoflow_entity_contact <- R6Class("geoflow_entity_contact",
       }
     },
     
+    #setId
+    setId = function(id){
+      self$id <- id
+    },
+    
     #setIndividualName
     setIndividualName = function(individualName){
       self$individualName <- individualName
@@ -28,7 +34,7 @@ geoflow_entity_contact <- R6Class("geoflow_entity_contact",
     #setOrganizationName
     setOrganizationName = function(organizationName){
       self$organizationName <- organizationName
-    }
+    },
     
     #setPositionName
     setPositionName = function(positionName){
