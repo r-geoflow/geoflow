@@ -1,6 +1,6 @@
-#'geoflow_entity_contact
+#'geoflow_contact
 #'@export
-geoflow_entity_contact <- R6Class("geoflow_entity_contact",
+geoflow_contact <- R6Class("geoflow_contact",
   public = list(
     id = NULL,
     individualName = NULL,

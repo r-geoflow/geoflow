@@ -207,7 +207,7 @@ loadHandler <- function(config, elem){
   if(isHandlerId){
     config$logger.info("Try to use embedded contacts handler")
     #in case handler id is specified
-    md_default_handlers <- c("gsheet")
+    md_default_handlers <- c("gsheet", "csv")
     if(!(h %in% md_default_handlers)){
       errMsg <- sprintf("Unknown handler '%s'. Available handlers are: %s",
                         h, paste(md_default_handlers, collapse=","))
@@ -216,9 +216,18 @@ loadHandler <- function(config, elem){
     if(is.null(h_src)){
       errMsg <- sprintf("Missing 'source' for handler '%s'", h)
     }
-    md_contact_handler <- switch(h,
-                                 "gsheet" = geoflow_handler_gsheet_contacts
-    )
+    if(elem == "contacts"){
+      md_handler <- switch(h,
+         "gsheet" = handle_contacts_gsheet,
+         "csv"    = handle_contacts_csv
+      )
+    }else if(elem == "entities"){
+      md_handler <- switch(h,
+         "gsheet" = handle_entities_gsheet,
+         "csv"    = handle_entities_csv
+      )      
+    } 
+   
   }else{
     #in case handler is a script
     h_script <- config_md_elem$script
@@ -229,20 +238,20 @@ loadHandler <- function(config, elem){
       stop(errMsg)
     }
     source(h_script) #load script
-    md_contact_handler <- try(eval(parse(text = h)))
-    if(class(md_contact_handler)=="try-error"){
+    md_handler <- try(eval(parse(text = h)))
+    if(class(md_handler)=="try-error"){
       errMsg <- sprintf("Failed loading function '%s. Please check the script '%s'", h, h_script)
       config$logger.error(errMsg)
       stop(errMsg)
     }
     
     #check custom handler arguments
-    args <- names(formals(md_contact_handler))
+    args <- names(formals(md_handler))
     if(!all(c("config", "source") %in% args)){
       errMsg <- "The handler function should at least include the parameters (arguments) 'config' and 'source'"
       config$logger.error(errMsg)
       stop(errMsg)
     }
   }
-  return(md_contact_handler)
+  return(md_handler)
 }
