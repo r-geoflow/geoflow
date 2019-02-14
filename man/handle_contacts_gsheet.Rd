@@ -2,10 +2,10 @@
 % Please edit documentation in R/geoflow_handlers_contact.R
 \name{handle_contacts_gsheet}
 \alias{handle_contacts_gsheet}
-\title{handle_contacts_gsheets}
+\title{handle_contacts_gsheet}
 \usage{
 handle_contacts_gsheet(config, source)
 }
 \description{
-handle_contacts_gsheets
+handle_contacts_gsheet
 }

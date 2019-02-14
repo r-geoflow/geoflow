@@ -31,7 +31,7 @@ handle_contacts_df <- function(config, source){
   return(contacts)
 }
 
-#' handle_contacts_gsheets
+#' handle_contacts_gsheet
 #' @export
 handle_contacts_gsheet <- function(config, source){
   
