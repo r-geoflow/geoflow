@@ -14,7 +14,9 @@ handle_entities_df <- function(config, source){
   for(i in 1:rowNum){
     source_entity <- source[i,]
     entity <- geoflow_entity$new()
-    
+    entity$setId(source_entity[,"Identifier"])
+    entity$setTitle(source_entity[,"Title"])
+    entity$setAbstract(source_entity[,"Description"])
     #TODO parsing of metadata entity elements and encapsulating in geoflow_entity obj
     
     

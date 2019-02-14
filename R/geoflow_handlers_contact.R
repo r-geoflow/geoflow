@@ -14,17 +14,17 @@ handle_contacts_df <- function(config, source){
   for(i in 1:rowNum){
     source_contact <- source[i,]
     contact <- geoflow_contact$new()
-    contact$setEmail(source_contact[,"email"])
-    contact$setIndividualName(paste(source_contact[,"firstName"], source_contact[,"lastName"]))
-    contact$setOrganizationName(source_contact[,"organizationName"])
-    contact$setPositionName(source_contact[,"positionName"])
-    contact$setPostalAddress(source_contact[,"postalAddress"])
-    contact$setPostalCode(source_contact[,"postalCode"])
-    contact$setCity(source_contact[,"city"])
-    contact$setCountry(source_contact[,"country"])
-    contact$setVoice(source_contact[,"voice"])
-    contact$setFacsimile(source_contact[,"facsimile"])
-    contact$setWebsite(source_contact[,"website"])
+    contact$setEmail(source_contact[,"Email"])
+    contact$setIndividualName(paste(source_contact[,"FirstName"], source_contact[,"LastName"]))
+    contact$setOrganizationName(source_contact[,"OrganizationName"])
+    contact$setPositionName(source_contact[,"PositionName"])
+    contact$setPostalAddress(source_contact[,"PostalAddress"])
+    contact$setPostalCode(source_contact[,"PostalCode"])
+    contact$setCity(source_contact[,"City"])
+    contact$setCountry(source_contact[,"Country"])
+    contact$setVoice(source_contact[,"Voice"])
+    contact$setFacsimile(source_contact[,"Facsimile"])
+    contact$setWebsite(source_contact[,"Website"])
     
     contacts <- c(contacts, contact)
   }
