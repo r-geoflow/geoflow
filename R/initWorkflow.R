@@ -125,7 +125,7 @@ initWorkflow <- function(file){
       config$logger.info("Execute contact handler to load contacts...")
       contacts <- md_contact_handler(config, source = cfg_md_contacts$source)
       
-      if(!is(contacts, "list") | !all(sapply(contacts, is, "geoflow_entity_contact"))){
+      if(!is(contacts, "list") | !all(sapply(contacts, is, "geoflow_contact"))){
         errMsg <- "The output of the contacts handler should return a list of objects of class 'geoflow_entity_contact'"
         config$logger.error(errMsg)
         stop(errMsg)
