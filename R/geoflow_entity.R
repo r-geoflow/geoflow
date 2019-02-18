@@ -7,6 +7,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     abstract = NULL,
     subjects = list(),
     contacts = list(),
+    relations = list(),
     initialize = function(){},
     
     #setId
@@ -38,8 +39,15 @@ geoflow_entity <- R6Class("geoflow_entity",
         stop("The argument should be an object of class 'geoflow_contact'")
       }
       self$contacts <- c(self$contacts, contact)
-    }
+    },
     
+    #addRelation
+    addRelation = function(relation){
+      if(!is(relation, "geoflow_relation")){
+        stop("The argument should be an object of class 'geoflow_relation'")
+      }
+      self$relations <- c(self$relations, relation)
+    }
     
   )
 )
