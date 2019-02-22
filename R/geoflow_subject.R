@@ -3,11 +3,14 @@
 geoflow_subject <- R6Class("geoflow_subject",
   public = list(
     name = NULL,
-    url = NULL,
+    uri = NULL,
     keywords = list(),
     initialize = function(str = NULL){
       if(!is.null(str)){
-        #TODO parse contact from str
+        subject_kvp <- extract_kvp(str)
+        self$setName(subject_kvp$key)
+        self$setUri(attr(subject_kvp$key,"uri"))
+        invisible(lapply(subject_kvp$values, self$addKeyword))
       }
     },
     
@@ -16,9 +19,9 @@ geoflow_subject <- R6Class("geoflow_subject",
       self$name <- name
     },
     
-    #setUrl
-    setUrl = function(url){
-      self$url <- url
+    #setUri
+    setUri = function(uri){
+      self$uri <- uri
     },
     
     #addKeyword
@@ -26,10 +29,19 @@ geoflow_subject <- R6Class("geoflow_subject",
       if(!is.null(uri)){
         attr(keyword, "uri") <- uri
       }
-      if(!any(sapply(self$keywords, function(x){ 
-        return(x == keyword & attr(keyword, "uri") == uri) 
+      if(!any(sapply(self$keywords, function(x){
+        kwd_added <- x$name == keyword
+        if(!is.null(x$uri) & !is.null(attr(keyword,"uri"))){
+          kwd_added <- kwd_added & x$uri == attr(keyword, "uri")
+        }
+        return(kwd_added) 
       }))){
-        self$keywords <- c(self$keywords, keyword)
+        uri <- attr(keyword,"uri")
+        attr(keyword, "uri") <- NULL
+        kwd <- geoflow_keyword$new()
+        kwd$setName(keyword)
+        kwd$setUri(uri)
+        self$keywords <- c(self$keywords, kwd)
       }
     }
   )                                  

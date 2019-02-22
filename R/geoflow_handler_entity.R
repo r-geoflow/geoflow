@@ -17,8 +17,12 @@ handle_entities_df <- function(config, source){
     entity$setId(source_entity[,"Identifier"])
     entity$setTitle(source_entity[,"Title"])
     entity$setAbstract(source_entity[,"Description"])
-    #TODO parsing of metadata entity elements and encapsulating in geoflow_entity obj
     
+    subjects <- unlist(strsplit(sanitize_str(source_entity[,"Subject"]), ";"))
+    invisible(lapply(subjects, function(subject){
+      subject_obj <- geoflow_subject$new(str = subject)
+      entity$addSubject(subject_obj)
+    }))
     
     entities <- c(entities, entity)
   }
