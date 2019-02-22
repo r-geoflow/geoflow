@@ -24,6 +24,15 @@ handle_entities_df <- function(config, source){
       entity$addSubject(subject_obj)
     }))
     
+    contacts <- unlist(strsplit(sanitize_str(source_entity[,"Creator"]), ";"))
+    invisible(lapply(contacts, function(contact){
+      contact_splits <- unlist(strsplit(contact, ":"))
+      contact_obj <- geoflow_contact$new()
+      contact_obj$setId(contact_splits[2])
+      contact_obj$setRole(contact_splits[1])
+      entity$addContact(contact_obj)
+    }))
+    
     entities <- c(entities, entity)
   }
   return(entities)

@@ -17,7 +17,7 @@ geoflow_contact <- R6Class("geoflow_contact",
     country = NULL,
     initialize = function(str = NULL){
       if(!is.null(str)){
-        #TODO parse contact from str
+        
       }
     },
     
