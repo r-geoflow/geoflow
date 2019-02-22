@@ -33,6 +33,8 @@ handle_entities_df <- function(config, source){
 #' @export
 handle_entities_gsheet <- function(config, source){
   
+  if(!require("gsheet")) stop("Package 'gsheet' is required!")
+  
   #read gsheet URL
   source <- as.data.frame(gsheet::gsheet2tbl(source))
   
