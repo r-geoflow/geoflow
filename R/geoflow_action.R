@@ -28,7 +28,7 @@ register_geoflow_actions <- function(){
       id = "geometa-create-iso-19115",
       type = "Metadata management",
       def = "Produces an ISO/OGC 19115/19139 metadata object",
-      fun = geometa_action_create_iso_19115
+      fun = geometa_create_iso_19115
     )
   )
   .geoflow$actions <- objs
