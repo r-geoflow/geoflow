@@ -47,9 +47,11 @@ initWorkflowJob <- function(config){
       dir.create(file.path(getwd(), directory))
     }
   }
-  config$logger.info("Copying action scripts to job directory")
-  for(task in config$tasks){
-    config$logger.info(sprintf("Copying %s ...", task))
-    file.copy(from = file.path(config$wd, task), to = getwd())
+  if(config$mode == "raw"){
+    config$logger.info("Copying raw action scripts to job directory")
+    for(action in config$actions){
+      config$logger.info(sprintf("Copying %s ...", action$script))
+      file.copy(from = file.path(config$wd, action$script), to = getwd())
+    }
   }
 }

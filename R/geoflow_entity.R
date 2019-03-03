@@ -3,6 +3,7 @@
 geoflow_entity <- R6Class("geoflow_entity",
   public = list(
     id = NULL,
+    language = "eng",
     title = NULL,
     abstract = NULL,
     subjects = list(),
@@ -13,6 +14,11 @@ geoflow_entity <- R6Class("geoflow_entity",
     #setId
     setId = function(id){
       self$id <- id
+    },
+    
+    #setLanguage
+    setLanguage = function(language){
+      self$language <- language
     },
     
     #setTitle

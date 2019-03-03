@@ -33,6 +33,12 @@ handle_entities_df <- function(config, source){
       entity$addContact(contact_obj)
     }))
     
+    relations <- unlist(strsplit(sanitize_str(source_entity[,"Relation"]), ";"))
+    invisible(lapply(relations, function(relation){
+      relation_obj <- geoflow_relation$new(str = relation)
+      entity$addRelation(relation_obj)
+    }))
+    
     entities <- c(entities, entity)
   }
   return(entities)

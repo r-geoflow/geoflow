@@ -3,10 +3,17 @@
 geoflow_relation <- R6Class("geoflow_relation",
  public = list(
    key = NULL,
-   value = NULL,
+   link = NULL,
+   label = NULL,
    initialize = function(str = NULL){
      if(!is.null(str)){
-       #TODO parse contact from str
+       kvp <- extract_kvp(str)
+       self$setKey(kvp$key)
+       label <- kvp$values[[1]]
+       link <- attr(label, "uri")
+       attr(label, "uri") <- NULL
+       self$setLink(link)
+       self$setLabel(label)
      }
    },
    
@@ -15,9 +22,14 @@ geoflow_relation <- R6Class("geoflow_relation",
      self$key <- key
    },
    
-   #setValue
-   setValue = function(value){
-     self$value <- value
+   #setLink
+   setLink = function(link){
+     self$link <- link
+   },
+   
+   #setLabel
+   setLabel = function(label){
+     self$label <- label
    }
  )                                  
 )

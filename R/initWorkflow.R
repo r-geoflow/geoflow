@@ -27,6 +27,23 @@ initWorkflow <- function(file){
   #working dir
   if(is.null(config$wd)) config$wd <- getwd()
   
+  #type of workflow
+  cfg_mode <- config$mode
+  if(!is.null(cfg_mode)){
+    allowedModes <- c("raw","entity")
+    if(!(cfg_mode %in% allowedModes)) {
+      errMsg <- sprintf("The workflow '%s' mode is incorrect. Allowed values are [%s]",
+                        cfg_mode, paste(allowedModes, collapse=","))
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+    config$mode <- cfg_mode
+  }else{
+    warnMes <- "No workflow mode specified, 'raw' mode specified by default!"
+    config$logger.warn(warnMes)
+    config$mode <- "raw"
+  }
+  
   #load packages
   #-------------
   #from CRAN
@@ -113,9 +130,9 @@ initWorkflow <- function(file){
   }
   
   #metadata elements
-  config$metadata$content <- list()
   if(!is.null(config$metadata)){
     config$logger.info("Loading metadata elements...")
+    config$metadata$content <- list()
     
     #metadata contacts
     cfg_md_contacts <- config$metadata$contacts
@@ -154,9 +171,11 @@ initWorkflow <- function(file){
         config$logger.info("Enrich metadata entities from directory of contacts")
         directory_of_contacts <- config$metadata$content$contacts
         #enrich entity contacts from contacts directory
-        invisible(lapply(entities, function(entity){
-          entity$contacts <- lapply(entity$contacts, function(contact){
-            if(is(contact,"geoflow_entity_contact")){
+        entities <- lapply(entities, function(entity){
+          newentity <- entity$clone()
+          newentity$contacts <- lapply(entity$contacts, function(contact){
+            newcontact <- NULL
+            if(is(contact,"geoflow_contact")){
               id <- contact$id
               role <- contact$role
               contact_from_directory <- directory_of_contacts[sapply(directory_of_contacts, function(x){x$id == id})]
@@ -166,14 +185,16 @@ initWorkflow <- function(file){
                     config$logger.warn("Warning: 2 contacts identified with same id! Check your contacts")
                   }
                   contact_from_directory <- contact_from_directory[[1]]
-                  contact <- contact_from_directory
-                  contact$setRole(role)
+                  newcontact <- contact_from_directory
+                  newcontact$setId(id)
+                  newcontact$setRole(role)
                 }
               }
             }
-            return(contact)
+            return(newcontact)
           })
-        }))
+          return(newentity)
+        })
       }
       config$metadata$content$entities <- entities
       config$logger.info(sprintf("Successfuly loaded %s entities!",length(entities)))
@@ -183,7 +204,75 @@ initWorkflow <- function(file){
   
   #Actions
   if(!is.null(config$actions)){
-    config$tasks <- names(config$actions)[unlist(config$actions)]
+    
+    config$actions <- lapply(config$actions,function(action){
+      if(!action$run) return(NULL)
+      
+      action_to_trigger <- NULL
+      isCustom <- FALSE
+      if(!is.null(action$script)){
+        isCustom <- TRUE
+      }
+      if(!isCustom){
+        if(is.null(action$id)){
+          errMsg <- "An 'action' should have an id. Please check your configuration file. In case of a custom action, the id should be the function name."
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
+        #we try to find it among embedded actions
+        if(!(action$id %in% list_geoflow_actions(raw=TRUE))){
+          stop(sprintf("The action '%s' is not among available geoflow actions", action$id))
+        }
+        action_to_trigger <- .geoflow$actions[sapply(.geoflow$actions, function(x){x$id==action$id})][[1]]
+        action_to_trigger$options <- action$options
+      }else{
+        if(config$mode == "entity"){
+          source(action$script)
+          customfun <- eval(parse(text = action$id))
+          if(class(customfun)=="try-error"){
+            errMsg <- sprintf("Error while trying to evaluate custom function'%s", action$id)
+            config$logger.error(errMsg)
+            stop(errMsg)
+          }
+          if(class(customfun)!="function"){
+            errMsg <- sprintf("'%s' is not a function!", action$id)
+            config$logger.error(errMsg)
+            stop(errMsg)
+          }
+          funparams <- formals(customfun)
+          if(!("entity" %in% funparams)){
+            errMsg <- sprintf("Missing parameter 'entity' in function '%s'", action$id)
+            config$logger.error(errMsg)
+            stop(errMsg)
+          }
+          if(!("config" %in% funparams)){
+            errMsg <- sprintf("Missing parameter 'config' in function '%s'", action$id)
+            config$logger.error(errMsg)
+            stop(errMsg)
+          }
+          if(!("opts" %in% funparams)){
+            errMsg <- sprintf("Missing parameter 'opts' in function '%s'", action$id)
+            config$logger.error(errMsg)
+            stop(errMsg)
+          }
+          action_to_trigger <- geoflow_action$new(
+            id = action$id,
+            type = action$type,
+            def = action$def,
+            fun = customfun
+          )
+        }else if(config$mode == "raw"){
+          action_to_trigger <- geoflow_action$new(
+            id = action$script,
+            type = action$type,
+            def = action$def,
+            script = action$script
+          )
+        }
+      }
+      return(action_to_trigger)
+    })
+    
   }
 
   return(config)

@@ -1,7 +1,7 @@
 {
   
   "id": "my-workflow",
-  
+  "mode" : "entity",
   "dependencies": {
     "packages": {
       "cran": [
@@ -59,9 +59,9 @@
     }
   },
   
-  "actions": {
-    "myscript_action_1.R": true,
-    "myscript_action_2.R": true,
-    "myscript_action_3.R": false
-  }
+  "actions": [
+    {"id": "myscript_action_1.R", "run": true},
+    {"id": "myscript_action_2.R", "run": true},
+    {"id": "myscript_action_2.R", "run": false}
+  ]
 }

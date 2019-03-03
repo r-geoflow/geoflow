@@ -26,6 +26,13 @@
   "sdi": {
     "loggerLevel": "DEBUG"
   },
-  
-  "actions": []
+  "actions": [
+    {
+      "id": "geometa-create-iso-19115",
+      "options" : {
+        "inspire" : true
+      },
+      "run": true
+    }
+  ]
 }
