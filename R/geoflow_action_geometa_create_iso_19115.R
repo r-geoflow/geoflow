@@ -1,4 +1,4 @@
-geoflow_action_create_iso_19115 <- function(entity, config, options){
+geometa_create_iso_19115 <- function(entity, config, options){
   
   if(!require("geometa")){
     stop("This action requires the 'geometa' package")
