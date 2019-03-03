@@ -11,23 +11,57 @@
 
 ## Functioning
 
-The principle of ``geoflow`` is to offer a simple framework in R to execute and orchestrate geospatial (meta)data management and publication tasks based on a
-tasks configuration file.
+The principle of ``geoflow`` is to offer a simple framework in R to execute and orchestrate geospatial (meta)data management and publication tasks based on a tasks configuration file.
+
+We distinguish two workflow  ``modes``:
+* ``raw`` if we want to execute raw scripts (e.g. geoprocessings) as sequence
+* ``entity`` if we want to to execute functions, each function based on a metadata entity and having different purpose
 
 ### Configuration File
 
 The configuration file used for defining a workflow is structured in a JSON file containing several building blocks (Please note that these building blocks are currently reviewed and ``geoflow`` is currently used as initiative to further standardize such building blocks):
 * ``id``: a simple workflow identifier.
+* ``mode``: with possible values ``raw`` (raw R processings, default value if the ``mode`` is omitted), or ``entity`` for entity-based actions. The latter requires to specify a ``metadata`` configuration.
 * ``dependencies``: a list of package and/or scripts dependencies. These can be CRAN packages, Github packages or individual (local or remote) scripts. The parameters ``cran_force_install`` and ``github_force_install`` set to TRUE will force the installation of packages prior to the workflow execution.
 * ``sdi``: lists the Spatial Data Infrastructure components. Here as well this list will be growing with the support of additional SDI components. For the time being, The following components are supported: GeoServer (REST API), with package [``geosapi``](https://github.com/eblondel/geosapi)), GeoNetwork (Legacy API) with package [``geonapi``](https://github.com/eblondel/geonapi), and [``ows4R``](https://github.com/eblondel/ows4R) for R interfaces to OGC Web-Services such as WFS and CSW.
-* ``actions``: one ore more actions, handled by script names, and true/false whether they should be run by the workflow. At this stage, no particular action will be embedded, but in the future some pre-defined actions (e.g. write/publish ISO/OGC metadata, create/publish Geoserver layer) might be embedded and available for users.
+* ``metadata``: This configuration section allows to define two kind of metadata entries: the ``entities`` (each entity represents a set of metadata e.g. describing a dataset), and ``contacts`` corresponding to the directory people/organizations involved in the entities.
+* ``actions``: one ore more actions to execute in the workflow. In the case of an entity-based workflow, the user can add either embedded actions made available in geoflow (The list can be obtained with ``list_geoflow_actions()``) or custom actions the user wants to configure.
 
+An embedded action is defined specifying the ``id`` of the action. An optional parameter can be used to specify ``options`` of the actions (e.g. create ISO 19115 and specify INSPIRE validation option). The parameter ``run`` indicates if the action has to be run in the workflow.
+
+Example of action definition for creating ISO 19115 metadata with [geometa](https://github.com/eblondel/geometa) with option to test INSPIRE metadata validation.
+
+```{json}
+{
+  "id": "geometa-create-iso-19115",
+  "options": {
+    "inspire": true
+  }
+  "run": true
+}
+
+```
+
+A custom action can be defined specifying the R script. In case of an entity-based workflow, the R script should handle a function which name is to specify as the action ``id``.
+
+```{json}
+{
+  "script": "my_script.R",
+  "id": "my_function",
+  "run": true
+}
+
+```
+
+**Example of workflow with ``raw`` mode**
+
+The below examples will execute 3 processing scripts as sequence.
 
 ```{json}
 {
   
   "id": "my-workflow",
-  
+  "mode": "raw",
   "dependencies": {
     "packages": {
       "cran": [
@@ -74,11 +108,69 @@ The configuration file used for defining a workflow is structured in a JSON file
     }
   },
   
-  "actions": {
-    "myscript_action_1.R": true,
-    "myscript_action_2.R": true,
-    "myscript_action_3.R": false
-  }
+  "actions": [
+    {
+      "id": "action-1",
+      "script": "myscript_action_1.R",
+      "run": true
+    },
+    {
+      "id": "action-2",
+      "script": "myscript_action_2.R",
+      "run": true
+    },
+    {
+      "id": "action-3",
+      "script": "myscript_action_3.R",
+      "run": true
+    }
+  ]
+}
+
+```
+
+**Example of workflow with ``raw`` mode**
+
+The below example configuration will handle an entity-based workflow with the creation of ISO 19115 metadata with geometa based on the metadata entities/contacts defined in the "metadata" configuration element.
+
+```{json}
+{
+  
+  "id": "my-workflow",
+  "mode": "entity",
+  "dependencies": {
+    "packages": {
+      "cran": [
+        "gsheet"
+      ],
+      "cran_force_install" : false,
+      "github": [],
+      "github_force_install": false
+    },
+    "scripts": []
+  },
+  "metadata": {
+    "entities": {
+      "handler": "gsheet",
+      "source": "https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing"
+    },
+    "contacts" : {
+      "handler": "gsheet",
+      "source": "https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing"
+    }
+  },
+  "sdi": {
+    "loggerLevel": "DEBUG"
+  },
+  "actions": [
+    {
+      "id": "geometa-create-iso-19115",
+      "options" : {
+        "inspire" : true
+      },
+      "run": true
+    }
+  ]
 }
 
 ```
@@ -110,7 +202,7 @@ In case of failure of the workflow, the working directory will be set back to th
 
 By default, there is no need of handling a ``main`` R script to handle the whole flow (sequence of tasks). The workflow configuration loader takes care of configuring the sequence of tasks for those ``actions`` scripts that are enabled (set to ``true`` in the configuration file).
 
-Further flexibility may be required to enable the execution of a ``main`` script instead to fine-tune the sequence of actions (TODO)
+Further flexibility may be required to enable the execution of a ``main`` script instead to fine-tune the sequence of actions (TODO).
 
 
 # Developments
