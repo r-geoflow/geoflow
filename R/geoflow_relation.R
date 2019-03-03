@@ -4,16 +4,20 @@ geoflow_relation <- R6Class("geoflow_relation",
  public = list(
    key = NULL,
    link = NULL,
-   label = NULL,
+   name = NULL,
+   description = NULL,
    initialize = function(str = NULL){
      if(!is.null(str)){
        kvp <- extract_kvp(str)
        self$setKey(kvp$key)
-       label <- kvp$values[[1]]
-       link <- attr(label, "uri")
-       attr(label, "uri") <- NULL
+       name <- kvp$values[[1]]
+       link <- attr(name, "uri")
+       description <- attr(name, "description")
+       attr(name, "uri") <- NULL
+       attr(name, "description") <- NULL
        self$setLink(link)
-       self$setLabel(label)
+       self$setName(name)
+       self$setDescription(description)
      }
    },
    
@@ -27,9 +31,14 @@ geoflow_relation <- R6Class("geoflow_relation",
      self$link <- link
    },
    
-   #setLabel
-   setLabel = function(label){
-     self$label <- label
+   #setName
+   setName = function(name){
+     self$name <- name
+   },
+   
+   #setDescription
+   setDescription = function(description){
+     self$description <- description
    }
  )                                  
 )

@@ -14,11 +14,11 @@ extract_kvp <- function(str){
   if(length(kvp)!=2) stop("Error while splitting kvp key/value")
   
   #key
-  name <- kvp[1]
-  name_splits <- unlist(strsplit(name, "@"))
-  if(length(name_splits)>1){
-    name <- name_splits[1]
-    attr(name,"uri") <- name_splits[2]
+  key <- kvp[1]
+  key_splits <- unlist(strsplit(key, "@"))
+  if(length(key_splits)>1){
+    key <- key_splits[1]
+    attr(key,"uri") <- key_splits[2]
   }
   
   #values
@@ -27,10 +27,19 @@ extract_kvp <- function(str){
     value_splits <- unlist(strsplit(value, "@"))
     if(length(value_splits)>1){
       value <- value_splits[1]
-      attr(value, "uri") <- value_splits[2]
+      link <- value_splits[2]
+      hasDescription <- attr(regexpr("\\[", value), "useBytes") & endsWith(value, "]")
+      if(hasDescription){
+        value_splits <- unlist(strsplit(value, "\\["))
+        value <- value_splits[1]
+        des <- value_splits[2]
+        des <- substr(des, 1, nchar(des)-1)
+        attr(value, "description") <- des
+      }
+      attr(value, "uri") <- link
     }
     return(value)
   })
   
-  return(list(key = name, values = values))
+  return(list(key = key, values = values))
 }
