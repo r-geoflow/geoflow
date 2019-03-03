@@ -45,7 +45,6 @@ list_geoflow_actions <- function(raw = FALSE){
       return(data.frame(
         id = action$id,
         type = action$type,
-        entity = tolower(as.character(action$entity)),
         definition = action$def,
         stringsAsFactors = FALSE
       ))
