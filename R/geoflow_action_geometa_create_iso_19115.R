@@ -154,7 +154,27 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #TODO spatial representation type
   md$addIdentificationInfo(ident)
   
-  #TODO distribution
+  #distribution
+  distrib <- ISODistribution$new()
+  dto <- ISODigitalTransferOptions$new()
+  http_relations <- entity$relations[sapply(entity$relations, function(x){
+    x$key %in% c("ftp","http", "wfs", "wms", "wcs", "csw")
+  })]
+  for(http_relation in http_relations){
+    or <- ISOOnlineResource$new()
+    or$setLinkage(http_relation$link)
+    or$setName(http_relation$name)
+    or$setDescription(http_relation$description)
+    protocol <- switch(http_relation$key,
+      "http" = "WWW:LINK-1.0-http--link",
+      "wms" = "OGC:WMS-1.3.0-http-get-map",
+      "WWW:LINK-1.0-http--link"
+    )
+    or$setProtocol(protocol)
+    dto$addOnlineResource(or)
+  }
+  distrib$setDigitalTransferOptions(dto)
+  md$setDistributionInfo(distrib)
   
   #TODO data quality
   
