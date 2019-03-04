@@ -23,7 +23,7 @@ The configuration file used for defining a workflow is structured in a JSON file
 * ``id``: a simple workflow identifier.
 * ``mode``: with possible values ``raw`` (raw R processings, default value if the ``mode`` is omitted), or ``entity`` for entity-based actions. The latter requires to specify a ``metadata`` configuration.
 * ``dependencies``: a list of package and/or scripts dependencies. These can be CRAN packages, Github packages or individual (local or remote) scripts. The parameters ``cran_force_install`` and ``github_force_install`` set to TRUE will force the installation of packages prior to the workflow execution.
-* ``sdi``: lists the Spatial Data Infrastructure components. Here as well this list will be growing with the support of additional SDI components. For the time being, The following components are supported: GeoServer (REST API), with package [``geosapi``](https://github.com/eblondel/geosapi)), GeoNetwork (Legacy API) with package [``geonapi``](https://github.com/eblondel/geonapi), and [``ows4R``](https://github.com/eblondel/ows4R) for R interfaces to OGC Web-Services such as WFS and CSW.
+* ``software``: lists the software components. Here as well this list will be growing with the support of additional software components. For the time being, The following components are supported: GeoServer (REST API) with package [``geosapi``](https://github.com/eblondel/geosapi), GeoNetwork (Legacy API) with package [``geonapi``](https://github.com/eblondel/geonapi), and [``ows4R``](https://github.com/eblondel/ows4R) for R interfaces to OGC Web-Services such as WFS and CSW, Zenodo (REST API) with package [``zen4R``](https://github.com/eblondel/zen4R). It is possible to specify a custom software comment providing the main function/publisher name as ``handler``.
 * ``metadata``: This configuration section allows to define two kind of metadata entries: the ``entities`` (each entity represents a set of metadata e.g. describing a dataset), and ``contacts`` corresponding to the directory people/organizations involved in the entities.
 * ``actions``: one ore more actions to execute in the workflow. In the case of an entity-based workflow, the user can add either embedded actions made available in geoflow (The list can be obtained with ``list_geoflow_actions()``) or custom actions the user wants to configure.
 
@@ -75,7 +75,7 @@ The below examples will execute 3 processing scripts as sequence.
     "scripts": []
   },
   
-  "sdi": [
+  "software": [
       "id": "geoserver",
       "url": "http://somehost/geoserver",
       "user": "user",
