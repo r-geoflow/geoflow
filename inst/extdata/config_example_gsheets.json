@@ -23,9 +23,6 @@
       "source": "https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing"
     }
   },
-  "sdi": {
-    "loggerLevel": "DEBUG"
-  },
-  
+  "software": [],
   "actions": []
 }

@@ -75,10 +75,8 @@ The below examples will execute 3 processing scripts as sequence.
     "scripts": []
   },
   
-  "sdi": {
-    "loggerLevel": "DEBUG",
-    
-    "geoserver": {
+  "sdi": [
+      "id": "geoserver",
       "url": "http://somehost/geoserver",
       "user": "user",
       "pwd": "pwd",
@@ -87,26 +85,28 @@ The below examples will execute 3 processing scripts as sequence.
       "datastore": "ds"
     },
     
-    "geonetwork": {
+    {
+      "id": "geonetwork",
       "url": "http://somehost/geonetwork",
       "user": "user",
       "pwd": "pwd",
       "version": "3.0"
     },
     
-    "wfs": {
+    {
+      "id": "wfs",
       "url": "http://somehost/geoserver/wfs",
       "version": "1.0.0"
       
     },
-    
-    "csw": {
+    {
+      "id": "csw",
       "url": "http://somehost/csw",
       "user": "user",
       "pwd": "pwd",
       "version": "2.0.2"
     }
-  },
+  ],
   
   "actions": [
     {
@@ -159,9 +159,7 @@ The below example configuration will handle an entity-based workflow with the cr
       "source": "https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing"
     }
   },
-  "sdi": {
-    "loggerLevel": "DEBUG"
-  },
+  "software": [],
   "actions": [
     {
       "id": "geometa-create-iso-19115",
