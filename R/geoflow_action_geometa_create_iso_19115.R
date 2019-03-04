@@ -181,6 +181,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #TODO content information --> Feature Catalogue description (if data handling)
   
   #we save the metadata
+  saveRDS(md, file.path(getwd(), "metadata", paste0(entity$id, ".rds")))
   md$save(file.path(getwd(), "metadata", paste0(entity$id, ".xml")), inspire = inspire)
   
   return(md)

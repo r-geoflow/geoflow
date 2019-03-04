@@ -29,6 +29,12 @@ register_geoflow_actions <- function(){
       type = "Metadata management",
       def = "Produces an ISO/OGC 19115/19139 metadata object",
       fun = geometa_create_iso_19115
+    ),
+    geoflow_action$new(
+      id = "geonapi-publish-iso-19139",
+      type = "Metadata management",
+      def = "Publish/Updates an ISO/OGC 19139 metadata object",
+      fun = geonapi_publish_iso_19139
     )
   )
   .geoflow$actions <- objs
