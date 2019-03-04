@@ -10,6 +10,12 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
   #shortcut for gn config
   GN <- config$software$geonetwork
   
+  if(is.null(GN)){
+    errMsg <- "This action requires a Geonetwork software to be declared in the configuration"
+    config$logger.error(errMsg)
+    stop(errMsg)
+  }
+  
   #to insert or update a metadata into a geonetwork.
   #An insert has to be done in 2 operations (the insert itself, and the privilege setting to "publish" it either to a restrained group or to public)
   #An update has to be done based on the internal Geonetwork id (that can be queried as well
