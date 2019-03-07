@@ -15,6 +15,7 @@ geoflow_contact <- R6Class("geoflow_contact",
     postalCode = NULL,
     city = NULL,
     country = NULL,
+    identifiers = list(),
     initialize = function(str = NULL){
       if(!is.null(str)){
         
@@ -84,6 +85,14 @@ geoflow_contact <- R6Class("geoflow_contact",
     #setCountry
     setCountry = function(country){
       self$country <- country
+    },
+    
+    #addIdentifier
+    addIdentifier = function(identifier){
+      if(!is(identifier, "geoflow_kvp")){
+        stop("The argument should be an object of class 'geoflow_kvp'")
+      }
+      self$identifiers = c(self$identifiers, identifier)
     }
    
   )                                  

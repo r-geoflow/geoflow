@@ -27,6 +27,12 @@ handle_contacts_df <- function(config, source){
     contact$setFacsimile(source_contact[,"Facsimile"])
     contact$setWebsite(source_contact[,"Website"])
     
+    identifiers <- unlist(strsplit(sanitize_str(source_contact[,"Identifier"]), ";"))
+    invisible(lapply(identifiers, function(identifier){
+      id_obj <- geoflow_kvp$new(str = identifier)
+      contact$addIdentifier(id_obj)
+    }))
+    
     contacts <- c(contacts, contact)
   }
   return(contacts)
