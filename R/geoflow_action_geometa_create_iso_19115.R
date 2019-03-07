@@ -54,7 +54,13 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   #TODO spatial representation
   
-  #TODO spatial reference system
+  #spatial reference system
+  if(!is.null(entity$srid)){
+    rs <- ISOReferenceSystem$new()
+    rsId <- ISOReferenceIdentifier$new(code = as.character(entity$srid), codeSpace = "EPSG")
+    rs$setReferenceSystemIdentifier(rsId)
+    md$setReferenceSystemInfo(rs)
+  }
   
   #Data identification
   ident <- ISODataIdentification$new()
@@ -145,10 +151,32 @@ geometa_create_iso_19115 <- function(entity, config, options){
   }
   
   #TODO maintenance information?
+  #constraints
   #TODO legal constraints?
   #TODO security constraints?
-  #TODO geographic extent
-  #TODO temporal extent
+  #extents
+  extent <- ISOExtent$new()
+  #geographic extent
+  if(!is.null(entity$spatial_extent)){
+    sf_bbox <- attr(entity$spatial_extent, "bbox")
+    bbox <- ISOGeographicBoundingBox$new(minx = sf_bbox$xmin, miny = sf_bbox$ymin, maxx = sf_bbox$xmax, maxy = sf_bbox$ymax)
+    extent$setGeographicElement(bbox)
+  }
+  #temporal extent
+  if(!is.null(entity$temporal_extent)){
+    time <- ISOTemporalExtent$new()
+    if(!is.null(entity$temporal_extent$instant)){
+      gmltimeinstant <- GMLTimeInstant$new(timePosition = entity$temporal_extent$instant)
+      time$setTimeInstant(gmltimeinstant)
+    }
+    if(!is.null(entity$temporal_extent$start) & !is.null(entity$temporal_extent$end)){
+      gmltimeperiod <- GMLTimePeriod$new(beginPosition = entity$temporal_extent$start, endPosition = entity$temporal_extent$end)
+      time$setTimePeriod(gmltimeperiod)
+    }
+    extent$setTemporalElement(time)
+  }
+  ident$setExtent(extent)
+  
   #TODO thesaurus/keywords
   #TODO supplemental info?
   #TODO spatial representation type

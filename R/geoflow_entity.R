@@ -9,6 +9,9 @@ geoflow_entity <- R6Class("geoflow_entity",
     subjects = list(),
     contacts = list(),
     relations = list(),
+    spatial_extent = NULL,
+    srid = NULL,
+    temporal_extent = NULL,
     initialize = function(){},
     
     #setId
@@ -53,6 +56,35 @@ geoflow_entity <- R6Class("geoflow_entity",
         stop("The argument should be an object of class 'geoflow_relation'")
       }
       self$relations <- c(self$relations, relation)
+    },
+    
+    #setSpatialExtent
+    setSpatialExtent = function(wkt, crs = NA){
+      spatial_extent <- sf::st_as_sfc(wkt, crs = crs)
+      if(class(spatial_extent)[1]=="try-error"){
+        stop("The spatial extent is invalid!")
+      }
+      self$spatial_extent <- spatial_extent
+    },
+    
+    #setSrid
+    setSrid = function(srid){
+      self$srid <- srid
+    },
+    
+    #setTemporalExtent
+    setTemporalExtent = function(str){
+      isInstant <- FALSE
+      strs <- unlist(strsplit(str,"/"))
+      if(length(strs)==1) isInstant <- TRUE
+      if(isInstant){
+        self$temporal_extent <- list(instant = str_to_posix(strs))
+      }else{
+        self$temporal_extent <- list(
+          start = str_to_posix(strs[1]),
+          end = str_to_posix(strs[2])
+        )
+      }
     }
     
   )

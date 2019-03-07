@@ -18,12 +18,14 @@ handle_entities_df <- function(config, source){
     entity$setTitle(source_entity[,"Title"])
     entity$setAbstract(source_entity[,"Description"])
     
+    #subjects
     subjects <- unlist(strsplit(sanitize_str(source_entity[,"Subject"]), ";"))
     invisible(lapply(subjects, function(subject){
       subject_obj <- geoflow_subject$new(str = subject)
       entity$addSubject(subject_obj)
     }))
     
+    #contacts
     contacts <- unlist(strsplit(sanitize_str(source_entity[,"Creator"]), ";"))
     invisible(lapply(contacts, function(contact){
       contact_splits <- unlist(strsplit(contact, ":"))
@@ -33,11 +35,19 @@ handle_entities_df <- function(config, source){
       entity$addContact(contact_obj)
     }))
     
+    #relations
     relations <- unlist(strsplit(sanitize_str(source_entity[,"Relation"]), ";"))
     invisible(lapply(relations, function(relation){
       relation_obj <- geoflow_relation$new(str = relation)
       entity$addRelation(relation_obj)
     }))
+    
+    #spatial extent
+    entity$setSrid(source_entity[,"SpatialReferenceSystem"])
+    entity$setSpatialExtent(source_entity[,"SpatialCoverage"], crs = source_entity[,"SpatialReferenceSystem"])
+    
+    #temporal extent
+    entity$setTemporalExtent(source_entity[,"TemporalCoverage"])
     
     entities <- c(entities, entity)
   }

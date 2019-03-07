@@ -43,3 +43,11 @@ extract_kvp <- function(str){
   
   return(list(key = key, values = values))
 }
+
+#'str_to_posix
+#'@export
+str_to_posix <- function(str){
+  str_format <- if(nchar(str)==10) "%Y-%m-%d" else "%Y-%m-%dT%H:%M:%S"
+  out <- as.POSIXct(str, format = str_format)
+  return(out)
+}
