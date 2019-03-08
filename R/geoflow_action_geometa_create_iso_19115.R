@@ -177,7 +177,34 @@ geometa_create_iso_19115 <- function(entity, config, options){
   }
   ident$setExtent(extent)
   
-  #TODO thesaurus/keywords
+  #thesaurus/keywords
+  for(subject in entity$subjects){
+    #add keywords
+    kwds <- ISOKeywords$new()
+    for(kwd in subject$keywords){
+      iso_kwd <- kwd$name
+      if(!is.null(kwd$uri)){
+        iso_kwd <- ISOAnchor$new(name = kwd$name, href = kwd$uri)
+      }
+      kwds$addKeyword(iso_kwd)
+    }
+    kwds$setKeywordType("theme") #TODO need to handle keywordType in thesaurus table definition...
+    th <- ISOCitation$new()
+    title <- subject$name
+    if(!is.null(subject$uri)){
+      title <- ISOAnchor$new(name = subject$name, href = subject$uri)
+    }
+    th$setTitle(title)
+    th$setAlternateTitle(title)
+    #TODO thesaurus date (likely to be different that current date). Required for ISO validity
+    d <- ISODate$new()
+    d$setDate(Sys.Date())
+    d$setDateType("lasRevision")
+    th$addDate(d)
+    kwds$setThesaurusName(th)
+    ident$addKeywords(kwds)
+  }
+  
   #TODO supplemental info?
   #TODO spatial representation type
   md$addIdentificationInfo(ident)
