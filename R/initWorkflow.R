@@ -109,7 +109,12 @@ initWorkflow <- function(file){
           "geonetwork" = geonapi::GNManager$new(url = software$url, user = software$user, pwd = software$pwd, version = software$version, logger = software$logger),
           "wfs" = ows4R::WFSClient$new(url = software$url, user = software$user, pwd = software$pwd, serviceVersion = software$version, logger = software$logger),
           "csw" = ows4R::CSWClient$new(url = software$url, user = software$user, pwd = software$pwd, serviceVersion = software$version, logger = software$logger),
-          "zenodo" = zen4R$ZenodoManager$new(access_token = software$token, logger = software$logger),
+          "zenodo" = {
+            if(!is.null(software$url))
+              zen4R::ZenodoManager$new(url = software$url, access_token = software$token, logger = software$logger)
+            else
+              zen4R::ZenodoManager$new(access_token = software$token, logger = software$logger)
+          },
           NULL
         )
       }else{

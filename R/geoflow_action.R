@@ -26,21 +26,27 @@ register_geoflow_actions <- function(){
   objs <- list(
     geoflow_action$new(
       id = "geometa-create-iso-19115",
-      type = "Metadata management",
+      type = "Metadata production",
       def = "Produce an ISO/OGC 19115/19139 metadata object",
       fun = geometa_create_iso_19115
     ),
     geoflow_action$new(
       id="ows4R-publish-iso-19139",
-      type = "Metadata management",
+      type = "Metadata publication",
       def = "Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol",
       fun = ows4R_publish_iso_19139
     ),
     geoflow_action$new(
       id = "geonapi-publish-iso-19139",
-      type = "Metadata management",
+      type = "Metadata publication",
       def = "Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API",
       fun = geonapi_publish_iso_19139
+    ),
+    geoflow_action$new(
+      id = "zen4R-deposit-record",
+      type = "Data publication",
+      def = "Deposits/Publish data and/or metadata in the Zenodo infrastructure",
+      fun = zen4R_deposit_record
     )
   )
   .geoflow$actions <- objs
