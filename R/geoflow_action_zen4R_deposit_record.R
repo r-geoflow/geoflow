@@ -86,6 +86,18 @@ zen4R_deposit_record <- function(entity, config, options){
   }
 
   #deposit (and publish, if specified in options)
+  #double verification for publish action, need to have the DOI specified in the entity table
+  if(is.null(entity$identifiers[["doi"]])){
+    config$logger.warn("No DOI specified in entity. Zenodo 'publish' action ignored!")
+    publish <- FALSE
+  }
+  if(!is.null(entity$identifiers[["doi"]])){
+    if(entity$identfiers[["doi"]] != zenodo_metadata$metadata$prereserve_doi$doi){ 
+      config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Zenodo record DOI (%s). Zenodo 'publish' action ignored!", 
+                                 entity$identfiers[["doi"]], zenodo_metadata$metadata$prereserve_doi$doi))
+      publish <- FALSE
+    }
+  }
   out <- ZENODO$depositRecord(zenodo_metadata, publish = publish)
   if(!is(out,"ZenodoRecord")){
     errMsg <- sprintf("Zenodo: %s", out$errors[[1]]$message)
