@@ -20,10 +20,10 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
   #An insert has to be done in 2 operations (the insert itself, and the privilege setting to "publish" it either to a restrained group or to public)
   #An update has to be done based on the internal Geonetwork id (that can be queried as well
   privileges <- if(!is.null(options$privileges)) options$privileges else  c("view","dynamic","featured")
-  metaFile <- file.path("metadata", paste0(entity$id,".rds"))
+  metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],".rds"))
   md <- readRDS(metaFile)
   if(is(md, "ISOMetadata")) privileges <- privileges[privileges!="featured"]
-  metaId <- GN$get(entity$id, by = "uuid", output = "id")
+  metaId <- GN$get(entity$identifiers[["id"]], by = "uuid", output = "id")
   if(is.null(metaId)){
     #insert metadata (once inserted only visible to the publisher)
     group <- if(!is.null(options$group)) options$group else "1"

@@ -14,7 +14,22 @@ handle_entities_df <- function(config, source){
   for(i in 1:rowNum){
     source_entity <- source[i,]
     entity <- geoflow_entity$new()
-    entity$setId(source_entity[,"Identifier"])
+    
+    #identifier
+    identifiers <- unlist(strsplit(sanitize_str(source_entity[,"Identifier"]), ";"))
+    if(length(identifiers)==1){
+      entity$setIdentifier("id", identifiers)
+    }else{
+      for(identifier in identifiers){
+        if(regexpr(":",identifier) == -1)
+          entity$setIdentifier("id", identifier)
+        else
+          id_kvp <- extract_kvp(identifier)
+          entity$setIdentifier(id_kvp$key, id_kvp$values[[1]])
+      }
+    }
+    
+    #title/description
     entity$setTitle(source_entity[,"Title"])
     entity$setAbstract(source_entity[,"Description"])
     

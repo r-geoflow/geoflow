@@ -10,7 +10,17 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   #create geometa object
   md <- ISOMetadata$new()
-  md$setFileIdentifier(entity$id)
+  #identifier, in case of presence of DOI we add an anchor
+  mdId <- entity$identifiers[["id"]]
+  if(!is.null(entity$identifiers[["doi"]])){
+    mdId <- ISOAnchor$new(
+      name = entity$identifiers[["id"]], 
+      href = paste0("http://dx.doi.org/", entity$identifiers[["doi"]])
+    )
+    mdId$setAttr("xlink:title", "DOI")
+    mdId$setAttr("xlink:actuate", "onRequest")
+  }
+  md$setFileIdentifier(mdId)
   parent_rels <- entity$relations[sapply(entity$relations, function(x){x$key == "parent"})]
   if(length(parent_rels)>0){
     parent <- parent_rels[[1]]
@@ -108,7 +118,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ct$addDate(d)
   ct$setEdition("1.0") #TODO
   ct$setEditionDate(as.Date(ISOdate(2015, 1, 1, 1))) #TODO to map with gsheet
-  ct$setIdentifier(ISOMetaIdentifier$new(code = entity$id))
+  ct$setIdentifier(ISOMetaIdentifier$new(code = mdId))
   ct$setPresentationForm("mapDigital") #TODO to map with gsheet
   
   #adding responsible party (search for owner, otherwise take first contact)
@@ -236,8 +246,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #TODO content information --> Feature Catalogue description (if data handling)
   
   #we save the metadata
-  saveRDS(md, file.path(getwd(), "metadata", paste0(entity$id, ".rds")))
-  md$save(file.path(getwd(), "metadata", paste0(entity$id, ".xml")), inspire = inspire)
+  saveRDS(md, file.path(getwd(), "metadata", paste0(entity$identifiers[["id"]], ".rds")))
+  md$save(file.path(getwd(), "metadata", paste0(entity$identifiers[["id"]], ".xml")), inspire = inspire)
   
   return(md)
 }

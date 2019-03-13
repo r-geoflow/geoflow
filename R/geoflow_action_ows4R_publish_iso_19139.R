@@ -7,7 +7,7 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
     stop("Package 'ows4R' is required for this action")
   }
 
-  metaFile <- file.path("metadata", paste0(entity$id,".rds"))
+  metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],".rds"))
   md <- readRDS(metaFile)
   
   #shortcut for csw config
@@ -19,7 +19,7 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
     stop(errMsg)
   }
   
-  meta_dc <- CSW$getRecordById(entity$id)
+  meta_dc <- CSW$getRecordById(entity$identifiers[["id"]])
   if(is.null(meta_dc)){
     CSW$insertRecord(record = md)
   }else{

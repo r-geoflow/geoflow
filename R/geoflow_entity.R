@@ -2,7 +2,7 @@
 #'@export
 geoflow_entity <- R6Class("geoflow_entity",
   public = list(
-    id = NULL,
+    identifiers = list(),
     language = "eng",
     title = NULL,
     abstract = NULL,
@@ -14,9 +14,9 @@ geoflow_entity <- R6Class("geoflow_entity",
     temporal_extent = NULL,
     initialize = function(){},
     
-    #setId
-    setId = function(id){
-      self$id <- id
+    #setIdentifier
+    setIdentifier = function(key, id){
+      self$identifiers[[key]] <- id
     },
     
     #setLanguage
