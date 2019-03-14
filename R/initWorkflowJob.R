@@ -39,7 +39,7 @@ initWorkflowJob <- function(config){
   file.rename(from = config_file, to = "job.json")
   
   #create sub directories as listed in the configuration file
-  directories <- c("data", "metadata", "logs")
+  directories <- c("data", "metadata")
   for(directory in directories){
     if (!file.exists(directory)){
       config$logger.info(sprintf("Creating '%s' directory: %s",directory, 

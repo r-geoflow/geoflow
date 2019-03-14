@@ -10,6 +10,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     subjects = list(),
     contacts = list(),
     relations = list(),
+    rights = list(),
     spatial_extent = NULL,
     srid = NULL,
     temporal_extent = NULL,
@@ -62,6 +63,14 @@ geoflow_entity <- R6Class("geoflow_entity",
         stop("The argument should be an object of class 'geoflow_relation'")
       }
       self$relations <- c(self$relations, relation)
+    },
+    
+    #addRight
+    addRight = function(right){
+      if(!is(right, "geoflow_right")){
+        stop("The argument should be an object of class 'geoflow_right'")
+      }
+      self$rights <- c(self$rights, right)
     },
     
     #setSpatialExtent

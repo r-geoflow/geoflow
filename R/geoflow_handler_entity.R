@@ -44,7 +44,7 @@ handle_entities_df <- function(config, source){
           entity$setDescription("abstract", description)
         else
           des_kvp <- extract_kvp(description)
-          entity$setDescription(id_kvp$key, des_kvp$values[[1]])
+          entity$setDescription(des_kvp$key, des_kvp$values[[1]])
       }
     }
     
@@ -78,6 +78,14 @@ handle_entities_df <- function(config, source){
     
     #temporal extent
     entity$setTemporalExtent(source_entity[,"TemporalCoverage"])
+    
+    #Rights
+    rights <- unlist(strsplit(sanitize_str(source_entity[,"Rights"]), ";"))
+    invisible(lapply(rights, function(right){
+      right_obj <- geoflow_right$new(str = right)
+      entity$addRight(right_obj)
+    }))
+    
     
     entities <- c(entities, entity)
   }

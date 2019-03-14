@@ -1,5 +1,7 @@
 geometa_create_iso_19115 <- function(entity, config, options){
   
+  ISOMetadataNamespace$GML$uri <- "http://www.opengis.net/gml/3.2"
+  
   if(!require("geometa")){
     stop("This action requires the 'geometa' package")
   }
@@ -121,7 +123,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   d$setDateType("publication")
   ct$addDate(d)
   ct$setEdition("1.0") #TODO
-  editionDate <- if(!is.null(entity$date)) editionDate else Sys.Date()
+  editionDate <- if(!is.null(entity$date)) entity$date else Sys.Date()
   ct$setEditionDate(editionDate)
   ct$setIdentifier(ISOMetaIdentifier$new(code = mdId))
   ct$setPresentationForm("mapDigital") #TODO to map with gsheet
@@ -167,10 +169,37 @@ geometa_create_iso_19115 <- function(entity, config, options){
     }
   }
   
-  #TODO maintenance information?
-  #constraints
-  #TODO legal constraints?
-  #TODO security constraints?
+  #maintenance information
+  maint <- ISOMaintenanceInformation$new()
+  maint$setMaintenanceFrequency("asNeeded")
+  ident$addResourceMaintenance(maint)
+  
+  #legal constraints
+  if(length(entity$rights)>0){
+    legal_constraints <- ISOLegalConstraints$new()
+    #use limitation
+    uses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "use"})]
+    if(length(uses)>0){
+      for(use in uses) legal_constraints$addUseLimitation(use$value)
+    }
+    #use constraints
+    useConstraints <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "useconstraint"})]
+    if(length(useConstraints)>0){
+      for(useConstraint in useConstraints) legal_constraints$addUseConstraint(useConstraint$value)
+    }
+    #access constraints
+    accessConstraints <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "accessconstraint"})]
+    if(length(accessConstraints)>0){
+      for(accessConstraint in accessConstraints) legal_constraints$addAccessConstraint(accessConstraint$value)
+    }
+    #other constraints
+    otherConstraints <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "otherconstraint"})]
+    if(length(otherConstraints)>0){
+      for(otherConstraint in otherConstraints) legal_constraints$addOtherConstraint(otherConstraint$value)
+    }
+    ident$addResourceConstraints(legal_constraints)
+  }
+  
   #extents
   extent <- ISOExtent$new()
   #geographic extent

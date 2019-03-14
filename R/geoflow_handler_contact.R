@@ -25,7 +25,8 @@ handle_contacts_df <- function(config, source){
     contact$setCountry(source_contact[,"Country"])
     contact$setVoice(source_contact[,"Voice"])
     contact$setFacsimile(source_contact[,"Facsimile"])
-    contact$setWebsite(source_contact[,"Website"])
+    contact$setWebsiteUrl(source_contact[,"WebsiteUrl"])
+    contact$setWebsiteName(source_contact[,"WebsiteName"])
     
     identifiers <- unlist(strsplit(sanitize_str(source_contact[,"Identifier"]), ";"))
     invisible(lapply(identifiers, function(identifier){
