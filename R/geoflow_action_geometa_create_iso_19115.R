@@ -12,14 +12,16 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md <- ISOMetadata$new()
   #identifier, in case of presence of DOI we add an anchor
   mdId <- entity$identifiers[["id"]]
-  if(!is.null(entity$identifiers[["doi"]])){
-    mdId <- ISOAnchor$new(
-      name = entity$identifiers[["id"]], 
-      href = paste0("http://dx.doi.org/", entity$identifiers[["doi"]])
-    )
-    mdId$setAttr("xlink:title", "DOI")
-    mdId$setAttr("xlink:actuate", "onRequest")
-  }
+  
+  #investigate with CSW transaction (ISO anchor not properly managed, at least by Geonetwork)
+  #if(!is.null(entity$identifiers[["doi"]])){
+  #  mdId <- ISOAnchor$new(
+  #    name = entity$identifiers[["id"]], 
+  #    href = paste0("http://dx.doi.org/", entity$identifiers[["doi"]])
+  #  )
+  #  mdId$setAttr("xlink:title", "DOI")
+  #  mdId$setAttr("xlink:actuate", "onRequest")
+  #}
   md$setFileIdentifier(mdId)
   parent_rels <- entity$relations[sapply(entity$relations, function(x){x$key == "parent"})]
   if(length(parent_rels)>0){
@@ -209,7 +211,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
     #TODO thesaurus date (likely to be different that current date). Required for ISO validity
     d <- ISODate$new()
     d$setDate(Sys.Date())
-    d$setDateType("lasRevision")
+    d$setDateType("lastRevision")
     th$addDate(d)
     kwds$setThesaurusName(th)
     ident$addKeywords(kwds)
