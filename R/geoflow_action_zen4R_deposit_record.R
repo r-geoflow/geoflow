@@ -15,6 +15,7 @@ zen4R_deposit_record <- function(entity, config, options){
   #options
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
   publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
+  deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
   communities <- if(!is.null(options$communities)) options$communities else NULL
   
   #create empty record
@@ -88,6 +89,15 @@ zen4R_deposit_record <- function(entity, config, options){
   
   #file uploads
   if(depositWithFiles){
+    if(deleteOldFiles){
+      config$logger.info("Zenodo: deleting old files...")
+      zen_files <- ZENODO$getFiles(zenodo_metadata$id)
+      if(length(zen_files)>0){
+        for(zen_file in zen_files){
+          ZENODO$deleteFile(zenodo_metadata$id,zen_file$id)
+        }
+      }
+    }
     config$logger.info("Zenodo: uploading files...")
     #upload data files, if any
     data_files <- list.files(file.path(getwd(),"data"))
