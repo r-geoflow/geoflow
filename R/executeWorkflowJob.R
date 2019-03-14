@@ -29,11 +29,21 @@ executeWorkflowJob <- function(config){
           entities <- config$metadata$content$entities
           if(!is.null(entities)){
             invisible(lapply(entities, function(entity){
+              #run sequence of actions
               for(i in 1:length(actions)){
                 action <- actions[[i]]
                 config$logger.info(sprintf("Executing Action %s: %s - for entity %s", i, action$id, entity$id))
                 action$fun(entity, config, action$options)
               }
+              #if zenodo is among actions, file upload (and possibly publish) to be managed here
+              withZenodo <- sapply(actions, function(x){x$id=="zen4R-deposit-record"})
+              if(any(withZenodo)){
+                zen_action <- actions[withZenodo][[1]]
+                act_options <- actions$options
+                act_options$depositWithFiles <- TRUE
+                zen_action$fun(entity, config, act_options)
+              }
+              
             }))
           }
         }else if(config$mode == "raw"){

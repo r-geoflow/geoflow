@@ -13,8 +13,9 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   #options
+  depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
+  publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
   communities <- if(!is.null(options$communities)) options$communities else NULL
-  publish <- if(!is.null(options$publish)) options$publish else FALSE
   
   #create empty record
   #how to deal with existing records / new versions
@@ -84,18 +85,51 @@ zen4R_deposit_record <- function(entity, config, options){
   if(!is.null(communities)){
     for(community in communities) zenodo_metadata$addCommunity(community)
   }
+  
+  #file uploads
+  if(depositWithFiles){
+    config$logger.info("Zenodo: uploading files...")
+    #upload data files, if any
+    data_files <- list.files(file.path(getwd(),"data"))
+    if(length(data_files)>0){
+      data_files <- data_files[regexpr(entity$identifiers[["id"]],data_files)>0]
+      if(length(data_files)>0) data_files <- data_files[!endsWith(data_files, ".rds")]
+      if(length(data_files)>0){
+        config$logger.info("Zenodo: uploading data files...")
+        for(data_file in data_files){
+          config$logger.info(sprintf("Zenodo: uploading data file '%s'", data_file))
+          ZENODO$uploadFile(file.path(getwd(), "data", data_file), zenodo_metadata$id)
+        }
+      }
+    }
+    #upload metadata files, if any
+    metadata_files <- list.files(file.path(getwd(),"metadata"))
+    if(length(metadata_files)>0){
+      metadata_files <- metadata_files[regexpr(entity$identifiers[["id"]],metadata_files)>0]
+      if(length(metadata_files)>0) metadata_files <- metadata_files[!endsWith(metadata_files, ".rds")]
+      if(length(metadata_files)>0){
+        config$logger.info("Zenodo: uploading metadata files...")
+        for(metadata_file in metadata_files){
+          config$logger.info(sprintf("Zenodo: uploading metadata file '%s'", metadata_file))
+          ZENODO$uploadFile(file.path(getwd(), "metadata",metadata_file), zenodo_metadata$id)
+        }
+      }
+    }
+  }
 
   #deposit (and publish, if specified in options)
-  #double verification for publish action, need to have the DOI specified in the entity table
-  if(is.null(entity$identifiers[["doi"]])){
-    config$logger.warn("No DOI specified in entity. Zenodo 'publish' action ignored!")
-    publish <- FALSE
-  }
-  if(!is.null(entity$identifiers[["doi"]])){
-    if(entity$identfiers[["doi"]] != zenodo_metadata$metadata$prereserve_doi$doi){ 
-      config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Zenodo record DOI (%s). Zenodo 'publish' action ignored!", 
-                                 entity$identfiers[["doi"]], zenodo_metadata$metadata$prereserve_doi$doi))
+  if(publish){
+    #double verification for publish action, need to have the DOI specified in the entity table
+    if(is.null(entity$identifiers[["doi"]])){
+      config$logger.warn("No DOI specified in entity. Zenodo 'publish' action ignored!")
       publish <- FALSE
+    }
+    if(!is.null(entity$identifiers[["doi"]])){
+      if(entity$identfiers[["doi"]] != zenodo_metadata$metadata$prereserve_doi$doi){ 
+        config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Zenodo record DOI (%s). Zenodo 'publish' action ignored!", 
+                                   entity$identfiers[["doi"]], zenodo_metadata$metadata$prereserve_doi$doi))
+        publish <- FALSE
+      }
     }
   }
   out <- ZENODO$depositRecord(zenodo_metadata, publish = publish)
