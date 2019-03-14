@@ -15,6 +15,8 @@ handle_entities_df <- function(config, source){
     source_entity <- source[i,]
     entity <- geoflow_entity$new()
     
+    entity$setDate(as.Date(source_entity[,"Date"]))
+    
     #identifier
     identifiers <- unlist(strsplit(sanitize_str(source_entity[,"Identifier"]), ";"))
     if(length(identifiers)==1){

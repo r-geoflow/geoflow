@@ -10,7 +10,8 @@ geoflow_contact <- R6Class("geoflow_contact",
     voice = NULL,
     facsimile = NULL,
     email = NULL,
-    website = NULL,
+    websiteUrl = NULL,
+    websiteName = NULL,
     postalAddress = NULL,
     postalCode = NULL,
     city = NULL,
@@ -62,9 +63,14 @@ geoflow_contact <- R6Class("geoflow_contact",
       self$email <- email
     },
     
-    #setWebsite
-    setWebsite = function(website){
-      self$website <- website
+    #setWebsiteUrl
+    setWebsiteUrl = function(websiteUrl){
+      self$websiteUrl <- websiteUrl
+    },
+    
+    #setWebsiteName
+    setWebsiteName = function(websiteName){
+      self$websiteName <- websiteName
     },
     
     #setPostalAddress

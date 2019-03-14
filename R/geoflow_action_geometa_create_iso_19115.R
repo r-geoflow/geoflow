@@ -59,8 +59,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
     address$setEmail(entity_contact$email)
     contact$setAddress(address)
     res <- ISOOnlineResource$new()
-    res$setLinkage(entity_contact$website)
-    res$setName("Website") #TODO writing convention in contacts table
+    res$setLinkage(entity_contact$websiteUrl)
+    res$setName(entity_contact$websiteName)
     contact$setOnlineResource(res)
     rp$setContactInfo(contact)
     md$addContact(rp)
@@ -106,8 +106,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
     address$setEmail(entity_contact$email)
     contact$setAddress(address)
     res <- ISOOnlineResource$new()
-    res$setLinkage(entity_contact$website)
-    res$setName("Website") #TODO writing convention in contacts table
+    res$setLinkage(entity_contact$websiteUrl)
+    res$setName(entity_contact$websiteName)
     contact$setOnlineResource(res)
     rp$setContactInfo(contact)
     ident$addPointOfContact(rp)
@@ -121,7 +121,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
   d$setDateType("publication")
   ct$addDate(d)
   ct$setEdition("1.0") #TODO
-  ct$setEditionDate(as.Date(ISOdate(2015, 1, 1, 1))) #TODO to map with gsheet
+  editionDate <- if(!is.null(entity$date)) editionDate else Sys.Date()
+  ct$setEditionDate(editionDate)
   ct$setIdentifier(ISOMetaIdentifier$new(code = mdId))
   ct$setPresentationForm("mapDigital") #TODO to map with gsheet
   
@@ -147,8 +148,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
   address$setEmail(main_entity$email)
   contact$setAddress(address)
   res <- ISOOnlineResource$new()
-  res$setLinkage(main_entity$website)
-  res$setName("Website") #TODO writing convention in contacts table
+  res$setLinkage(main_entity$websiteUrl)
+  res$setName(main_entity$websiteName)
   contact$setOnlineResource(res)
   rp$setContactInfo(contact) 
   ct$setCitedResponsibleParty(rp)
@@ -211,12 +212,22 @@ geometa_create_iso_19115 <- function(entity, config, options){
       title <- ISOAnchor$new(name = subject$name, href = subject$uri)
     }
     th$setTitle(title)
-    th$setAlternateTitle(title)
-    #TODO thesaurus date (likely to be different that current date). Required for ISO validity
-    d <- ISODate$new()
-    d$setDate(Sys.Date())
-    d$setDateType("lastRevision")
-    th$addDate(d)
+    
+    if(length(subject$dates)>0){
+      for(subj_datetype in names(subject$dates)){
+        subj_date <- ISODate$new()
+        subj_date$setDate(subject$dates[[subj_datetype]])
+        subj_date$setDateType(subj_datetype)
+        th$addDate(subj_date) 
+      }
+    }else{
+      #TODO thesaurus date (likely to be different that current date). Required for ISO validity
+      #this is a limitation of tabular approach to fill metadata
+      d <- ISODate$new()
+      d$setDate(Sys.Date())
+      d$setDateType("lastRevision")
+      th$addDate(d) 
+    }
     kwds$setThesaurusName(th)
     ident$addKeywords(kwds)
   }

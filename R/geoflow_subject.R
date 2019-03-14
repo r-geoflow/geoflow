@@ -4,6 +4,7 @@ geoflow_subject <- R6Class("geoflow_subject",
   public = list(
     name = NULL,
     uri = NULL,
+    dates = list(),
     keywords = list(),
     initialize = function(str = NULL){
       if(!is.null(str)){
@@ -22,6 +23,11 @@ geoflow_subject <- R6Class("geoflow_subject",
     #setUri
     setUri = function(uri){
       self$uri <- uri
+    },
+    
+    #setDate
+    setDate = function(dateType, date){
+      self$dates[[dateType]] <- date
     },
     
     #addKeyword
