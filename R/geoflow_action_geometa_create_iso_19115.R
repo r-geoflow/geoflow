@@ -23,12 +23,14 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #  mdId$setAttr("xlink:actuate", "onRequest")
   #}
   md$setFileIdentifier(mdId)
-  parent_rels <- entity$relations[sapply(entity$relations, function(x){x$key == "parent"})]
-  if(length(parent_rels)>0){
-    parent <- parent_rels[[1]]
-    parentId <- parent$label
-    if(!is.null(parent$link)) parentId <- ISOAnchor$new(name = parent$label, href = parent$link)
-    md$setParentIdentifier(parentId)
+  if(length(entity$relations)>0){
+    parent_rels <- entity$relations[sapply(entity$relations, function(x){x$key == "parent"})]
+    if(length(parent_rels)>0){
+      parent <- parent_rels[[1]]
+      parentId <- parent$label
+      if(!is.null(parent$link)) parentId <- ISOAnchor$new(name = parent$label, href = parent$link)
+      md$setParentIdentifier(parentId)
+    }
   }
   md$setCharacterSet("utf8")
   md$setLanguage(entity$language)
@@ -76,8 +78,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   #Data identification
   ident <- ISODataIdentification$new()
-  ident$setAbstract(entity$abstract)
-  #TODO purpose
+  ident$setAbstract(entity$descriptions[["abstract"]])
+  ident$setPurpose(entity$descriptions[["purpose"]])
   #TODO credit (N)
   #TODO status (N)
   ident$setLanguage(entity$language)
@@ -153,13 +155,15 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ident$setCitation(ct)
  
   #graphic overviews
-  thumbnails <- entity$relations[sapply(entity$relations, function(x){x$key == "thumbnail"})]
-  for(thumbnail in thumbnails){
-    go <- ISOBrowseGraphic$new(
-      fileName = thumbnail$link,
-      fileDescription = thumbnail$label
-    )
-    ident$addGraphicOverview(go)
+  if(length(entity$relations)>0){
+    thumbnails <- entity$relations[sapply(entity$relations, function(x){x$key == "thumbnail"})]
+    for(thumbnail in thumbnails){
+      go <- ISOBrowseGraphic$new(
+        fileName = thumbnail$link,
+        fileDescription = thumbnail$label
+      )
+      ident$addGraphicOverview(go)
+    }
   }
   
   #TODO maintenance information?
@@ -217,28 +221,30 @@ geometa_create_iso_19115 <- function(entity, config, options){
     ident$addKeywords(kwds)
   }
   
-  #TODO supplemental info?
+  ident$setSupplementalInformation(entity$descriptions[["info"]])
   #TODO spatial representation type
   md$addIdentificationInfo(ident)
   
   #distribution
   distrib <- ISODistribution$new()
   dto <- ISODigitalTransferOptions$new()
-  http_relations <- entity$relations[sapply(entity$relations, function(x){
-    x$key %in% c("ftp","http", "wfs", "wms", "wcs", "csw")
-  })]
-  for(http_relation in http_relations){
-    or <- ISOOnlineResource$new()
-    or$setLinkage(http_relation$link)
-    or$setName(http_relation$name)
-    or$setDescription(http_relation$description)
-    protocol <- switch(http_relation$key,
-      "http" = "WWW:LINK-1.0-http--link",
-      "wms" = "OGC:WMS-1.3.0-http-get-map",
-      "WWW:LINK-1.0-http--link"
-    )
-    or$setProtocol(protocol)
-    dto$addOnlineResource(or)
+  if(length(entity$relations)>0){
+    http_relations <- entity$relations[sapply(entity$relations, function(x){
+      x$key %in% c("ftp","http", "wfs", "wms", "wcs", "csw")
+    })]
+    for(http_relation in http_relations){
+      or <- ISOOnlineResource$new()
+      or$setLinkage(http_relation$link)
+      or$setName(http_relation$name)
+      or$setDescription(http_relation$description)
+      protocol <- switch(http_relation$key,
+        "http" = "WWW:LINK-1.0-http--link",
+        "wms" = "OGC:WMS-1.3.0-http-get-map",
+        "WWW:LINK-1.0-http--link"
+      )
+      or$setProtocol(protocol)
+      dto$addOnlineResource(or)
+    }
   }
   distrib$setDigitalTransferOptions(dto)
   md$setDistributionInfo(distrib)

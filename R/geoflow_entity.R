@@ -5,7 +5,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     identifiers = list(),
     language = "eng",
     title = NULL,
-    abstract = NULL,
+    descriptions = list(),
     subjects = list(),
     contacts = list(),
     relations = list(),
@@ -29,9 +29,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$title <- title
     },
     
-    #setAbstract
-    setAbstract = function(abstract){
-      self$abstract <- abstract
+    #setDescription
+    setDescription = function(key, id){
+      self$descriptions[[key]] <- id
     },
     
     #addSubject

@@ -29,9 +29,22 @@ handle_entities_df <- function(config, source){
       }
     }
     
-    #title/description
+    #title
     entity$setTitle(source_entity[,"Title"])
-    entity$setAbstract(source_entity[,"Description"])
+    
+    #description
+    descriptions <- unlist(strsplit(sanitize_str(source_entity[,"Description"]), ";"))
+    if(length(descriptions)==1){
+      entity$setDescription("abstract", descriptions)
+    }else{
+      for(description in descriptions){
+        if(regexpr(":",description) == -1)
+          entity$setDescription("abstract", description)
+        else
+          des_kvp <- extract_kvp(description)
+          entity$setDescription(id_kvp$key, des_kvp$values[[1]])
+      }
+    }
     
     #subjects
     subjects <- unlist(strsplit(sanitize_str(source_entity[,"Subject"]), ";"))

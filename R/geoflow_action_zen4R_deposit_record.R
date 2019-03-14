@@ -52,7 +52,7 @@ zen4R_deposit_record <- function(entity, config, options){
   
   #basic record description
   zenodo_metadata$setTitle(entity$title)
-  zenodo_metadata$setDescription(entity$abstract)
+  zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
   
   #upload type
   #TODO think on how to map upload types between Dublin core, ISO/OGC metadata, Zenodo  
