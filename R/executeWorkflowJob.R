@@ -56,5 +56,5 @@ executeWorkflowJob <- function(config){
         }
       }
     }
-  },file = file.path(getwd(), "job.log"))
+  },file = file.path(getwd(), "job-logs.txt"))
 }
