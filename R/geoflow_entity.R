@@ -14,6 +14,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     spatial_extent = NULL,
     srid = NULL,
     temporal_extent = NULL,
+    data = NULL,
     initialize = function(){},
     
     #setIdentifier
@@ -100,6 +101,14 @@ geoflow_entity <- R6Class("geoflow_entity",
           end = str_to_posix(strs[2])
         )
       }
+    },
+    
+    #setData
+    setData = function(data){
+      if(!is(data,"geoflow_data")){
+        stop("Data should be an object of class 'geoflow_data'")
+      }
+      self$data <- data
     }
     
   )

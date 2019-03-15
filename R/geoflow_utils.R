@@ -28,16 +28,17 @@ extract_kvp <- function(str){
     if(length(value_splits)>1){
       value <- value_splits[1]
       link <- value_splits[2]
-      hasDescription <- attr(regexpr("\\[", value), "useBytes") & endsWith(value, "]")
-      if(hasDescription){
-        value_splits <- unlist(strsplit(value, "\\["))
-        value <- value_splits[1]
-        des <- value_splits[2]
-        des <- substr(des, 1, nchar(des)-1)
-        attr(value, "description") <- des
-      }
       attr(value, "uri") <- link
     }
+    hasDescription <- attr(regexpr("\\[", value), "useBytes") & endsWith(value, "]")
+    if(hasDescription){
+      value_splits <- unlist(strsplit(value, "\\["))
+      value <- value_splits[1]
+      des <- value_splits[2]
+      des <- substr(des, 1, nchar(des)-1)
+      attr(value, "description") <- des
+    }
+    
     return(value)
   })
   

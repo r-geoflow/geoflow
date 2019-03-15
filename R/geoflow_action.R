@@ -43,6 +43,12 @@ register_geoflow_actions <- function(){
       fun = geonapi_publish_iso_19139
     ),
     geoflow_action$new(
+      id = "geosapi-publish-ogc-services",
+      type = "Data publication",
+      def = "Publish vector data to GeoServer OGC web-services (WMS/WFS)",
+      fun = geosapi_publish_ogc_services
+    ),
+    geoflow_action$new(
       id = "zen4R-deposit-record",
       type = "Data publication",
       def = "Deposits/Publish data and/or metadata in the Zenodo infrastructure",

@@ -86,6 +86,14 @@ handle_entities_df <- function(config, source){
       entity$addRight(right_obj)
     }))
     
+    #TODO Provenance
+    
+    #data
+    data <- source_entity[,"Data"]
+    if(!is.na(data)){
+      data_obj <- geoflow_data$new(str = data)
+      entity$setData(data_obj)
+    }
     
     entities <- c(entities, entity)
   }

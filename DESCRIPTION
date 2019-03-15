@@ -1,14 +1,14 @@
 Package: geoflow
 Version: 0.1
-Date: 2019-03-13
+Date: 2019-03-15
 Title: R engine to orchestrate and run geospatial (meta)data workflows
 Authors@R: c(
   person("Emmanuel", "Blondel", role = c("aut", "cre"), email = "emmanuel.blondel1@gmail.com", comment = c(ORCID = "0000-0002-5870-5762")),
   person("Julien,", "Barde", role = c("ctb"), email = "julien.barde@ird.fr", comment = c(ORCID = "0000-0002-3519-6141")),
   person("Wilfried", "Heintz", role = c("ctb"), email = "wilfried.heintz@inra.fr", comment = c(ORCID = "0000-0002-9244-9766")))
 Maintainer: Emmanuel Blondel <emmanuel.blondel1@gmail.com>
-Depends: R (>= 3.3), methods
-Imports:R6, jsonlite, DBI, sp, sf, rgdal, rgeos, cleangeo, geosapi, geonapi, geometa, ows4R
+Depends: R (>= 3.3), methods, sp, sf, rgdal, rgeos, geosapi, geonapi, geometa, ows4R
+Imports:R6, jsonlite
 Suggests: testthat
 Description: R engine to orchestrate and run geospatial (meta)data workflows
 License: MIT + file LICENSE
