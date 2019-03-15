@@ -12,35 +12,35 @@
 #' 
 closeWorkflow <- function(config){
   #close DB
-  if(!is.null(config$sdi$db)){
+  if(!is.null(config$software$db)){
     config$logger.info("Closing database connection")
-    dbDisconnect(config$sdi$db)
-    config$sdi$db <- config$sdi$db_config
-    config$sdi$db_config <- NULL
+    dbDisconnect(config$software$db)
+    config$software$db <- config$software$db_config
+    config$software$db_config <- NULL
   }
   #Geoserver API manager
-  if(!is.null(config$sdi$geoserver)){
+  if(!is.null(config$software$geoserver)){
     config$logger.info("Reset Geoserver API manager")
-    config$sdi$geoserver <- config$sdi$geoserver_config
-    config$sdi$geoserver_config <- NULL
+    config$software$geoserver <- config$software$geoserver_config
+    config$software$geoserver_config <- NULL
   }
   #Geonetwork API manager
-  if(!is.null(config$sdi$geonetwork)){
+  if(!is.null(config$software$geonetwork)){
     config$logger.info("Reset Geonetwork API manager")
-    config$sdi$geonetwork <- config$sdi$geonetwork_config
-    config$sdi$geonetwork_config <- NULL
+    config$software$geonetwork <- config$software$geonetwork_config
+    config$software$geonetwork_config <- NULL
   }
   #WFS
-  if(!is.null(config$sdi$wfs)){
+  if(!is.null(config$software$wfs)){
     config$logger.info("Reset WFS client")
-    config$sdi$wfs <- config$sdi$wfs_config
-    config$sdi$wfs_config <- NULL
+    config$software$wfs <- config$software$wfs_config
+    config$software$wfs_config <- NULL
   }
   #CSW
-  if(!is.null(config$sdi$csw)){
+  if(!is.null(config$software$csw)){
     config$logger.info("Reset CSW client")
-    config$sdi$csw <- config$sdi$csw_config
-    config$sdi$csw_config <- NULL
+    config$software$csw <- config$software$csw_config
+    config$software$csw_config <- NULL
   }
   setwd(config$wd)
 }
