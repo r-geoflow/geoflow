@@ -33,9 +33,9 @@
   "actions": [
     {
       "id": "zen4R-deposit-record",
-	    "options": {
-		    "publish": true
-	    },
+      "options": {
+        "publish": true
+      },
       "run": true
     },
     {
