@@ -19,9 +19,9 @@ geoflow_action <- R6Class("geoflow_action",
   )
 )
 
-#'register_geoflow_actions
+#'register_actions
 #'@export
-register_geoflow_actions <- function(){
+register_actions <- function(){
   
   objs <- list(
     geoflow_action$new(
@@ -58,12 +58,12 @@ register_geoflow_actions <- function(){
   .geoflow$actions <- objs
 }
 
-#'list_geoflow_actions
+#'list_actions
 #'@export
-list_geoflow_actions <- function(raw = FALSE){
+list_actions <- function(raw = FALSE){
   actions <- .geoflow$actions 
   if(raw){
-    actions <- sapply(actions, function(x){x$id})
+    return(actions)
   }else{
     actions <- do.call("rbind", lapply(actions, function(action){
       return(data.frame(

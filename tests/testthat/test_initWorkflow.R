@@ -26,7 +26,7 @@ test_that("gsheet handler is working properly",{
 
 test_that("ISO 19115 metadata produced out of gsheets",{
   #try to init workflow
-  cfg_file = system.file("extdata/config_example_gsheets_geometa.json", package = "geoflow")
+  cfg_file = system.file("extdata/config_example_gsheets_action_geometa.json", package = "geoflow")
   CFG <- initWorkflow(cfg_file)
   #check
   expect_is(CFG$metadata$content, "list")

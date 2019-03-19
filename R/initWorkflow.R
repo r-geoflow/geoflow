@@ -223,7 +223,9 @@ initWorkflow <- function(file){
           stop(errMsg)
         }
         #we try to find it among embedded actions
-        if(!(action$id %in% list_geoflow_actions(raw=TRUE))){
+        available_actions <- list_actions(raw=TRUE)
+        available_action_ids <- sapply(available_actions, function(x){x$id})
+        if(!(action$id %in% available_action_ids)){
           stop(sprintf("The action '%s' is not among available geoflow actions", action$id))
         }
         action_to_trigger <- .geoflow$actions[sapply(.geoflow$actions, function(x){x$id==action$id})][[1]]
@@ -299,26 +301,21 @@ loadHandler <- function(config, elem){
   if(isHandlerId){
     config$logger.info("Try to use embedded contacts handler")
     #in case handler id is specified
-    md_default_handlers <- c("gsheet", "csv")
-    if(!(h %in% md_default_handlers)){
+    md_default_handlers <- switch(elem,
+      "contacts" = list_contact_handlers(raw=TRUE),
+      "entities" = list_entity_handlers(raw=TRUE)
+    )
+    md_default_handler_ids <- sapply(md_default_handlers, function(x){x$id})
+    if(!(h %in% md_default_handler_ids)){
       errMsg <- sprintf("Unknown handler '%s'. Available handlers are: %s",
-                        h, paste(md_default_handlers, collapse=","))
+                        h, paste(md_default_handler_ids, collapse=","))
     }
     h_src <- config_md_elem$source
     if(is.null(h_src)){
       errMsg <- sprintf("Missing 'source' for handler '%s'", h)
     }
-    if(elem == "contacts"){
-      md_handler <- switch(h,
-         "gsheet" = handle_contacts_gsheet,
-         "csv"    = handle_contacts_csv
-      )
-    }else if(elem == "entities"){
-      md_handler <- switch(h,
-         "gsheet" = handle_entities_gsheet,
-         "csv"    = handle_entities_csv
-      )      
-    } 
+    
+    md_handler <- md_default_handlers[sapply(md_default_handlers, function(x){x$id==h})][[1]]$fun
    
   }else{
     #in case handler is a script
