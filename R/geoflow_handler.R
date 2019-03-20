@@ -25,6 +25,11 @@ register_contact_handlers <- function(){
       fun = handle_contacts_csv
     ),
     geoflow_handler$new(
+      id = "excel",
+      def = "Handle metadata contacts from a Microsoft Excel (xls,xlsx) file",
+      fun = handle_contacts_excel
+    ),
+    geoflow_handler$new(
       id = "gsheet",
       def = "Handle metadata contacts from a Google spreadsheet",
       fun = handle_contacts_gsheet
@@ -60,6 +65,11 @@ register_entity_handlers <- function(){
       id = "csv",
       def = "Handle metadata entities from a CSV file",
       fun = handle_entities_csv
+    ),
+    geoflow_handler$new(
+      id = "excel",
+      def = "Handle metadata entities from a Microsoft Excel (xls,xlsx) file",
+      fun = handle_entities_excel
     ),
     geoflow_handler$new(
       id = "gsheet",

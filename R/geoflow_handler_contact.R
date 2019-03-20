@@ -62,3 +62,16 @@ handle_contacts_csv <- function(config, source){
   contacts <- handle_contacts_df(config, source)
   return(contacts)
 }
+
+#' handle_contacts_excel
+#' @export
+handle_contacts_excel <- function(config, source){
+  
+  #read excel TODO -> options management: sep, encoding etc
+  source <- as.data.frame(readxl::read_excel(source))
+  
+  #apply generic handler
+  contacts <- handle_entities_df(config, source)
+  return(contacts)
+}
+

@@ -5,6 +5,8 @@
 #' 
 #' @import R6
 #' @import jsonlite
+#' @import gsheet
+#' @import readxl
 #' @import plyr
 #' @import DBI
 #' @import sp
