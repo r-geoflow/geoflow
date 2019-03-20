@@ -145,7 +145,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #getSubjects
-    getSubjects = function(pretty = FALSE, keywords = TRUE){
+    getSubjects = function(pretty = FALSE, keywords = FALSE){
       if(pretty){
         out <- do.call("rbind.fill", lapply(self$subjects, function(subject){
           subject.df <- data.frame(
