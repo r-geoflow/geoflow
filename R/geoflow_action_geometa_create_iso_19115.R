@@ -163,7 +163,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
     for(thumbnail in thumbnails){
       go <- ISOBrowseGraphic$new(
         fileName = thumbnail$link,
-        fileDescription = thumbnail$label
+        fileDescription = thumbnail$name
       )
       ident$addGraphicOverview(go)
     }

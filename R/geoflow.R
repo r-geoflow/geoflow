@@ -5,6 +5,7 @@
 #' 
 #' @import R6
 #' @import jsonlite
+#' @import plyr
 #' @import DBI
 #' @import sp
 #' @import sf

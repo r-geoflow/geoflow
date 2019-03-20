@@ -49,6 +49,23 @@ geoflow_subject <- R6Class("geoflow_subject",
         kwd$setUri(uri)
         self$keywords <- c(self$keywords, kwd)
       }
+    },
+    
+    #getKeywords
+    getKeywords = function(pretty = FALSE){
+      if(pretty){
+        out <- do.call("rbind", lapply(self$keywords, function(kwd){
+          kwd.df <- data.frame(
+            keyword_name = kwd$name, 
+            keyword_uri = ifelse(is.null(kwd$uri),NA,kwd$uri),
+            stringsAsFactors=FALSE
+          )
+          return(kwd.df)
+        }))
+        return(out)
+      }else{
+        return(self$keywords)
+      }
     }
   )                                  
 )

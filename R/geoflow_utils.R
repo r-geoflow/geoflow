@@ -32,8 +32,10 @@ extract_kvp <- function(str){
     }
     hasDescription <- attr(regexpr("\\[", value), "useBytes") & endsWith(value, "]")
     if(hasDescription){
+      attrs <- attributes(value)
       value_splits <- unlist(strsplit(value, "\\["))
       value <- value_splits[1]
+      attributes(value) <- attrs
       des <- value_splits[2]
       des <- substr(des, 1, nchar(des)-1)
       attr(value, "description") <- des
