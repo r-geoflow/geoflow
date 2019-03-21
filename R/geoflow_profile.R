@@ -4,7 +4,7 @@ geoflow_profile <- R6Class("geoflow_profile",
  public = list(
    project = NULL,
    organization = NULL,
-   logo = NULL,
+   logos = list(),
    initialize = function(){},
    
    #setProject
@@ -17,9 +17,9 @@ geoflow_profile <- R6Class("geoflow_profile",
      self$organization <- organization
    },
    
-   #setLogo
-   setLogo = function(logo){
-     self$logo <- logo 
+   #addLogo
+   addLogo = function(logo){
+     self$logos <- c(self$logos, logo) 
    }
    
  )                                  

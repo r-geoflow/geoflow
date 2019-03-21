@@ -1,6 +1,13 @@
 {
   
   "id": "my-workflow",
+  "profile": {
+  	"project": "Test geoflow project",
+  	"organization": "My organization",
+  	"logos": [
+  		"https://via.placeholder.com/300x150.png/09f/fff?text=geoflow"
+  	]
+  },
   "mode": "entity",
   "dependencies": {
     "packages": {

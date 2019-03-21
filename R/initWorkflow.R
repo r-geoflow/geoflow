@@ -30,7 +30,9 @@ initWorkflow <- function(file){
     profile <- geoflow_profile$new()
     if(!is.null(config$profile$project)) profile$setProject(config$profile$project)
     if(!is.null(config$profile$organization)) profile$setOrganization(config$profile$organization)
-    if(!is.null(config$profile$logo)) profile$setLogo(config$profile$logo)
+    if(!is.null(config$profile$logos)){
+      for(logo in config$profile$logos) profile$addLogo(logo)
+    }
     config$profile <- profile
   }
   

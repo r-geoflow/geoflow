@@ -169,12 +169,11 @@ geometa_create_iso_19115 <- function(entity, config, options){
     }
   }
   #option to add logo as thumbnail
-  if(logo && !is.null(config$profile$logo)){
-    logoThumbnail <- ISOBrowseGraphic$new(
-      fileName = config$profile$logo,
-      fileDescription = "Organization Logo"
-    )
-    ident$addGraphicOverview(logoThumbnail)
+  if(logo && !is.null(config$profile$logos)){
+    for(logo in config$profile$logos){
+      logoThumbnail <- ISOBrowseGraphic$new(fileName = logo, fileDescription = "Logo")
+      ident$addGraphicOverview(logoThumbnail)
+    }
   }
   
   #maintenance information
