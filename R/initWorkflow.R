@@ -24,6 +24,16 @@ initWorkflow <- function(file){
   config$logger.info("Init Workflow configuration")
   config$logger.info("========================================================================")
   
+  #profile
+  if(!is.null(config$profile)){
+    config$logger.info("Creating workflow profile...")
+    profile <- geoflow_profile$new()
+    if(!is.null(config$profile$project)) profile$setProject(config$profile$project)
+    if(!is.null(config$profile$organization)) profile$setOrganization(config$profile$organization)
+    if(!is.null(config$profile$logo)) profile$setLogo(config$profile$logo)
+    config$profile <- profile
+  }
+  
   #working dir
   if(is.null(config$wd)) config$wd <- getwd()
   

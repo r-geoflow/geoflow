@@ -7,8 +7,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
   }
   
   #options
-  inspire <- FALSE
-  if(!is.null(options$inspire)) inspire <- options$inspire
+  inspire <- if(!is.null(options$inspire)) options$inspire else FALSE
+  logo <- if(!is.null(options$logo)) options$logo else FALSE
   
   #create geometa object
   md <- ISOMetadata$new()
@@ -167,6 +167,14 @@ geometa_create_iso_19115 <- function(entity, config, options){
       )
       ident$addGraphicOverview(go)
     }
+  }
+  #option to add logo as thumbnail
+  if(logo && !is.null(config$profile$logo)){
+    logoThumbnail <- ISOBrowseGraphic$new(
+      fileName = config$profile$logo,
+      fileDescription = "Organization Logo"
+    )
+    ident$addGraphicOverview(logoThumbnail)
   }
   
   #maintenance information
