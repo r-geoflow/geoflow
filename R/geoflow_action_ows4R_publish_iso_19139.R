@@ -11,7 +11,7 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
   md <- readRDS(metaFile)
   
   #shortcut for csw config
-  CSW <- config$software$output$csw
+  CSW <- config$software$csw
   
   if(is.null(CSW)){
     errMsg <- "This action requires a CSW software to be declared in the configuration"
