@@ -7,9 +7,11 @@ geoflow_software <- R6Class("geoflow_software",
     software_type = NULL,
     definition = NULL,
     handler = NULL,
+    attributes = list(),
+    properties = list(),
     arguments = list(),
     parameters = list(),
-    initialize = function(id = NULL, type = NULL, software_type, definition, handler, arguments){
+    initialize = function(id = NULL, type = NULL, software_type, definition, attributes, handler, arguments){
       self$setId(id)
       if(!is.null(type)) self$setType(type)
       self$setSoftwareType(software_type)
@@ -41,6 +43,26 @@ geoflow_software <- R6Class("geoflow_software",
       self$definition <- definition
     },
     
+    #setAttributes
+    setAttributes = function(attributes){
+      self$attributes <- attributes
+    },
+    
+    #setProperties
+    setProperties = function(...){
+      props <- list(...)[[1]]
+      propNames <- names(props)
+      if(length(propNames)>0){
+        for(propName in propNames){
+          if(!(propName %in% names(self$properties))){
+            stop(sprintf("The property '%s' is not a valid property for software '%s'. The parameter should be among values [%s]. To see a comprehensive properties list, use the following the code: list_software_properties(\"%s\")",
+                         paramName, self$software_type, paste(names(self$attributes), collapse=","), self$software_type))
+          }
+          self$properties[[propName]] <- props[[propName]]
+        }
+      }
+    },
+    
     #setHandler
     setHandler = function(handler){
       self$handler <- handler
@@ -58,7 +80,7 @@ geoflow_software <- R6Class("geoflow_software",
       if(length(paramNames)>0){
         for(paramName in paramNames){
           if(!(paramName %in% names(self$arguments))){
-            stop(sprintf("The parameter '%s' is not a valid parameter for software '%s'. The parameter should be among values [%s]. To see a comprehensive parameters list, use the following the code: list_software_parameter(\"%s\")", 
+            stop(sprintf("The parameter '%s' is not a valid parameter for software '%s'. The parameter should be among values [%s]. To see a comprehensive parameters list, use the following the code: list_software_parameters(\"%s\")", 
                          paramName, self$software_type, paste(names(self$arguments), collapse=","), self$software_type))
           }
           self$parameters[[paramName]] <- params[[paramName]]
@@ -92,7 +114,7 @@ register_software <- function(){
       handler = ows4R::CSWClient$new,
       arguments = list(
         url = list(def = "CSW service endpoint URL"),
-        version = list(def = "CSW service version ('2.0.2' or '3.0')"),
+        serviceVersion = list(def = "CSW service version ('2.0.2' or '3.0')"),
         user = list(def = "Username for CSW authentication"),
         pwd = list(def = "Password for CSW authentication"),
         logger = list(def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)")
@@ -105,7 +127,7 @@ register_software <- function(){
       handler = ows4R::WFSClient$new,
       arguments = list(
         url = list(def = "WFS service endpoint URL"),
-        version = list(def = "WFS service version ('1.0.0', '1.1.1', '2.0'"),
+        serviceVersion = list(def = "WFS service version ('1.0.0', '1.1.1', '2.0')"),
         user = list(def = "Username for WFS authentication"),
         pwd = list(def = "Password for WFS authentication"),
         logger = list(def = "Level for 'ows4R' logger messages (NULL, 'INFO' or 'DEBUG')")
@@ -134,6 +156,10 @@ register_software <- function(){
         user = list(def = "Username for GeoServer authentication"),
         pwd = list(def = "Password for GeoServer authentication"),
         logger = list(def = "Level for 'geosapi' logger messages (NULL, 'INFO' or 'DEBUG')")    
+      ),
+      attributes = list(
+        workspace = list(def = "GeoServer workspace name"),
+        datastore = list(def = "GeoServer datastore name")
       )
     ),
     #ZENODO

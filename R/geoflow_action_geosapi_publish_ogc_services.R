@@ -15,12 +15,12 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     stop(errMsg)
   }
   GS_CONFIG <- config$software$output$geoserver_config
-  if(is.null(GS_CONFIG$workspace)){
+  if(is.null(GS_CONFIG$properties$workspace)){
     errMsg <- "The geoserver configuration requires a workspace for publishing action"
     config$logger.error(errMsg)
     stop(errMsg)
   }
-  if(is.null(GS_CONFIG$datastore)){
+  if(is.null(GS_CONFIG$properties$datastore)){
     errMsg <- "The geoserver configuration requires a datastore for publishing action"
     config$logger.error(errMsg)
     stop(errMsg)
@@ -130,8 +130,8 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   }
   
   #publish
-  try(GS$unpublishLayer(GS_CONFIG$workspace, GS_CONFIG$datastore, layername))
-  out <- GS$publishLayer(GS_CONFIG$workspace, GS_CONFIG$datastore, featureType, layer)
+  try(GS$unpublishLayer(GS_CONFIG$properties$workspace, GS_CONFIG$properties$datastore, layername))
+  out <- GS$publishLayer(GS_CONFIG$properties$workspace, GS_CONFIG$properties$datastore, featureType, layer)
   if(!out){
     errMsg <- sprintf("Error during layer '%s' publication for entity '%s'!",layername, entity$identifiers[["id"]])
     config$logger.error(errMsg)
