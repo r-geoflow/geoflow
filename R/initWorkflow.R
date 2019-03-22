@@ -158,7 +158,7 @@ initWorkflow <- function(file){
         stop(errMsg)
       }
       config$software[[software$type]][[switch(software$type,"input"=software$id,"output"=software$software_type)]] <- client
-      config$software[[paste(switch(software$type,"input"=software$id,"output"=software$software_type),"config",sep="_")]] <- software
+      config$software[[software$type]][[paste(switch(software$type,"input"=software$id,"output"=software$software_type),"config",sep="_")]] <- software
     }
   }
   

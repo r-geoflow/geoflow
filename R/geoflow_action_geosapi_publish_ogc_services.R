@@ -99,16 +99,16 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   md_link_html <- NULL
   if(!is.null(config$software$output$csw)|!is.null(config$software$output$geonetwork)){
     if(!is.null(config$software$output$csw)){
-      md_link_xml <- paste0(config$software$output$csw$url, "?service=CSW&request=GetRecordById&Version=", config$software$output$csw_config$version,
+      md_link_xml <- paste0(config$software$output$csw_config$parameters$url, "?service=CSW&request=GetRecordById&Version=", config$software$output$csw_config$parameters$version,
                             "&elementSetName=full&outputSchema=http%3A//www.isotc211.org/2005/gmd&id=", entity$identifiers[["id"]])
     }
     if(!is.null(config$software$output$geonetwork)){
-      md_link_xml <- paste0(config$software$output$geonetwork$url, "/srv/eng/csw?service=CSW&request=GetRecordById&Version=2.0.2",
+      md_link_xml <- paste0(config$software$output$geonetwork_config$parameters$url, "/srv/eng/csw?service=CSW&request=GetRecordById&Version=2.0.2",
                             "&elementSetName=full&outputSchema=http%3A//www.isotc211.org/2005/gmd&id=", entity$identifiers[["id"]])
-      if(startsWith(config$software$output$geonetwork_config$version, "2")){
-        md_link_html <- paste0(config$software$output$geonetwork$url, "/srv/en/main.home?uuid=", entity$identifiers[["id"]])
-      }else if(startsWith(config$software$output$geonetwork_config$version, "3")){
-        md_link_html <- paste0(config$software$output$geonetwork$url, "/srv/eng/catalog.search#/metadata/", entity$identifiers[["id"]])
+      if(startsWith(config$software$output$geonetwork_config$parameters$version, "2")){
+        md_link_html <- paste0(config$software$output$geonetwork_config$parameters$url, "/srv/en/main.home?uuid=", entity$identifiers[["id"]])
+      }else if(startsWith(config$software$output$geonetwork_config$parameters$version, "3")){
+        md_link_html <- paste0(config$software$output$geonetwork_config$parameters$url, "/srv/eng/catalog.search#/metadata/", entity$identifiers[["id"]])
       }
     }
   }
