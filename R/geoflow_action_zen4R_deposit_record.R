@@ -4,7 +4,7 @@ zen4R_deposit_record <- function(entity, config, options){
     stop("This action requires the 'zen4R' package")
   }
   
-  ZENODO <- config$software$zenodo
+  ZENODO <- config$software$output$zenodo
   
   if(is.null(ZENODO)){
     errMsg <- "This action requires the Zenodo API to be declared in the configuration"

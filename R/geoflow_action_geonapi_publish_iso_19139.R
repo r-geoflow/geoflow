@@ -8,7 +8,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
   }
   
   #shortcut for gn config
-  GN <- config$software$geonetwork
+  GN <- config$software$output$geonetwork
   
   if(is.null(GN)){
     errMsg <- "This action requires a Geonetwork software to be declared in the configuration"

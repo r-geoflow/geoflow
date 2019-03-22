@@ -95,40 +95,52 @@ initWorkflow <- function(file){
   #software components
   if(!is.null(config$software)){
     
-    supportedSoftware <- c(
-      "geoserver", "geonetwork", "wfs", "csw",
-      "zenodo"
-    )
+    supportedSoftware <- list_software(raw = TRUE)
     
     software_configs <- config$software
+    
     config$software <- list()
+    config$software$input <- list()
+    config$software$output <- list()
+    
     for(software in software_configs){
       if(is.null(software$id)){
         errMsg <- "Sofware 'id' is missing. Please make sure to give an id to all declared software"
         config$logger.info(errMsg)
         stop(errMsg)
       }
+      if(is.null(software$type)){
+        errMsg <- "Sofware 'type' is missing. Please make sure to specify a type ('input' or 'output') to all declared software"
+        config$logger.info(errMsg)
+        stop(errMsg)
+      }
+      if(!(software$type %in% c("input","output"))){
+        errMsg <- sprintf("Incorrect type value (%s') for software '%s'", software$type, software$id)
+      }
+      
+      #embedded software or custom?
       embeddedSoftware <- is.null(software$handler)
-      if(!(software$id %in% supportedSoftware) & embeddedSoftware){
-        errMsg <- sprintf("Embedded Software with id '%s' not supported by geoflow", software$id)
+      if(embeddedSoftware){
+        if(is.null(software$software_type)){
+          errMsg <- sprintf("The 'software_type' is missing for software '%s'", software$id)
+          config$logger.info(errMsg)
+          stop(errMsg)
+        }
+      }
+      
+      if(!(software$software_type %in% sapply(supportedSoftware, function(x){x$software_type})) & embeddedSoftware){
+        errMsg <- sprintf("Embedded Software type '%s' not supported by geoflow. Check the list of embedded software with R code: list_software()", software$software_type)
         config$logger.error(errMsg)
         stop(errMsg)
       }
       client <- NULL
       if(embeddedSoftware){
-        client <- switch(tolower(software$id),
-          "geoserver" = geosapi::GSManager$new(url = software$url, user = software$user, pwd = software$pwd, logger = software$logger),
-          "geonetwork" = geonapi::GNManager$new(url = software$url, user = software$user, pwd = software$pwd, version = software$version, logger = software$logger),
-          "wfs" = ows4R::WFSClient$new(url = software$url, user = software$user, pwd = software$pwd, serviceVersion = software$version, logger = software$logger),
-          "csw" = ows4R::CSWClient$new(url = software$url, user = software$user, pwd = software$pwd, serviceVersion = software$version, logger = software$logger),
-          "zenodo" = {
-            if(!is.null(software$url))
-              zen4R::ZenodoManager$new(url = software$url, access_token = software$token, logger = software$logger)
-            else
-              zen4R::ZenodoManager$new(access_token = software$token, logger = software$logger)
-          },
-          NULL
-        )
+        target_software <- supportedSoftware[sapply(supportedSoftware, function(x){x$software_type == software$software_type})][[1]]
+        config$logger.info(sprintf("Configuring %s software '%s' (%s)", software$type, software$id, software$software_type))
+        target_software$setId(software$id)
+        target_software$setType(software$type)
+        if(!is.null(software$parameters)) target_software$setParameters(unlist(software$parameters))
+        client <- target_software$getHandlerInstance()
       }else{
         client_handler <- eval(parse(text=software$handler))
         if(class(client_handler)=="try-error"){
@@ -139,8 +151,8 @@ initWorkflow <- function(file){
         client_params <- unlist(software[names(software)!="handler"])
         client <- client_handler(client_params)
       }
-      config$software[[software$id]] <- client
-      config$software[[paste(software$id,"config",sep="_")]] <- software
+      config$software[[software$type]][[switch(software$type,"input"=software$id,"output"=software$software_type)]] <- client
+      config$software[[paste(switch(software$type,"input"=software$id,"output"=software$software_type),"config",sep="_")]] <- software
     }
   }
   

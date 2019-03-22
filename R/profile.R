@@ -6,6 +6,9 @@
   register_contact_handlers()
   register_entity_handlers()
   
+  #software
+  register_software()
+  
   #embedded actions
   register_actions()
   
