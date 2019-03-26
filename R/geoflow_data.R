@@ -120,7 +120,7 @@ geoflow_data <- R6Class("geoflow_data",
     
     #setUpload
     setUpload = function(upload){
-      self$upload <- FALSE
+      self$upload <- upload
     },
     
     #setCqlFilter
