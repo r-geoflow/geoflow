@@ -21,8 +21,8 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     config$logger.error(errMsg)
     stop(errMsg)
   }
-  datastore <- GS_CONFIG$properties$datstore
-  if(is.null(datstore)){
+  datastore <- GS_CONFIG$properties$datastore
+  if(is.null(datastore)){
     errMsg <- "The geoserver configuration requires a datastore for publishing action"
     config$logger.error(errMsg)
     stop(errMsg)
