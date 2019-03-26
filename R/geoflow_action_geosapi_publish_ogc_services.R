@@ -15,16 +15,22 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     stop(errMsg)
   }
   GS_CONFIG <- config$software$output$geoserver_config
-  if(is.null(GS_CONFIG$properties$workspace)){
+  workspace <- GS_CONFIG$properties$workspace
+  if(is.null(workspace)){
     errMsg <- "The geoserver configuration requires a workspace for publishing action"
     config$logger.error(errMsg)
     stop(errMsg)
   }
-  if(is.null(GS_CONFIG$properties$datastore)){
+  datastore <- GS_CONFIG$properties$datstore
+  if(is.null(datstore)){
     errMsg <- "The geoserver configuration requires a datastore for publishing action"
     config$logger.error(errMsg)
     stop(errMsg)
   }
+  
+  #check presence of workspace/datastore local config
+  if(!is.null(entity$data$workspace)) workspace <- entity$data$workspace
+  if(!is.null(entity$data$datastore)) datastore <- entity$data$datastore
   
   #check presence of data
   if(is.null(entity$data)){
@@ -34,17 +40,65 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     return(NULL)
   }
   
-  #variables
-  epsgCode <- sprintf("EPSG:%s", entity$srid)
-  
   #ft/layername
   layername <- if(!is.null(entity$data$identifier)) entity$data$identifier else entity$identifiers$id
+  
+  #upload
+  #-------------------------------------------------------------------------------------------------
+  if(entity$data$upload){
+    config$logger.info("Upload mode is set to true")
+    if(startsWith(entity$data$type,"db")){
+      warnMsg <- "Skipping upload: Upload mode is only valid for types 'shp', 'spatialite' or 'h2'"
+      config$logger.warn(warnMsg)
+    }else{
+      uploaded <- FALSE
+      isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", entity$data$source) > 0
+      if(isSourceUrl){
+        warnMsg <- "Upload from URL: Upload will assume remote file is a zip archive!"
+        config$logger.warn(warnMsg)
+        filename <- file.path(getwd(), "data", paste0(layername,".zip"))
+        download.file(entity$data$source, destfile = filename)
+        uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
+                                  filename = filename, extension = entity$data$type, charset = "UTF-8")
+      }else{
+        config$logger.info("Upload from local file(s)")
+        srcFilename <- entity$data$source
+        trgFilename <- file.path(getwd(), "data", paste0(layername,".zip"))
+        data.files <- list.files(pattern = srcFilename)
+        isZipped <- any(sapply(data.files, endsWith, ".zip"))
+        if(!isZipped){
+          config$logger.info("Upload from local file(s): zipping files as archive into data directory prior upload")
+          zip(zipfile = trgFilename, files = data.files)
+        }else{
+          config$logger.info("Upload from local file(s): copying zipped file to data directory prior upload")
+          file.copy(from = srcFilename, to = file.path(getwd(),"data"))
+        }
+        uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
+                                  filename = trgFilename, extension = entity$data$type, charset = "UTF-8")
+      }
+      if(uploaded){
+        infoMsg <- sprintf("Successful Geoserver upload for file '%s' (%s)", entity$data$source, entity$data$type)
+        config$logger$info(infoMsg)
+      }else{
+        errMsg <- "Error during Geoserver file upload. Aborting 'geosapi' action!"
+        config$logger$error(errMsg)
+        stop(errMsg)
+      }
+    }
+  }
+  
+  
+  #featuretype/layer publication
+  #--------------------------------------------------------------------------------------------------
+  
+  #variables
+  epsgCode <- sprintf("EPSG:%s", entity$srid)
   
   #build feature type
   featureType <- GSFeatureType$new()
   featureType$setName(layername)
   nativeName <- entity$data$source
-  if(entity$data$type == "dbquery") nativeName <- layername
+  if(entity$data$type != "shp") nativeName <- layername
   featureType$setNativeName(nativeName)
   featureType$setAbstract(entity$descriptions$abstract)
   featureType$setTitle(entity$title)
@@ -130,8 +184,8 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   }
   
   #publish
-  try(GS$unpublishLayer(GS_CONFIG$properties$workspace, GS_CONFIG$properties$datastore, layername))
-  out <- GS$publishLayer(GS_CONFIG$properties$workspace, GS_CONFIG$properties$datastore, featureType, layer)
+  try(GS$unpublishLayer(workspace, datastore, layername))
+  out <- GS$publishLayer(workspace, datastore, featureType, layer)
   if(!out){
     errMsg <- sprintf("Error during layer '%s' publication for entity '%s'!",layername, entity$identifiers[["id"]])
     config$logger.error(errMsg)

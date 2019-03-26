@@ -11,6 +11,8 @@ geoflow_data <- R6Class("geoflow_data",
     geometryType = NULL,
     parameters = list(),
     styles = list(),
+    workspace = NULL,
+    datastore = NULL,
     initialize = function(str = NULL){
       if(!is.null(str)){
         data_props <-  unlist(strsplit(sanitize_str(str), ";"))
@@ -86,6 +88,13 @@ geoflow_data <- R6Class("geoflow_data",
             self$addStyle(style$values[[1]])
           }
         }
+        
+        #workspace
+        workspaces <- data_props[sapply(data_props, function(x){x$key=="workspace"})]
+        if(length(workspaces)>0) self$setWorkspace(workspaces[[1]]$values[[1]])
+        #datastore
+        datastores <- data_props[sapply(data_props, function(x){x$key=="datastore"})]
+        if(length(datastores)>0) self$setDatastore(datastores[[1]]$values[[1]])
       }
     },
     
@@ -96,7 +105,7 @@ geoflow_data <- R6Class("geoflow_data",
     
     #setType
     setType = function(type){
-      allowedTypes <- c("dbtable", "dbview", "dbquery","shapefile")
+      allowedTypes <- c("dbtable", "dbview", "dbquery","shp")
       if(!(type %in% allowedTypes)){
         errMsg <- sprintf("Type should be among values [%s]", paste0(allowedTypes, collapse=","))
         stop(errMsg)
@@ -142,6 +151,16 @@ geoflow_data <- R6Class("geoflow_data",
     #addStyle
     addStyle = function(style){
       self$styles <- c(self$styles, style)
+    },
+    
+    #setWorkspace
+    setWorkspace = function(workspace){
+      self$workspace <- workspace
+    },
+    
+    #setDatastore
+    setDatastore = function(datastore){
+      self$datastore <- datastore
     }
     
   )
