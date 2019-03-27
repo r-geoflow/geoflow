@@ -40,8 +40,9 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     return(NULL)
   }
   
-  #ft/layername
+  #layername/sourcename
   layername <- if(!is.null(entity$data$identifier)) entity$data$identifier else entity$identifiers$id
+  sourcename <- if(!is.null(entity$data$sourceName)) entity$data$sourceName else layername
   
   #upload
   #-------------------------------------------------------------------------------------------------
@@ -64,29 +65,35 @@ geosapi_publish_ogc_services <- function(entity, config, options){
         config$logger.info("Upload from local file(s)")
         srcFilename <- entity$data$source
         trgFilename <- file.path(getwd(), "data", paste0(layername,".zip"))
-        data.files <- list.files(pattern = srcFilename)
-        isZipped <- any(sapply(data.files, endsWith, ".zip"))
-        if(!isZipped){
-          config$logger.info("Upload from local file(s): zipping files as archive into data directory prior upload")
-          zip(zipfile = trgFilename, files = data.files)
+        data.files <- list.files(path = dirname(srcFilename), pattern = entity$data$sourceName)
+        if(length(data.files)>0){
+          isZipped <- any(sapply(data.files, endsWith, ".zip"))
+          if(!isZipped){
+            config$logger.info("Upload from local file(s): zipping files as archive into data directory prior upload")
+            zip(zipfile = trgFilename, files = data.files)
+          }else{
+            config$logger.info("Upload from local file(s): copying zipped file to data directory prior upload")
+            file.copy(from = srcFilename, to = file.path(getwd(),"data"))
+          }
+          uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
+                                    filename = trgFilename, extension = entity$data$type, charset = "UTF-8",
+                                    contentType = if(entity$data$type=="spatialite") "application/x-sqlite3" else "")
         }else{
-          config$logger.info("Upload from local file(s): copying zipped file to data directory prior upload")
-          file.copy(from = srcFilename, to = file.path(getwd(),"data"))
+          errMsg <- sprintf("Upload from local file(s): no files found for source '%s' (%s)", srcFilename, entity$data$sourceName)
+          config$logger.error(errMsg)
+          stop(errMsg)
         }
-        uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
-                                  filename = trgFilename, extension = entity$data$type, charset = "UTF-8")
       }
       if(uploaded){
         infoMsg <- sprintf("Successful Geoserver upload for file '%s' (%s)", entity$data$source, entity$data$type)
-        config$logger$info(infoMsg)
+        config$logger.info(infoMsg)
       }else{
         errMsg <- "Error during Geoserver file upload. Aborting 'geosapi' action!"
-        config$logger$error(errMsg)
+        config$logger.error(errMsg)
         stop(errMsg)
       }
     }
   }
-  
   
   #featuretype/layer publication
   #--------------------------------------------------------------------------------------------------
@@ -97,9 +104,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   #build feature type
   featureType <- GSFeatureType$new()
   featureType$setName(layername)
-  nativeName <- entity$data$source
-  if(entity$data$type != "shp") nativeName <- layername
-  featureType$setNativeName(nativeName)
+  featureType$setNativeName(sourcename)
   featureType$setAbstract(entity$descriptions$abstract)
   featureType$setTitle(entity$title)
   featureType$setSrs(epsgCode)

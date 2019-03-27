@@ -5,6 +5,7 @@ geoflow_data <- R6Class("geoflow_data",
     identifier = NULL,
     type = NULL,
     source = NULL,
+    sourceName = NULL,
     upload = FALSE,
     cqlfilter = NULL,
     geometryField = NULL,
@@ -19,30 +20,43 @@ geoflow_data <- R6Class("geoflow_data",
         data_props <- lapply(data_props, function(data_prop){
           return(extract_kvp(data_prop))
         })
+        #type
         names(data_props) <- sapply(data_props, function(x){x$key})
         if(!any(sapply(data_props, function(x){x$key=="type"}))){
-          stop("The data source 'type' is mandatory")
+          stop("The data 'type' is mandatory")
         }
         self$setType(data_props$type$values[[1]])
+        #source
         if(!any(sapply(data_props, function(x){x$key=="source"}))){
           stop("The data 'source' is mandatory")
         }
         self$setSource(data_props$source$values[[1]])
+        #sourceName
+        if(!any(sapply(data_props, function(x){x$key=="sourceName"})) && self$type %in% c("shp","spatialite","h2")){
+          stop(sprintf("The data 'sourceName' is mandatory for data type '%s'",self$type))
+        }
+        self$setSourceName(data_props$sourceName$values[[1]])
+        if(self$type %in% c("dbtable","dbview")) self$setSourceName(self$source)
         
+        #identifier (if any)
+        #not mandatory, can be used for subset layers
         if(!is.null(data_props$identifier)){
           self$setIdentifier(data_props$identifier$values[[1]])
         }
         
+        #upload
         if(!is.null(data_props$upload)){
-          upload <- as.logical(data_props$upload$values[[1]])
+          upload <- as.logical(tolower(data_props$upload$values[[1]]))
           if(is.na(upload)){
             stop("Incorrect value for 'upload'. Expected boolean value (true/false")
           }
           self$setUpload(upload)
         }
+        #cql filter
         if(!is.null(data_props$cqlfilter)){
           self$setCqlFilter(data_props$cqlfilter$values[[1]])
         }
+        #params
         params <- data_props[sapply(data_props, function(x){x$key=="parameter"})]
         if(length(params)>0){
           if(self$type != "dbquery"){
@@ -81,7 +95,7 @@ geoflow_data <- R6Class("geoflow_data",
           self$setGeometryType(geom$values[[2]])
         }
         
-        #styles
+        #layer styles
         styles <- data_props[sapply(data_props, function(x){x$key=="style"})]
         if(length(styles)>0){
           for(style in styles){
@@ -89,6 +103,7 @@ geoflow_data <- R6Class("geoflow_data",
           }
         }
         
+        #geoserver targets
         #workspace
         workspaces <- data_props[sapply(data_props, function(x){x$key=="workspace"})]
         if(length(workspaces)>0) self$setWorkspace(workspaces[[1]]$values[[1]])
@@ -113,9 +128,14 @@ geoflow_data <- R6Class("geoflow_data",
       self$type <- type
     },
     
-    #setSource
+    #setSourceName
     setSource = function(source){
       self$source <- source
+    },
+    
+    #setSourceName
+    setSourceName = function(sourceName){
+      self$sourceName <- sourceName
     },
     
     #setUpload
