@@ -95,6 +95,9 @@ handle_entities_df <- function(config, source){
       entity$setData(data_obj)
     }
     
+    #enrich metadata with dynamic properties
+    if(!is.null(entity$data)) entity$enrichWithData(config)
+    
     entities <- c(entities, entity)
   }
   return(entities)

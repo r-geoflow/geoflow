@@ -71,9 +71,13 @@ geosapi_publish_ogc_services <- function(entity, config, options){
           if(!isZipped){
             config$logger.info("Upload from local file(s): zipping files as archive into data directory prior upload")
             zip(zipfile = trgFilename, files = data.files)
+            config$logger.info("Upload from local file(s): copying unzipped files to data directory prior upload")
+            for(data.file in data.files) file.copy(from = data.file, to = file.path(getwd(), "data"))
           }else{
             config$logger.info("Upload from local file(s): copying zipped file to data directory prior upload")
             file.copy(from = srcFilename, to = file.path(getwd(),"data"))
+            config$logger.info("Upload from local file(s): copying unzipped files to data directory prior upload")
+            unzip(zipfile = trgFilename, exdir = file.path(getwd(), "data"), unzip = getOption("unzip"))
           }
           uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
                                     filename = trgFilename, extension = entity$data$type, charset = "UTF-8",
@@ -111,7 +115,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   featureType$setNativeCRS(epsgCode)
   featureType$setEnabled(TRUE)
   featureType$setProjectionPolicy("FORCE_DECLARED")
-  bbox <- attr(entity$spatial_extent, "bbox")
+  bbox <- entity$spatial_extent
   featureType$setLatLonBoundingBox(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, crs = epsgCode)
   featureType$setNativeBoundingBox(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, crs = epsgCode) 
   for(subject in entity$subjects){

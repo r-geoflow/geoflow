@@ -10,6 +10,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
   inspire <- if(!is.null(options$inspire)) options$inspire else FALSE
   logo <- if(!is.null(options$logo)) options$logo else FALSE
   
+  #metadata creation
+  #-----------------------------------------------------------------------------------------------------
   #create geometa object
   md <- ISOMetadata$new()
   #identifier, in case of presence of DOI we add an anchor
@@ -211,7 +213,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   extent <- ISOExtent$new()
   #geographic extent
   if(!is.null(entity$spatial_extent)){
-    sf_bbox <- attr(entity$spatial_extent, "bbox")
+    sf_bbox <- entity$spatial_extent
     bbox <- ISOGeographicBoundingBox$new(minx = sf_bbox$xmin, miny = sf_bbox$ymin, maxx = sf_bbox$xmax, maxy = sf_bbox$ymax)
     extent$setGeographicElement(bbox)
   }

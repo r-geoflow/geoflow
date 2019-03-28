@@ -75,8 +75,13 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #setSpatialExtent
-    setSpatialExtent = function(wkt, crs = NA){
-      spatial_extent <- sf::st_as_sfc(wkt, crs = crs)
+    setSpatialExtent = function(wkt = NULL, bbox = NULL, data = NULL, crs = NA){
+      if(is.null(wkt) & is.null(bbox) & is.null(data)){
+        stop("At least one of the arguments 'wkt' (WKT string) or 'bbox' should be provided!")
+      }
+      if(!is.null(wkt)) spatial_extent <- attr(sf::st_as_sfc(wkt, crs = crs), "bbox")
+      if(!is.null(bbox)) spatial_extent <- bbox
+      if(!is.null(data)) spatial_extent <- sf::st_bbox(data)
       if(class(spatial_extent)[1]=="try-error"){
         stop("The spatial extent is invalid!")
       }
@@ -109,6 +114,195 @@ geoflow_entity <- R6Class("geoflow_entity",
         stop("Data should be an object of class 'geoflow_data'")
       }
       self$data <- data
+    },
+    
+    #copyDataToJobDir
+    copyDataToJobDir = function(config){
+      
+      jobdir <- getwd()
+      
+      config$logger.info(sprintf("Copying data to job directory '%s'", jobdir))
+      
+      layername <- if(!is.null(self$data$identifier)) self$data$identifier else self$identifiers$id
+      basefilename <- paste0(self$identifiers$id,"_",layername)
+      trgFilename <- file.path(jobdir, "data", basefilename)
+      
+      isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", self$data$source) > 0
+      if(isSourceUrl){
+        warnMsg <- "Copying data from URL to Job data directory!"
+        config$logger.warn(warnMsg)
+        download.file(self$data$source, destfile = paste0(trgFilename,".zip"))
+      }else{
+        config$logger.info("Copying data local file(s) to Job data directory!")
+        srcFilename <- self$data$source
+        data.files <- list.files(path = dirname(srcFilename), pattern = self$data$sourceName)
+        if(length(data.files)>0){
+          isZipped <- any(sapply(data.files, endsWith, ".zip"))
+          if(!isZipped){
+            config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
+            for(data.file in data.files){
+              file.copy(from = data.file, to = file.path(jobdir, "data"))
+              fileparts <- unlist(strsplit(data.file,"\\."))
+              fileext <- fileparts[length(fileparts)]
+              file.rename(from = file.path(jobdir, "data", data.file), to = paste0(trgFilename, ".", fileext))
+            }
+            config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
+            data.files <- list.files(path = dirname(trgFilename), pattern = basefilename)
+            zip(zipfile = paste0(trgFilename,".zip"), files = file.path(jobdir, "data", data.files))
+          }else{
+            config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
+            unzip(zipfile = srcFilename, exdir = file.path(jobdir, "data"), unzip = getOption("unzip"))
+            data.files <- list.files(path = dirname(trgFilename), pattern = self$data$sourceName)
+            if(length(data.files)>0) for(data.file in data.files){
+              file.copy(from = data.file, to = file.path(jobdir, "data"))
+              fileparts <- unlist(strsplit(data.file,"\\."))
+              fileext <- fileparts[length(fileparts)]
+              file.rename(from = file.path(jobdir, "data", data.file), to = paste0(trgFilename, ".", fileext))
+            }
+            data.files <- list.files(path = dirname(trgFilename), pattern = basefilename)
+            zip(zipfile = paste0(trgFilename,".zip"), files = file.path(jobdir, "data", data.files))
+          }
+        }else{
+          errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", srcFilename, self$data$sourceName)
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
+      }
+    },
+    
+    #enrichWithData
+    enrichWithData = function(config){
+    
+      layername <- if(!is.null(self$data$identifier)) self$data$identifier else self$identifiers$id
+      
+      TEMP_DATA_DIR <- file.path(getwd(), "geoflow_temp_data")
+      if(!dir.exists(TEMP_DATA_DIR)){
+        config$logger.info("Create geoflow temporary data directory")
+        dir.create(TEMP_DATA_DIR)
+      }
+      trgFilename <- file.path(TEMP_DATA_DIR, paste0(layername,".zip"))
+      
+      switch(self$data$type,
+           #Method for ESRI Shapefile (if remote, shapefiles should be zipped)
+           "shp" = {
+             shpExists <- FALSE
+             isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", self$data$source) > 0
+             if(isSourceUrl){
+               warnMsg <- "Downloading remote data from URL to temporary geoflow temporary data directory!"
+               config$logger.warn(warnMsg)
+               download.file(self$data$source, destfile = trgFilename)
+               unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
+               shpExists <- TRUE
+             }else{
+               data.files <- list.files(path = dirname(self$data$source), pattern = self$data$sourceName)
+               if(length(data.files)>0){
+                 shpExists <- TRUE
+                 config$logger.info("Copying local data to temporary geoflow temporary data directory")
+                 isZipped <- any(sapply(data.files, endsWith, ".zip"))
+                 if(!isZipped){
+                   zip(zipfile = trgFilename, files = data.files)
+                   for(data.file in data.files) file.copy(from = data.file, to = TEMP_DATA_DIR)
+                 }else{
+                   file.copy(from = self$data$source, to = TEMP_DATA_DIR)
+                   unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
+                 }
+               }
+             }
+            
+             if(shpExists){
+               #read shapefile
+               config$logger.info("Read Shapefiles from geoflow temporary data directory")
+               trgShp <- file.path(TEMP_DATA_DIR, paste0(layername,".shp"))
+               sf.data <- sf::st_read(trgShp)
+               if(!is.null(sf.data)){
+                 #we try to apply the cql filter specified as data property
+                 if(!is.null(self$data$cqlfilter)){
+                   cqlfilter <- self$data$cqlfilter
+                   rfilter <- gsub(" AND ", " & ", cqlfilter)
+                   rfilter <- gsub(" OR ", " | ", rfilter)
+                   rfilter <- gsub(" IN\\(", " %in% c(", rfilter)
+                   rfilter <- gsub("'","\"", rfilter)
+                   rfilter <- gsub("=", "==", rfilter)
+                   rfilter <- paste0("sf.data$", rfilter)
+                   sf.data.filtered <- try(eval(parse(text= sprintf("sf.data[%s,]",rfilter))))
+                   if(class(sf.data.filtered)[1]!="try-error") sf.data <- sf.data.filtered
+                 }
+                 
+                 #dynamic srid
+                 sf.crs <- sf::st_crs(sf.data)
+                 if(!is.na(sf.crs)) self$setSrid(sf.crs$epsg)
+                 #dynamic spatial extent
+                 self$setSpatialExtent(data = sf.data)
+                 #dynamic relations related to OGC services (only executed if geosapi action is handled in workflow)
+                 if(any(sapply(config$actions, function(x){regexpr("geosapi",x$id)>0}))){
+                   #Thumbnail
+                   new_thumbnail <- geoflow_relation$new()
+                   new_thumbnail$setKey("thumbnail")
+                   new_thumbnail$setName(layername)
+                   new_thumbnail$setDescription(paste0(self$title, " - Map Overview"))
+                   new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
+                                                 config$software$output$geoserver_config$parameters$url, 
+                                                 config$software$output$geoserver_config$properties$workspace,
+                                                 layername, paste(self$spatial_extent,collapse=","),self$srid))
+                   self$addRelation(new_thumbnail)
+                   #WMS
+                   new_wms <- geoflow_relation$new()
+                   new_wms$setKey("wms")
+                   new_wms$setName(layername)
+                   new_wms$setDescription(self$title)
+                   new_wms$setLink(sprintf("%s/%s/ows?service=WMS", 
+                                           config$software$output$geoserver_config$parameters$url, 
+                                           config$software$output$geoserver_config$properties$workspace))
+                   self$addRelation(new_wms)
+                   #wfs (GML)
+                   new_wfs_gml <- geoflow_relation$new()
+                   new_wfs_gml$setKey("wfs")
+                   new_wfs_gml$setName(layername)
+                   new_wfs_gml$setDescription(paste0(self$title, " - GIS Data Download (GML)"))
+                   new_wfs_gml$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s", 
+                                               config$software$output$geoserver_config$parameters$url, 
+                                               config$software$output$geoserver_config$properties$workspace,
+                                               layername))
+                   self$addRelation(new_wfs_gml)
+                   #wfs (GeoJSON)
+                   new_wfs_geojson <- geoflow_relation$new()
+                   new_wfs_geojson$setKey("wfs")
+                   new_wfs_geojson$setName(layername)
+                   new_wfs_geojson$setDescription(paste0(self$title, " - GIS Data Download (GeoJSON)"))
+                   new_wfs_geojson$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=json", 
+                                                   config$software$output$geoserver_config$parameters$url, 
+                                                   config$software$output$geoserver_config$properties$workspace,
+                                                   layername))
+                   self$addRelation(new_wfs_geojson)
+                   #wfs (ESRI Shapefile)
+                   new_wfs_shp <- geoflow_relation$new()
+                   new_wfs_shp$setKey("wfs")
+                   new_wfs_shp$setName(layername)
+                   new_wfs_shp$setDescription(paste0(self$title, " - GIS Data Download (ESRI Shapefile)"))
+                   new_wfs_shp$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=SHAPE-ZIP", 
+                                               config$software$output$geoserver_config$parameters$url, 
+                                               config$software$output$geoserver_config$properties$workspace,
+                                               layername))
+                   self$addRelation(new_wfs_shp)
+                 }
+                   
+                   
+               }else{
+                 warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
+                 config$logger.warn(warnMsg)
+               }
+             }else{
+               warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", self$data$source)
+               config$logger.warn(warnMsg)
+             }
+          },
+          {
+            config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$type))
+          }
+      ) 
+      
+      #remove temp dir
+      unlink(TEMP_DATA_DIR, force = TRUE)
     },
     
     #getContacts

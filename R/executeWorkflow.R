@@ -20,7 +20,7 @@ executeWorkflow <- function(file){
   CFG <- initWorkflow(file)
   
   #2. Inits workflow job (create directories)
-  jobDir <- initWorkflowJob(CFG)
+  initWorkflowJob(CFG)
   
   #3. Execute the workflow job
   exec <- try(executeWorkflowJob(CFG))

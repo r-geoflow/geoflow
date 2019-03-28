@@ -29,10 +29,14 @@ executeWorkflowJob <- function(config){
           entities <- config$metadata$content$entities
           if(!is.null(entities)){
             invisible(lapply(entities, function(entity){
+              
+              #if entity has data we copy data to job data dir
+              if(!is.null(entity$data)) entity$copyDataToJobDir(config)
+              
               #run sequence of actions
               for(i in 1:length(actions)){
                 action <- actions[[i]]
-                config$logger.info(sprintf("Executing Action %s: %s - for entity %s", i, action$id, entity$id))
+                config$logger.info(sprintf("Executing Action %s: %s - for entity %s", i, action$id, entity$identifiers[["id"]]))
                 action$fun(entity, config, action$options)
               }
               #if zenodo is among actions, file upload (and possibly publish) to be managed here
