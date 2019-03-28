@@ -9,6 +9,9 @@ initWorkflowJob(config)
 \arguments{
 \item{config}{a configuration object as read by \code{initWorkflow}}
 }
+\value{
+the job directory path
+}
 \description{
 \code{initWorkflowJob} allows to init a workflow job
 }

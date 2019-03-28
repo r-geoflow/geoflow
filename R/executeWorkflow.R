@@ -20,10 +20,10 @@ executeWorkflow <- function(file){
   CFG <- initWorkflow(file)
   
   #2. Inits workflow job (create directories)
-  initWorkflowJob(CFG)
+  jobdir <- initWorkflowJob(CFG)
   
   #3. Execute the workflow job
-  exec <- try(executeWorkflowJob(CFG))
+  exec <- try(executeWorkflowJob(CFG, jobdir))
   if(class(exec)=="try-error"){
     setwd(CFG$wd)
   }

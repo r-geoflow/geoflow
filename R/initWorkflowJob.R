@@ -7,6 +7,8 @@
 #'                 
 #' @param config a configuration object as read by \code{initWorkflow}
 #' 
+#' @return the job directory path
+#' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'   
@@ -54,4 +56,5 @@ initWorkflowJob <- function(config){
       file.copy(from = file.path(config$wd, action$script), to = getwd())
     }
   }
+  return(jobDirPath)
 }

@@ -8,6 +8,8 @@ executeWorkflowJob(config)
 }
 \arguments{
 \item{config}{a configuration object as read by \code{initWorkflow}}
+
+\item{jobdir}{the Job directory}
 }
 \description{
 \code{executeWorkflowJob} allows to execute a workflow job

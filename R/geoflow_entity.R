@@ -117,15 +117,15 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #copyDataToJobDir
-    copyDataToJobDir = function(config){
+    copyDataToJobDir = function(config, jobdir){
       
-      jobdir <- getwd()
+      wd <- getwd()
+      setwd(file.path(jobdir,"data"))
       
       config$logger.info(sprintf("Copying data to job directory '%s'", jobdir))
       
       layername <- if(!is.null(self$data$identifier)) self$data$identifier else self$identifiers$id
       basefilename <- paste0(self$identifiers$id,"_",self$data$type,"_",layername)
-      trgFilename <- file.path(jobdir, "data", basefilename)
       
       #here either we only pickup zipped files and re-distribute them in job data directory
       #or we write it from entity$data$features if the latter is not NULL and if writer available (for now only shp)
@@ -136,7 +136,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(isSourceUrl){
         warnMsg <- "Copying data from URL to Job data directory!"
         config$logger.warn(warnMsg)
-        download.file(self$data$source, destfile = paste0(trgFilename,".zip"))
+        download.file(self$data$source, destfile = paste0(basefilename,".zip"))
       }else{
         if(is.null(self$data$features)){
           
@@ -148,26 +148,26 @@ geoflow_entity <- R6Class("geoflow_entity",
             if(!isZipped){
               config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
               for(data.file in data.files){
-                file.copy(from = data.file, to = file.path(jobdir, "data"))
+                file.copy(from = data.file, to = getwd())
                 fileparts <- unlist(strsplit(data.file,"\\."))
                 fileext <- fileparts[length(fileparts)]
-                file.rename(from = file.path(jobdir, "data", data.file), to = paste0(trgFilename, ".", fileext))
+                file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
               }
               config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
-              data.files <- list.files(path = dirname(trgFilename), pattern = basefilename)
-              zip(path = file.path(jobdir,"data"),zipfile = paste0(trgFilename,".zip"), files = file.path(jobdir, "data", data.files))
+              data.files <- list.files(pattern = basefilename)
+              zip(zipfile = paste0(basefilename,".zip"), files = data.files)
             }else{
               config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
-              unzip(zipfile = srcFilename, exdir = file.path(jobdir, "data"), unzip = getOption("unzip"))
-              data.files <- list.files(path = dirname(trgFilename), pattern = self$data$sourceName)
+              unzip(zipfile = srcFilename, unzip = getOption("unzip"))
+              data.files <- list.files(pattern = self$data$sourceName)
               if(length(data.files)>0) for(data.file in data.files){
-                file.copy(from = data.file, to = file.path(jobdir, "data"))
+                file.copy(from = data.file, to = getwd())
                 fileparts <- unlist(strsplit(data.file,"\\."))
                 fileext <- fileparts[length(fileparts)]
-                file.rename(from = file.path(jobdir, "data", data.file), to = paste0(trgFilename, ".", fileext))
+                file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
               }
-              data.files <- list.files(path = dirname(trgFilename), pattern = basefilename)
-              zip(path = file.path(jobdir,"data"),zipfile = paste0(trgFilename,".zip"), files = file.path(jobdir, "data", data.files))
+              data.files <- list.files(pattern = basefilename)
+              zip(zipfile = paste0(basefilename,".zip"), files = data.files)
             }
           }else{
             errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", srcFilename, self$data$sourceName)
@@ -176,18 +176,19 @@ geoflow_entity <- R6Class("geoflow_entity",
           }
           
         }else{
-          config$logger.info("Writing entity data features to Job data directory!")
+          config$logger.info("Writing entity data features to job data directory!")
           switch(self$data$type,
             "shp" = {
-              sf::st_write(self$data$features, paste0(trgFilename, ".shp"), delete_dsn = TRUE)
-              data.files <- list.files(path = file.path(jobdir, "data"), pattern = basefilename)
-              zip(path = file.path(jobdir,"data"), zipfile = paste0(trgFilename, ".zip"), files = file.path(jobdir, "data", data.files))
+              sf::st_write(self$data$features, paste0(basefilename, ".shp"), delete_dsn = TRUE)
+              data.files <- list.files(pattern = basefilename)
+              zip(zipfile = paste0(basefilename, ".zip"), files = data.files)
             },{
-              config$logger.warn(sprintf("Entity data features writing not implemented for type '%s'", self$data$type))
+              config$logger.warn(sprintf("Entity data features writer not implemented for type '%s'", self$data$type))
             }
           )
         }
       }
+      setwd(wd)
     },
     
     #enrichWithData

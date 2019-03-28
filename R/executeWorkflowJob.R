@@ -6,11 +6,12 @@
 #' @usage executeWorkflowJob(config)
 #'                 
 #' @param config a configuration object as read by \code{initWorkflow}
+#' @param jobdir the Job directory
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'    
-executeWorkflowJob <- function(config){
+executeWorkflowJob <- function(config, jobdir){
   capture.output({
     config$logger.info("Executing workflow job...")
     actions <- config$actions
@@ -31,7 +32,7 @@ executeWorkflowJob <- function(config){
             invisible(lapply(entities, function(entity){
               
               #if entity has data we copy data to job data dir
-              if(!is.null(entity$data)) entity$copyDataToJobDir(config)
+              if(!is.null(entity$data)) entity$copyDataToJobDir(config, jobdir)
               
               #run sequence of actions
               for(i in 1:length(actions)){
