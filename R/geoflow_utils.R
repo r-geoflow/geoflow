@@ -54,3 +54,18 @@ str_to_posix <- function(str){
   out <- as.POSIXct(str, format = str_format)
   return(out)
 }
+
+#'filter_sf_bycqlfilter
+#'@export
+filter_sf_by_cqlfilter <- function(sfdata, cqlfilter){
+  out <- NULL
+  rfilter <- gsub(" AND ", " & ", cqlfilter)
+  rfilter <- gsub(" OR ", " | ", rfilter)
+  rfilter <- gsub(" IN\\(", " %in% c(", rfilter)
+  rfilter <- gsub("'","\"", rfilter)
+  rfilter <- gsub("=", "==", rfilter)
+  rfilter <- paste0("sfdata$", rfilter)
+  sfdata.filtered <- try(eval(parse(text= sprintf("sfdata[%s,]",rfilter))))
+  if(class(sfdata.filtered)[1]!="try-error") out <- sfdata.filtered
+  return(out)
+}

@@ -14,6 +14,7 @@ geoflow_data <- R6Class("geoflow_data",
     styles = list(),
     workspace = NULL,
     datastore = NULL,
+    features = NULL,
     initialize = function(str = NULL){
       if(!is.null(str)){
         data_props <-  unlist(strsplit(sanitize_str(str), ";"))
@@ -181,6 +182,11 @@ geoflow_data <- R6Class("geoflow_data",
     #setDatastore
     setDatastore = function(datastore){
       self$datastore <- datastore
+    },
+    
+    #setFeatures
+    setFeatures = function(features){
+      self$features <- features
     }
     
   )

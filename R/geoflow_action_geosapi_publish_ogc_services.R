@@ -57,33 +57,22 @@ geosapi_publish_ogc_services <- function(entity, config, options){
       if(isSourceUrl){
         warnMsg <- "Upload from URL: Upload will assume remote file is a zip archive!"
         config$logger.warn(warnMsg)
-        filename <- file.path(getwd(), "data", paste0(layername,".zip"))
+        filename <- file.path(getwd(), "data", paste0(entity$data$sourceName,".zip"))
         download.file(entity$data$source, destfile = filename)
         uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
                                   filename = filename, extension = entity$data$type, charset = "UTF-8")
+        unlink(filename)
       }else{
         config$logger.info("Upload from local file(s)")
         srcFilename <- entity$data$source
-        trgFilename <- file.path(getwd(), "data", paste0(layername,".zip"))
-        data.files <- list.files(path = dirname(srcFilename), pattern = entity$data$sourceName)
+        data.files <- list.files(path = dirname(srcFilename), pattern = paste0(entity$data$sourceName,".zip"))
         if(length(data.files)>0){
-          isZipped <- any(sapply(data.files, endsWith, ".zip"))
-          if(!isZipped){
-            config$logger.info("Upload from local file(s): zipping files as archive into data directory prior upload")
-            zip(zipfile = trgFilename, files = data.files)
-            config$logger.info("Upload from local file(s): copying unzipped files to data directory prior upload")
-            for(data.file in data.files) file.copy(from = data.file, to = file.path(getwd(), "data"))
-          }else{
-            config$logger.info("Upload from local file(s): copying zipped file to data directory prior upload")
-            file.copy(from = srcFilename, to = file.path(getwd(),"data"))
-            config$logger.info("Upload from local file(s): copying unzipped files to data directory prior upload")
-            unzip(zipfile = trgFilename, exdir = file.path(getwd(), "data"), unzip = getOption("unzip"))
-          }
+          filename <- file.path(dirname(srcFilename), data.files[1])
           uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
-                                    filename = trgFilename, extension = entity$data$type, charset = "UTF-8",
+                                    filename = filename, extension = entity$data$type, charset = "UTF-8",
                                     contentType = if(entity$data$type=="spatialite") "application/x-sqlite3" else "")
         }else{
-          errMsg <- sprintf("Upload from local file(s): no files found for source '%s' (%s)", srcFilename, entity$data$sourceName)
+          errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", srcFilename, entity$data$sourceName)
           config$logger.error(errMsg)
           stop(errMsg)
         }

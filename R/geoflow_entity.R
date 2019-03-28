@@ -124,8 +124,13 @@ geoflow_entity <- R6Class("geoflow_entity",
       config$logger.info(sprintf("Copying data to job directory '%s'", jobdir))
       
       layername <- if(!is.null(self$data$identifier)) self$data$identifier else self$identifiers$id
-      basefilename <- paste0(self$identifiers$id,"_",layername)
+      basefilename <- paste0(self$identifiers$id,"_",self$data$type,"_",layername)
       trgFilename <- file.path(jobdir, "data", basefilename)
+      
+      #here either we only pickup zipped files and re-distribute them in job data directory
+      #or we write it from entity$data$features if the latter is not NULL and if writer available (for now only shp)
+      #The latter allows to push features filtered by cqlfilter (matching an eventual geoserver layer) to Zenodo
+      #instead of the complete dataset
       
       isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", self$data$source) > 0
       if(isSourceUrl){
@@ -133,39 +138,54 @@ geoflow_entity <- R6Class("geoflow_entity",
         config$logger.warn(warnMsg)
         download.file(self$data$source, destfile = paste0(trgFilename,".zip"))
       }else{
-        config$logger.info("Copying data local file(s) to Job data directory!")
-        srcFilename <- self$data$source
-        data.files <- list.files(path = dirname(srcFilename), pattern = self$data$sourceName)
-        if(length(data.files)>0){
-          isZipped <- any(sapply(data.files, endsWith, ".zip"))
-          if(!isZipped){
-            config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
-            for(data.file in data.files){
-              file.copy(from = data.file, to = file.path(jobdir, "data"))
-              fileparts <- unlist(strsplit(data.file,"\\."))
-              fileext <- fileparts[length(fileparts)]
-              file.rename(from = file.path(jobdir, "data", data.file), to = paste0(trgFilename, ".", fileext))
+        if(is.null(self$data$features)){
+          
+          config$logger.info("Copying data local file(s) to Job data directory!")
+          srcFilename <- self$data$source
+          data.files <- list.files(path = dirname(srcFilename), pattern = self$data$sourceName)
+          if(length(data.files)>0){
+            isZipped <- any(sapply(data.files, endsWith, ".zip"))
+            if(!isZipped){
+              config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
+              for(data.file in data.files){
+                file.copy(from = data.file, to = file.path(jobdir, "data"))
+                fileparts <- unlist(strsplit(data.file,"\\."))
+                fileext <- fileparts[length(fileparts)]
+                file.rename(from = file.path(jobdir, "data", data.file), to = paste0(trgFilename, ".", fileext))
+              }
+              config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
+              data.files <- list.files(path = dirname(trgFilename), pattern = basefilename)
+              zip(path = file.path(jobdir,"data"),zipfile = paste0(trgFilename,".zip"), files = file.path(jobdir, "data", data.files))
+            }else{
+              config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
+              unzip(zipfile = srcFilename, exdir = file.path(jobdir, "data"), unzip = getOption("unzip"))
+              data.files <- list.files(path = dirname(trgFilename), pattern = self$data$sourceName)
+              if(length(data.files)>0) for(data.file in data.files){
+                file.copy(from = data.file, to = file.path(jobdir, "data"))
+                fileparts <- unlist(strsplit(data.file,"\\."))
+                fileext <- fileparts[length(fileparts)]
+                file.rename(from = file.path(jobdir, "data", data.file), to = paste0(trgFilename, ".", fileext))
+              }
+              data.files <- list.files(path = dirname(trgFilename), pattern = basefilename)
+              zip(path = file.path(jobdir,"data"),zipfile = paste0(trgFilename,".zip"), files = file.path(jobdir, "data", data.files))
             }
-            config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
-            data.files <- list.files(path = dirname(trgFilename), pattern = basefilename)
-            zip(zipfile = paste0(trgFilename,".zip"), files = file.path(jobdir, "data", data.files))
           }else{
-            config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
-            unzip(zipfile = srcFilename, exdir = file.path(jobdir, "data"), unzip = getOption("unzip"))
-            data.files <- list.files(path = dirname(trgFilename), pattern = self$data$sourceName)
-            if(length(data.files)>0) for(data.file in data.files){
-              file.copy(from = data.file, to = file.path(jobdir, "data"))
-              fileparts <- unlist(strsplit(data.file,"\\."))
-              fileext <- fileparts[length(fileparts)]
-              file.rename(from = file.path(jobdir, "data", data.file), to = paste0(trgFilename, ".", fileext))
-            }
-            data.files <- list.files(path = dirname(trgFilename), pattern = basefilename)
-            zip(zipfile = paste0(trgFilename,".zip"), files = file.path(jobdir, "data", data.files))
+            errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", srcFilename, self$data$sourceName)
+            config$logger.error(errMsg)
+            stop(errMsg)
           }
+          
         }else{
-          errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", srcFilename, self$data$sourceName)
-          config$logger.error(errMsg)
-          stop(errMsg)
+          config$logger.info("Writing entity data features to Job data directory!")
+          switch(self$data$type,
+            "shp" = {
+              sf::st_write(self$data$features, paste0(trgFilename, ".shp"), delete_dsn = TRUE)
+              data.files <- list.files(path = file.path(jobdir, "data"), pattern = basefilename)
+              zip(path = file.path(jobdir,"data"), zipfile = paste0(trgFilename, ".zip"), files = file.path(jobdir, "data", data.files))
+            },{
+              config$logger.warn(sprintf("Entity data features writing not implemented for type '%s'", self$data$type))
+            }
+          )
         }
       }
     },
@@ -180,7 +200,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         config$logger.info("Create geoflow temporary data directory")
         dir.create(TEMP_DATA_DIR)
       }
-      trgFilename <- file.path(TEMP_DATA_DIR, paste0(layername,".zip"))
+      trgFilename <- file.path(TEMP_DATA_DIR, paste0(self$data$sourceName,".zip"))
       
       switch(self$data$type,
            #Method for ESRI Shapefile (if remote, shapefiles should be zipped)
@@ -212,21 +232,14 @@ geoflow_entity <- R6Class("geoflow_entity",
              if(shpExists){
                #read shapefile
                config$logger.info("Read Shapefiles from geoflow temporary data directory")
-               trgShp <- file.path(TEMP_DATA_DIR, paste0(layername,".shp"))
+               trgShp <- file.path(TEMP_DATA_DIR, paste0(self$data$sourceName,".shp"))
                sf.data <- sf::st_read(trgShp)
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
                  if(!is.null(self$data$cqlfilter)){
-                   cqlfilter <- self$data$cqlfilter
-                   rfilter <- gsub(" AND ", " & ", cqlfilter)
-                   rfilter <- gsub(" OR ", " | ", rfilter)
-                   rfilter <- gsub(" IN\\(", " %in% c(", rfilter)
-                   rfilter <- gsub("'","\"", rfilter)
-                   rfilter <- gsub("=", "==", rfilter)
-                   rfilter <- paste0("sf.data$", rfilter)
-                   sf.data.filtered <- try(eval(parse(text= sprintf("sf.data[%s,]",rfilter))))
-                   if(class(sf.data.filtered)[1]!="try-error") sf.data <- sf.data.filtered
+                   sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
                  }
+                 self$data$setFeatures(sf.data)
                  
                  #dynamic srid
                  sf.crs <- sf::st_crs(sf.data)
@@ -296,6 +309,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                config$logger.warn(warnMsg)
              }
           },
+          #other format handlers to come
           {
             config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$type))
           }
