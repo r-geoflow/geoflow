@@ -155,7 +155,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               }
               config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
               data.files <- list.files(pattern = basefilename)
-              zip(zipfile = paste0(basefilename,".zip"), files = data.files)
+              if(length(data.files)>0) zip(zipfile = paste0(basefilename,".zip"), files = data.files)
             }else{
               config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
               unzip(zipfile = srcFilename, unzip = getOption("unzip"))
@@ -167,7 +167,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
               }
               data.files <- list.files(pattern = basefilename)
-              zip(zipfile = paste0(basefilename,".zip"), files = data.files)
+              if(length(data.files)>0) zip(zipfile = paste0(basefilename,".zip"), files = data.files)
             }
           }else{
             errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", srcFilename, self$data$sourceName)
@@ -299,6 +299,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                                                layername))
                    self$addRelation(new_wfs_shp)
                  }
+                 #TODO dynamic subjects
                    
                    
                }else{
