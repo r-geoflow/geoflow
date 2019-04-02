@@ -35,56 +35,74 @@ handle_entities_df <- function(config, source){
     entity$setTitle(source_entity[,"Title"])
     
     #description
-    descriptions <- unlist(strsplit(sanitize_str(source_entity[,"Description"]), ";"))
-    if(length(descriptions)==1){
-      entity$setDescription("abstract", descriptions)
-    }else{
-      for(description in descriptions){
-        if(regexpr(":",description) == -1)
-          entity$setDescription("abstract", description)
-        else
-          des_kvp <- extract_kvp(description)
-          entity$setDescription(des_kvp$key, des_kvp$values[[1]])
+    src_description <- sanitize_str(source_entity[,"Description"])
+    descriptions <- if(!is.na(src_description)) unlist(strsplit(src_description, ";")) else list()
+    if(length(descriptions)>0){
+      if(length(descriptions)==1){
+        entity$setDescription("abstract", descriptions)
+      }else{
+        for(description in descriptions){
+          if(regexpr(":",description) == -1)
+            entity$setDescription("abstract", description)
+          else
+            des_kvp <- extract_kvp(description)
+            entity$setDescription(des_kvp$key, des_kvp$values[[1]])
+        }
       }
     }
     
     #subjects
-    subjects <- unlist(strsplit(sanitize_str(source_entity[,"Subject"]), ";"))
-    invisible(lapply(subjects, function(subject){
-      subject_obj <- geoflow_subject$new(str = subject)
-      entity$addSubject(subject_obj)
-    }))
-    
+    src_subject <- sanitize_str(source_entity[,"Subject"])
+    subjects <- if(!is.na(src_subject)) unlist(strsplit(src_subject, ";")) else list()
+    if(length(subjects)>0){
+      invisible(lapply(subjects, function(subject){
+        subject_obj <- geoflow_subject$new(str = subject)
+        entity$addSubject(subject_obj)
+      }))
+    }
+      
     #contacts
-    contacts <- unlist(strsplit(sanitize_str(source_entity[,"Creator"]), ";"))
-    invisible(lapply(contacts, function(contact){
-      contact_splits <- unlist(strsplit(contact, ":"))
-      contact_obj <- geoflow_contact$new()
-      contact_obj$setId(contact_splits[2])
-      contact_obj$setRole(contact_splits[1])
-      entity$addContact(contact_obj)
-    }))
+    src_contact <- sanitize_str(source_entity[,"Creator"])
+    contacts <- if(!is.na(src_contact)) unlist(strsplit(src_contact, ";")) else list()
+    if(length(contacts)>0){
+      invisible(lapply(contacts, function(contact){
+        contact_splits <- unlist(strsplit(contact, ":"))
+        contact_ids <- unlist(strsplit(contact_splits[2],","))
+        for(contact_id in contact_ids){
+          contact_obj <- geoflow_contact$new()
+          contact_obj$setId(contact_id)
+          contact_obj$setRole(contact_splits[1])
+          entity$addContact(contact_obj)
+        }
+      }))
+    }
     
     #relations
-    relations <- unlist(strsplit(sanitize_str(source_entity[,"Relation"]), ";"))
-    invisible(lapply(relations, function(relation){
-      relation_obj <- geoflow_relation$new(str = relation)
-      entity$addRelation(relation_obj)
-    }))
+    src_relation <- sanitize_str(source_entity[,"Relation"])
+    relations <- if(!is.na(src_relation)) unlist(strsplit(src_relation, ";")) else list()
+    if(length(relations)>0){
+      invisible(lapply(relations, function(relation){
+        relation_obj <- geoflow_relation$new(str = relation)
+        entity$addRelation(relation_obj)
+      }))
+    }
     
     #spatial extent
     entity$setSrid(source_entity[,"SpatialReferenceSystem"])
-    entity$setSpatialExtent(source_entity[,"SpatialCoverage"], crs = source_entity[,"SpatialReferenceSystem"])
+    if(!is.na(source_entity[,"SpatialCoverage"])) entity$setSpatialExtent(source_entity[,"SpatialCoverage"], crs = source_entity[,"SpatialReferenceSystem"])
     
     #temporal extent
-    entity$setTemporalExtent(source_entity[,"TemporalCoverage"])
+    if(!is.na(source_entity[,"TemporalCoverage"])) entity$setTemporalExtent(source_entity[,"TemporalCoverage"])
     
     #Rights
-    rights <- unlist(strsplit(sanitize_str(source_entity[,"Rights"]), ";"))
-    invisible(lapply(rights, function(right){
-      right_obj <- geoflow_right$new(str = right)
-      entity$addRight(right_obj)
-    }))
+    src_rights <- sanitize_str(source_entity[,"Rights"])
+    rights <- if(!is.na(src_rights)) unlist(strsplit(src_rights, ";")) else list()
+    if(length(rights)>0){
+      invisible(lapply(rights, function(right){
+        right_obj <- geoflow_right$new(str = right)
+        entity$addRight(right_obj)
+      }))
+    }
     
     #TODO Provenance
     

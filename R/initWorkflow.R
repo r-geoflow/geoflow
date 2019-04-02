@@ -214,8 +214,8 @@ initWorkflow <- function(file){
               contact_from_directory <- directory_of_contacts[sapply(directory_of_contacts, function(x){x$id == id})]
               if(!is.null(contact_from_directory)){
                 if(length(contact_from_directory)>0){
-                  if(length(contact_from_directory)>1){
-                    config$logger.warn("Warning: 2 contacts identified with same id! Check your contacts")
+                  if(length(contact_from_directory)>1 & length(unique(sapply(contact_from_directory, function(x){x$role})))>1){
+                    config$logger.warn("Warning: 2 contacts identified with same id/role! Check your contacts")
                   }
                   contact_from_directory <- contact_from_directory[[1]]
                   newcontact <- contact_from_directory

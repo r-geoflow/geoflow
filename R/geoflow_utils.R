@@ -30,7 +30,7 @@ extract_kvp <- function(str){
       link <- value_splits[2]
       attr(value, "uri") <- link
     }
-    hasDescription <- attr(regexpr("\\[", value), "useBytes") & endsWith(value, "]")
+    hasDescription <- regexpr("\\[", value)>0 & endsWith(value, "]")
     if(hasDescription){
       attrs <- attributes(value)
       value_splits <- unlist(strsplit(value, "\\["))
