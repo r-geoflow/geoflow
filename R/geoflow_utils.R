@@ -3,6 +3,8 @@
 sanitize_str <- function(str){
   str <- gsub("\n", ";", str)
   str <- gsub(";;", ";", str)
+  str <- gsub(",;", ",", str)
+  str <- gsub(":;", ":", str)
   return(str)
 }
 

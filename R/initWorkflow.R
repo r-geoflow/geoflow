@@ -226,6 +226,30 @@ initWorkflow <- function(file){
             }
             return(newcontact)
           })
+          
+          #we look at data provenance
+          if(!is.null(entity$provenance)){
+            newprov <- entity$provenance$clone()
+            if(length(entity$provenance$processes)>0){
+              newprov$processes <- lapply(entity$provenance$processes, function(process){
+                newprocess <- process$clone()
+                processor <- process$processor
+                if(!is.null(processor)){
+                  processor_from_directory <- directory_of_contacts[sapply(directory_of_contacts, function(x){x$id == processor$id})]
+                  if(length(processor_from_directory)>0){
+                    processor_from_directory <- processor_from_directory[[1]]
+                    new_processor <- processor_from_directory
+                    new_processor$setId(processor$id)
+                    new_processor$setRole("processor")
+                    newprocess$setProcessor(new_processor)
+                  }
+                }
+                return(newprocess)
+              })
+            }
+            newentity$setProvenance(newprov)
+          }
+          
           return(newentity)
         })
       }

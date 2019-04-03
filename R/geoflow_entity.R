@@ -5,6 +5,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     identifiers = list(),
     date = NULL,
     language = "eng",
+    type = "dataset",
     title = NULL,
     descriptions = list(),
     subjects = list(),
@@ -14,6 +15,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     spatial_extent = NULL,
     srid = NULL,
     temporal_extent = NULL,
+    provenance = NULL,
     data = NULL,
     initialize = function(){},
     
@@ -30,6 +32,11 @@ geoflow_entity <- R6Class("geoflow_entity",
     #setLanguage
     setLanguage = function(language){
       self$language <- language
+    },
+    
+    #setType
+    setType = function(type){
+      self$type <- type
     },
     
     #setTitle
@@ -106,6 +113,14 @@ geoflow_entity <- R6Class("geoflow_entity",
           end = str_to_posix(strs[2])
         )
       }
+    },
+    
+    #setProvenance
+    setProvenance = function(provenance){
+      if(!is(provenance, "geoflow_provenance")){
+        stop("The provenance should be an object of class 'geoflow_provenance'")
+      }
+      self$provenance <- provenance
     },
     
     #setData

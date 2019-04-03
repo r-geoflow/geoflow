@@ -42,6 +42,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md$setMetadataStandardName("ISO 19115:2003/19139")
   md$setMetadataStandardVersion("1.0")
   md$setDataSetURI(md$fileIdentifier)
+  md$setHierarchyLevel(entity$type)
   
   #add contacts
   for(entity_contact in entity$contacts){
@@ -298,7 +299,55 @@ geometa_create_iso_19115 <- function(entity, config, options){
   distrib$setDigitalTransferOptions(dto)
   md$setDistributionInfo(distrib)
   
-  #TODO data quality
+  #data quality - provenance / lineage
+  if(!is.null(entity$provenance)){
+    dq_lineage <- ISODataQuality$new()
+    dq_lineage_scope <- ISOScope$new()
+    dq_lineage_scope$setLevel(entity$type)
+    dq_lineage$setScope(dq_lineage_scope)
+    lineage <- ISOLineage$new()
+    lineage$setStatement(entity$provenance$statement)
+    processes <- entity$provenance$processes
+    if(length(processes)>0){
+      for(process in processes){
+        processStep <- ISOProcessStep$new()
+        processStep$setRationale(process$rationale)
+        processStep$setDescription(process$description)
+        
+        #processor as responsability party
+        processor <- process$processor
+        rpp <- ISOResponsibleParty$new()
+        rpp$setIndividualName(processor$individualName)
+        rpp$setOrganisationName(processor$organizationName)
+        rpp$setPositionName(processor$positionName)
+        rpp$setRole(processor$role)
+        contact <- ISOContact$new()
+        phone <- ISOTelephone$new()
+        phone$setVoice(processor$voice)
+        phone$setFacsimile(processor$facsimile)
+        contact$setPhone(phone)
+        address <- ISOAddress$new()
+        address$setDeliveryPoint(processor$postalAddress)
+        address$setCity(processor$city)
+        address$setPostalCode(processor$postalCode)
+        address$setCountry(processor$country)
+        address$setEmail(processor$email)
+        contact$setAddress(address)
+        res <- ISOOnlineResource$new()
+        res$setLinkage(processor$websiteUrl)
+        res$setName(processor$websiteName)
+        contact$setOnlineResource(res)
+        rpp$setContactInfo(contact) 
+        processStep$addProcessor(rpp)
+        lineage$addProcessStep(processStep)
+      }
+    }
+    dq_lineage$setLineage(lineage)
+    md$addDataQualityInfo(dq_lineage)
+  }
+  
+  #TODO data quality other than lineage
+  #e.g. INSPIRE conformance?
   
   #TODO content information --> Feature Catalogue description (if data handling)
   

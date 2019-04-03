@@ -17,6 +17,8 @@ handle_entities_df <- function(config, source){
     
     entity$setDate(as.Date(source_entity[,"Date"]))
     
+    if(!is.na(source_entity[,"Type"])) entity$setType(source_entity[,"Type"])
+    
     #identifier
     identifiers <- unlist(strsplit(sanitize_str(source_entity[,"Identifier"]), ";"))
     if(length(identifiers)==1){
@@ -104,10 +106,15 @@ handle_entities_df <- function(config, source){
       }))
     }
     
-    #TODO Provenance
+    #Provenance
+    prov <- sanitize_str(source_entity[,"Provenance"])
+    if(!is.na(prov)){
+      prov_obj <- geoflow_provenance$new(str = prov)
+      entity$setProvenance(prov_obj)
+    }
     
     #data
-    data <- source_entity[,"Data"]
+    data <- sanitize_str(source_entity[,"Data"])
     if(!is.na(data)){
       data_obj <- geoflow_data$new(str = data)
       entity$setData(data_obj)
