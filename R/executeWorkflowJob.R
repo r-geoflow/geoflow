@@ -26,9 +26,13 @@ executeWorkflowJob <- function(config, jobdir){
         for(i in 1:length(actions)){config$logger.info(sprintf("Action %s: %s", i, actions[[i]]$id))}
         
         if(config$mode == "entity"){
+         
           #execute entity-based actions
           entities <- config$metadata$content$entities
           if(!is.null(entities)){
+            
+            withZenodo <- sapply(actions, function(x){x$id=="zen4R-deposit-record"})
+            
             invisible(lapply(entities, function(entity){
               
               #if entity has data we copy data to job data dir
@@ -41,15 +45,23 @@ executeWorkflowJob <- function(config, jobdir){
                 action$fun(entity, config, action$options)
               }
               #if zenodo is among actions, file upload (and possibly publish) to be managed here
-              withZenodo <- sapply(actions, function(x){x$id=="zen4R-deposit-record"})
               if(any(withZenodo)){
                 zen_action <- actions[withZenodo][[1]]
                 act_options <- actions$options
                 act_options$depositWithFiles <- TRUE
                 zen_action$fun(entity, config, act_options)
               }
-              
             }))
+            
+            #in case Zenodo was enabled, we create an output table of DOIs
+            if(withZenodo){
+              config$logger.info("Exporting reference list of DOIs to job directory")
+              out_zenodo_dois <- do.call("rbind", lapply(entities, function(entity){
+                return(data.frame(id = entity$identifiers[["id"]], doi = entity$identifiers[["doi"]], stringsAsFactors = FALSE))
+              }))
+              write.csv(out_zenodo_dois, file = file.path(getwd(),"metadata", "zenodo_dois.csv"), row.names = FALSE)
+            }
+            
           }
         }else if(config$mode == "raw"){
           #execute raw actions (--> not based on metadata entities)
