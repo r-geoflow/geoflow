@@ -90,8 +90,18 @@ handle_entities_df <- function(config, source){
     }
     
     #spatial extent
-    entity$setSrid(source_entity[,"SpatialReferenceSystem"])
-    if(!is.na(source_entity[,"SpatialCoverage"])) entity$setSpatialExtent(source_entity[,"SpatialCoverage"], crs = source_entity[,"SpatialReferenceSystem"])
+    spatial_cov <- source_entity[,"SpatialCoverage"]
+    if(!is.na(spatial_cov)){
+      if(!startsWith(spatial_cov,"SRID=")) 
+        stop("The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry")
+      spatial_cov <- unlist(strsplit(spatial_cov,";"))
+      if(length(spatial_cov)!=2) 
+        stop("The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry")
+      spatial_srid <- as.integer(unlist(strsplit(spatial_cov[1],"SRID="))[2])
+      spatial_cov <- spatial_cov[2]
+      entity$setSrid(spatial_srid)
+      entity$setSpatialExtent(spatial_cov, crs = spatial_srid)
+    }
     
     #temporal extent
     if(!is.na(source_entity[,"TemporalCoverage"])) entity$setTemporalExtent(source_entity[,"TemporalCoverage"])
