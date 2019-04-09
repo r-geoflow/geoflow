@@ -15,11 +15,10 @@ geoflow_provenance <- R6Class("geoflow_provenance",
          if(!any(sapply(data_props, function(x){x$key=="statement"}))){
            stop("The data 'statement' is mandatory")
          }
-         self$setStatement(data_props$statement$values[[1]])
+         self$setStatement(paste(data_props$statement$values,collapse=","))
          #processes
          processes <- data_props[sapply(data_props, function(x){x$key=="process"})]
          processors <- data_props[sapply(data_props, function(x){x$key=="processor"})]
-         if(length(processes)==0) stop("At least one provenance process step is required")
          if(length(processors)!=length(processes)) stop("Number of processors doesn't match the number of process steps")
          if(length(processes)>0 & length(processors)>0 & length(processes)==length(processors)){
            processes <- processes[[1]]$values
