@@ -160,8 +160,8 @@ handle_entities_csv <- function(config, source){
   source <- read.csv(source)
   
   #apply generic handler
-  contacts <- handle_entities_df(config, source)
-  return(contacts)
+  entities <- handle_entities_df(config, source)
+  return(entities)
 }
 
 #' handle_entities_excel
@@ -172,8 +172,8 @@ handle_entities_excel <- function(config, source){
   source <- as.data.frame(readxl::read_excel(source))
   
   #apply generic handler
-  contacts <- handle_entities_df(config, source)
-  return(contacts)
+  entities <- handle_entities_df(config, source)
+  return(entities)
 }
 
 
