@@ -60,6 +60,7 @@ zen4R_deposit_record <- function(entity, config, options){
   
   #contacts
   #TODO think if correct handle all contacts (whatever roles) as creators (author/co-authors)
+  contact_added <- list()
   zenodo_metadata$metadata$creators <- list()
   for(contact in entity$contacts){
     contact_names <- unlist(strsplit(contact$individualName, " "))
@@ -71,12 +72,15 @@ zen4R_deposit_record <- function(entity, config, options){
     if(length(contact_ids)>0) orcid <- contact_ids[[1]]$value
     
     #add/update creators
-    zenodo_metadata$addCreator(
-      firstname = contact_names[1], 
-      lastname = contact_names[2], 
-      affiliation = contact$organizationName,
-      orcid = orcid
-    )
+    if(!(contact$id %in% contact_added)){
+      zenodo_metadata$addCreator(
+        firstname = contact_names[1], 
+        lastname = contact_names[2], 
+        affiliation = contact$organizationName,
+        orcid = orcid
+      )
+      contact_added <- c(contact_added, contact$id)
+    }
   }
   
   #TODO myrec$setLicense
