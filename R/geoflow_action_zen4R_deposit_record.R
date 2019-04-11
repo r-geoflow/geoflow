@@ -56,7 +56,7 @@ zen4R_deposit_record <- function(entity, config, options){
   
   #upload type
   #TODO think on how to map upload types between Dublin core, ISO/OGC metadata, Zenodo  
-  zenodo_metadata$setUploadType("dataset")
+  zenodo_metadata$setUploadType(entity$type)
   
   #contacts
   #TODO think if correct handle all contacts (whatever roles) as creators (author/co-authors)
