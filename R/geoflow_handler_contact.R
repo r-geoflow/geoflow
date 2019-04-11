@@ -28,12 +28,16 @@ handle_contacts_df <- function(config, source){
     contact$setWebsiteUrl(source_contact[,"WebsiteUrl"])
     contact$setWebsiteName(source_contact[,"WebsiteName"])
     
-    identifiers <- unlist(strsplit(sanitize_str(source_contact[,"Identifier"]), ";"))
-    invisible(lapply(identifiers, function(identifier){
-      id_obj <- geoflow_kvp$new(str = identifier)
-      contact$addIdentifier(id_obj)
-    }))
-    
+    srcId <- source_contact[,"Identifier"]
+    if(!is.na(srcId)){
+      identifiers <- unlist(strsplit(sanitize_str(srcId), ";"))
+      if(length(identifiers)>0){
+        invisible(lapply(identifiers, function(identifier){
+          id_obj <- geoflow_kvp$new(str = identifier)
+          contact$addIdentifier(id_obj)
+        }))
+      }
+    }
     contacts <- c(contacts, contact)
   }
   return(contacts)
