@@ -12,6 +12,7 @@ handle_entities_df <- function(config, source){
   rowNum <- nrow(source)
   config$logger.info(sprintf("Parsing %s entities from tabular source", rowNum))
   for(i in 1:rowNum){
+    config$logger.info(sprintf("Parsing entity %s", i))
     source_entity <- source[i,]
     entity <- geoflow_entity$new()
     
@@ -25,11 +26,12 @@ handle_entities_df <- function(config, source){
       entity$setIdentifier("id", identifiers)
     }else{
       for(identifier in identifiers){
-        if(regexpr(":",identifier) == -1)
+        if(regexpr(":",identifier) == -1){
           entity$setIdentifier("id", identifier)
-        else
+        }else{
           id_kvp <- extract_kvp(identifier)
           entity$setIdentifier(id_kvp$key, id_kvp$values[[1]])
+        }
       }
     }
     
@@ -69,12 +71,18 @@ handle_entities_df <- function(config, source){
     if(length(contacts)>0){
       invisible(lapply(contacts, function(contact){
         contact_splits <- unlist(strsplit(contact, ":"))
-        contact_ids <- unlist(strsplit(contact_splits[2],","))
+        contact_ids <- tolower(unlist(strsplit(contact_splits[2],",")))
         for(contact_id in contact_ids){
-          contact_obj <- geoflow_contact$new()
-          contact_obj$setId(contact_id)
-          contact_obj$setRole(contact_splits[1])
-          entity$addContact(contact_obj)
+          if(is.na(contact_id)){
+            config$logger.warn(sprintf("Warning: In entity %s, empty contact id will be ignored!", i))
+          }else if(contact_id==""){
+            config$logger.warn(sprintf("Warning: In entity %s, empty contact id will be ignored!", i))
+          }else{
+            contact_obj <- geoflow_contact$new()
+            contact_obj$setId(contact_id)
+            contact_obj$setRole(contact_splits[1])
+            entity$addContact(contact_obj)
+          }
         }
       }))
     }

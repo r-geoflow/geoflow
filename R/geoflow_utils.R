@@ -13,7 +13,8 @@ sanitize_str <- function(str){
 #'@export
 extract_kvp <- function(str){
   kvp <- unlist(strsplit(str, ":(?!//|\\d)", perl = T))
-  if(length(kvp)!=2) stop("Error while splitting kvp key/value")
+  if(length(kvp)==1) stop("Error while splitting kvp key/value")
+  if(length(kvp)>2) kvp[2] <- paste(kvp[2:length(kvp)], collapse=":", sep="")
   
   #key
   key <- kvp[1]
@@ -52,8 +53,12 @@ extract_kvp <- function(str){
 #'str_to_posix
 #'@export
 str_to_posix <- function(str){
-  str_format <- if(nchar(str)==10) "%Y-%m-%d" else "%Y-%m-%dT%H:%M:%S"
-  out <- as.POSIXct(str, format = str_format)
+  if(nchar(str)>7){
+    str_format <- if(nchar(str)==10) "%Y-%m-%d" else "%Y-%m-%dT%H:%M:%S"
+    out <- as.POSIXct(str, format = str_format)
+  }else{
+    out <- str
+  }
   return(out)
 }
 

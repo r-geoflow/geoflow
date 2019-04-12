@@ -212,7 +212,7 @@ initWorkflow <- function(file){
               id <- contact$id
               role <- contact$role
               contact_from_directory <- directory_of_contacts[sapply(directory_of_contacts, function(x){x$id == id})]
-              if(!is.null(contact_from_directory)){
+              if(!all(is.null(contact_from_directory))){
                 if(length(contact_from_directory)>0){
                   if(length(contact_from_directory)>1 & length(unique(sapply(contact_from_directory, function(x){x$role})))>1){
                     config$logger.warn("Warning: 2 contacts identified with same id/role! Check your contacts")
@@ -222,10 +222,13 @@ initWorkflow <- function(file){
                   newcontact$setId(id)
                   newcontact$setRole(role)
                 }
+              }else{
+                config$logger.warn(sprintf("Warning: contact %s is not registered in directory! Contact will be ignored!", id))
               }
             }
             return(newcontact)
           })
+          newentity$contacts <- newentity$contacts[!sapply(newentity$contacts, is.null)]
           
           #we look at data provenance
           if(!is.null(entity$provenance)){
@@ -331,6 +334,7 @@ initWorkflow <- function(file){
       }
       return(action_to_trigger)
     })
+    config$actions <- config$actions[!sapply(config$actions, is.null)]
     
   }
 

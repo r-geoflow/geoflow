@@ -63,19 +63,19 @@ zen4R_deposit_record <- function(entity, config, options){
   contact_added <- list()
   zenodo_metadata$metadata$creators <- list()
   for(contact in entity$contacts){
-    contact_names <- unlist(strsplit(contact$individualName, " "))
     
     #manage orcid?
     orcid <- NULL
     contact_ids <- contact$identifiers
-    contact_ids <- contact_ids[sapply(contact_ids, function(x){x$key=="orcid"})]
-    if(length(contact_ids)>0) orcid <- contact_ids[[1]]$value
-    
+    if(any(sapply(contact_ids, function(x){x$key=="orcid"}))){
+      contact_ids <- contact_ids[sapply(contact_ids, function(x){x$key=="orcid"})]
+      if(length(contact_ids)>0) orcid <- contact_ids[[1]]$value
+    }
     #add/update creators
     if(!(contact$id %in% contact_added)){
       zenodo_metadata$addCreator(
-        firstname = contact_names[1], 
-        lastname = contact_names[2], 
+        firstname = contact$firstName, 
+        lastname = contact$lastName, 
         affiliation = contact$organizationName,
         orcid = orcid
       )
@@ -154,11 +154,12 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   #we set the (prereserved) doi to the entity in question
-  invisible(lapply(1:length(config$metadata$content$entities), function(i){
-    ent <- config$metadata$content$entities[[i]] 
+  for(i in 1:length(config$metadata$content$entities)){
+    ent <- config$metadata$content$entities[[i]]
     if(ent$identifiers[["id"]]==entity$identifiers[["id"]]){
-      config$metadata$content$entities[[i]]$identifiers[["doi"]] <<- zenodo_metadata$metadata$prereserve_doi$doi
+      config$metadata$content$entities[[i]]$identifiers[["doi"]] <- zenodo_metadata$metadata$prereserve_doi$doi
+      break;
     }
-  }))
+  }
   
 }

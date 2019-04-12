@@ -3,7 +3,8 @@
 geoflow_contact <- R6Class("geoflow_contact",
   public = list(
     id = NULL,
-    individualName = NULL,
+    firstName = NULL,
+    lastName = NULL,
     organizationName = NULL,
     positionName = NULL,
     role = NULL,
@@ -30,7 +31,17 @@ geoflow_contact <- R6Class("geoflow_contact",
     
     #setIndividualName
     setIndividualName = function(individualName){
-      self$individualName <- individualName
+      stop("The function 'setIndividualname' is deprecated, please use setFirstName/setLastName methods instead!")
+    },
+    
+    #setFirstName
+    setFirstName = function(firstName){
+      self$firstName <- firstName
+    },
+    
+    #setLastName
+    setLastName = function(lastName){
+      self$lastName <- lastName
     },
     
     #setOrganizationName

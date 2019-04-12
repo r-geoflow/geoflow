@@ -47,7 +47,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #add contacts
   for(entity_contact in entity$contacts){
     rp <- ISOResponsibleParty$new()
-    rp$setIndividualName(entity_contact$individualName)
+    rp$setIndividualName(paste(entity_contact$firstName, entity_contact$lastName))
     rp$setOrganisationName(entity_contact$organizationName)
     rp$setPositionName(entity_contact$positionName)
     rp$setRole(entity_contact$role)
@@ -94,7 +94,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #adding contacts
   for(entity_contact in entity$contacts){
     rp <- ISOResponsibleParty$new()
-    rp$setIndividualName(entity_contact$individualName)
+    rp$setIndividualName(paste(entity_contact$firstName, entity_contact$lastName))
     rp$setOrganisationName(entity_contact$organizationName)
     rp$setPositionName(entity_contact$positionName)
     rp$setRole(entity_contact$role)
@@ -136,7 +136,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   owners <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
   if(length(owners)==0) main_entity <- entity$contacts[[1]] else main_entity <- owners[[1]]
   rp <- ISOResponsibleParty$new()
-  rp$setIndividualName(main_entity$individualName)
+  rp$setIndividualName(paste(main_entity$firstName, main_entity$lastName))
   rp$setOrganisationName(main_entity$organizationName)
   rp$setPositionName(main_entity$positionName)
   rp$setRole(main_entity$role)
@@ -317,7 +317,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
         #processor as responsability party
         processor <- process$processor
         rpp <- ISOResponsibleParty$new()
-        rpp$setIndividualName(processor$individualName)
+        rpp$setIndividualName(paste(processor$firstName, processor$lastName))
         rpp$setOrganisationName(processor$organizationName)
         rpp$setPositionName(processor$positionName)
         rpp$setRole(processor$role)

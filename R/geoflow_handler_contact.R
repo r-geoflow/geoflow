@@ -14,9 +14,10 @@ handle_contacts_df <- function(config, source){
   for(i in 1:rowNum){
     source_contact <- source[i,]
     contact <- geoflow_contact$new()
-    contact$setId(source_contact[,"Email"])
-    contact$setEmail(source_contact[,"Email"])
-    contact$setIndividualName(paste(source_contact[,"FirstName"], source_contact[,"LastName"]))
+    contact$setId(tolower(source_contact[,"Email"]))
+    contact$setEmail(tolower(source_contact[,"Email"]))
+    contact$setFirstName(source_contact[,"FirstName"])
+    contact$setLastName(source_contact[,"LastName"])
     contact$setOrganizationName(source_contact[,"OrganizationName"])
     contact$setPositionName(source_contact[,"PositionName"])
     contact$setPostalAddress(source_contact[,"PostalAddress"])
