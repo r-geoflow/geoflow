@@ -32,10 +32,18 @@
   },
   "software": [
     {
-  		"id": "zenodo",
-  		"url": "https://sandbox.zenodo.org/api",
-  		"token": "<your_zenodo_token>"
-	  }
+  		"id": "my-zenodo",
+		  "type": "output",
+		  "software_type": "zenodo",
+		  "parameters": {
+    		"url": "https://sandbox.zenodo.org/api",
+    		"token": "<your_zenodo_token>",
+    		"logger": "DEBUG"
+		  },
+		  "properties": {
+		    "clean": true
+		  }
+		}
   ],
   "actions": [
     {
