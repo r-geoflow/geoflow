@@ -171,6 +171,9 @@ register_software <- function(){
         url = list(def = "Zenodo API URL. For sandbox tests, use 'https://sandbox.zenodo.org/api', otherwise provided by zen4R by default"),
         token = list(def = "Zenodo user authentication token."),
         logger = list(def = "Level for 'zen4R' logger messages (NULL, 'INFO' or 'DEBUG')")
+      ),
+      attributes = list(
+        clean = list(def = "An option (TRUE/FALSE), to clean all draft Zenodo deposits prior to any new deposit")
       )
     )
   )

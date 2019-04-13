@@ -31,7 +31,14 @@ executeWorkflowJob <- function(config, jobdir){
           entities <- config$metadata$content$entities
           if(!is.null(entities)){
             
-            withZenodo <- sapply(actions, function(x){x$id=="zen4R-deposit-record"})
+            withZenodo <- any(sapply(actions, function(x){x$id=="zen4R-deposit-record"}))
+            if(withZenodo){
+              ZENODO_CONFIG <- config$software$output$zenodo_config
+              if(!is.null(ZENODO_CONFIG$properties$clean)) if(as.logical(ZENODO_CONFIG$properties$clean)){
+                config$logger.info("Zenodo action 'clean' activated: deleting all draft deposits prior to new deposits!")
+                config$software$output$zenodo$deleteRecords()
+              }
+            }
             
             invisible(lapply(entities, function(entity){
               
@@ -45,8 +52,8 @@ executeWorkflowJob <- function(config, jobdir){
                 action$fun(entity, config, action$options)
               }
               #if zenodo is among actions, file upload (and possibly publish) to be managed here
-              if(any(withZenodo)){
-                zen_action <- actions[withZenodo][[1]]
+              if(withZenodo){
+                zen_action <- actions[sapply(actions, function(x){x$id=="zen4R-deposit-record"})][[1]]
                 act_options <- actions$options
                 act_options$depositWithFiles <- TRUE
                 zen_action$fun(entity, config, act_options)
