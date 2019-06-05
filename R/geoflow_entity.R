@@ -139,8 +139,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       
       config$logger.info(sprintf("Copying data to job directory '%s'", jobdir))
       
-      layername <- if(!is.null(self$data$identifier)) self$data$identifier else self$identifiers$id
-      basefilename <- paste0(self$identifiers$id,"_",self$data$type,"_",layername)
+      resourceId <- if(!is.null(self$data$identifier)) self$data$identifier else self$identifiers$id
+      basefilename <- paste0(self$identifiers$id,"_",self$data$type,"_",resourceId)
       
       #here either we only pickup zipped files and re-distribute them in job data directory
       #or we write it from entity$data$features if the latter is not NULL and if writer available (for now only shp)
@@ -151,7 +151,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(isSourceUrl){
         warnMsg <- "Copying data from URL to Job data directory!"
         config$logger.warn(warnMsg)
-        download.file(self$data$source, destfile = paste0(basefilename,".zip"))
+        download.file(self$data$source, destfile = basefilename)
       }else{
         if(is.null(self$data$features)){
           

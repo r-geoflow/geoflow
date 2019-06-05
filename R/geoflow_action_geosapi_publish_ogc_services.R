@@ -44,6 +44,12 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   layername <- if(!is.null(entity$data$identifier)) entity$data$identifier else entity$identifiers$id
   sourcename <- if(!is.null(entity$data$sourceName)) entity$data$sourceName else layername
   
+  if(entity$data$type == "other"){
+    warnMsg <- "No 'geosapi' action possible for type 'other'. Action skipped"
+    config$logger.warn(warnMsg)
+    return(NULL)
+  }
+  
   #upload
   #-------------------------------------------------------------------------------------------------
   if(entity$data$upload){

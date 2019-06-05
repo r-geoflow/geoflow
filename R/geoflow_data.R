@@ -121,7 +121,7 @@ geoflow_data <- R6Class("geoflow_data",
     
     #setType
     setType = function(type){
-      allowedTypes <- c("dbtable", "dbview", "dbquery","shp")
+      allowedTypes <- c("dbtable", "dbview", "dbquery","shp", "other")
       if(!(type %in% allowedTypes)){
         errMsg <- sprintf("Type should be among values [%s]", paste0(allowedTypes, collapse=","))
         stop(errMsg)
