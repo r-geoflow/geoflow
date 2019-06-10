@@ -54,7 +54,7 @@ executeWorkflowJob <- function(config, jobdir){
               #if zenodo is among actions, file upload (and possibly publish) to be managed here
               if(withZenodo){
                 zen_action <- actions[sapply(actions, function(x){x$id=="zen4R-deposit-record"})][[1]]
-                act_options <- actions$options
+                act_options <- zen_action$options
                 act_options$depositWithFiles <- TRUE
                 zen_action$fun(entity, config, act_options)
               }
@@ -64,7 +64,7 @@ executeWorkflowJob <- function(config, jobdir){
             if(withZenodo){
               config$logger.info("Exporting reference list of DOIs to job directory")
               out_zenodo_dois <- do.call("rbind", lapply(entities, function(entity){
-                return(data.frame(id = entity$identifiers[["id"]], doi = entity$identifiers[["doi"]], stringsAsFactors = FALSE))
+                return(data.frame(id = entity$identifiers[["id"]], doi = entity$identifiers[["doi_to_save"]], stringsAsFactors = FALSE))
               }))
               write.csv(out_zenodo_dois, file = file.path(getwd(),"metadata", "zenodo_dois.csv"), row.names = FALSE)
             }

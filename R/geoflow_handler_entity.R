@@ -22,16 +22,12 @@ handle_entities_df <- function(config, source){
     
     #identifier
     identifiers <- unlist(strsplit(sanitize_str(source_entity[,"Identifier"]), ";"))
-    if(length(identifiers)==1){
-      entity$setIdentifier("id", identifiers)
-    }else{
-      for(identifier in identifiers){
-        if(regexpr(":",identifier) == -1){
-          entity$setIdentifier("id", identifier)
-        }else{
-          id_kvp <- extract_kvp(identifier)
-          entity$setIdentifier(id_kvp$key, id_kvp$values[[1]])
-        }
+    for(identifier in identifiers){
+      if(regexpr(":",identifier) == -1){
+        entity$setIdentifier("id", identifier)
+      }else{
+        id_kvp <- extract_kvp(identifier)
+        entity$setIdentifier(id_kvp$key, id_kvp$values[[1]])
       }
     }
     

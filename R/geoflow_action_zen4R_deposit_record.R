@@ -27,13 +27,15 @@ zen4R_deposit_record <- function(entity, config, options){
   if(length(deposits)>0){
     invisible(lapply(deposits, function(deposit){
      related_identifiers <- deposit$metadata$related_identifiers
-     for(related_identifier in related_identifiers){
-       if(startsWith(related_identifier$identifier,"urn")){
-         related_id <- unlist(strsplit(related_identifier$identifier, "urn:"))[2]
-         if(related_id == entity$identifiers[["id"]] &
-            related_identifier$relation == "isIdenticalTo"){
-           zenodo_metadata <<- deposit
-           break
+     if(!is.null(related_identifiers)){
+       for(related_identifier in related_identifiers){
+         if(startsWith(related_identifier$identifier,"urn")){
+           related_id <- unlist(strsplit(related_identifier$identifier, "urn:"))[2]
+           if(related_id == entity$identifiers[["id"]] &
+              related_identifier$relation == "isIdenticalTo"){
+             zenodo_metadata <<- deposit
+             break
+           }
          }
        }
      }
@@ -45,10 +47,12 @@ zen4R_deposit_record <- function(entity, config, options){
     zenodo_metadata$addRelatedIdentifier("isIdenticalTo", paste("urn", entity$identifiers[["id"]], sep=":"))
   }
   
+  doi <- zenodo_metadata$metadata$prereserve_doi$doi
   #if entity already comes with a DOI, we set it (this might be a preset DOI from Zenodo or elsewhere)
   if(!is.null(entity$identifiers[["doi"]])){
-    zenodo_metadata$setDOI(entity$identifiers[["doi"]])
+    doi <- entity$identifiers[["doi"]]
   }
+  if(regexpr("zenodo", doi)<0) zenodo_metadata$setDOI(doi)
   
   #basic record description
   zenodo_metadata$setTitle(entity$title)
@@ -139,13 +143,14 @@ zen4R_deposit_record <- function(entity, config, options){
       publish <- FALSE
     }
     if(!is.null(entity$identifiers[["doi"]])){
-      if(entity$identfiers[["doi"]] != zenodo_metadata$metadata$prereserve_doi$doi){ 
+      if(regexpr("zenodo", doi)>0) if(doi != zenodo_metadata$metadata$prereserve_doi$doi){ 
         config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Zenodo record DOI (%s). Zenodo 'publish' action ignored!", 
-                                   entity$identfiers[["doi"]], zenodo_metadata$metadata$prereserve_doi$doi))
+                                   doi, zenodo_metadata$metadata$prereserve_doi$doi))
         publish <- FALSE
       }
     }
   }
+  config$logger.info(sprintf("Deposit record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
   out <- ZENODO$depositRecord(zenodo_metadata, publish = publish)
   if(!is(out,"ZenodoRecord")){
     errMsg <- sprintf("Zenodo: %s", out$errors[[1]]$message)
@@ -154,12 +159,14 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   #we set the (prereserved) doi to the entity in question
+  config$logger.info(sprintf("Setting DOI '%s' to save and export for record",zenodo_metadata$metadata$prereserve_doi$doi))
   for(i in 1:length(config$metadata$content$entities)){
     ent <- config$metadata$content$entities[[i]]
     if(ent$identifiers[["id"]]==entity$identifiers[["id"]]){
-      config$metadata$content$entities[[i]]$identifiers[["doi"]] <- zenodo_metadata$metadata$prereserve_doi$doi
+      if(regexpr("zenodo", doi)>0) config$metadata$content$entities[[i]]$identifiers[["doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
       break;
     }
   }
+  
   
 }

@@ -12,7 +12,8 @@ sanitize_str <- function(str){
 #'extract_kvp
 #'@export
 extract_kvp <- function(str){
-  kvp <- unlist(strsplit(str, ":(?!//|\\d)", perl = T))
+  #kvp <- unlist(strsplit(str, ":(?!//|\\d)", perl = T))
+  kvp <- unlist(strsplit(str, ":(?!//)", perl = T))
   if(length(kvp)==1) stop("Error while splitting kvp key/value")
   if(length(kvp)>2) kvp[2] <- paste(kvp[2:length(kvp)], collapse=":", sep="")
   
