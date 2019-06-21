@@ -58,6 +58,9 @@ zen4R_deposit_record <- function(entity, config, options){
   zenodo_metadata$setTitle(entity$title)
   zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
   
+  #date
+  zenodo_metadata$setPublicationDate(entity$date)
+  
   #upload type
   #TODO think on how to map upload types between Dublin core, ISO/OGC metadata, Zenodo  
   zenodo_metadata$setUploadType(entity$type)
