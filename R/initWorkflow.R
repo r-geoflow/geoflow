@@ -58,39 +58,51 @@ initWorkflow <- function(file){
   
   #load packages
   #-------------
-  #from CRAN
-  config$logger.info("Loading R CRAN packages...")
-  cran_pkgs = c("devtools", config$dependencies$packages$cran)
-  invisible(sapply(cran_pkgs, function(pkg){
-    if(config$dependencies$packages$cran_force_install){
-      config$logger.info(sprintf("Reinstalling R CRAN package '%s'", pkg))
-      eval(parse(text = sprintf("try(detach(\"package:%s\", unload=TRUE, force = TRUE))", pkg)))
-      install.packages(pkg)
+  if(!is.null(config$dependencies)) if(!is.null(config$dependencies$packages)){
+    #from CRAN
+    if(!is.null(config$dependencies$packages$cran)){
+      config$logger.info("Loading R CRAN packages...")
+      cran_pkgs = c("devtools", config$dependencies$packages$cran)
+      invisible(sapply(cran_pkgs, function(pkg){
+        if(!is.null(config$dependencies$packages$cran_force_install)){ 
+          if(config$dependencies$packages$cran_force_install){
+            config$logger.info(sprintf("Reinstalling R CRAN package '%s'", pkg))
+            eval(parse(text = sprintf("try(detach(\"package:%s\", unload=TRUE, force = TRUE))", pkg)))
+            install.packages(pkg)
+          }
+        }
+        config$logger.info(sprintf("Loading R CRAN package '%s'", pkg))
+        eval(parse(text = sprintf("require(%s)", pkg)))
+      }))
     }
-    config$logger.info(sprintf("Loading R CRAN package '%s'", pkg))
-    eval(parse(text = sprintf("require(%s)", pkg)))
-  }))
-  #from Github
-  config$logger.info("Loading R GitHub packages...")
-  github_pkgs = config$dependencies$packages$github
-  invisible(sapply(github_pkgs, function(pkg){
-    pkgname <- unlist(strsplit(pkg, "/"))[2]
-    if(config$dependencies$packages$github_force_install){
-      config$logger.info(sprintf("Reinstalling R GitHub package '%s'", pkgname))
-      eval(parse(text = sprintf("try(detach(\"package:%s\", unload=TRUE, force = TRUE))", pkgname)))
-      devtools::install_github(pkg, force = TRUE)
+    #from Github
+    github_pkgs = config$dependencies$packages$github
+    if(length(github_pkgs)>0){
+      config$logger.info("Loading R GitHub packages...")
+      invisible(sapply(github_pkgs, function(pkg){
+        pkgname <- unlist(strsplit(pkg, "/"))[2]
+        if(!is.null(config$dependencies$packages$github_force_install)){
+          if(config$dependencies$packages$github_force_install){
+            config$logger.info(sprintf("Reinstalling R GitHub package '%s'", pkgname))
+            eval(parse(text = sprintf("try(detach(\"package:%s\", unload=TRUE, force = TRUE))", pkgname)))
+            devtools::install_github(pkg, force = TRUE)
+          }
+        }
+        config$logger.info(sprintf("Loading R GitHub package '%s'", pkgname))
+        eval(parse(text = sprintf("require(%s)", pkgname)))
+      }))
     }
-    config$logger.info(sprintf("Loading R GitHub package '%s'", pkgname))
-    eval(parse(text = sprintf("require(%s)", pkgname)))
-  }))
+  }
   #load source scripts
   #--------------------
-  config$logger.info("Loading R scripts...")
   source_scripts <- config$dependencies$scripts
-  invisible(sapply(source_scripts,function(script){
-    config$logger.info(sprintf("Loading R script '%s'...", script))
-    source(script)
-  }))
+  if(length(source_scripts)>0){
+    config$logger.info("Loading R scripts...")
+    invisible(sapply(source_scripts,function(script){
+      config$logger.info(sprintf("Loading R script '%s'...", script))
+      source(script)
+    }))
+  }
   
   #software components
   if(!is.null(config$software)){
