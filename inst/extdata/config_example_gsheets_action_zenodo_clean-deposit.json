@@ -21,7 +21,12 @@
         "token": "<yourtoken>"
       },
       "properties" : {
-        "clean": true
+        "clean": {
+          "run": true,
+          "query": "<some Zenodo Elasticsearch query",
+          "doi": ["doi1","doi2","doi3"],
+          "community": "fisheries"
+        }
       }
     }
   ],

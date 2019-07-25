@@ -12,7 +12,6 @@
 #' @export
 #'    
 executeWorkflowJob <- function(config, jobdir){
-  capture.output({
     config$logger.info("Executing workflow job...")
     actions <- config$actions
     if(is.null(actions)){
@@ -31,16 +30,43 @@ executeWorkflowJob <- function(config, jobdir){
           entities <- config$metadata$content$entities
           if(!is.null(entities)){
             
+            #cleaning in case Zenodo action is enabled with clean properties 
             withZenodo <- any(sapply(actions, function(x){x$id=="zen4R-deposit-record"}))
             if(withZenodo){
               ZENODO_CONFIG <- config$software$output$zenodo_config
-              if(!is.null(ZENODO_CONFIG$properties$clean)) if(as.logical(ZENODO_CONFIG$properties$clean)){
-                config$logger.info("Zenodo action 'clean' activated: deleting all draft deposits prior to new deposits!")
-                config$software$output$zenodo$deleteRecords()
+              clean <- ZENODO_CONFIG$properties$clean
+              if(!is.null(clean)) if(!is.null(clean$run)) if(as.logical(clean$run)){
+                config$logger.info("Zenodo action 'clean' activated: deleting deposits prior to new deposits!")
+                if(is.null(clean$query) 
+                   & length(clean$doi)==0 
+                   & length(clean$community)==0){
+                  config$logger.info("Zenodo: no query or list of DOIs specified for cleaning: cleaning all draft deposits")
+                  config$software$output$zenodo$deleteRecords()
+                }else{
+                  #selective cleaning by Zenodo ElasticSearch query
+                  if(!is.null(clean$query)){
+                    config$logger.info(sprintf("Zenodo: cleaning draft deposits based on query '%s'",clean$query))
+                    config$software$output$zenodo$deleteRecords(q = clean$query)
+                  }
+                  #selective cleaning by prereserved DOI(s)
+                  if(!is.null(clean$doi)){
+                    config$logger.info(sprintf("Zenodo: cleaning draft deposits with prereserved DOIs [%s]", paste(clean$doi, collapse=",")))
+                    invisible(lapply(clean$doi, config$software$output$zenodo$deleteRecordByDOI))
+                  }
+                  #selective cleaning by community(ies)
+                  if(!is.null(clean$community)){
+                    config$logger.info(sprintf("Zenodo: cleaning draft deposits in communities [%s]", paste(clean$community, collapse=",")))
+                    invisible(lapply(clean$community, function(community){
+                      config$software$output$zenodo$deleteRecords(q = sprintf("communities:%s", community))
+                    }))
+                  }
+                }
               }
             }
+            config$logger.info("Zenodo: sleeping 5 seconds...")
+            Sys.sleep(5)
             
-            invisible(lapply(entities, function(entity){
+            for(entity in entities){
               
               #if entity has data we copy data to job data dir
               if(!is.null(entity$data)) entity$copyDataToJobDir(config, jobdir)
@@ -53,12 +79,19 @@ executeWorkflowJob <- function(config, jobdir){
               }
               #if zenodo is among actions, file upload (and possibly publish) to be managed here
               if(withZenodo){
+                #if Zenodo is the only action then let's sleep to avoid latence issues when listing depositions
+                #if no sleep is specified, getDepositions doesn't list yet the newly deposited recorded with
+                #isIdenticalTo relationship
+                if(length(actions)==1){
+                  config$logger.info("Zenodo: sleeping 5 seconds...")
+                  Sys.sleep(5)
+                }
                 zen_action <- actions[sapply(actions, function(x){x$id=="zen4R-deposit-record"})][[1]]
                 act_options <- zen_action$options
                 act_options$depositWithFiles <- TRUE
                 zen_action$fun(entity, config, act_options)
               }
-            }))
+            }
             
             #in case Zenodo was enabled, we create an output table of DOIs
             if(withZenodo){
@@ -80,5 +113,4 @@ executeWorkflowJob <- function(config, jobdir){
         }
       }
     }
-  },file = file.path(getwd(), "job-logs.txt"))
 }

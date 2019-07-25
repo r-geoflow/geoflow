@@ -16,14 +16,14 @@ zen4R_deposit_record <- function(entity, config, options){
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
   publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
   deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
-  communities <- if(!is.null(options$communities)) options$communities else NULL
+  communities <- if(!is.null(options$community)) options$community else NULL
   
   #create empty record
   #how to deal with existing records / new versions
   #this approach that the Zenodo record has a related identifier as URN
   #e.g. urn:my-metadata-identifier
   zenodo_metadata <- NULL
-  deposits <- ZENODO$getDepositions()
+  deposits <- ZENODO$getDepositions(q = entity$identifiers[["id"]])
   if(length(deposits)>0){
     invisible(lapply(deposits, function(deposit){
      related_identifiers <- deposit$metadata$related_identifiers
@@ -43,8 +43,12 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   if(is.null(zenodo_metadata)){
+    config$logger.info(sprintf("Zenodo: No existing Zenodo record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
+    config$logger.info("Zenodo: creating a new deposit empty record")
     zenodo_metadata <- ZENODO$createEmptyRecord()
     zenodo_metadata$addRelatedIdentifier("isIdenticalTo", paste("urn", entity$identifiers[["id"]], sep=":"))
+  }else{
+    config$logger.info(sprintf("Zenodo: Existing record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
   }
   
   doi <- zenodo_metadata$metadata$prereserve_doi$doi
@@ -52,8 +56,13 @@ zen4R_deposit_record <- function(entity, config, options){
   if(!is.null(entity$identifiers[["doi"]])){
     doi <- entity$identifiers[["doi"]]
   }
-  if(regexpr("zenodo", doi)<0) zenodo_metadata$setDOI(doi)
-  
+  #if entity comes with a foreign DOI (not assigned by Zenodo)
+  #we set the DOI (which set prereserve_doi to FALSE)
+  if(regexpr("zenodo", doi)<0){
+    config$logger.info("Zenodo: Existing foreign DOI (not assigned by Zenodo). Setting foreign DOI and prereserve_doi to 'FALSE'")
+    zenodo_metadata$setDOI(doi)
+  }
+    
   #basic record description
   zenodo_metadata$setTitle(entity$title)
   zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
@@ -95,6 +104,7 @@ zen4R_deposit_record <- function(entity, config, options){
   
   #communities
   if(!is.null(communities)){
+    zenodo_metadata$metadata$communities <- list()
     for(community in communities) zenodo_metadata$addCommunity(community)
   }
   
@@ -140,11 +150,12 @@ zen4R_deposit_record <- function(entity, config, options){
 
   #deposit (and publish, if specified in options)
   if(publish){
-    #double verification for publish action, need to have the DOI specified in the entity table
+    #2d verification for publish action, need to have the DOI specified in the entity table
     if(is.null(entity$identifiers[["doi"]])){
       config$logger.warn("No DOI specified in entity. Zenodo 'publish' action ignored!")
       publish <- FALSE
     }
+    #3rd verification for publish action, need to check that DOI match the one prereserved
     if(!is.null(entity$identifiers[["doi"]])){
       if(regexpr("zenodo", doi)>0) if(doi != zenodo_metadata$metadata$prereserve_doi$doi){ 
         config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Zenodo record DOI (%s). Zenodo 'publish' action ignored!", 

@@ -23,14 +23,17 @@ executeWorkflow <- function(file){
   jobdir <- initWorkflowJob(CFG)
   
   #3. Execute the workflow job
-  exec <- try(executeWorkflowJob(CFG, jobdir))
-  if(class(exec)=="try-error"){
-    setwd(CFG$wd)
-  }
+  capture.output({
+    exec <- try(executeWorkflowJob(CFG, jobdir))
+    if(class(exec)=="try-error"){
+      setwd(CFG$wd)
+    }
+  }, file = file.path(jobdir, "job-logs.txt"))
   
   #4. close workflow
   closeWorkflow(CFG)
   
+  #reset options
   options(.defaultOptions)
-  
+
 }

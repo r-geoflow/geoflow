@@ -173,7 +173,9 @@ register_software <- function(){
         logger = list(def = "Level for 'zen4R' logger messages (NULL, 'INFO' or 'DEBUG')")
       ),
       attributes = list(
-        clean = list(def = "An option (TRUE/FALSE), to clean all draft Zenodo deposits prior to any new deposit")
+        clean = list(def = "An option, to clean draft Zenodo deposits prior to any new deposit. To clean deposits, enable 'run', 
+                     and optionally specify either a 'query' (ElasticSearch Zenodo query), a list of 'doi', or 'community' for which
+                     you want to restrain the cleaning operation.")
       )
     )
   )

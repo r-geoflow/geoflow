@@ -41,7 +41,9 @@
     		"logger": "DEBUG"
 		  },
 		  "properties": {
-		    "clean": true
+		    "clean": {
+		      "run": true
+		    }
 		  }
 		}
   ],
