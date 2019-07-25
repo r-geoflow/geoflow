@@ -1,0 +1,37 @@
+{
+  "id": "Zenodo_publish_workflow",
+  "profile": {
+    "project": "Test geoflow project",
+    "organization": "My organization"
+  },
+  "mode": "entity",
+  "metadata": {
+    "entities": {
+      "handler": "gsheet",
+      "source": "https://docs.google.com/spreadsheets/d/1XXXI1mFWbf_x8sk_bseh5Vra8fgg_kSFuTA0WNF9O7Q/edit?usp=sharing"
+    }
+  },
+  "software": [
+    {
+      "id": "my-zenodo",
+      "type": "output",
+      "software_type": "zenodo",
+      "parameters": {
+        "url": "https://sandbox.zenodo.org/api",
+        "token": "<yourtoken>"
+      },
+      "properties" : {
+        "clean": true
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "zen4R-deposit-record",
+      "options": {
+        "publish": false
+      },
+      "run": true
+    }
+  ]
+}
