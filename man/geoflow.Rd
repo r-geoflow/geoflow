@@ -4,7 +4,6 @@
 \name{geoflow}
 \alias{geoflow}
 \alias{geoflow-package}
-\alias{geoflow-package}
 \title{R engine to orchestrate and run geospatial (meta)data workflows}
 \description{
 R engine to orchestrate and run geospatial (meta)data workflows

@@ -7,12 +7,12 @@ Authors@R: c(
   person("Julien,", "Barde", role = c("ctb"), email = "julien.barde@ird.fr", comment = c(ORCID = "0000-0002-3519-6141")),
   person("Wilfried", "Heintz", role = c("ctb"), email = "wilfried.heintz@inra.fr", comment = c(ORCID = "0000-0002-9244-9766")))
 Maintainer: Emmanuel Blondel <emmanuel.blondel1@gmail.com>
-Depends: R (>= 3.3), methods, plyr, sp, sf, rgdal, rgeos, geosapi, geonapi, geometa, ows4R
-Imports:R6, jsonlite, gsheet, readxl
+Depends: R (>= 3.3), methods, plyr, sp, sf, rgdal, rgeos, geosapi, geonapi, geometa, ows4R, xml2
+Imports: R6, jsonlite, gsheet, readxl, rvest
 Suggests: testthat
 Description: R engine to orchestrate and run geospatial (meta)data workflows
 License: MIT + file LICENSE
 URL: https://github.com/eblondel/geoflow
 BugReports: https://github.com/eblondel/geoflow
 LazyLoad: yes
-RoxygenNote: 6.0.0
+RoxygenNote: 6.1.1

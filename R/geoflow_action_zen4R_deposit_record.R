@@ -185,5 +185,10 @@ zen4R_deposit_record <- function(entity, config, options){
     }
   }
   
+  #if publish, we save all
+  if(publish){
+    config$logger.info(sprintf("Export record to Zenodo metadata formats", zenodo_metadata$getConceptDOI()))
+    out$exportAsAllFormats(file.path(getwd(),"metadata",entity$identifiers[["id"]]))
+  }
   
 }
