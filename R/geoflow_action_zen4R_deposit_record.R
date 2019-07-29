@@ -180,7 +180,11 @@ zen4R_deposit_record <- function(entity, config, options){
   for(i in 1:length(config$metadata$content$entities)){
     ent <- config$metadata$content$entities[[i]]
     if(ent$identifiers[["id"]]==entity$identifiers[["id"]]){
-      if(regexpr("zenodo", doi)>0) config$metadata$content$entities[[i]]$identifiers[["doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
+      if(regexpr("zenodo", doi)>0){
+        config$metadata$content$entities[[i]]$identifiers[["doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
+        config$metadata$content$entities[[i]]$identifiers[["conceptdoi_to_save"]] <- zenodo_metadata$getConceptDOI()
+        config$metadata$content$entities[[i]]$setStatus(ifelse(publish, "published", "draft"))
+      }
       break;
     }
   }

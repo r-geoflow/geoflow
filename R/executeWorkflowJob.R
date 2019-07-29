@@ -101,7 +101,13 @@ executeWorkflowJob <- function(config, jobdir){
             if(withZenodo){
               config$logger.info("Exporting reference list of DOIs to job directory")
               out_zenodo_dois <- do.call("rbind", lapply(entities, function(entity){
-                return(data.frame(id = entity$identifiers[["id"]], doi = entity$identifiers[["doi_to_save"]], stringsAsFactors = FALSE))
+                return(data.frame(
+                  identifier = entity$identifiers[["id"]], 
+                  status = entity$status,
+                  doi_for_allversions = entity$identifiers[["conceptdoi_to_save"]],
+                  doi_for_version = entity$identifiers[["doi_to_save"]],
+                  stringsAsFactors = FALSE
+                ))
               }))
               write.csv(out_zenodo_dois, file = file.path(getwd(),"metadata", "zenodo_dois.csv"), row.names = FALSE)
             }

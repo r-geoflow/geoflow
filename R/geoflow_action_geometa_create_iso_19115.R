@@ -124,6 +124,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #https://geo-ide.noaa.gov/wiki/index.php?title=DOI_Minting_Procedure#Third.2C_Include_the_DOI_and_citation_text_in_the_ISO_Metadata_Record
   mdIdentifier <- mdId
   the_doi <- entity$identifiers[["doi"]]
+  if(is.null(the_doi)) the_doi <- entity$identifiers[["conceptdoi_to_save"]]
   if(is.null(the_doi)) the_doi <- entity$identifiers[["doi_to_save"]]
   if(!is.null(the_doi) & doi){
     mdIdentifier <- ISOAnchor$new(

@@ -17,6 +17,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     temporal_extent = NULL,
     provenance = NULL,
     data = NULL,
+    status = NULL,
     initialize = function(){},
     
     #setIdentifier
@@ -413,8 +414,15 @@ geoflow_entity <- R6Class("geoflow_entity",
       }else{
         return(self$relations)
       }
-    }
+    },
     
+    #setStatus
+    setStatus = function(status){
+      if(!(status %in% c("draft", "published"))){
+        stop("The status should be either 'draft' or 'published'")
+      }
+      self$status <- status
+    }
   )
 )
 
