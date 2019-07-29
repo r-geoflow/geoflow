@@ -12,6 +12,9 @@ zen4R_deposit_record <- function(entity, config, options){
     stop(errMsg)
   }
   
+  #global options
+  skipFileDownload <- if(!is.null(config$options$skipFileDownload)) config$options$skipFileDownload else FALSE
+  
   #options
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
   publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
@@ -110,7 +113,7 @@ zen4R_deposit_record <- function(entity, config, options){
   
   #file uploads
   if(depositWithFiles){
-    if(deleteOldFiles){
+    if(deleteOldFiles & !skipFileDownload){
       config$logger.info("Zenodo: deleting old files...")
       zen_files <- ZENODO$getFiles(zenodo_metadata$id)
       if(length(zen_files)>0){

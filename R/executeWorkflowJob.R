@@ -13,6 +13,10 @@
 #'    
 executeWorkflowJob <- function(config, jobdir){
     config$logger.info("Executing workflow job...")
+    
+    #options
+    skipFileDownload <- if(!is.null(config$options$skipFileDownload)) config$options$skipFileDownload else FALSE
+  
     actions <- config$actions
     if(is.null(actions)){
       config$logger.warn("No actions enabled for this workflow!")
@@ -69,7 +73,7 @@ executeWorkflowJob <- function(config, jobdir){
             for(entity in entities){
               
               #if entity has data we copy data to job data dir
-              if(!is.null(entity$data)) entity$copyDataToJobDir(config, jobdir)
+              if(!is.null(entity$data) & !skipFileDownload) entity$copyDataToJobDir(config, jobdir)
               
               #run sequence of actions
               for(i in 1:length(actions)){
