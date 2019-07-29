@@ -41,6 +41,7 @@ handle_contacts_df <- function(config, source){
     }
     contacts <- c(contacts, contact)
   }
+  attr(contacts, "source") <- contacts
   return(contacts)
 }
 

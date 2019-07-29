@@ -193,6 +193,10 @@ initWorkflow <- function(file){
         config$logger.error(errMsg)
         stop(errMsg)
       }
+      
+      #keep source contacts part of the config
+      config$src_contacts <- attr(contacts, "source")
+      
       config$logger.info(sprintf("Successfuly fetched %s contacts!",length(contacts)))
       config$metadata$content$contacts <- contacts
       config$logger.info(sprintf("Successfuly loaded %s contacts!",length(contacts)))
@@ -211,6 +215,9 @@ initWorkflow <- function(file){
         config$logger.error(errMsg)
         stop(errMsg)
       }
+      
+      #keep source entities part of the config
+      config$src_entities <- attr(entities, "source")
       
       config$logger.info(sprintf("Successfuly fetched %s entities!",length(entities)))
       if(!is.null(config$metadata$content$contacts)){

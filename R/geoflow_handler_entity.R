@@ -139,6 +139,7 @@ handle_entities_df <- function(config, source){
     
     entities <- c(entities, entity)
   }
+  attr(entities, "source") <- source
   return(entities)
 }
 
