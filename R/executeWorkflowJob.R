@@ -131,10 +131,8 @@ executeWorkflowJob <- function(config, jobdir){
               src_config$metadata$entities$handler <- "csv"
               src_config$metadata$entities$source <- "zenodo_entities_with_doi_for_publication.csv"
               
-              #modifying global option
-              src_config$options$skipFileDownload <- TRUE
-              
               #altering clean property
+              #deactivated for the timebeing, quite dangerous, to discuss with @juldebar
               #zen_software <- src_config$software[sapply(src_config$software, function(x){x$software_type == "zenodo"})][[1]]
               #zen_clean <- if(!is.null(zen_software$properties$clean$run)) zen_software$properties$clean$run else FALSE
               #invisible(lapply(1:length(src_config$software), function(i){
@@ -158,6 +156,9 @@ executeWorkflowJob <- function(config, jobdir){
                 src_config, file.path(getwd(),"metadata","zenodo_geoflow_config_for_publication.json"),
                 auto_unbox = TRUE, pretty = TRUE
               )
+              
+              #modifying global option
+              src_config$options$skipFileDownload <- if(zen_publish) TRUE else FALSE
               
             }
             
