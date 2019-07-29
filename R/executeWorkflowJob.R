@@ -158,7 +158,7 @@ executeWorkflowJob <- function(config, jobdir){
               )
               
               #modifying global option
-              src_config$options$skipFileDownload <- if(zen_publish) TRUE else FALSE
+              src_config$options$skipFileDownload <- if(zen_publish) FALSE else TRUE
               
             }
             
