@@ -14,6 +14,7 @@ initWorkflow <- function(file){
   
   config <- jsonlite::read_json(file)
   config$src <- file
+  config$src_config <- config
   
   #worfklow config$loggers
   config$logger <- function(type, text){cat(sprintf("[geoflow][%s][%s] %s \n", config$id, type, text))}
