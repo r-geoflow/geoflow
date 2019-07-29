@@ -160,9 +160,9 @@ zen4R_deposit_record <- function(entity, config, options){
     }
     #3rd verification for publish action, need to check that DOI match the one prereserved
     if(!is.null(entity$identifiers[["doi"]])){
-      if(regexpr("zenodo", doi)>0) if(doi != zenodo_metadata$metadata$prereserve_doi$doi){ 
-        config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Zenodo record DOI (%s). Zenodo 'publish' action ignored!", 
-                                   doi, zenodo_metadata$metadata$prereserve_doi$doi))
+      if(regexpr("zenodo", doi)>0) if(doi != zenodo_metadata$getConceptDOI()){ 
+        config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Zenodo record Concept DOI (%s). Zenodo 'publish' action ignored!", 
+                                   doi, zenodo_metadata$getConceptDOI()))
         publish <- FALSE
       }
     }

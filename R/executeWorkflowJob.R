@@ -97,19 +97,31 @@ executeWorkflowJob <- function(config, jobdir){
               }
             }
             
-            #in case Zenodo was enabled, we create an output table of DOIs
+            #in case Zenodo was enabled, we create an output table of DOIs & export altered source entities
             if(withZenodo){
               config$logger.info("Exporting reference list of DOIs to job directory")
               out_zenodo_dois <- do.call("rbind", lapply(entities, function(entity){
                 return(data.frame(
-                  identifier = entity$identifiers[["id"]], 
-                  status = entity$status,
-                  doi_for_allversions = entity$identifiers[["conceptdoi_to_save"]],
-                  doi_for_version = entity$identifiers[["doi_to_save"]],
+                  Identifier = entity$identifiers[["id"]], 
+                  Status = entity$status,
+                  DOI_for_allversions = entity$identifiers[["conceptdoi_to_save"]],
+                  DOI_for_version = entity$identifiers[["doi_to_save"]],
                   stringsAsFactors = FALSE
                 ))
               }))
               write.csv(out_zenodo_dois, file = file.path(getwd(),"metadata", "zenodo_dois.csv"), row.names = FALSE)
+          
+              config$logger.info("Exporting source entities table enriched with DOIs")
+              src_entities <- config$src_entities
+              src_entities$Identifier <- sapply(1:nrow(src_entities), function(i){
+                identifier <- src_entities[i, "Identifier"]
+                if(!endsWith(identifier,";")) identifier <- paste0(identifier, ";\n")
+                if(regexpr("doi", identifier)>0) return(identifier)
+                if(out_zenodo_dois[i,"Status"] == "published") return(identifier)
+                identifier <- paste0(identifier, "doi:", out_zenodo_dois[i,"DOI_for_allversions"])
+                return(identifier)
+              })
+              write.csv(src_entities, file = file.path(getwd(),"metadata","zenodo_entities_with_doi_for_publication.csv"), row.names = FALSE)
             }
             
           }
