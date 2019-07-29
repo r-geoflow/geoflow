@@ -122,6 +122,43 @@ executeWorkflowJob <- function(config, jobdir){
                 return(identifier)
               })
               write.csv(src_entities, file = file.path(getwd(),"metadata","zenodo_entities_with_doi_for_publication.csv"), row.names = FALSE)
+  
+              
+              config$logger.info("Exporting workflow configuration for Zenodo DOI publication")
+              src_config <- config$src_config
+              
+              #modifying handler to csv/exported table - to see with @juldebar
+              src_config$metadata$entities$handler <- "csv"
+              src_config$metadata$entities$source <- "zenodo_entities_with_doi_for_publication.csv"
+              
+              #modifying global option
+              src_config$options$skipFileDownload <- TRUE
+              
+              #altering clean property
+              #zen_software <- src_config$software[sapply(src_config$software, function(x){x$software_type == "zenodo"})][[1]]
+              #zen_clean <- if(!is.null(zen_software$properties$clean$run)) zen_software$properties$clean$run else FALSE
+              #invisible(lapply(1:length(src_config$software), function(i){
+              #  software <- src_config$software[[i]]
+              #  if(software$software_type=="zenodo"){
+              #    src_config$software[[i]]$properties$clean$run <<- if(zen_clean) FALSE else TRUE
+              #  }
+              #}))
+              
+              #altering publish option
+              zen_action <- src_config$actions[sapply(src_config$actions, function(x){x$id=="zen4R-deposit-record"})][[1]]
+              zen_publish <- if(!is.null(zen_action$options$publish)) zen_action$options$publish else FALSE
+              invisible(lapply(1:length(src_config$actions), function(i){
+                action <- src_config$actions[[i]]
+                if(action$id=="zen4R-deposit-record"){
+                  src_config$actions[[i]]$options$publish <<- if(zen_publish) FALSE else TRUE
+                }
+              }))
+              #export modified config
+              jsonlite::write_json(
+                src_config, file.path(getwd(),"metadata","zenodo_geoflow_config_for_publication.json"),
+                auto_unbox = TRUE, pretty = TRUE
+              )
+              
             }
             
           }
