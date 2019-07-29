@@ -9,23 +9,13 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #options
   inspire <- if(!is.null(options$inspire)) options$inspire else FALSE
   logo <- if(!is.null(options$logo)) options$logo else FALSE
+  doi <- if(!is.null(options$doi)) options$doi else FALSE
   
   #metadata creation
   #-----------------------------------------------------------------------------------------------------
   #create geometa object
   md <- ISOMetadata$new()
-  #identifier, in case of presence of DOI we add an anchor
   mdId <- entity$identifiers[["id"]]
-  
-  #investigate with CSW transaction (ISO anchor not properly managed, at least by Geonetwork)
-  #if(!is.null(entity$identifiers[["doi"]])){
-  #  mdId <- ISOAnchor$new(
-  #    name = entity$identifiers[["id"]], 
-  #    href = paste0("http://dx.doi.org/", entity$identifiers[["doi"]])
-  #  )
-  #  mdId$setAttr("xlink:title", "DOI")
-  #  mdId$setAttr("xlink:actuate", "onRequest")
-  #}
   md$setFileIdentifier(mdId)
   if(length(entity$relations)>0){
     parent_rels <- entity$relations[sapply(entity$relations, function(x){x$key == "parent"})]
@@ -128,7 +118,23 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ct$setEdition("1.0") #TODO
   editionDate <- if(!is.null(entity$date)) entity$date else Sys.Date()
   ct$setEditionDate(editionDate)
-  ct$setIdentifier(ISOMetaIdentifier$new(code = mdId))
+  
+  #set metadata identifier
+  #methodology to set DOI inspired by NOAA wiki
+  #https://geo-ide.noaa.gov/wiki/index.php?title=DOI_Minting_Procedure#Third.2C_Include_the_DOI_and_citation_text_in_the_ISO_Metadata_Record
+  mdIdentifier <- mdId
+  the_doi <- entity$identifiers[["doi"]]
+  if(is.null(the_doi)) the_doi <- entity$identifiers[["doi_to_save"]]
+  if(!is.null(the_doi) & doi){
+    mdIdentifier <- ISOAnchor$new(
+      name = paste0("doi:", the_doi), 
+      href = paste0("http://dx.doi.org/", the_doi)
+    )
+    mdIdentifier$setAttr("xlink:title", "DOI")
+    mdIdentifier$setAttr("xlink:actuate", "onRequest")
+  }
+  ct$setIdentifier(ISOMetaIdentifier$new(code = mdIdentifier))
+
   ct$setPresentationForm("mapDigital") #TODO to map with gsheet
   
   #adding responsible party (search for owner, otherwise take first contact)
