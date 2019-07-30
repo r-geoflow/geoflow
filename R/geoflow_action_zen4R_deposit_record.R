@@ -19,6 +19,8 @@ zen4R_deposit_record <- function(entity, config, options){
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
   publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
   deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
+  update_metadata <- if(!is.null(options$update_metadata)) options$update_metadata else TRUE
+  update_files <- if(!is.null(options$update_files)) options$update_files else TRUE
   communities <- if(!is.null(options$community)) options$community else NULL
   
   #create empty record
@@ -45,6 +47,7 @@ zen4R_deposit_record <- function(entity, config, options){
     }))
   }
   
+  update <- FALSE
   if(is.null(zenodo_metadata)){
     config$logger.info(sprintf("Zenodo: No existing Zenodo record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
     config$logger.info("Zenodo: creating a new deposit empty record")
@@ -52,6 +55,7 @@ zen4R_deposit_record <- function(entity, config, options){
     zenodo_metadata$addRelatedIdentifier("isIdenticalTo", paste("urn", entity$identifiers[["id"]], sep=":"))
   }else{
     config$logger.info(sprintf("Zenodo: Existing record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
+    update <- TRUE
   }
   
   doi <- zenodo_metadata$metadata$prereserve_doi$doi
@@ -65,54 +69,60 @@ zen4R_deposit_record <- function(entity, config, options){
     config$logger.info("Zenodo: Existing foreign DOI (not assigned by Zenodo). Setting foreign DOI and prereserve_doi to 'FALSE'")
     zenodo_metadata$setDOI(doi)
   }
-    
-  #basic record description
-  zenodo_metadata$setTitle(entity$title)
-  zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
   
-  #date
-  zenodo_metadata$setPublicationDate(entity$date)
-  
-  #upload type
-  #TODO think on how to map upload types between Dublin core, ISO/OGC metadata, Zenodo  
-  zenodo_metadata$setUploadType(entity$type)
-  
-  #contacts
-  #TODO think if correct handle all contacts (whatever roles) as creators (author/co-authors)
-  contact_added <- list()
-  zenodo_metadata$metadata$creators <- list()
-  for(contact in entity$contacts){
-    
-    #manage orcid?
-    orcid <- NULL
-    contact_ids <- contact$identifiers
-    if(any(sapply(contact_ids, function(x){x$key=="orcid"}))){
-      contact_ids <- contact_ids[sapply(contact_ids, function(x){x$key=="orcid"})]
-      if(length(contact_ids)>0) orcid <- contact_ids[[1]]$value
+  if(!update | (update & update_metadata)){
+    if(update){
+      config$logger.info("Updating Zenodo record metadata properties")
+    }else{
+      config$logger.info("Setting Zenodo record metadata properties")
     }
-    #add/update creators
-    if(!(contact$id %in% contact_added)){
-      zenodo_metadata$addCreator(
-        firstname = contact$firstName, 
-        lastname = contact$lastName, 
-        affiliation = contact$organizationName,
-        orcid = orcid
-      )
-      contact_added <- c(contact_added, contact$id)
+    #basic record description
+    zenodo_metadata$setTitle(entity$title)
+    zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
+    #date
+    zenodo_metadata$setPublicationDate(entity$date)
+    #upload type
+    #TODO think on how to map upload types between Dublin core, ISO/OGC metadata, Zenodo  
+    zenodo_metadata$setUploadType(entity$type)
+    #contacts
+    #TODO think if correct handle all contacts (whatever roles) as creators (author/co-authors)
+    contact_added <- list()
+    zenodo_metadata$metadata$creators <- list()
+    for(contact in entity$contacts){
+      
+      #manage orcid?
+      orcid <- NULL
+      contact_ids <- contact$identifiers
+      if(any(sapply(contact_ids, function(x){x$key=="orcid"}))){
+        contact_ids <- contact_ids[sapply(contact_ids, function(x){x$key=="orcid"})]
+        if(length(contact_ids)>0) orcid <- contact_ids[[1]]$value
+      }
+      #add/update creators
+      if(!(contact$id %in% contact_added)){
+        zenodo_metadata$addCreator(
+          firstname = contact$firstName, 
+          lastname = contact$lastName, 
+          affiliation = contact$organizationName,
+          orcid = orcid
+        )
+        contact_added <- c(contact_added, contact$id)
+      }
     }
-  }
-  
-  #TODO myrec$setLicense
-  #TODO myrec$setAccessRight
-  
-  #communities
-  if(!is.null(communities)){
-    zenodo_metadata$metadata$communities <- list()
-    for(community in communities) zenodo_metadata$addCommunity(community)
+    
+    #TODO myrec$setLicense
+    #TODO myrec$setAccessRight
+    
+    #communities
+    if(!is.null(communities)){
+      zenodo_metadata$metadata$communities <- list()
+      for(community in communities) zenodo_metadata$addCommunity(community)
+    }
+  }else{
+    config$logger.info("Skipping update of Zenodo metadata properties (option 'update_metadata' FALSE)")
   }
   
   #file uploads
-  if(depositWithFiles){
+  if(depositWithFiles & (!update | (update & update_files))){
     if(deleteOldFiles & !skipFileDownload){
       config$logger.info("Zenodo: deleting old files...")
       zen_files <- ZENODO$getFiles(zenodo_metadata$id)
@@ -149,6 +159,8 @@ zen4R_deposit_record <- function(entity, config, options){
         }
       }
     }
+  }else{
+    config$logger.info("Skipping update of Zenodo metadata properties (option 'update_files' and/or 'depositWithFiles FALSE)")
   }
 
   #deposit (and publish, if specified in options)
