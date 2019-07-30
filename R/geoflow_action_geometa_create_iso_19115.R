@@ -120,9 +120,9 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ct$setEditionDate(editionDate)
   
   #set metadata identifier
+  ct$addIdentifier(ISOMetaIdentifier$new(code = mdId))
   #methodology to set DOI inspired by NOAA wiki
   #https://geo-ide.noaa.gov/wiki/index.php?title=DOI_Minting_Procedure#Third.2C_Include_the_DOI_and_citation_text_in_the_ISO_Metadata_Record
-  mdIdentifier <- mdId
   the_doi <- entity$identifiers[["doi"]]
   if(is.null(the_doi)) the_doi <- entity$identifiers[["conceptdoi_to_save"]]
   if(is.null(the_doi)) the_doi <- entity$identifiers[["doi_to_save"]]
@@ -133,8 +133,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
     )
     mdIdentifier$setAttr("xlink:title", "DOI")
     mdIdentifier$setAttr("xlink:actuate", "onRequest")
+    ct$addIdentifier(ISOMetaIdentifier$new(code = mdIdentifier))
   }
-  ct$setIdentifier(ISOMetaIdentifier$new(code = mdIdentifier))
 
   ct$setPresentationForm("mapDigital") #TODO to map with gsheet
   
@@ -285,6 +285,18 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #distribution
   distrib <- ISODistribution$new()
   dto <- ISODigitalTransferOptions$new()
+  
+  #add online resource for DOI if existing
+  if(!is.null(the_doi) & doi){
+    doi_or <- ISOOnlineResource$new()
+    doi_or$setLinkage(paste0("http://dx.doi.org/", the_doi))
+    doi_or$setName("DOI")
+    doi_or$setDescription("Digital Object Identifier")
+    doi_or$setProtocol("WWW:LINK-1.0-http--link")
+    dto$addOnlineResource(doi_or)
+  }
+  
+  #add online resource for each relation
   if(length(entity$relations)>0){
     http_relations <- entity$relations[sapply(entity$relations, function(x){
       x$key %in% c("ftp","http", "wfs", "wms", "wcs", "csw")
