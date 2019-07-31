@@ -136,7 +136,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
     ct$addIdentifier(ISOMetaIdentifier$new(code = mdIdentifier))
   }
 
-  ct$setPresentationForm("mapDigital") #TODO to map with gsheet
+  ct$addPresentationForm("mapDigital") #TODO to map with gsheet
   
   #adding responsible party (search for owner, otherwise take first contact)
   main_entity <- NULL
@@ -164,7 +164,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   res$setName(main_entity$websiteName)
   contact$setOnlineResource(res)
   rp$setContactInfo(contact) 
-  ct$setCitedResponsibleParty(rp)
+  ct$addCitedResponsibleParty(rp)
   ident$setCitation(ct)
  
   #graphic overviews
