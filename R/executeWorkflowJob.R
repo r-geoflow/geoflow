@@ -162,6 +162,10 @@ executeWorkflowJob <- function(config, jobdir){
               
             }
             
+            #save entities & contacts used
+            write.csv(config$src_entities, file = file.path(getwd(), "metadata", "config_copyof_entities",".csv"), row.names = FALSE)
+            write.csv(config$src_contacts, file = file.path(getwd(), "metadata", "config_copyof_contacts",".csv"), row.names = FALSE)
+            
           }
         }else if(config$mode == "raw"){
           #execute raw actions (--> not based on metadata entities)
