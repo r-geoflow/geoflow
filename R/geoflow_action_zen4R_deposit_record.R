@@ -62,7 +62,7 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   #doi
-  doi <- NULL
+  doi <- zenodo_metadata$metadata$prereserve_doi$doi
   
   #action to perform: create empty record or update existing record
   update <- FALSE
@@ -71,10 +71,8 @@ zen4R_deposit_record <- function(entity, config, options){
     config$logger.info("Zenodo: creating a new deposit empty record")
     zenodo_metadata <- ZENODO$createEmptyRecord()
     zenodo_metadata$addRelatedIdentifier("isIdenticalTo", paste("urn", entity$identifiers[["id"]], sep=":"))
-    doi <- zenodo_metadata$metadata$prereserve_doi$doi
   }else{
     config$logger.info(sprintf("Zenodo: Existing record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
-    doi <- zenodo_metadata$doi
     update <- TRUE
     
     #case of submitted records, need to unlock record
@@ -109,6 +107,21 @@ zen4R_deposit_record <- function(entity, config, options){
     #basic record description
     zenodo_metadata$setTitle(entity$title)
     zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
+    
+    #keywords (free text) & subjects
+    zenodo_metadata$metadata$keywords <- list()
+    zenodo_metadata$metadata$subjects <- list()
+    for(subject in entity$subjects){
+      for(kwd in subject$keywords){
+        kwd_name <- kwd$name
+        kwd_uri <- kwd$uri
+        if(is.null(kwd_uri))
+          zenodo_metadata$addKeyword(kwd_name)
+        else
+          zenodo_metadata$addSubject(kwd_name, kwd_uri)
+      }
+    }
+    
     #date
     zenodo_metadata$setPublicationDate(entity$date)
     #upload type
