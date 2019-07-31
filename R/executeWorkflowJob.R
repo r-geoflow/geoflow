@@ -65,10 +65,10 @@ executeWorkflowJob <- function(config, jobdir){
                     }))
                   }
                 }
+                config$logger.info("Zenodo: sleeping 5 seconds...")
+                Sys.sleep(5)    
               }
             }
-            config$logger.info("Zenodo: sleeping 5 seconds...")
-            Sys.sleep(5)
             
             for(entity in entities){
               

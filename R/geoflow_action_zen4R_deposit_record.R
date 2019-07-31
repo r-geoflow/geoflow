@@ -23,12 +23,26 @@ zen4R_deposit_record <- function(entity, config, options){
   update_files <- if(!is.null(options$update_files)) options$update_files else TRUE
   communities <- if(!is.null(options$community)) options$community else NULL
   
-  #create empty record
-  #how to deal with existing records / new versions
-  #this approach that the Zenodo record has a related identifier as URN
-  #e.g. urn:my-metadata-identifier
+  #zenodo object
   zenodo_metadata <- NULL
-  deposits <- ZENODO$getDepositions(q = entity$identifiers[["id"]])
+  
+  #how to deal with existing records / new versions
+  #we try first to use DOI if existing, assuming it's a concept DOI, if not a simple DOI
+  #if nothing is found, we use the default get depositions by identifier, used if no DOI is specified
+  #this approach is possible because the Zenodo record has a related identifier as URN, specified when
+  #creating the record. For existing record we also check the presence of the URN as related identifier
+  #e.g. urn:my-metadata-identifier
+  deposits <- NULL
+  if(!is.null(entity$identifiers[["doi"]])){
+    deposit <- ZENODO$getDepositionByConceptDOI(entity$identifiers[["doi"]]) #try to get latest record with concept DOI
+    if(is.null(deposit)) deposit <- ZENODO$getDepositionByDOI(entity$identifiers[["doi"]]) #try to get record with specific DOI
+    if(!is.null(deposit)) deposits <- list(deposit)
+  }
+  
+  if(is.null(deposits)){
+    deposits <- ZENODO$getDepositions(q = entity$identifiers[["id"]])
+  }
+  #check related identifier
   if(length(deposits)>0){
     invisible(lapply(deposits, function(deposit){
      related_identifiers <- deposit$metadata$related_identifiers
@@ -47,22 +61,38 @@ zen4R_deposit_record <- function(entity, config, options){
     }))
   }
   
+  #doi
+  doi <- NULL
+  
+  #action to perform: create empty record or update existing record
   update <- FALSE
   if(is.null(zenodo_metadata)){
     config$logger.info(sprintf("Zenodo: No existing Zenodo record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
     config$logger.info("Zenodo: creating a new deposit empty record")
     zenodo_metadata <- ZENODO$createEmptyRecord()
     zenodo_metadata$addRelatedIdentifier("isIdenticalTo", paste("urn", entity$identifiers[["id"]], sep=":"))
+    doi <- zenodo_metadata$metadata$prereserve_doi$doi
   }else{
     config$logger.info(sprintf("Zenodo: Existing record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
+    doi <- zenodo_metadata$doi
     update <- TRUE
+    
+    #case of submitted records, need to unlock record
+    if(zenodo_metadata$state == "done"){
+      config$logger.info(sprintf("Zenodo: record '%s' already published. Need to unlock it for edition", zenodo_metadata$id))
+      unlocked_rec <- ZENODO$editRecord(zenodo_metadata$id)
+      if(is(unlocked_rec, "ZenodoRecord")){
+        zenodo_metadata <- unlocked_rec
+      }
+    }
+    
   }
   
-  doi <- zenodo_metadata$metadata$prereserve_doi$doi
   #if entity already comes with a DOI, we set it (this might be a preset DOI from Zenodo or elsewhere)
   if(!is.null(entity$identifiers[["doi"]])){
     doi <- entity$identifiers[["doi"]]
   }
+
   #if entity comes with a foreign DOI (not assigned by Zenodo)
   #we set the DOI (which set prereserve_doi to FALSE)
   if(regexpr("zenodo", doi)<0){
@@ -118,7 +148,7 @@ zen4R_deposit_record <- function(entity, config, options){
       for(community in communities) zenodo_metadata$addCommunity(community)
     }
   }else{
-    config$logger.info("Skipping update of Zenodo metadata properties (option 'update_metadata' FALSE)")
+    config$logger.info("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")
   }
   
   #file uploads
@@ -160,7 +190,7 @@ zen4R_deposit_record <- function(entity, config, options){
       }
     }
   }else{
-    config$logger.info("Skipping update of Zenodo metadata properties (option 'update_files' and/or 'depositWithFiles FALSE)")
+    config$logger.info("Skipping update of Zenodo record files (option 'update_files' and/or 'depositWithFiles FALSE)")
   }
 
   #deposit (and publish, if specified in options)
@@ -172,9 +202,9 @@ zen4R_deposit_record <- function(entity, config, options){
     }
     #3rd verification for publish action, need to check that DOI match the one prereserved
     if(!is.null(entity$identifiers[["doi"]])){
-      if(regexpr("zenodo", doi)>0) if(doi != zenodo_metadata$getConceptDOI()){ 
+      if(regexpr("zenodo", doi)>0) if(doi != entity$identifiers[["doi"]]){ 
         config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Zenodo record Concept DOI (%s). Zenodo 'publish' action ignored!", 
-                                   doi, zenodo_metadata$getConceptDOI()))
+                                   entity$identifiers[["doi"]], doi))
         publish <- FALSE
       }
     }
