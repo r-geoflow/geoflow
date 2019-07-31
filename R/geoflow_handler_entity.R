@@ -18,7 +18,23 @@ handle_entities_df <- function(config, source){
     
     entity$setDate(as.Date(source_entity[,"Date"]))
     
-    if(!is.na(source_entity[,"Type"])) entity$setType(source_entity[,"Type"])
+    #types
+    src_type <- sanitize_str(source_entity[,"Type"])
+    types <- if(!is.na(src_type)) unlist(strsplit(src_type, ";")) else list()
+    if(length(types)>0){
+      if(length(types)==1){
+        entity$setType("generic", types)
+      }else{
+        for(type in types){
+          if(regexpr(":",type) == -1){
+            entity$setDescription("generic", type)
+          }else{
+            type_kvp <- extract_kvp(type)
+            entity$setType(type_kvp$key, type_kvp$values[[1]])
+          }
+        }
+      }
+    }
     
     #identifier
     identifiers <- unlist(strsplit(sanitize_str(source_entity[,"Identifier"]), ";"))

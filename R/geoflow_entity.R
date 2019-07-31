@@ -5,7 +5,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     identifiers = list(),
     date = NULL,
     language = "eng",
-    type = "dataset",
+    types = list(generic = "dataset"),
     title = NULL,
     descriptions = list(),
     subjects = list(),
@@ -36,8 +36,8 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #setType
-    setType = function(type){
-      self$type <- type
+    setType = function(key, type){
+      self$types[[key]] <- type
     },
     
     #setTitle
@@ -46,8 +46,8 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #setDescription
-    setDescription = function(key, id){
-      self$descriptions[[key]] <- id
+    setDescription = function(key, description){
+      self$descriptions[[key]] <- description
     },
     
     #addSubject

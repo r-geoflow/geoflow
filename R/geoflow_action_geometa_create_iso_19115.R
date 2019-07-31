@@ -32,7 +32,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md$setMetadataStandardName("ISO 19115:2003/19139")
   md$setMetadataStandardVersion("1.0")
   md$setDataSetURI(md$fileIdentifier)
-  md$setHierarchyLevel(entity$type)
+  md$setHierarchyLevel(entity$types[["generic"]])
   
   #add contacts
   for(entity_contact in entity$contacts){
@@ -322,7 +322,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(!is.null(entity$provenance)){
     dq_lineage <- ISODataQuality$new()
     dq_lineage_scope <- ISOScope$new()
-    dq_lineage_scope$setLevel(entity$type)
+    dq_lineage_scope$setLevel(entity$types[["generic"]])
     dq_lineage$setScope(dq_lineage_scope)
     lineage <- ISOLineage$new()
     lineage$setStatement(entity$provenance$statement)

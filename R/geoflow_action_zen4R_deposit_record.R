@@ -126,7 +126,20 @@ zen4R_deposit_record <- function(entity, config, options){
     zenodo_metadata$setPublicationDate(entity$date)
     #upload type
     #TODO think on how to map upload types between Dublin core, ISO/OGC metadata, Zenodo  
-    zenodo_metadata$setUploadType(entity$type)
+    if(!is.null(entity$types[["generic"]])) zenodo_metadata$setUploadType(entity$types[["generic"]])
+    if(!is.null(entity$types[["zenodoUploadType"]])) zenodo_metadata$setUploadType(entity$types[["zenodoUploadType"]])
+    
+    #publication type
+    if(zenodo_metadata$metadata$upload_type == "publication"){
+      if(!is.null(entity$types[["zenodoPublicationType"]]))
+        zenodo_metadata$setPublicationType(entity$types[["zenodoPublicationType"]])
+    }
+    #image type
+    if(zenodo_metadata$metadata$upload_type == "image"){
+      if(!is.null(entity$types[["zenodoImageType"]]))
+        zenodo_metadata$setImageType(entity$types[["zenodoImageType"]])
+    }
+    
     #contacts
     #TODO think if correct handle all contacts (whatever roles) as creators (author/co-authors)
     contact_added <- list()
