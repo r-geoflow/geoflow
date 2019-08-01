@@ -140,98 +140,123 @@ geoflow_entity <- R6Class("geoflow_entity",
       
       config$logger.info(sprintf("Copying data to job directory '%s'", jobdir))
       
-      resourceId <- if(!is.null(self$data$identifier)) self$data$identifier else self$identifiers$id
-      basefilename <- paste0(self$identifiers$id,"_",self$data$type,"_",resourceId)
+      for(i in 1:length(self$data$source)){
       
-      #here either we only pickup zipped files and re-distribute them in job data directory
-      #or we write it from entity$data$features if the latter is not NULL and if writer available (for now only shp)
-      #The latter allows to push features filtered by cqlfilter (matching an eventual geoserver layer) to Zenodo
-      #instead of the complete dataset
+        datasource <- self$data$source[[i]]
+        datasource_parts <- unlist(strsplit(datasource, "\\."))
+        datasource_name <- datasource_parts[1]
+        datasource_ext <- ifelse(length(datasource_parts)>1, datasource_parts[2], "zip")
+        datasource_file <- attr(datasource, "uri")
+        attributes(datasource) <- NULL
+        
+        config$logger.info(sprintf("Copying data source %s '%s' (%s) to job directory '%s'",
+                                   i, datasource, datasource_file, jobdir))
+        
+        resourceId <- if(!is.null(self$data$layername) & i==1) self$data$layername else datasource_name
+        basefilename <- paste0(self$identifiers$id, "_", self$data$uploadType,"_",resourceId)
       
-      isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", self$data$source) > 0
-      if(isSourceUrl){
-        warnMsg <- "Copying data from URL to Job data directory!"
-        config$logger.warn(warnMsg)
-        download.file(self$data$source, destfile = basefilename)
-      }else{
-        if(is.null(self$data$features)){
+        #here either we only pickup zipped files and re-distribute them in job data directory
+        #or we write it from entity$data$features if the latter is not NULL and if writer available (for now only shp)
+        #The latter allows to push features filtered by cqlfilter (matching an eventual geoserver layer) to Zenodo
+        #instead of the complete dataset
+      
+        isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
+        if(isSourceUrl){
+          warnMsg <- "Copying data from URL to Job data directory!"
+          config$logger.warn(warnMsg)
+          download.file(datasource_file, destfile = paste(basefilename, datasource_ext, sep="."))
+        }else{
+          if(is.null(self$data$features)){
           
-          config$logger.info("Copying data local file(s) to Job data directory!")
-          srcFilename <- self$data$source
-          data.files <- list.files(path = dirname(srcFilename), pattern = self$data$sourceName)
-          if(length(data.files)>0){
-            isZipped <- any(sapply(data.files, endsWith, ".zip"))
-            if(!isZipped){
-              config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
-              for(data.file in data.files){
-                file.copy(from = data.file, to = getwd())
-                fileparts <- unlist(strsplit(data.file,"\\."))
-                fileext <- fileparts[length(fileparts)]
-                file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
+            config$logger.info("Copying data local file(s) to Job data directory!")
+            srcFilename <- datasource_file
+            data.files <- list.files(path = dirname(srcFilename), pattern = datasource_name)
+            if(length(data.files)>0){
+              isZipped <- any(sapply(data.files, endsWith, ".zip"))
+              if(!isZipped){
+                config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
+                for(data.file in data.files){
+                  file.copy(from = data.file, to = getwd())
+                  fileparts <- unlist(strsplit(data.file,"\\."))
+                  fileext <- fileparts[length(fileparts)]
+                  file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
+                }
+                config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
+                data.files <- list.files(pattern = basefilename)
+                if(length(data.files)>0) zip(zipfile = paste0(basefilename,".zip"), files = data.files)
+              }else{
+                config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
+                unzip(zipfile = srcFilename, unzip = getOption("unzip"))
+                data.files <- list.files(pattern = datasource_name)
+                if(length(data.files)>0) for(data.file in data.files){
+                  file.copy(from = data.file, to = getwd())
+                  fileparts <- unlist(strsplit(data.file,"\\."))
+                  fileext <- fileparts[length(fileparts)]
+                  file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
+                }
+                data.files <- list.files(pattern = basefilename)
+                if(length(data.files)>0) zip(zipfile = paste0(basefilename,".zip"), files = data.files)
               }
-              config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
-              data.files <- list.files(pattern = basefilename)
-              if(length(data.files)>0) zip(zipfile = paste0(basefilename,".zip"), files = data.files)
             }else{
-              config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
-              unzip(zipfile = srcFilename, unzip = getOption("unzip"))
-              data.files <- list.files(pattern = self$data$sourceName)
-              if(length(data.files)>0) for(data.file in data.files){
-                file.copy(from = data.file, to = getwd())
-                fileparts <- unlist(strsplit(data.file,"\\."))
-                fileext <- fileparts[length(fileparts)]
-                file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
-              }
-              data.files <- list.files(pattern = basefilename)
-              if(length(data.files)>0) zip(zipfile = paste0(basefilename,".zip"), files = data.files)
+              errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", srcFilename, datasource_name)
+              config$logger.error(errMsg)
+              stop(errMsg)
             }
+            
           }else{
-            errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", srcFilename, self$data$sourceName)
-            config$logger.error(errMsg)
-            stop(errMsg)
+            config$logger.info("Writing entity data features to job data directory!")
+            switch(self$data$uploadType,
+              "shp" = {
+                sf::st_write(self$data$features, paste0(basefilename, ".shp"), delete_dsn = FALSE)
+                data.files <- list.files(pattern = basefilename)
+                zip(zipfile = paste0(basefilename, ".zip"), files = data.files)
+              },{
+                config$logger.warn(sprintf("Entity data features writer not implemented for type '%s'", self$data$uploadType))
+              }
+            )
           }
           
-        }else{
-          config$logger.info("Writing entity data features to job data directory!")
-          switch(self$data$type,
-            "shp" = {
-              sf::st_write(self$data$features, paste0(basefilename, ".shp"), delete_dsn = TRUE)
-              data.files <- list.files(pattern = basefilename)
-              zip(zipfile = paste0(basefilename, ".zip"), files = data.files)
-            },{
-              config$logger.warn(sprintf("Entity data features writer not implemented for type '%s'", self$data$type))
-            }
-          )
         }
+        
       }
+      
       setwd(wd)
+      
     },
     
     #enrichWithData
     enrichWithData = function(config){
     
-      layername <- if(!is.null(self$data$identifier)) self$data$identifier else self$identifiers$id
+      if(length(self$data$source)>1) 
+        config$logger.warn("More than one data sources, entity metadata enrichment with data based on the first source only!")
+      
+      datasource <- self$data$source[[1]]
+      datasource_name <- unlist(strsplit(datasource, "\\."))[1]
+      datasource_file <- attr(datasource, "uri")
+      attributes(datasource) <- NULL
+      
+      layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
       
       TEMP_DATA_DIR <- file.path(getwd(), "geoflow_temp_data")
       if(!dir.exists(TEMP_DATA_DIR)){
         config$logger.info("Create geoflow temporary data directory")
         dir.create(TEMP_DATA_DIR)
       }
-      trgFilename <- file.path(TEMP_DATA_DIR, paste0(self$data$sourceName,".zip"))
+      trgFilename <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".zip"))
       
-      switch(self$data$type,
+      switch(self$data$uploadType,
            #Method for ESRI Shapefile (if remote, shapefiles should be zipped)
            "shp" = {
              shpExists <- FALSE
-             isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", self$data$source) > 0
+             isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
              if(isSourceUrl){
                warnMsg <- "Downloading remote data from URL to temporary geoflow temporary data directory!"
                config$logger.warn(warnMsg)
-               download.file(self$data$source, destfile = trgFilename)
+               download.file(datasource_file, destfile = trgFilename)
                unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
                shpExists <- TRUE
              }else{
-               data.files <- list.files(path = dirname(self$data$source), pattern = self$data$sourceName)
+               data.files <- list.files(path = dirname(datasource_file), pattern = datasource_name)
                if(length(data.files)>0){
                  shpExists <- TRUE
                  config$logger.info("Copying local data to temporary geoflow temporary data directory")
@@ -240,7 +265,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                    zip(zipfile = trgFilename, files = data.files)
                    for(data.file in data.files) file.copy(from = data.file, to = TEMP_DATA_DIR)
                  }else{
-                   file.copy(from = self$data$source, to = TEMP_DATA_DIR)
+                   file.copy(from = datasource_file, to = TEMP_DATA_DIR)
                    unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
                  }
                }
@@ -249,7 +274,7 @@ geoflow_entity <- R6Class("geoflow_entity",
              if(shpExists){
                #read shapefile
                config$logger.info("Read Shapefiles from geoflow temporary data directory")
-               trgShp <- file.path(TEMP_DATA_DIR, paste0(self$data$sourceName,".shp"))
+               trgShp <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".shp"))
                sf.data <- sf::st_read(trgShp)
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
@@ -323,13 +348,13 @@ geoflow_entity <- R6Class("geoflow_entity",
                  config$logger.warn(warnMsg)
                }
              }else{
-               warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", self$data$source)
+               warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
                config$logger.warn(warnMsg)
              }
           },
           #other format handlers to come
           {
-            config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$type))
+            config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$uploadType))
           }
       ) 
       

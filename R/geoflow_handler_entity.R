@@ -146,8 +146,10 @@ handle_entities_df <- function(config, source){
     #data
     data <- sanitize_str(source_entity[,"Data"])
     if(!is.na(data)){
-      data_obj <- geoflow_data$new(str = data)
-      entity$setData(data_obj)
+      if(data != ""){
+        data_obj <- geoflow_data$new(str = data)
+        entity$setData(data_obj)
+      }
     }
     
     #enrich metadata with dynamic properties

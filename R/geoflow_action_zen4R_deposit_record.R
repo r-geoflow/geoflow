@@ -62,7 +62,7 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   #doi
-  doi <- zenodo_metadata$metadata$prereserve_doi$doi
+  doi <- NULL
   
   #action to perform: create empty record or update existing record
   update <- FALSE
@@ -83,8 +83,9 @@ zen4R_deposit_record <- function(entity, config, options){
         zenodo_metadata <- unlocked_rec
       }
     }
-    
   }
+  
+  doi <- zenodo_metadata$metadata$prereserve_doi$doi
   
   #if entity already comes with a DOI, we set it (this might be a preset DOI from Zenodo or elsewhere)
   if(!is.null(entity$identifiers[["doi"]])){
@@ -93,7 +94,7 @@ zen4R_deposit_record <- function(entity, config, options){
 
   #if entity comes with a foreign DOI (not assigned by Zenodo)
   #we set the DOI (which set prereserve_doi to FALSE)
-  if(regexpr("zenodo", doi)<0){
+  if(!is.null(doi)) if(regexpr("zenodo", doi)<0){
     config$logger.info("Zenodo: Existing foreign DOI (not assigned by Zenodo). Setting foreign DOI and prereserve_doi to 'FALSE'")
     zenodo_metadata$setDOI(doi)
   }
@@ -178,6 +179,7 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   #file uploads
+  print(entity$data$upload)
   if(depositWithFiles & (!update | (update & update_files))){
     if(deleteOldFiles & !skipFileDownload){
       config$logger.info("Zenodo: deleting old files...")
@@ -195,10 +197,14 @@ zen4R_deposit_record <- function(entity, config, options){
       data_files <- data_files[regexpr(entity$identifiers[["id"]],data_files)>0]
       if(length(data_files)>0) data_files <- data_files[!endsWith(data_files, ".rds")]
       if(length(data_files)>0){
-        config$logger.info("Zenodo: uploading data files...")
-        for(data_file in data_files){
-          config$logger.info(sprintf("Zenodo: uploading data file '%s'", data_file))
-          ZENODO$uploadFile(file.path(getwd(), "data", data_file), zenodo_metadata$id)
+        if(entity$data$upload){
+          config$logger.info("Zenodo: uploading data files...")
+          for(data_file in data_files){
+            config$logger.info(sprintf("Zenodo: uploading data file '%s'", data_file))
+            ZENODO$uploadFile(file.path(getwd(), "data", data_file), zenodo_metadata$id)
+          }
+        }else{
+          config$logger.warn("Zenodo: upload:false, skipping data files upload!")
         }
       }
     }

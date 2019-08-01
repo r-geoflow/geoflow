@@ -7,6 +7,27 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     stop("Package 'geosapi' is required for this action")
   }
   
+  #check presence of data
+  if(is.null(entity$data)){
+    warnMsg <- sprintf("No data object associated to entity '%s'. Skipping data publication!", 
+                       entity$identifiers[["id"]])
+    config$logger.warn(warnMsg)
+    return(NULL)
+  }
+  
+  if(length(entity$data$source)>1) 
+    config$logger.warn("More than one data sources, geosapi action will consider the first one only!")
+  
+  #datasource
+  datasource <- entity$data$source[[1]]
+  datasource_name <- unlist(strsplit(datasource, "\\."))[1]
+  datasource_file <- attr(datasource, "uri")
+  attributes(datasource) <- NULL
+  
+  #layername/sourcename
+  layername <- if(!is.null(entity$data$layername)) entity$data$layername else entity$identifiers$id
+  sourcename <- if(!is.null(datasource_name)) datasource_name else layername
+  
   #shortcut for gs config
   GS <- config$software$output$geoserver
   if(is.null(GS)){
@@ -32,19 +53,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   if(!is.null(entity$data$workspace)) workspace <- entity$data$workspace
   if(!is.null(entity$data$datastore)) datastore <- entity$data$datastore
   
-  #check presence of data
-  if(is.null(entity$data)){
-    warnMsg <- sprintf("No data object associated to entity '%s'. Skipping data publication!", 
-                       entity$identifiers[["id"]])
-    config$logger.warn(warnMsg)
-    return(NULL)
-  }
-  
-  #layername/sourcename
-  layername <- if(!is.null(entity$data$identifier)) entity$data$identifier else entity$identifiers$id
-  sourcename <- if(!is.null(entity$data$sourceName)) entity$data$sourceName else layername
-  
-  if(entity$data$type == "other"){
+  if(entity$data$uploadType == "other"){
     warnMsg <- "No 'geosapi' action possible for type 'other'. Action skipped"
     config$logger.warn(warnMsg)
     return(NULL)
@@ -54,37 +63,37 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   #-------------------------------------------------------------------------------------------------
   if(entity$data$upload){
     config$logger.info("Upload mode is set to true")
-    if(startsWith(entity$data$type,"db")){
+    if(startsWith(entity$data$uploadType,"db")){
       warnMsg <- "Skipping upload: Upload mode is only valid for types 'shp', 'spatialite' or 'h2'"
       config$logger.warn(warnMsg)
     }else{
       uploaded <- FALSE
-      isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", entity$data$source) > 0
+      isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
       if(isSourceUrl){
         warnMsg <- "Upload from URL: Upload will assume remote file is a zip archive!"
         config$logger.warn(warnMsg)
-        filename <- file.path(getwd(), "data", paste0(entity$data$sourceName,".zip"))
-        download.file(entity$data$source, destfile = filename)
+        filename <- file.path(getwd(), "data", paste0(datasource_name,".zip"))
+        download.file(datasource_file, destfile = filename)
         uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
-                                  filename = filename, extension = entity$data$type, charset = "UTF-8")
+                                  filename = filename, extension = entity$data$uploadType, charset = "UTF-8")
         unlink(filename)
       }else{
         config$logger.info("Upload from local file(s)")
-        srcFilename <- entity$data$source
-        data.files <- list.files(path = dirname(srcFilename), pattern = paste0(entity$data$sourceName,".zip"))
+        srcFilename <- datasource_file
+        data.files <- list.files(path = dirname(srcFilename), pattern = paste0(datasource_name,".zip"))
         if(length(data.files)>0){
           filename <- file.path(dirname(srcFilename), data.files[1])
           uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
-                                    filename = filename, extension = entity$data$type, charset = "UTF-8",
-                                    contentType = if(entity$data$type=="spatialite") "application/x-sqlite3" else "")
+                                    filename = filename, extension = entity$data$uploadType, charset = "UTF-8",
+                                    contentType = if(entity$data$uploadType=="spatialite") "application/x-sqlite3" else "")
         }else{
-          errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", srcFilename, entity$data$sourceName)
+          errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", srcFilename, datasource_name)
           config$logger.error(errMsg)
           stop(errMsg)
         }
       }
       if(uploaded){
-        infoMsg <- sprintf("Successful Geoserver upload for file '%s' (%s)", entity$data$source, entity$data$type)
+        infoMsg <- sprintf("Successful Geoserver upload for file '%s' (%s)", datasource_file, entity$data$uploadType)
         config$logger.info(infoMsg)
       }else{
         errMsg <- "Error during Geoserver file upload. Aborting 'geosapi' action!"
@@ -124,10 +133,10 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   }
   
   #virtual table?
-  if(entity$data$type == "dbquery"){
+  if(entity$data$uploadType == "dbquery"){
     vt <- GSVirtualTable$new()
     vt$setName(entity$identifiers$id)
-    vt$setSql(entity$data$source)
+    vt$setSql(datasource)
     #if the virtual table is spatialized
     if(!is.null(entity$data$geometryField) & !is.null(entity$data$geometryType)){
       vtg <- GSVirtualTableGeometry$new(

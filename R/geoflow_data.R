@@ -1,12 +1,14 @@
 #'geoflow_data
 #'@export
 geoflow_data <- R6Class("geoflow_data",
+  private = list(
+    supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "other")
+  ),
   public = list(
-    identifier = NULL,
-    type = NULL,
     source = NULL,
-    sourceName = NULL,
-    upload = FALSE,
+    upload = TRUE,
+    uploadType = "other",
+    layername = NULL,
     cqlfilter = NULL,
     geometryField = NULL,
     geometryType = NULL,
@@ -21,37 +23,38 @@ geoflow_data <- R6Class("geoflow_data",
         data_props <- lapply(data_props, function(data_prop){
           return(extract_kvp(data_prop))
         })
-        #type
-        names(data_props) <- sapply(data_props, function(x){x$key})
-        if(!any(sapply(data_props, function(x){x$key=="type"}))){
-          stop("The data 'type' is mandatory")
-        }
-        self$setType(data_props$type$values[[1]])
-        #source
-        if(!any(sapply(data_props, function(x){x$key=="source"}))){
-          stop("The data 'source' is mandatory")
-        }
-        self$setSource(data_props$source$values[[1]])
-        #sourceName
-        if(!any(sapply(data_props, function(x){x$key=="sourceName"})) && self$type %in% c("shp","spatialite","h2")){
-          stop(sprintf("The data 'sourceName' is mandatory for data type '%s'",self$type))
-        }
-        self$setSourceName(data_props$sourceName$values[[1]])
-        if(self$type %in% c("dbtable","dbview")) self$setSourceName(self$source)
         
-        #identifier (if any)
-        #not mandatory, can be used for subset layers
-        if(!is.null(data_props$identifier)){
-          self$setIdentifier(data_props$identifier$values[[1]])
+        #uploadType
+        names(data_props) <- sapply(data_props, function(x){x$key})
+        if(!any(sapply(data_props, function(x){x$key=="uploadType"}))){
+          self$setUploadType("other")
+        }else{
+          self$setUploadType(data_props$uploadType$values[[1]])
         }
+        
         
         #upload
         if(!is.null(data_props$upload)){
           upload <- as.logical(tolower(data_props$upload$values[[1]]))
           if(is.na(upload)){
-            stop("Incorrect value for 'upload'. Expected boolean value (true/false")
+            self$setUpload(TRUE) 
+          }else{
+            self$setUpload(upload) 
           }
-          self$setUpload(upload)
+        }else{
+          self$setUpload(TRUE) 
+        }
+        
+        #source
+        if(!any(sapply(data_props, function(x){x$key=="source"}))){
+          stop("The data 'source' is mandatory")
+        }
+        self$setSource(data_props$source$values)
+        
+        #layername (if any)
+        #not mandatory, can be used for subset layers
+        if(!is.null(data_props$layername)){
+          self$setLayername(data_props$layername$values[[1]])
         }
         #cql filter
         if(!is.null(data_props$cqlfilter)){
@@ -61,7 +64,7 @@ geoflow_data <- R6Class("geoflow_data",
         params <- data_props[sapply(data_props, function(x){x$key=="parameter"})]
         if(length(params)>0){
           if(self$type != "dbquery"){
-            stop("The specification of service parameters is only possible for a 'dbquery' type!")
+            stop("The specification of service parameters is only possible for a 'dbquery' upload type!")
           }
           #check and set parameter
           for(param in params){
@@ -114,34 +117,28 @@ geoflow_data <- R6Class("geoflow_data",
       }
     },
     
-    #setIdentifier
-    setIdentifier = function(identifier){
-      self$identifier <- identifier
+    #setLayername
+    setLayername = function(layername){
+      self$layername <- layername
     },
     
-    #setType
-    setType = function(type){
-      allowedTypes <- c("dbtable", "dbview", "dbquery","shp", "other")
-      if(!(type %in% allowedTypes)){
-        errMsg <- sprintf("Type should be among values [%s]", paste0(allowedTypes, collapse=","))
+    #setUploadType
+    setUploadType = function(uploadType){
+      if(!(uploadType %in% private$supportedUploadTypes)){
+        errMsg <- sprintf("Upload type should be among values [%s]", paste0(private$supportedUploadTypes, collapse=","))
         stop(errMsg)
       }
-      self$type <- type
-    },
-    
-    #setSourceName
-    setSource = function(source){
-      self$source <- source
-    },
-    
-    #setSourceName
-    setSourceName = function(sourceName){
-      self$sourceName <- sourceName
+      self$uploadType <- uploadType
     },
     
     #setUpload
     setUpload = function(upload){
       self$upload <- upload
+    },
+    
+    #setSource
+    setSource = function(source){
+      self$source <- source
     },
     
     #setCqlFilter
