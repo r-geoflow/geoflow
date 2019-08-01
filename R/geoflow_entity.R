@@ -215,9 +215,24 @@ geoflow_entity <- R6Class("geoflow_entity",
               }
             )
           }
-          
         }
-        
+      }
+      
+      if(self$data$uploadType == "other" & self$data$uploadZip){
+        config$logger.info("uploadZip = TRUE: Zip sources into single data file")
+        data.files <- list.files()
+        print(data.files)
+        zip(zipfile = paste0(self$identifiers$id, "_files", ".zip"), files = data.files)
+        if(self$data$uploadZipOnly){
+          config$logger.info("uploadZipOnly = TRUE: deleting zipped, they will not be uploaded")
+          for(data.file in data.files){
+            unlink(data.file, force = TRUE)
+          }
+        }else{
+          config$logger.info("uploadZipOnly = FALSE: both zip and zipped files will be uploaded")
+        }
+      }else{
+        config$logger.info("uploadZip = FALSE: source files will be uploaded")
       }
       
       setwd(wd)

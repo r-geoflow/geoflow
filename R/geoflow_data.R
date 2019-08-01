@@ -8,6 +8,8 @@ geoflow_data <- R6Class("geoflow_data",
     source = NULL,
     upload = TRUE,
     uploadType = "other",
+    uploadZip = FALSE,
+    uploadZipOnly = FALSE,
     layername = NULL,
     cqlfilter = NULL,
     geometryField = NULL,
@@ -36,13 +38,31 @@ geoflow_data <- R6Class("geoflow_data",
         #upload
         if(!is.null(data_props$upload)){
           upload <- as.logical(tolower(data_props$upload$values[[1]]))
-          if(is.na(upload)){
-            self$setUpload(TRUE) 
-          }else{
+          if(!is.na(upload)){
             self$setUpload(upload) 
           }
         }else{
           self$setUpload(TRUE) 
+        }
+        
+        #uploadZip
+        if(!is.null(data_props$uploadZip)){
+          uploadZip <- as.logical(tolower(data_props$uploadZip$values[[1]]))
+          if(!is.na(uploadZip)){
+            self$setUploadZip(uploadZip) 
+          }
+        }else{
+          self$setUploadZip(FALSE) 
+        }
+        
+        #uploadZipOnly
+        if(!is.null(data_props$uploadZipOnly)){
+          uploadZipOnly <- as.logical(tolower(data_props$uploadZipOnly$values[[1]]))
+          if(!is.na(uploadZipOnly)){
+            self$setUploadZipOnly(uploadZipOnly) 
+          }
+        }else{
+          self$setUploadZipOnly(FALSE) 
         }
         
         #source
@@ -134,6 +154,16 @@ geoflow_data <- R6Class("geoflow_data",
     #setUpload
     setUpload = function(upload){
       self$upload <- upload
+    },
+    
+    #setUploadZip
+    setUploadZip = function(uploadZip){
+      self$uploadZip <- uploadZip
+    },
+    
+    #setUploadZipOnly
+    setUploadZipOnly = function(uploadZipOnly){
+      self$uploadZipOnly <- uploadZipOnly
     },
     
     #setSource
