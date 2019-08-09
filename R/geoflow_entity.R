@@ -27,6 +27,9 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #setDate
     setDate = function(date){
+      if(!is(date, "Date") & !is(date, "POSIXt")){
+        stop("The date should be either a 'Date' or 'POSIXt' object")
+      }
       self$date <- date
     },
     

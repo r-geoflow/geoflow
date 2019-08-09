@@ -16,8 +16,8 @@ handle_entities_df <- function(config, source){
     source_entity <- source[i,]
     entity <- geoflow_entity$new()
     
-    date <- sanitize_str(source_entity[,"Date"])
-    if(!is.na(date)) entity$setDate(as.Date(date))
+    date <- sanitize_date(source_entity[,"Date"])
+    if(!is.na(date)) entity$setDate(date)
     
     #types
     src_type <- sanitize_str(source_entity[,"Type"])

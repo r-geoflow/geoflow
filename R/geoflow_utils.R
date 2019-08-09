@@ -1,6 +1,7 @@
 #'sanitize_str
 #'@export
 sanitize_str <- function(str){
+  if(!is(str, "character")) return(str)
   if(!is.na(str) & str=="") return(NA)
   str <- gsub("\n", ";", str)
   str <- gsub(";;", ";", str)
@@ -9,6 +10,22 @@ sanitize_str <- function(str){
   return(str)
 }
 
+#' sanitize_date
+#' @export
+sanitize_date <- function(date){
+  if(is(date, "character")){
+    if(date==""){
+      date <- NA 
+    }else{
+      if(nchar(date)==10){
+        date <- as.Date(date)
+      }else{
+        date <- as.POSIXct(date) 
+      }
+    }
+  }
+  return(date)
+}
 
 #'extract_kvp
 #'@export
