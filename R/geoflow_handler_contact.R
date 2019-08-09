@@ -29,9 +29,9 @@ handle_contacts_df <- function(config, source){
     contact$setWebsiteUrl(source_contact[,"WebsiteUrl"])
     contact$setWebsiteName(source_contact[,"WebsiteName"])
     
-    srcId <- source_contact[,"Identifier"]
+    srcId <- sanitize_str(source_contact[,"Identifier"])
     if(!is.na(srcId)){
-      identifiers <- unlist(strsplit(sanitize_str(srcId), ";"))
+      identifiers <- unlist(strsplit(srcId, ";"))
       if(length(identifiers)>0){
         invisible(lapply(identifiers, function(identifier){
           id_obj <- geoflow_kvp$new(str = identifier)

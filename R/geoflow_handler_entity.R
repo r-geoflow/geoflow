@@ -16,7 +16,8 @@ handle_entities_df <- function(config, source){
     source_entity <- source[i,]
     entity <- geoflow_entity$new()
     
-    entity$setDate(as.Date(source_entity[,"Date"]))
+    date <- sanitize_str(source_entity[,"Date"])
+    if(!is.na(date)) entity$setDate(as.Date(date))
     
     #types
     src_type <- sanitize_str(source_entity[,"Type"])
@@ -110,7 +111,7 @@ handle_entities_df <- function(config, source){
     }
     
     #spatial extent
-    spatial_cov <- source_entity[,"SpatialCoverage"]
+    spatial_cov <- sanitize_str(source_entity[,"SpatialCoverage"])
     if(!is.na(spatial_cov)){
       if(!startsWith(spatial_cov,"SRID=")) 
         stop("The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry")
@@ -124,7 +125,10 @@ handle_entities_df <- function(config, source){
     }
     
     #temporal extent
-    if(!is.na(source_entity[,"TemporalCoverage"])) entity$setTemporalExtent(source_entity[,"TemporalCoverage"])
+    temporal_cov <- sanitize_str(source_entity[,"TemporalCoverage"])
+    if(!is.na(temporal_cov) & temporal_cov != ""){
+      entity$setTemporalExtent(temporal_cov)
+    }
     
     #Rights
     src_rights <- sanitize_str(source_entity[,"Rights"])

@@ -1,6 +1,7 @@
 #'sanitize_str
 #'@export
 sanitize_str <- function(str){
+  if(!is.na(str) & str=="") return(NA)
   str <- gsub("\n", ";", str)
   str <- gsub(";;", ";", str)
   str <- gsub(",;", ",", str)
