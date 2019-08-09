@@ -56,14 +56,20 @@ handle_entities_df <- function(config, source){
     descriptions <- if(!is.na(src_description)) unlist(strsplit(src_description, ";")) else list()
     if(length(descriptions)>0){
       if(length(descriptions)==1){
-        entity$setDescription("abstract", descriptions)
+        if(regexpr(":",descriptions) == -1){
+          entity$setDescription("abstract", descriptions)
+        }else{
+          des_kvp <- extract_kvp(descriptions)
+          descriptions <- paste(des_kvp$values, collapse=",")
+          entity$setDescription("abstract", descriptions) 
+        }
       }else{
         for(description in descriptions){
           if(regexpr(":",description) == -1)
             entity$setDescription("abstract", description)
           else
             des_kvp <- extract_kvp(description)
-            entity$setDescription(des_kvp$key, des_kvp$values[[1]])
+            entity$setDescription(des_kvp$key, paste(des_kvp$values, collapse=","))
         }
       }
     }

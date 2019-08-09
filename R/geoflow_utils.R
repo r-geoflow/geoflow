@@ -3,7 +3,7 @@
 sanitize_str <- function(str){
   if(!is(str, "character")) return(str)
   if(!is.na(str) & str=="") return(NA)
-  str <- gsub("\n", ";", str)
+  #str <- gsub("\n", ";", str)
   str <- gsub(";;", ";", str)
   str <- gsub(",;", ",", str)
   str <- gsub(":;", ":", str)
