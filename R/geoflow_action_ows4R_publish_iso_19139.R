@@ -1,4 +1,9 @@
 ows4R_publish_iso_19139 <- function(entity, config, options){
+  
+  geometa_inspire <- if(!is.null(options$geometa_inspire)) options$geometa_inspire else FALSE
+  if(geometa_inspire){
+    config$logger.info("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its CSW-T publication")
+  }
     
   if(!require("geometa")){
     stop("Package 'geometa' is required for this action")
@@ -21,9 +26,11 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
   
   meta_dc <- CSW$getRecordById(entity$identifiers[["id"]])
   if(is.null(meta_dc)){
-    CSW$insertRecord(record = md)
+    config$logger.info(sprintf("Inserting new record with id '%s'", meta_dc))
+    CSW$insertRecord(record = md, geometa_inspire = geometa_inspire)
   }else{
-    CSW$updateRecord(record = md)
+    config$logger.info(sprintf("Updating existing record with id '%s'", meta_dc))
+    CSW$updateRecord(record = md, geometa_inspire = geometa_inspire)
   }
   return(md$fileIdentifier)
 }
