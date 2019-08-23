@@ -6,7 +6,7 @@ geoflow_provenance <- R6Class("geoflow_provenance",
      processes = list(),
      initialize = function(str = NULL){
        if(!is.null(str)){
-         data_props <-  unlist(strsplit(sanitize_str(str), ";"))
+         data_props <- extract_cell_components(sanitize_str(str))
          state_prop <- data_props[[1]]
          if(!startsWith(state_prop, "statement")){
            stop("The data 'statement' is mandatory")

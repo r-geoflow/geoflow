@@ -2,8 +2,13 @@
 #'@export
 sanitize_str <- function(str){
   if(!is(str, "character")) return(str)
+  if(is.na(str)) return(NA)
   if(!is.na(str) & str=="") return(NA)
-  #str <- gsub("\n", ";", str)
+  startwith_n <- startsWith(str, "\n")
+  while(startwith_n){
+    str <- substr(str, 2, nchar(str))
+    startwith_n <- startsWith(str, "\n")
+  }
   str <- gsub(";;", ";", str)
   str <- gsub(",;", ",", str)
   str <- gsub(":;", ":", str)
@@ -94,4 +99,24 @@ filter_sf_by_cqlfilter <- function(sfdata, cqlfilter){
   sfdata.filtered <- try(eval(parse(text= sprintf("sfdata[%s,]",rfilter))))
   if(class(sfdata.filtered)[1]!="try-error") out <- sfdata.filtered
   return(out)
+}
+
+#'extract_cell_components
+#'@export
+extract_cell_components <- function(x){
+  lines <- unlist(strsplit(x, get_line_separator()))
+  return(lines)
+}
+
+#'set_line_separator
+#'@export
+set_line_separator <- function(x = ";\n"){
+  if(!is(x,"character")) stop("The line separator should be an object of class 'character'")
+  .geoflow$LINE_SEPARATOR <- x
+}
+
+#'get_line_separator
+#'@export
+get_line_separator <- function(){
+  return(.geoflow$LINE_SEPARATOR)
 }

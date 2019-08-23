@@ -115,7 +115,7 @@ executeWorkflowJob <- function(config, jobdir){
               src_entities <- config$src_entities
               src_entities$Identifier <- sapply(1:nrow(src_entities), function(i){
                 identifier <- src_entities[i, "Identifier"]
-                if(!endsWith(identifier,";")) identifier <- paste0(identifier, ";\n")
+                if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
                 if(regexpr("doi", identifier)>0) return(identifier)
                 if(out_zenodo_dois[i,"Status"] == "published") return(identifier)
                 identifier <- paste0(identifier, "doi:", out_zenodo_dois[i,"DOI_for_allversions"])

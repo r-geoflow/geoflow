@@ -31,7 +31,7 @@ handle_contacts_df <- function(config, source){
     
     srcId <- sanitize_str(source_contact[,"Identifier"])
     if(!is.na(srcId)){
-      identifiers <- unlist(strsplit(srcId, ";"))
+      identifiers <- extract_cell_components(srcId)
       if(length(identifiers)>0){
         invisible(lapply(identifiers, function(identifier){
           id_obj <- geoflow_kvp$new(str = identifier)

@@ -43,4 +43,5 @@ closeWorkflow <- function(config){
     config$software$csw_config <- NULL
   }
   setwd(config$wd)
+  set_line_separator() #default line separator
 }

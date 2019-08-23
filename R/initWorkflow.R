@@ -37,6 +37,15 @@ initWorkflow <- function(file){
     config$profile <- profile
   }
   
+  #options
+  if(!is.null(config$options)){
+    config$logger.info("Setting geoflow global options...")
+    if(!is.null(config$options$line_separator)){
+      config$logger.info(sprintf("Setting option 'line_separator' to '%s'", config$options$line_separator))
+      set_line_separator(config$options$line_separator)
+    }
+  }
+  
   #working dir
   if(is.null(config$wd)) config$wd <- getwd()
   

@@ -21,7 +21,7 @@ handle_entities_df <- function(config, source){
     
     #types
     src_type <- sanitize_str(source_entity[,"Type"])
-    types <- if(!is.na(src_type)) unlist(strsplit(src_type, ";")) else list()
+    types <- if(!is.na(src_type)) extract_cell_components(src_type) else list()
     if(length(types)>0){
       if(length(types)==1){
         entity$setType("generic", types)
@@ -38,7 +38,7 @@ handle_entities_df <- function(config, source){
     }
     
     #identifier
-    identifiers <- unlist(strsplit(sanitize_str(source_entity[,"Identifier"]), ";"))
+    identifiers <-extract_cell_components(sanitize_str(source_entity[,"Identifier"]))
     for(identifier in identifiers){
       if(regexpr(":",identifier) == -1){
         entity$setIdentifier("id", identifier)
@@ -53,7 +53,7 @@ handle_entities_df <- function(config, source){
     
     #description
     src_description <- sanitize_str(source_entity[,"Description"])
-    descriptions <- if(!is.na(src_description)) unlist(strsplit(src_description, ";")) else list()
+    descriptions <- if(!is.na(src_description)) extract_cell_components(src_description) else list()
     if(length(descriptions)>0){
       if(length(descriptions)==1){
         if(regexpr(":",descriptions) == -1){
@@ -76,7 +76,7 @@ handle_entities_df <- function(config, source){
     
     #subjects
     src_subject <- sanitize_str(source_entity[,"Subject"])
-    subjects <- if(!is.na(src_subject)) unlist(strsplit(src_subject, ";")) else list()
+    subjects <- if(!is.na(src_subject)) extract_cell_components(src_subject) else list()
     if(length(subjects)>0){
       invisible(lapply(subjects, function(subject){
         subject_obj <- geoflow_subject$new(str = subject)
@@ -86,7 +86,7 @@ handle_entities_df <- function(config, source){
       
     #contacts
     src_contact <- sanitize_str(source_entity[,"Creator"])
-    contacts <- if(!is.na(src_contact)) unlist(strsplit(src_contact, ";")) else list()
+    contacts <- if(!is.na(src_contact)) extract_cell_components(src_contact) else list()
     if(length(contacts)>0){
       invisible(lapply(contacts, function(contact){
         contact_splits <- unlist(strsplit(contact, ":"))
@@ -108,7 +108,7 @@ handle_entities_df <- function(config, source){
     
     #relations
     src_relation <- sanitize_str(source_entity[,"Relation"])
-    relations <- if(!is.na(src_relation)) unlist(strsplit(src_relation, ";")) else list()
+    relations <- if(!is.na(src_relation)) extract_cell_components(src_relation) else list()
     if(length(relations)>0){
       invisible(lapply(relations, function(relation){
         relation_obj <- geoflow_relation$new(str = relation)
@@ -121,7 +121,7 @@ handle_entities_df <- function(config, source){
     if(!is.na(spatial_cov)){
       if(!startsWith(spatial_cov,"SRID=")) 
         stop("The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry")
-      spatial_cov <- unlist(strsplit(spatial_cov,";"))
+      spatial_cov <- unlist(strsplit(spatial_cov, ";"))
       if(length(spatial_cov)!=2) 
         stop("The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry")
       spatial_srid <- as.integer(unlist(strsplit(spatial_cov[1],"SRID="))[2])
@@ -138,7 +138,7 @@ handle_entities_df <- function(config, source){
     
     #Rights
     src_rights <- sanitize_str(source_entity[,"Rights"])
-    rights <- if(!is.na(src_rights)) unlist(strsplit(src_rights, ";")) else list()
+    rights <- if(!is.na(src_rights)) extract_cell_components(src_rights) else list()
     if(length(rights)>0){
       invisible(lapply(rights, function(right){
         right_obj <- geoflow_right$new(str = right)
