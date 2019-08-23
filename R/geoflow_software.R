@@ -7,17 +7,18 @@ geoflow_software <- R6Class("geoflow_software",
     software_type = NULL,
     definition = NULL,
     handler = NULL,
-    attributes = list(),
-    properties = list(),
     arguments = list(),
     parameters = list(),
-    initialize = function(id = NULL, type = NULL, software_type, definition, attributes, handler, arguments){
+    attributes = list(),
+    properties = list(),
+    initialize = function(id = NULL, type = NULL, software_type, definition, handler, arguments, attributes = list()){
       self$setId(id)
       if(!is.null(type)) self$setType(type)
       self$setSoftwareType(software_type)
       self$setDefinition(definition)
       self$setHandler(handler)
       self$setArguments(arguments)
+      self$setAttributes(attributes)
     },
     
     #setId
@@ -228,10 +229,10 @@ list_software_properties <- function(software_type){
   software <- .geoflow$software[sapply(.geoflow$software, function(x){x$software_type == software_type})]
   if(length(software)==0) stop(sprintf("No software '%s'!", software_type))
   software <- software[[1]]
-  if(length(software$properties)>0){
+  if(length(software$attributes)>0){
     out <- data.frame(
-      name = names(software$properties),
-      definition = sapply(software$properties, function(x){x$def}),
+      name = names(software$attributes),
+      definition = sapply(software$attributes, function(x){x$def}),
       stringsAsFactors = FALSE
     )
     row.names(out) <- 1:nrow(out)
