@@ -14,7 +14,6 @@
 #' @import sf
 #' @import rgdal
 #' @import rgeos
-#' @import cleangeo
 #' @import geosapi
 #' @import geonapi
 #' @import geometa
