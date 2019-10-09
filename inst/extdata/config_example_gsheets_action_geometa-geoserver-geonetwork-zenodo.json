@@ -1,0 +1,105 @@
+{
+  "id": "my-workflow",
+  "profile": {
+	"project": "Test geoflow project",
+	"organization": "My organization",
+	"logos": [
+		"https://via.placeholder.com/300x150.png/09f/fff?text=geometa",
+		"https://via.placeholder.com/300x150.png/09f/fff?text=ows4R"
+	]
+  },
+  "options": {
+	"line_separator": "_\n"
+  },
+  "mode": "entity",
+  "metadata": {
+    "entities": {
+      "handler": "gsheet",
+      "source": "https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing"
+    },
+    "contacts" : {
+      "handler": "gsheet",
+      "source": "https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing"
+    }
+  },
+  "software": [
+	{
+		"id": "my-zenodo",
+		"type": "output",
+		"software_type": "zenodo",
+		"parameters": {
+			"url": "https://sandbox.zenodo.org/api",
+			"token": "<token>",
+			"logger": "INFO"
+		},
+		"properties" : {
+			"clean": {
+				"run": false
+			}
+		}
+	},
+	{
+		"id": "my-csw",
+		"type": "output",
+		"software_type": "csw",
+		"parameters": {
+			"url": "http://localhost:8080/geonetwork/srv/en/csw",
+			"serviceVersion": "2.0.2",
+			"user": "admin",
+			"pwd": "geonetwork",
+			"logger": "DEBUG"
+		}
+	},
+	{
+		"id": "my-geonetwork",
+		"type": "output",
+		"software_type": "geonetwork",
+		"parameters": {
+			"url": "http://localhost:8080/geonetwork",
+			"user": "admin",
+			"pwd": "geonetwork",
+			"version": "3.0.2",
+			"logger": "DEBUG"
+		}
+	},
+	{
+		"id": "my-geoserver",
+		"type": "output",
+		"software_type": "geoserver",
+		"parameters": {
+			"url": "http://localhost:8080/geoserver",
+			"user": "admin",
+			"pwd": "geoserver",
+			"logger": "DEBUG"
+		},
+		"properties" : {
+			"workspace": "workspace",
+			"datastore": "datastore"
+		}
+	}
+  ],
+  "actions": [
+	{
+      "id": "zen4R-deposit-record",
+	  "options": {
+		"publish": true
+	  },
+      "run": true
+    },
+	{
+      "id": "geometa-create-iso-19115",
+	  "options": {
+		"logo": true
+	  },
+      "run": true
+    },
+	{
+	  "id": "ows4R-publish-iso-19139",
+	  "run": true
+	},
+	{
+	  "id": "geosapi-publish-ogc-services",
+	  "run": true
+	}
+  ]
+}
