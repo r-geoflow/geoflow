@@ -44,4 +44,9 @@ closeWorkflow <- function(config){
   }
   setwd(config$wd)
   set_line_separator() #default line separator
+  
+  #delete temp data dir used for data enrichment
+  TEMP_DATA_DIR <- get_temp_directory()
+  unlink(TEMP_DATA_DIR, recursive = TRUE, force = TRUE)
+  
 }
