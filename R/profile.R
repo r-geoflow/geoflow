@@ -5,6 +5,9 @@
   #default line separator
   set_line_separator()
   
+  #defaut temp directory
+  set_temp_directory()
+  
   #embedded handlers
   register_contact_handlers()
   register_entity_handlers()
