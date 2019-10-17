@@ -164,13 +164,13 @@ geoflow_entity <- R6Class("geoflow_entity",
         #instead of the complete dataset
       
         isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
-        if(isSourceUrl){
+        if(isSourceUrl && is.null(self$data$features)){
+          #case where data is remote and there was no data enrichment in initWorkflow
           warnMsg <- "Copying data from URL to Job data directory!"
           config$logger.warn(warnMsg)
           download.file(datasource_file, destfile = paste(basefilename, datasource_ext, sep="."))
         }else{
           if(is.null(self$data$features)){
-          
             config$logger.info("Copying data local file(s) to Job data directory!")
             srcFilename <- datasource_file
             data.files <- list.files(path = dirname(srcFilename), pattern = datasource_name)
@@ -217,6 +217,15 @@ geoflow_entity <- R6Class("geoflow_entity",
                 config$logger.warn(sprintf("Entity data features writer not implemented for type '%s'", self$data$uploadType))
               }
             )
+            #we also copy the source with its native name
+            #this is required eg for geosapi if we want to set-up filtered shapefile layers
+            #based on the same source shapefile
+            config$logger.info("For entities enriched with spatial data, copy the datasource")
+            file.copy(
+              from = file.path(config$wd, get_temp_directory(), paste0(datasource_name, ".", datasource_ext)),
+              to = getwd()
+            )
+            
           }
         }
       }
@@ -255,7 +264,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       
       layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
       
-      TEMP_DATA_DIR <- file.path(getwd(), "geoflow_temp_data")
+      TEMP_DATA_DIR <- file.path(getwd(), get_temp_directory())
       if(!dir.exists(TEMP_DATA_DIR)){
         config$logger.info("Create geoflow temporary data directory")
         dir.create(TEMP_DATA_DIR)
@@ -270,7 +279,7 @@ geoflow_entity <- R6Class("geoflow_entity",
              if(isSourceUrl){
                warnMsg <- "Downloading remote data from URL to temporary geoflow temporary data directory!"
                config$logger.warn(warnMsg)
-               download.file(datasource_file, destfile = trgFilename)
+               download.file(datasource_file, destfile = trgFilename, mode = "wb")
                unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
                shpExists <- TRUE
              }else{
@@ -317,7 +326,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                                                  config$software$output$geoserver_config$parameters$url, 
                                                  config$software$output$geoserver_config$properties$workspace,
                                                  layername, paste(self$spatial_extent,collapse=","),self$srid))
-                   self$addRelation(new_thumbnail)
+                   self$relations <- c(new_thumbnail, self$relation) #here we use native vector to put WMS as first thumbnail
                    #WMS
                    new_wms <- geoflow_relation$new()
                    new_wms$setKey("wms")
@@ -375,9 +384,6 @@ geoflow_entity <- R6Class("geoflow_entity",
             config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$uploadType))
           }
       ) 
-      
-      #remove temp dir
-      unlink(TEMP_DATA_DIR, force = TRUE)
     },
     
     #getContacts
