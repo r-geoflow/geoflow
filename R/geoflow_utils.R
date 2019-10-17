@@ -120,3 +120,16 @@ set_line_separator <- function(x = ";\n"){
 get_line_separator <- function(){
   return(.geoflow$LINE_SEPARATOR)
 }
+
+#'set_temp_directory
+#'@export
+set_temp_directory <- function(x = "geoflow_temp_data"){
+  if(!is(x,"character")) stop("The dir name should be an object of class 'character'")
+  .geoflow$TEMP_DATA_DIR <- x
+}
+
+#'get_temp_directory
+#'@export
+get_temp_directory <- function(){
+  return(.geoflow$TEMP_DATA_DIR)
+}
