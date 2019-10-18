@@ -21,7 +21,7 @@ zen4R_deposit_record <- function(entity, config, options){
   deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
   update_metadata <- if(!is.null(options$update_metadata)) options$update_metadata else TRUE
   update_files <- if(!is.null(options$update_files)) options$update_files else TRUE
-  communities <- if(!is.null(options$community)) options$community else NULL
+  communities <- if(!is.null(options$community)) options$community else NA
   
   #zenodo object
   zenodo_metadata <- NULL
@@ -170,7 +170,7 @@ zen4R_deposit_record <- function(entity, config, options){
     #TODO myrec$setAccessRight
     
     #communities
-    if(!is.null(communities)){
+    if(!is.na(communities)){
       zenodo_metadata$metadata$communities <- list()
       for(community in communities) zenodo_metadata$addCommunity(community)
     }
