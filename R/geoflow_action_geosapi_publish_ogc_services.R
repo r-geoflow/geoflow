@@ -65,7 +65,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   #-------------------------------------------------------------------------------------------------
   if(entity$data$upload){
     config$logger.info("Upload mode is set to true")
-    if(startsWith(entity$data$uploadType,"db")){
+    if(startsWith(entity$data$uploadType,"db") || entity$data$uploadType == "other"){
       warnMsg <- "Skipping upload: Upload mode is only valid for types 'shp', 'spatialite' or 'h2'"
       config$logger.warn(warnMsg)
     }else{
