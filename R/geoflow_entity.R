@@ -314,8 +314,8 @@ geoflow_entity <- R6Class("geoflow_entity",
                  sf.crs <- sf::st_crs(sf.data)
                  if(!is.na(sf.crs)){
                    srid <- if(!is.null(self$srid)) self$srid else ""
-                   if(srid != sf.crs){
-                    config$logger.info("Overwriting entity srid [%s] with shapefile srid [%s]") 
+                   if(srid != sf.crs$epsg){
+                    config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, sf.crs$epsg)) 
                     self$setSrid(sf.crs$epsg)
                    }
                  }
