@@ -1,5 +1,5 @@
 Package: geoflow
-Version: 0.0.9002
+Version: 0.0.9003
 Date: 2019-10-18
 Title: R engine to orchestrate and run geospatial (meta)data workflows
 Authors@R: c(

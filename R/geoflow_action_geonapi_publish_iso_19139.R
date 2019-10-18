@@ -7,6 +7,11 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     stop("Package 'geonapi' is required for this action")
   }
   
+  geometa_inspire <- if(!is.null(options$geometa_inspire)) options$geometa_inspire else FALSE
+  if(geometa_inspire){
+    config$logger.info("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its CSW-T publication")
+  }
+  
   #shortcut for gn config
   GN <- config$software$output$geonetwork
   
@@ -28,7 +33,8 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     #insert metadata (once inserted only visible to the publisher)
     group <- if(!is.null(options$group)) options$group else "1"
     category <- if(!is.null(options$category)) options$category else "datasets"
-    created = GN$insertMetadata(geometa = md, group = group, category = category)
+    created = GN$insertMetadata(geometa = md, group = group, category = category,
+                                geometa_inspire = geometa_inspire)
     
     #config privileges
     config <- GNPrivConfiguration$new()
@@ -36,7 +42,8 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     GN$setPrivConfiguration(id = created, config = config)
   }else{
     #update a metadata
-    updated = GN$updateMetadata(id = metaId, geometa = md)
+    updated = GN$updateMetadata(id = metaId, geometa = md,
+                                geometa_inspire = geometa_inspire)
     
     #config privileges
     gn_config <- GNPrivConfiguration$new()
