@@ -312,8 +312,15 @@ geoflow_entity <- R6Class("geoflow_entity",
                  
                  #dynamic srid
                  sf.crs <- sf::st_crs(sf.data)
-                 if(!is.na(sf.crs)) self$setSrid(sf.crs$epsg)
+                 if(!is.na(sf.crs)){
+                   srid <- if(!is.null(self$srid)) self$srid else ""
+                   if(srid != sf.crs){
+                    config$logger.info("Overwriting entity srid [%s] with shapefile srid [%s]") 
+                    self$setSrid(sf.crs$epsg)
+                   }
+                 }
                  #dynamic spatial extent
+                 config$logger.info("Overwriting entity extent with shapefile extent")
                  self$setSpatialExtent(data = sf.data)
                  #dynamic relations related to OGC services (only executed if geosapi action is handled in workflow)
                  if(any(sapply(config$actions, function(x){regexpr("geosapi",x$id)>0}))){
