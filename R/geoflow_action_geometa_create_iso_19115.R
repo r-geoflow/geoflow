@@ -6,10 +6,15 @@ geometa_create_iso_19115 <- function(entity, config, options){
     stop("This action requires the 'geometa' package")
   }
   
+  #features if any
+  features <- entity$data$features
+  
   #options
   inspire <- if(!is.null(options$inspire)) options$inspire else FALSE
   logo <- if(!is.null(options$logo)) options$logo else FALSE
   doi <- if(!is.null(options$doi)) options$doi else FALSE
+  addfeatures <- if(!is.null(options$addfeatures)) options$addfeatures else FALSE
+  featureid <- if(!is.null(options$featureid)){ options$featureid } else { if(!is.null(features)) colnames(features)[1] else NULL} 
   
   #metadata creation
   #-----------------------------------------------------------------------------------------------------
@@ -227,7 +232,17 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(!is.null(entity$spatial_extent)){
     sf_bbox <- entity$spatial_extent
     bbox <- ISOGeographicBoundingBox$new(minx = sf_bbox$xmin, miny = sf_bbox$ymin, maxx = sf_bbox$xmax, maxy = sf_bbox$ymax)
-    extent$setGeographicElement(bbox)
+    extent$addGeographicElement(bbox)
+  }
+  #bounding polygons (if any features & 'addfeatures' option is enabled)
+  if(!is.null(features) && addfeatures){
+    bp <- ISOBoundingPolygon$new()
+    for(i in 1:nrow(features)){
+      geom <- GMLAbstractGeometry$fromSimpleFeatureGeometry(features[i,]$geometry[[1]])
+      geom$attrs["gml:id"] <- paste0("fid.",as.character(features[i,][featureid])[1])
+      bp$polygon <- c(bp$polygon, geom)
+    }
+    extent$addGeographicElement(bp)
   }
   #temporal extent
   if(!is.null(entity$temporal_extent)){
@@ -240,7 +255,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
       gmltimeperiod <- GMLTimePeriod$new(beginPosition = entity$temporal_extent$start, endPosition = entity$temporal_extent$end)
       time$setTimePeriod(gmltimeperiod)
     }
-    extent$setTemporalElement(time)
+    extent$addTemporalElement(time)
   }
   ident$setExtent(extent)
   
