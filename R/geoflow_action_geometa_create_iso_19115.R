@@ -412,8 +412,42 @@ geometa_create_iso_19115 <- function(entity, config, options){
     md$addDataQualityInfo(dq_lineage)
   }
   
-  #TODO data quality other than lineage
-  #e.g. INSPIRE conformance?
+  #data quality other than lineage
+  if(inspire){
+    dq2 <- ISODataQuality$new()
+    scope2 <- ISOScope$new()
+    scope2$setLevel(entity$types[["generic"]])
+    dq2$setScope(scope2)
+    
+    #INSPIRE - interoperability of spatial data sets and services
+    dc_inspire1 <- ISODomainConsistency$new()
+    cr_inspire1 <- ISOConformanceResult$new()
+    cr_inspire_spec1 <- ISOCitation$new()
+    cr_inspire_spec1$setTitle("Commission Regulation (EU) No 1089/2010 of 23 November 2010 implementing Directive 2007/2/EC of the European Parliament and of the Council as regards interoperability of spatial data sets and services")
+    cr_inspire1$setExplanation("See the referenced specification")
+    cr_inspire_date1 <- ISODate$new()
+    cr_inspire_date1$setDate(as.Date(ISOdate(2010,12,8)))
+    cr_inspire_date1$setDateType("publication")
+    cr_inspire_spec1$addDate(cr_inspire_date1)
+    cr_inspire1$setSpecification(cr_inspire_spec1)
+    cr_inspire1$setPass(TRUE)
+    dc_inspire1$addResult(cr_inspire1)
+    dq2$addReport(dc_inspire1)
+    #INSPIRE - metadata
+    dc_inspire2 <- ISODomainConsistency$new()
+    cr_inspire2 <- ISOConformanceResult$new()
+    cr_inspire_spec2 <- ISOCitation$new()
+    cr_inspire_spec2$setTitle("COMMISSION REGULATION (EC) No 1205/2008 of 3 December 2008 implementing Directive 2007/2/EC of the European Parliament and of the Council as regards metadata")
+    cr_inspire2$setExplanation("See the referenced specification")
+    cr_inspire_date2 <- ISODate$new()
+    cr_inspire_date2$setDate(as.Date(ISOdate(2008,12,4)))
+    cr_inspire_date2$setDateType("publication")
+    cr_inspire_spec2$addDate(cr_inspire_date2)
+    cr_inspire2$setSpecification(cr_inspire_spec2)
+    cr_inspire2$setPass(TRUE)
+    dc_inspire2$addResult(cr_inspire2)
+    dq2$addReport(dc_inspire2)
+  }
   
   #TODO content information --> Feature Catalogue description (if data handling)
   
