@@ -68,7 +68,35 @@ geometa_create_iso_19115 <- function(entity, config, options){
     }
   }
   
-  #TODO spatial representation
+  #spatial representation
+  if(!is.null(features)){
+    #support vector spatial representation
+    if(is(features, "sf")){
+      geomtypes <- as.list(table(st_geometry_type(features)))
+      geomtypes <- geomtypes[geomtypes > 0]
+      for(geomtype in names(geomtypes)){
+        vsr <- ISOVectorSpatialRepresentation$new()
+        geomLevel <- "geometryOnly"
+        if(geomtype == "TIN") geomLevel = "planarGraph"
+        vsr$setTopologyLevel(geomLevel)
+        if(geomLevel == "geometryOnly"){
+          geomObject <- ISOGeometricObjects$new()
+          isoGeomType <- switch(geomtype,
+            "GEOMETRY" = "composite", "GEOMETRY" = "composite",
+            "POINT" = "point", "MULTIPOINT" = "point", 
+            "LINESTRING" = "curve", "CIRCULARSTRING" = "curve", "MULTILINESTRING" = "curve", "CURVE" = "curve", "COMPOUNDCURVE" = "curve",
+            "POLYGON" = "surface", "MULTIPOLYGON" = "surface", "TRIANGLE" = "surface",
+            "CURVEPOLYGON" = "surface", "SURFACE" = "surface", "MULTISURFACE" = "surface",
+            "POLYHEDRALSURFACE" = "solid"
+          )
+          geomObject$setGeometricObjectType(isoGeomType)
+          geomObject$setGeometricObjectCount(nrow(features[st_geometry_type(features)==geomtype,]))
+          vsr$setGeometricObjects(geomObject)
+        }
+        md$addSpatialRepresentationInfo(vsr)
+      }
+    }
+  }
   
   #spatial reference system
   if(!is.null(entity$srid)){
