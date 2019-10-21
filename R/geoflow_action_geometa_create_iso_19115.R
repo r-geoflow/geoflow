@@ -114,7 +114,14 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #TODO status (N)
   ident$setLanguage(entity$language)
   ident$setCharacterSet("utf8")
-  #TODO TopicCategory (N)
+  #topic categories
+  topics <- list()
+  if(length(entity$subjects)>0) topics <- entity$subjects[sapply(entity$subjects, function(x){return(tolower(x$name) == "topic")})]
+  if(length(topics)>0){
+    for(topic in topics){
+      for(topicCategory in topic$keywords) ident$addTopicCategory(topicCategory$name)
+    }
+  }
   
   #adding contacts
   for(entity_contact in entity$contacts){
@@ -288,7 +295,9 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ident$setExtent(extent)
   
   #thesaurus/keywords
-  for(subject in entity$subjects){
+  subjects <- entity$subjects
+  if(length(subjects)>0) subjects <- subjects[sapply(subjects, function(x){return(x$name != "topic")})]
+  if(length(subjects)>0) for(subject in subjects){
     #add keywords
     kwds <- ISOKeywords$new()
     for(kwd in subject$keywords){
