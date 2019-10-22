@@ -364,7 +364,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
       or$setDescription(http_relation$description)
       protocol <- switch(http_relation$key,
         "http" = "WWW:LINK-1.0-http--link",
-        "wms" = "OGC:WMS-1.3.0-http-get-map",
+        "wms" = "OGC:WMS-1.1.0-http-get-map",
         "WWW:LINK-1.0-http--link"
       )
       or$setProtocol(protocol)
