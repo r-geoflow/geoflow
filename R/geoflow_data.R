@@ -168,6 +168,7 @@ geoflow_data <- R6Class("geoflow_data",
     
     #setSource
     setSource = function(source){
+      if(!is(source, "list")) source <- list(source)
       self$source <- source
     },
     

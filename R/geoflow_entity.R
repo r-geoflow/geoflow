@@ -152,6 +152,14 @@ geoflow_entity <- R6Class("geoflow_entity",
         datasource_file <- attr(datasource, "uri")
         attributes(datasource) <- NULL
         
+        
+        if(is.null(datasource_file)){
+          warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
+          config$logger.warn(warnMsg)
+          setwd(wd)
+          return(FALSE)
+        }
+        
         config$logger.info(sprintf("Copying data source %s '%s' (%s) to job directory '%s'",
                                    i, datasource, datasource_file, jobdir))
         
@@ -261,6 +269,12 @@ geoflow_entity <- R6Class("geoflow_entity",
       datasource_name <- unlist(strsplit(datasource, "\\."))[1]
       datasource_file <- attr(datasource, "uri")
       attributes(datasource) <- NULL
+      
+      if(is.null(datasource_file)){
+        warnMsg <- sprintf("No source file/URL for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
+        config$logger.warn(warnMsg)
+        return(FALSE)
+      }
       
       layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
       
