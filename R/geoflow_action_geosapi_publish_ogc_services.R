@@ -129,7 +129,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   if(entity$data$uploadType == "dbquery"){
     vt <- GSVirtualTable$new()
     vt$setName(entity$identifiers$id)
-    vt$setSql(datasource)
+    vt$setSql(entity$data$sql)
     #if the virtual table is spatialized
     if(!is.null(entity$data$geometryField) & !is.null(entity$data$geometryType)){
       vtg <- GSVirtualTableGeometry$new(

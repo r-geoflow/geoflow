@@ -6,6 +6,7 @@ geoflow_data <- R6Class("geoflow_data",
   ),
   public = list(
     source = NULL,
+    sql = NULL,
     upload = TRUE,
     uploadType = "other",
     uploadZip = FALSE,
@@ -70,6 +71,11 @@ geoflow_data <- R6Class("geoflow_data",
           stop("The data 'source' is mandatory")
         }
         self$setSource(data_props$source$values)
+        
+        #sql
+        if(!is.null(data_props$sql)){
+          self$setSql(data_props$sql$values[[1]])
+        }
         
         #layername (if any)
         #not mandatory, can be used for subset layers
@@ -170,6 +176,11 @@ geoflow_data <- R6Class("geoflow_data",
     setSource = function(source){
       if(!is(source, "list")) source <- list(source)
       self$source <- source
+    },
+    
+    #setSql
+    setSql = function(sql){
+      self$sql <- sql
     },
     
     #setCqlFilter
