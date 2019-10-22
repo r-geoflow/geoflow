@@ -399,11 +399,19 @@ geoflow_entity <- R6Class("geoflow_entity",
                warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
                config$logger.warn(warnMsg)
              }
-          },
-          #other format handlers to come
-          {
-            config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$uploadType))
-          }
+            },
+           "dbquery" = {
+              sqlfile <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".sql"))
+              config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
+              sql <- paste(readLines(sqlfile), collapse="")
+              self$data$setSql(sql)
+              unlink(sqlfile)
+              config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$uploadType))
+            },
+            #other format handlers to come
+            {
+              config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$uploadType))
+            }
       ) 
     },
     
