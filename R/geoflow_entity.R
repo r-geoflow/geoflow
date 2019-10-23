@@ -473,7 +473,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 sf.data <- try(sf::st_read(DBI, query = self$data$sql))
                 if(!is.null(sf.data)){
                   if(class(sf.data)[1]=="try-error"){
-                    errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", sf$data$sql)
+                    errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", self$data$sql)
                     config$logger.error(errMsg)
                     return(FALSE)
                     
