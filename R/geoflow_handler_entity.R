@@ -165,6 +165,9 @@ handle_entities_df <- function(config, source){
     #enrich metadata with dynamic properties
     if(!is.null(entity$data)) entity$enrichWithData(config)
     
+    #enrich with relations (eg. geosapi & OGC data protocol online resources)
+    entity$enrichWithRelations(config)
+    
     entities <- c(entities, entity)
   }
   attr(entities, "source") <- source

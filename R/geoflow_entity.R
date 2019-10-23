@@ -270,7 +270,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       datasource_file <- attr(datasource, "uri")
       attributes(datasource) <- NULL
       
-      if(is.null(datasource_file)){
+      types_without_file <- c("dbtable","dbview","dbquery")
+      datasource_file_needed <- !(self$data$uploadType %in% types_without_file)
+      if(datasource_file_needed && is.null(datasource_file)){
         warnMsg <- sprintf("No source file/URL for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
         config$logger.warn(warnMsg)
         return(FALSE)
@@ -283,11 +285,14 @@ geoflow_entity <- R6Class("geoflow_entity",
         config$logger.info("Create geoflow temporary data directory")
         dir.create(TEMP_DATA_DIR)
       }
-      trgFilename <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".zip"))
       
       switch(self$data$uploadType,
-           #Method for ESRI Shapefile (if remote, shapefiles should be zipped)
+           #shp - ESRI Shapefile (if remote, shapefiles should be zipped)
+           #---------------------------------------------------------------------------------
            "shp" = {
+             
+             trgFilename <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".zip"))
+             
              shpExists <- FALSE
              isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
              if(isSourceUrl){
@@ -336,60 +341,6 @@ geoflow_entity <- R6Class("geoflow_entity",
                  #dynamic spatial extent
                  config$logger.info("Overwriting entity extent with shapefile extent")
                  self$setSpatialExtent(data = sf.data)
-                 #dynamic relations related to OGC services (only executed if geosapi action is handled in workflow)
-                 if(any(sapply(config$actions, function(x){regexpr("geosapi",x$id)>0}))){
-                   #Thumbnail
-                   new_thumbnail <- geoflow_relation$new()
-                   new_thumbnail$setKey("thumbnail")
-                   new_thumbnail$setName(layername)
-                   new_thumbnail$setDescription(paste0(self$title, " - Map Overview"))
-                   new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
-                                                 config$software$output$geoserver_config$parameters$url, 
-                                                 config$software$output$geoserver_config$properties$workspace,
-                                                 layername, paste(self$spatial_extent,collapse=","),self$srid))
-                   self$relations <- c(new_thumbnail, self$relation) #here we use native vector to put WMS as first thumbnail
-                   #WMS
-                   new_wms <- geoflow_relation$new()
-                   new_wms$setKey("wms")
-                   new_wms$setName(layername)
-                   new_wms$setDescription(self$title)
-                   new_wms$setLink(sprintf("%s/%s/ows?service=WMS", 
-                                           config$software$output$geoserver_config$parameters$url, 
-                                           config$software$output$geoserver_config$properties$workspace))
-                   self$addRelation(new_wms)
-                   #wfs (GML)
-                   new_wfs_gml <- geoflow_relation$new()
-                   new_wfs_gml$setKey("wfs")
-                   new_wfs_gml$setName(layername)
-                   new_wfs_gml$setDescription(paste0(self$title, " - GIS Data Download (GML)"))
-                   new_wfs_gml$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s", 
-                                               config$software$output$geoserver_config$parameters$url, 
-                                               config$software$output$geoserver_config$properties$workspace,
-                                               layername))
-                   self$addRelation(new_wfs_gml)
-                   #wfs (GeoJSON)
-                   new_wfs_geojson <- geoflow_relation$new()
-                   new_wfs_geojson$setKey("wfs")
-                   new_wfs_geojson$setName(layername)
-                   new_wfs_geojson$setDescription(paste0(self$title, " - GIS Data Download (GeoJSON)"))
-                   new_wfs_geojson$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=json", 
-                                                   config$software$output$geoserver_config$parameters$url, 
-                                                   config$software$output$geoserver_config$properties$workspace,
-                                                   layername))
-                   self$addRelation(new_wfs_geojson)
-                   #wfs (ESRI Shapefile)
-                   new_wfs_shp <- geoflow_relation$new()
-                   new_wfs_shp$setKey("wfs")
-                   new_wfs_shp$setName(layername)
-                   new_wfs_shp$setDescription(paste0(self$title, " - GIS Data Download (ESRI Shapefile)"))
-                   new_wfs_shp$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=SHAPE-ZIP", 
-                                               config$software$output$geoserver_config$parameters$url, 
-                                               config$software$output$geoserver_config$properties$workspace,
-                                               layername))
-                   self$addRelation(new_wfs_shp)
-                 }
-                 #TODO dynamic subjects
-                   
                    
                }else{
                  warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
@@ -400,19 +351,241 @@ geoflow_entity <- R6Class("geoflow_entity",
                config$logger.warn(warnMsg)
              }
             },
+           #dbtable
+           #---------------------------------------------------------------------------------
+           "dbtable" = {
+             DBI <- config$software$input$dbi
+             if(!is.null(DBI)){
+               sf.data <- sf::st_read(DBI, datasource_name)
+               if(!is.null(sf.data)){
+                 #we try to apply the cql filter specified as data property
+                 if(!is.null(self$data$cqlfilter)){
+                   sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
+                 }
+                 self$data$setFeatures(sf.data)
+                 if(is(sf.data, "sf")){
+                   #dynamic srid
+                   sf.crs <- sf::st_crs(sf.data)
+                   if(!is.na(sf.crs)){
+                     srid <- if(!is.null(self$srid)) self$srid else ""
+                     if(srid != sf.crs$epsg){
+                       config$logger.info(sprintf("Overwriting entity srid [%s] with DB spatial table srid [%s]", srid, sf.crs$epsg)) 
+                       self$setSrid(sf.crs$epsg)
+                     }
+                   }
+                   #dynamic spatial extent
+                   config$logger.info("Overwriting entity extent with DB spatial table extent")
+                   self$setSpatialExtent(data = sf.data)
+                 }else{
+                   warnMsg <- sprintf("DB table '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
+                   config$logger.warn(warnMsg)
+                 }
+                 
+               }else{
+                 warnMsg <- sprintf("Cannot get results from DB table '%s'. Dynamic metadata computation aborted!", datasource_name)
+                 config$logger.warn(warnMsg)
+               }
+               
+             }else{
+               warnMsg <- sprintf("No database configured to read DB table '%s'. Dynamic metadata computation aborted!", datasource_name)
+               config$logger.warn(warnMsg)
+             }
+           },
+           #dbview
+           #---------------------------------------------------------------------------------
+           "dbview" = {
+             DBI <- config$software$input$dbi
+             if(!is.null(DBI)){
+               sf.data <- sf::st_read(DBI, datasource_name)
+               if(!is.null(sf.data)){
+                 #we try to apply the cql filter specified as data property
+                 if(!is.null(self$data$cqlfilter)){
+                   sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
+                 }
+                 self$data$setFeatures(sf.data)
+                 if(is(sf.data, "sf")){
+                   #dynamic srid
+                   sf.crs <- sf::st_crs(sf.data)
+                   if(!is.na(sf.crs)){
+                     srid <- if(!is.null(self$srid)) self$srid else ""
+                     if(srid != sf.crs$epsg){
+                       config$logger.info(sprintf("Overwriting entity srid [%s] with DB spatial view srid [%s]", srid, sf.crs$epsg)) 
+                       self$setSrid(sf.crs$epsg)
+                     }
+                   }
+                   #dynamic spatial extent
+                   config$logger.info("Overwriting entity extent with DB spatial view extent")
+                   self$setSpatialExtent(data = sf.data)
+                 }else{
+                   warnMsg <- sprintf("DB view '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
+                   config$logger.warn(warnMsg)
+                 }
+                 
+               }else{
+                 warnMsg <- sprintf("Cannot get results from DB view '%s'. Dynamic metadata computation aborted!", datasource_name)
+                 config$logger.warn(warnMsg)
+               }
+               
+             }else{
+               warnMsg <- sprintf("No database configured to read DB view '%s'. Dynamic metadata computation aborted!", datasource_name)
+               config$logger.warn(warnMsg)
+             }
+           },
+           #dbquery
+           #---------------------------------------------------------------------------------
            "dbquery" = {
-              sqlfile <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".sql"))
-              config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
-              sql <- paste(readLines(sqlfile), collapse="")
-              self$data$setSql(sql)
-              unlink(sqlfile)
-              config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$uploadType))
+             
+              trgFilename <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".sql"))
+             
+              sqlFileExists <- FALSE
+              if(!is.null(datasource_file)){
+                isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
+                if(isSourceUrl){
+                  warnMsg <- "Downloading remote SQL file from URL to temporary geoflow temporary data directory!"
+                  config$logger.warn(warnMsg)
+                  download.file(datasource_file, destfile = trgFilename, mode = "wb")
+                  sqlFileExists <- TRUE
+                }else{
+                  data.files <- list.files(path = dirname(datasource_file), pattern = datasource_name)
+                  if(length(data.files)>0){
+                    sqlFileExists <- TRUE
+                    config$logger.info("Copying local SQL scrit to temporary geoflow temporary data directory")
+                    file.copy(from = data.files[1], to = TEMP_DATA_DIR)
+                  }
+                }
+              }
+             
+              if(sqlFileExists){
+                sqlfile <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".sql"))
+                config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
+                sql <- paste(readLines(sqlfile), collapse="")
+                config$logger.info(sql)
+                self$data$setSql(sql)
+                unlink(sqlfile)
+              }else{
+                if(is.null(self$data$sql)){
+                  warnMsg <- sprintf("No SQL file nor 'sql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
+                  config$logger.warn(warnMsg)
+                  return(FALSE)
+                }
+              }
+              
+              DBI <- config$software$input$dbi
+              if(!is.null(DBI)){
+                sf.data <- try(sf::st_read(DBI, query = self$data$sql))
+                if(!is.null(sf.data)){
+                  if(class(sf.data)[1]=="try-error"){
+                    errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", sf$data$sql)
+                    config$logger.error(errMsg)
+                    return(FALSE)
+                    
+                  }
+                  #we try to apply the cql filter specified as data property
+                  if(!is.null(self$data$cqlfilter)){
+                    sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
+                  }
+                  self$data$setFeatures(sf.data)
+                  if(is(sf.data, "sf")){
+                    #dynamic srid
+                    sf.crs <- sf::st_crs(sf.data)
+                    if(!is.na(sf.crs)){
+                      srid <- if(!is.null(self$srid)) self$srid else ""
+                      if(srid != sf.crs$epsg){
+                        config$logger.info(sprintf("Overwriting entity srid [%s] with SQL query output srid [%s]", srid, sf.crs$epsg)) 
+                        self$setSrid(sf.crs$epsg)
+                      }
+                    }
+                    #dynamic spatial extent
+                    config$logger.info("Overwriting entity extent with SQL query output extent")
+                    self$setSpatialExtent(data = sf.data)
+                  }else{
+                    warnMsg <- sprintf("Result of SQL query file '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_file)
+                    config$logger.warn(warnMsg)
+                  }
+                  
+                }else{
+                  warnMsg <- sprintf("Cannot get results from SQL query file '%s'. Dynamic metadata computation aborted!", datasource_file)
+                  config$logger.warn(warnMsg)
+                }
+                
+              }else{
+                warnMsg <- sprintf("No database configured to execute SQL query file '%s'. Dynamic metadata computation aborted!", datasource_file)
+                config$logger.warn(warnMsg)
+              }
+              
             },
             #other format handlers to come
             {
               config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$uploadType))
             }
       ) 
+    },
+    
+    #enrichWithRelations
+    enrichWithRelations = function(config){
+      geosapi_action <- NULL
+      actions <- config$actions[sapply(config$actions, function(x){regexpr("geosapi",x$id)>0})]
+      if(length(actions)>0) geosapi_action <- actions[[1]]
+      #dynamic relations related to OGC services (only executed if geosapi action is handled and enabled in workflow)
+      if(!is.null(geosapi_action)){
+        
+        layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
+        
+        #Thumbnail
+        new_thumbnail <- geoflow_relation$new()
+        new_thumbnail$setKey("thumbnail")
+        new_thumbnail$setName(layername)
+        new_thumbnail$setDescription(paste0(self$title, " - Map Overview"))
+        new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
+                                      config$software$output$geoserver_config$parameters$url, 
+                                      config$software$output$geoserver_config$properties$workspace,
+                                      layername, paste(self$spatial_extent,collapse=","),self$srid))
+        self$relations <- c(new_thumbnail, self$relation) #here we use native vector to put WMS as first thumbnail
+        #WMS
+        new_wms <- geoflow_relation$new()
+        new_wms$setKey("wms")
+        new_wms$setName(layername)
+        new_wms$setDescription(self$title)
+        new_wms$setLink(sprintf("%s/%s/ows?service=WMS", 
+                                config$software$output$geoserver_config$parameters$url, 
+                                config$software$output$geoserver_config$properties$workspace))
+        self$addRelation(new_wms)
+        #wfs (GML)
+        new_wfs_gml <- geoflow_relation$new()
+        new_wfs_gml$setKey("wfs")
+        new_wfs_gml$setName(layername)
+        new_wfs_gml$setDescription(paste0(self$title, " - GIS Data Download (GML)"))
+        new_wfs_gml$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s", 
+                                    config$software$output$geoserver_config$parameters$url, 
+                                    config$software$output$geoserver_config$properties$workspace,
+                                    layername))
+        self$addRelation(new_wfs_gml)
+        #wfs (GeoJSON)
+        new_wfs_geojson <- geoflow_relation$new()
+        new_wfs_geojson$setKey("wfs")
+        new_wfs_geojson$setName(layername)
+        new_wfs_geojson$setDescription(paste0(self$title, " - GIS Data Download (GeoJSON)"))
+        new_wfs_geojson$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=json", 
+                                        config$software$output$geoserver_config$parameters$url, 
+                                        config$software$output$geoserver_config$properties$workspace,
+                                        layername))
+        self$addRelation(new_wfs_geojson)
+        #wfs (ESRI Shapefile)
+        new_wfs_shp <- geoflow_relation$new()
+        new_wfs_shp$setKey("wfs")
+        new_wfs_shp$setName(layername)
+        new_wfs_shp$setDescription(paste0(self$title, " - GIS Data Download (ESRI Shapefile)"))
+        new_wfs_shp$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=SHAPE-ZIP", 
+                                    config$software$output$geoserver_config$parameters$url, 
+                                    config$software$output$geoserver_config$properties$workspace,
+                                    layername))
+        self$addRelation(new_wfs_shp)
+      }
+    },
+    
+    #enrichWithSubjects
+    enrichWithSubjects = function(config){
+      stop("Not yet implemented")
     },
     
     #getContacts
