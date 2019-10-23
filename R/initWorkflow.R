@@ -19,7 +19,7 @@ initWorkflow <- function(file){
   #worfklow config$loggers
   config$logger <- function(type, text){cat(sprintf("[geoflow][%s][%s] %s \n", config$id, type, text))}
   config$logger.info <- function(text){config$logger("INFO", text)}
-  config$logger.warn <- function(text){config$logger("WARNING", text)}
+  config$logger.warn <- function(text){config$logger("WARN", text)}
   config$logger.error <- function(text){config$logger("ERROR", text)}
   
   config$logger.info("Init Workflow configuration")
