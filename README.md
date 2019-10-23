@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/eblondel/geoflow.svg?branch=master)](https://travis-ci.org/eblondel/geoflow)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/geoflow)](https://cran.r-project.org/package=geoflow)
-[![Github_Status_Badge](https://img.shields.io/badge/Github-0.0.9004-blue.svg)](https://github.com/eblondel/geoflow)
+[![Github_Status_Badge](https://img.shields.io/badge/Github-0.0.9005-blue.svg)](https://github.com/eblondel/geoflow)
 [![DOI](https://zenodo.org/badge/DOI//10.5281/zenodo.3138920.svg)](https://doi.org//10.5281/zenodo.3138920)
 
 [![Gitter](https://img.shields.io/badge/chat%20room-for%20users-brown.svg?style=flat-square)](https://gitter.im/geoflow-users/community)
