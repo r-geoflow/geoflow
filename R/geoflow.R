@@ -5,11 +5,14 @@
 #' 
 #' @import R6
 #' @import jsonlite
+#' @import xml2
+#' @import plyr
 #' @import readr
 #' @import gsheet
 #' @import readxl
-#' @import plyr
 #' @import DBI
+#' @import RPostgreSQL
+#' @import RSQLite
 #' @import sp
 #' @import sf
 #' @import rgdal
@@ -18,9 +21,7 @@
 #' @import geonapi
 #' @import geometa
 #' @import ows4R
-#' @import rvest
-#' @import xml2
-#' @import DBI
+#' @import zen4R
 #' 
 #' @title  R engine to orchestrate and run geospatial (meta)data workflows
 #' @description  R engine to orchestrate and run geospatial (meta)data workflows
@@ -30,7 +31,7 @@
 #'    Package: \tab geoflow\cr
 #'    Type: \tab Package\cr
 #'    Version: \tab 0.0.9004\cr
-#'    Date: \tab 2019-10-21\cr
+#'    Date: \tab 2019-10-23\cr
 #'    License: \tab MIT\cr
 #'    LazyLoad: \tab yes\cr
 #'  }
