@@ -82,7 +82,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
         if(geomLevel == "geometryOnly"){
           geomObject <- ISOGeometricObjects$new()
           isoGeomType <- switch(geomtype,
-            "GEOMETRY" = "composite", "GEOMETRY" = "composite",
+            "GEOMETRY" = "composite", "GEOMETRYCOLLECTION" = "composite",
             "POINT" = "point", "MULTIPOINT" = "point", 
             "LINESTRING" = "curve", "CIRCULARSTRING" = "curve", "MULTILINESTRING" = "curve", "CURVE" = "curve", "COMPOUNDCURVE" = "curve",
             "POLYGON" = "surface", "MULTIPOLYGON" = "surface", "TRIANGLE" = "surface",
