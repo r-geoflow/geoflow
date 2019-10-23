@@ -259,8 +259,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       
     },
     
-    #enrichWithData
-    enrichWithData = function(config){
+    #enrichWithFeatures
+    enrichWithFeatures = function(config){
     
       if(length(self$data$source)>1) 
         config$logger.warn("More than one data sources, entity metadata enrichment with data based on the first source only!")
@@ -277,8 +277,6 @@ geoflow_entity <- R6Class("geoflow_entity",
         config$logger.warn(warnMsg)
         return(FALSE)
       }
-      
-      layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
       
       TEMP_DATA_DIR <- file.path(getwd(), get_temp_directory())
       if(!dir.exists(TEMP_DATA_DIR)){
@@ -498,6 +496,17 @@ geoflow_entity <- R6Class("geoflow_entity",
                     #dynamic spatial extent
                     config$logger.info("Overwriting entity extent with SQL query output extent")
                     self$setSpatialExtent(data = sf.data)
+                    #dynamic view properties required
+                    geomtype <- as.character(unique(sf::st_geometry_type(grid))[1])
+                    gsGeomType <- switch(geomtype,
+                      "GEOMETRY" = "Geometry", "GEOMETRYCOLLECTION" = "GeometryCollection",
+                      "POINT" = "Point", "MULTIPOINT" = "MultiPoint", 
+                      "LINESTRING" = "LineString", "MULTILINESTRING" = "MultiLineString",
+                      "POLYGON" = "Polygon", "MULTIPOLYGON" = "MultiPolygon"
+                    )
+                    self$data$setGeometryType(gsGeomType)
+                    geomField <- colnames(grid)[sapply(colnames(grid), function(x){(is(grid[[x]],"sfc"))})][1]
+                    self$data$setGeometryField(geomField)
                   }else{
                     warnMsg <- sprintf("Result of SQL query file '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_file)
                     config$logger.warn(warnMsg)
@@ -527,7 +536,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       actions <- config$actions[sapply(config$actions, function(x){regexpr("geosapi",x$id)>0})]
       if(length(actions)>0) geosapi_action <- actions[[1]]
       #dynamic relations related to OGC services (only executed if geosapi action is handled and enabled in workflow)
-      if(!is.null(geosapi_action)){
+      if(!is.null(geosapi_action)) if(!is.null(self$data)) if(self$data$uploadType != "other"){
         
         layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
         
