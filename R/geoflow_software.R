@@ -94,6 +94,13 @@ geoflow_software <- R6Class("geoflow_software",
       handler_params = paste(sapply(names(self$parameters), function(paramName){
         paramValue <- self$parameters[[paramName]]
         if(is.character(paramValue)) paramValue <- paste0("\"",paramValue,"\"")
+        #manage argument handler (if defined)
+        argIdx = which(paramName == names(self$arguments))
+        if(length(argIdx)>0){
+          if(!is.null(self$arguments[[argIdx]]$handler)){
+            paramValue <- paste0("self$arguments[[",argIdx,"]]$handler", "(", paramValue, ")")
+          }
+        }
         return(paste(paramName," = ",paramValue))
       }),collapse=", ")
       instance <- eval(parse(text=paste0("self$handler(",handler_params,")")))
