@@ -52,7 +52,10 @@ register_actions <- function(){
       def = "Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API",
       fun = geonapi_publish_iso_19139,
       options = list(
-        geometa_inspire = list(desc = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", default = FALSE)
+        geometa_inspire = list(desc = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", default = FALSE),
+        privileges = list(desc = "Geonetwork privileges to set for the metadata to be published", default = c("view","dynamic","featured")),
+        group = list(desc = "Geonetwork user group to which the metadata should be associated", default = "1"),
+        category = list(desc = "Category of metadata resources to which the metadata record should be associated", default = "datasets")
       )
     ),
     geoflow_action$new(

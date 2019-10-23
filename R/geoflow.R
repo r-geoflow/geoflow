@@ -20,6 +20,7 @@
 #' @import ows4R
 #' @import rvest
 #' @import xml2
+#' @import DBI
 #' 
 #' @title  R engine to orchestrate and run geospatial (meta)data workflows
 #' @description  R engine to orchestrate and run geospatial (meta)data workflows

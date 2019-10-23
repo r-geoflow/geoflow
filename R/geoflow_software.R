@@ -115,6 +115,20 @@ geoflow_software <- R6Class("geoflow_software",
 register_software <- function(){
   
   software <- list(
+    #DBI
+    geoflow_software$new(
+      software_type = "dbi",
+      definition = "Data Base Interface powered by 'DBI' package",
+      handler = DBI::dbConnect,
+      arguments = list(
+        drv = list(def = "DBI driver name", handler = DBI::dbDriver),
+        user = list(def = "Username"),
+        password = list(def = "Password"),
+        host = list(def = "Hostname"),
+        port = list(def = "Port number"),
+        dbname = list(def = "Database name")
+      )
+    ),
     #OGC WFS
     geoflow_software$new(
       software_type = "csw",

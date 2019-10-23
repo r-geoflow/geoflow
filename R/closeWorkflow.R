@@ -14,7 +14,7 @@ closeWorkflow <- function(config){
   #close DB
   if(!is.null(config$software$db)){
     config$logger.info("Closing database connection")
-    dbDisconnect(config$software$db)
+    DBI::dbDisconnect(config$software$db)
     config$software$db <- config$software$db_config
     config$software$db_config <- NULL
   }
