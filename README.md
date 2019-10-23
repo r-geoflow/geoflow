@@ -12,7 +12,7 @@
 
 ``geoflow`` provides a R engine to orchestrate and run geospatial (meta)data workflows.
 
-Please check the [online documentation](https://github.com/eblondel/geoflow/wiki) for more details! **(documentation coming soon)**
+Please check the [online documentation](https://github.com/eblondel/geoflow/wiki) for more details! **(documentation in preparation)**
 
 
 ## Sponsors
