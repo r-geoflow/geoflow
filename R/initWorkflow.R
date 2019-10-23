@@ -179,7 +179,7 @@ initWorkflow <- function(file){
         config$logger.error(errMsg)
         stop(errMsg)
       }
-      config$software[[software$type]][[switch(software$type,"input"=software$id,"output"=software$software_type)]] <- client
+      config$software[[software$type]][[software$software_type]] <- client
       config$software[[software$type]][[paste(switch(software$type,"input"=software$id,"output"=software$software_type),"config",sep="_")]] <- software
     }
   }
