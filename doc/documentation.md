@@ -99,7 +99,7 @@ which is the current version in development (likely to be unstable).
 
 ``` r
 require("remotes")
-install_github("eblondel/geoflow")
+install_github("eblondel/geoflow", dependencies = c("Depends", "Imports"))
 ```
 
 <a name="geoflow_execute"/>

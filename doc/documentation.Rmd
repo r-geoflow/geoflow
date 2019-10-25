@@ -84,7 +84,7 @@ Once the ``remotes`` package loaded, you can use the install_github to install `
 
 ```{r, eval = FALSE}
 require("remotes")
-install_github("eblondel/geoflow")
+install_github("eblondel/geoflow", dependencies = c("Depends", "Imports"))
 ```
 
 <a name="geoflow_execute"/>
