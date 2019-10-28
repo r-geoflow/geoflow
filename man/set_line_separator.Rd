@@ -4,7 +4,7 @@
 \alias{set_line_separator}
 \title{set_line_separator}
 \usage{
-set_line_separator(x = ";\\n")
+set_line_separator(x = "_\\n")
 }
 \description{
 set_line_separator
