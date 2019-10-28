@@ -110,7 +110,7 @@ extract_cell_components <- function(x){
 
 #'set_line_separator
 #'@export
-set_line_separator <- function(x = ";\n"){
+set_line_separator <- function(x = "_\n"){
   if(!is(x,"character")) stop("The line separator should be an object of class 'character'")
   .geoflow$LINE_SEPARATOR <- x
 }
