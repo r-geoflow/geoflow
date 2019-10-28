@@ -220,12 +220,34 @@ declaring the `source` (a file or URL) and the `handler`, ie the source
 format.
 
 The sources of *entities* and *contacts* can be handled for different
-`handlers` (for the timebeing `gsheet` - for Google spreadsheets, `csv`
-or `excel` files). The list of `entity` and `contact` handlers can be
-retrieved in R with `list_entity_handlers()` and
+`handlers` (for the timebeing `gsheet` - for Google spreadsheets, `csv`,
+`excel` files, or a `dbi` source). The list of `entity` and `contact`
+handlers can be retrieved in R with `list_entity_handlers()` and
 `list_contact_handlers()`. For the time being,
 [geoflow](https://github.com/eblondel/geoflow) provides basic format
 handlers.
+
+  - List of `entity` handlers supported by geoflow:
+
+| id     | definition                                                      |
+| :----- | :-------------------------------------------------------------- |
+| csv    | Handle metadata entities from a CSV file                        |
+| excel  | Handle metadata entities from a Microsoft Excel (xls,xlsx) file |
+| gsheet | Handle metadata entities from a Google spreadsheet              |
+| dbi    | Handle metadata entities from a DB source                       |
+
+List of entity handlers supported by geoflow
+
+  - List of `contact` handlers supported by geoflow:
+
+| id     | definition                                                      |
+| :----- | :-------------------------------------------------------------- |
+| csv    | Handle metadata contacts from a CSV file                        |
+| excel  | Handle metadata contacts from a Microsoft Excel (xls,xlsx) file |
+| gsheet | Handle metadata contacts from a Google spreadsheet              |
+| dbi    | Handle metadata contacts from a DB source                       |
+
+List of contact handlers supported by geoflow
 
 > Note: The list of handlers is expected to be extended in the future,
 > eg LDAP handler for contacts.

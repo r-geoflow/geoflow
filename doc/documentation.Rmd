@@ -175,7 +175,24 @@ The metadata part is the section of the workflow configuration where to define t
 
 Whether is for _entities_ or _contacts_, the configuration consists in declaring the ``source`` (a file or URL) and the ``handler``, ie the source format.
 
-The sources of _entities_ and _contacts_ can be handled for different ``handlers`` (for the timebeing ``gsheet`` - for Google spreadsheets, ``csv`` or ``excel`` files). The list of ``entity`` and ``contact`` handlers can be retrieved in R with ``list_entity_handlers()`` and ``list_contact_handlers()``. For the time being, [geoflow](https://github.com/eblondel/geoflow) provides basic format handlers.
+The sources of _entities_ and _contacts_ can be handled for different ``handlers`` (for the timebeing ``gsheet`` - for Google spreadsheets, ``csv``, ``excel`` files, or a ``dbi`` source). The list of ``entity`` and ``contact`` handlers can be retrieved in R with ``list_entity_handlers()`` and ``list_contact_handlers()``. For the time being, [geoflow](https://github.com/eblondel/geoflow) provides basic format handlers.
+
+* List of ``entity`` handlers supported by geoflow:
+
+```{r, echo = FALSE, message = FALSE, results = 'asis'}
+library(knitr)
+kable(geoflow::list_entity_handlers(), caption = "List of entity handlers supported by geoflow")
+
+```
+
+* List of ``contact`` handlers supported by geoflow:
+
+```{r, echo = FALSE, message = FALSE, results = 'asis'}
+library(knitr)
+kable(geoflow::list_contact_handlers(), caption = "List of contact handlers supported by geoflow")
+
+```
+
 
 > Note: The list of handlers is expected to be extended in the future, eg LDAP handler for contacts.
 
