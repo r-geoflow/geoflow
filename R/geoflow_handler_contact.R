@@ -81,3 +81,34 @@ handle_contacts_excel <- function(config, source){
   return(contacts)
 }
 
+#' handle_contacts_dbi
+#' @export
+handle_contacts_dbi <- function(config, source){
+  dbi <- config$software$input$dbi
+  if(is.null(dbi)){
+    stop("There is no database input software configured to handle contacts from DB")
+  }
+  
+  #db source
+  is_query <- startsWith(tolower(source), "select ")
+  if(is_query){
+    source <- try(DBI::dbGetQuery(dbi, source))
+    if(class(source)="try-error"){
+      errMsg <- sprintf("Error while trying to execute DB query '%s'.", source)
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+  }else{
+    source <- try(DBI::dbReadTable(dbi, source))
+    if(class(source)="try-error"){
+      errMsg <- sprintf("Error while trying to read DB table/view '%s'. Check if it exists in DB.", source)
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+  }
+  
+  #apply generic handler
+  contacts <- handle_contacts_df(config, source)
+  return(contacts)
+  
+}

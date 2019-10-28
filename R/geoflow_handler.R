@@ -33,6 +33,11 @@ register_contact_handlers <- function(){
       id = "gsheet",
       def = "Handle metadata contacts from a Google spreadsheet",
       fun = handle_contacts_gsheet
+    ),
+    geoflow_handler$new(
+      id = "dbi",
+      def = "Handle metadata contacts from a DB source",
+      fun = handle_contacts_dbi
     )
   )
   .geoflow$contact_handlers <- handlers
@@ -75,6 +80,11 @@ register_entity_handlers <- function(){
       id = "gsheet",
       def = "Handle metadata entities from a Google spreadsheet",
       fun = handle_entities_gsheet
+    ),
+    geoflow_handler$new(
+      id = "dbi",
+      def = "Handle metadata entities from a DB source",
+      fun = handle_entities_dbi
     )
   )
   .geoflow$entity_handlers <- handlers
