@@ -497,15 +497,18 @@ geoflow_entity <- R6Class("geoflow_entity",
                     config$logger.info("Overwriting entity extent with SQL query output extent")
                     self$setSpatialExtent(data = sf.data)
                     #dynamic view properties required
-                    geomtype <- as.character(unique(sf::st_geometry_type(grid))[1])
+                    
+                    geomtype <- as.character(unique(sf::st_geometry_type(sf.data))[1])
                     gsGeomType <- switch(geomtype,
                       "GEOMETRY" = "Geometry", "GEOMETRYCOLLECTION" = "GeometryCollection",
                       "POINT" = "Point", "MULTIPOINT" = "MultiPoint", 
                       "LINESTRING" = "LineString", "MULTILINESTRING" = "MultiLineString",
                       "POLYGON" = "Polygon", "MULTIPOLYGON" = "MultiPolygon"
                     )
+                    config$logger.info(sprintf("Setting entity geometry type '%s'", gsGeomType))
                     self$data$setGeometryType(gsGeomType)
-                    geomField <- colnames(grid)[sapply(colnames(grid), function(x){(is(grid[[x]],"sfc"))})][1]
+                    geomField <- colnames(sf.data)[sapply(colnames(sf.data), function(x){(is(sf.data[[x]],"sfc"))})][1]
+                    config$logger.info(sprintf("Setting entity geometry field '%s'",geomField))
                     self$data$setGeometryField(geomField)
                   }else{
                     warnMsg <- sprintf("Result of SQL query file '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_file)
