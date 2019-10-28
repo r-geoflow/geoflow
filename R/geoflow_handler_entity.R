@@ -226,14 +226,14 @@ handle_entities_dbi <- function(config, source){
   is_query <- startsWith(tolower(source), "select ")
   if(is_query){
     source <- try(DBI::dbGetQuery(dbi, source))
-    if(class(source)="try-error"){
+    if(class(source)=="try-error"){
       errMsg <- sprintf("Error while trying to execute DB query '%s'.", source)
       config$logger.error(errMsg)
       stop(errMsg)
     }
   }else{
     source <- try(DBI::dbReadTable(dbi, source))
-    if(class(source)="try-error"){
+    if(class(source)=="try-error"){
       errMsg <- sprintf("Error while trying to read DB table/view '%s'. Check if it exists in DB.", source)
       config$logger.error(errMsg)
       stop(errMsg)
