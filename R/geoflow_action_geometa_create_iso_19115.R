@@ -264,12 +264,25 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #extents
   extent <- ISOExtent$new()
   #geographic extent
-  if(!is.null(entity$spatial_extent)){
-    sf_bbox <- entity$spatial_extent
+  if(!is.null(entity$spatial_bbox)){
+    sf_bbox <- entity$spatial_bbox
     bbox <- ISOGeographicBoundingBox$new(minx = sf_bbox$xmin, miny = sf_bbox$ymin, maxx = sf_bbox$xmax, maxy = sf_bbox$ymax)
     extent$addGeographicElement(bbox)
   }
-  #bounding polygons (if any features & 'addfeatures' option is enabled)
+  #bounding polygons from spatial coverage
+  #(applies to spatial coverage set-up from wkt)
+  if(is(entity$spatial_extent, "sfc")){
+    bbox_sfc <- sf::st_as_sfc(sf::st_bbox(entity$spatial_extent))
+    #if bbox (as geometry) is different from the spatial extent
+    #then we have more complex geometries
+    if(bbox_sfc != entity$spatial_extent){
+      sbp <- ISOBoundingPolygon$new()
+      geom <- GMLAbstractGeometry$fromSimpleFeatureGeometry(entity$spatial_extent[[1]])
+      sbp$addPolygon(geom)
+      extent$addGeographicElement(sbp)
+    }
+  }
+  #bounding polygons from data (if any features & 'addfeatures' option is enabled)
   if(!is.null(features) && addfeatures){
     bp <- ISOBoundingPolygon$new()
     for(i in 1:nrow(features)){

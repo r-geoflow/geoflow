@@ -114,7 +114,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   featureType$setNativeCRS(epsgCode)
   featureType$setEnabled(TRUE)
   featureType$setProjectionPolicy("FORCE_DECLARED")
-  bbox <- entity$spatial_extent
+  bbox <- entity$spatial_bbox
   featureType$setLatLonBoundingBox(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, crs = epsgCode)
   featureType$setNativeBoundingBox(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, crs = epsgCode) 
   for(subject in entity$subjects){

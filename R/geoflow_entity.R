@@ -13,6 +13,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     relations = list(),
     rights = list(),
     spatial_extent = NULL,
+    spatial_bbox = NULL,
     srid = NULL,
     temporal_extent = NULL,
     provenance = NULL,
@@ -85,18 +86,37 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$rights <- c(self$rights, right)
     },
     
-    #setSpatialExtent
+    #setSpatialExtent (method call from handler, but not from enrichWithFeatures)
     setSpatialExtent = function(wkt = NULL, bbox = NULL, data = NULL, crs = NA){
       if(is.null(wkt) & is.null(bbox) & is.null(data)){
         stop("At least one of the arguments 'wkt' (WKT string) or 'bbox' should be provided!")
       }
-      if(!is.null(wkt)) spatial_extent <- attr(sf::st_as_sfc(wkt, crs = crs), "bbox")
+      spatial_extent <- NULL
+      if(!is.null(wkt)) spatial_extent <- sf::st_as_sfc(wkt, crs = crs)
       if(!is.null(bbox)) spatial_extent <- bbox
-      if(!is.null(data)) spatial_extent <- sf::st_bbox(data)
+      if(!is.null(data)) spatial_extent <- data
+
       if(class(spatial_extent)[1]=="try-error"){
         stop("The spatial extent is invalid!")
       }
       self$spatial_extent <- spatial_extent
+      self$setSpatialBbox(wkt, bbox, data, crs)
+    },
+    
+    #setSpatialBbox  (method call from handler in setSpatialExtent, and from enrichWithFeatures)
+    setSpatialBbox = function(wkt = NULL, bbox = NULL, data = NULL, crs = NA){
+      if(is.null(wkt) & is.null(bbox) & is.null(data)){
+        stop("At least one of the arguments 'wkt' (WKT string) or 'bbox' should be provided!")
+      }
+      spatial_bbox  <- NULL
+      if(!is.null(wkt)) spatial_bbox <- sf::st_bbox(sf::st_as_sfc(wkt, crs = crs))
+      if(!is.null(bbox)) spatial_bbox <- bbox
+      if(!is.null(data)) spatial_bbox <- sf::st_bbox(data)
+      
+      if(class(spatial_bbox)[1]=="try-error"){
+        stop("The spatial bbox is invalid!")
+      }
+      self$spatial_bbox <- spatial_bbox
     },
     
     #setSrid
@@ -337,8 +357,8 @@ geoflow_entity <- R6Class("geoflow_entity",
                    }
                  }
                  #dynamic spatial extent
-                 config$logger.info("Overwriting entity extent with shapefile extent")
-                 self$setSpatialExtent(data = sf.data)
+                 config$logger.info("Overwriting entity bounding box with shapefile bounding box")
+                 self$setSpatialBbox(data = sf.data)
                    
                }else{
                  warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
@@ -372,8 +392,8 @@ geoflow_entity <- R6Class("geoflow_entity",
                      }
                    }
                    #dynamic spatial extent
-                   config$logger.info("Overwriting entity extent with DB spatial table extent")
-                   self$setSpatialExtent(data = sf.data)
+                   config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
+                   self$setSpatialBbox(data = sf.data)
                  }else{
                    warnMsg <- sprintf("DB table '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
                    config$logger.warn(warnMsg)
@@ -412,8 +432,8 @@ geoflow_entity <- R6Class("geoflow_entity",
                      }
                    }
                    #dynamic spatial extent
-                   config$logger.info("Overwriting entity extent with DB spatial view extent")
-                   self$setSpatialExtent(data = sf.data)
+                   config$logger.info("Overwriting entity bounding box with DB spatial view bounding box")
+                   self$setSpatialBbox(data = sf.data)
                  }else{
                    warnMsg <- sprintf("DB view '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
                    config$logger.warn(warnMsg)
@@ -494,8 +514,8 @@ geoflow_entity <- R6Class("geoflow_entity",
                       }
                     }
                     #dynamic spatial extent
-                    config$logger.info("Overwriting entity extent with SQL query output extent")
-                    self$setSpatialExtent(data = sf.data)
+                    config$logger.info("Overwriting entity bounding box with SQL query output bounding box")
+                    self$setSpatialBbox(data = sf.data)
                     #dynamic view properties required
                     
                     geomtype <- as.character(unique(sf::st_geometry_type(sf.data))[1])
@@ -551,7 +571,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
                                       config$software$output$geoserver_config$parameters$url, 
                                       config$software$output$geoserver_config$properties$workspace,
-                                      layername, paste(self$spatial_extent,collapse=","),self$srid))
+                                      layername, paste(self$spatial_bbox,collapse=","),self$srid))
         self$relations <- c(new_thumbnail, self$relation) #here we use native vector to put WMS as first thumbnail
         #WMS
         new_wms <- geoflow_relation$new()
