@@ -165,19 +165,21 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   #set metadata identifier
   ct$addIdentifier(ISOMetaIdentifier$new(code = mdId))
-  #methodology to set DOI inspired by NOAA wiki
-  #https://geo-ide.noaa.gov/wiki/index.php?title=DOI_Minting_Procedure#Third.2C_Include_the_DOI_and_citation_text_in_the_ISO_Metadata_Record
-  the_doi <- entity$identifiers[["doi"]]
-  if(is.null(the_doi)) the_doi <- entity$identifiers[["conceptdoi_to_save"]]
-  if(is.null(the_doi)) the_doi <- entity$identifiers[["doi_to_save"]]
-  if(!is.null(the_doi) & doi){
-    mdIdentifier <- ISOAnchor$new(
-      name = paste0("doi:", the_doi), 
-      href = paste0("http://dx.doi.org/", the_doi)
-    )
-    mdIdentifier$setAttr("xlink:title", "DOI")
-    mdIdentifier$setAttr("xlink:actuate", "onRequest")
-    ct$addIdentifier(ISOMetaIdentifier$new(code = mdIdentifier))
+  if(doi){
+    #methodology to set DOI inspired by NOAA wiki
+    #https://geo-ide.noaa.gov/wiki/index.php?title=DOI_Minting_Procedure#Third.2C_Include_the_DOI_and_citation_text_in_the_ISO_Metadata_Record
+    the_doi <- entity$identifiers[["doi"]]
+    if(is.null(the_doi)) the_doi <- entity$identifiers[["conceptdoi_to_save"]]
+    if(is.null(the_doi)) the_doi <- entity$identifiers[["doi_to_save"]]
+    if(!is.null(the_doi) & doi){
+      mdIdentifier <- ISOAnchor$new(
+        name = paste0("doi:", the_doi), 
+        href = paste0("http://dx.doi.org/", the_doi)
+      )
+      mdIdentifier$setAttr("xlink:title", "DOI")
+      mdIdentifier$setAttr("xlink:actuate", "onRequest")
+      ct$addIdentifier(ISOMetaIdentifier$new(code = mdIdentifier))
+    }
   }
 
   ct$addPresentationForm("mapDigital") #TODO to map with gsheet
