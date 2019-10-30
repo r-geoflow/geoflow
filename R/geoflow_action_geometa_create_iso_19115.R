@@ -22,6 +22,11 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md <- ISOMetadata$new()
   mdId <- entity$identifiers[["id"]]
   md$setFileIdentifier(mdId)
+  
+  the_doi <- entity$identifiers[["doi"]]
+  if(is.null(the_doi)) the_doi <- entity$identifiers[["conceptdoi_to_save"]]
+  if(is.null(the_doi)) the_doi <- entity$identifiers[["doi_to_save"]]
+  
   if(length(entity$relations)>0){
     parent_rels <- entity$relations[sapply(entity$relations, function(x){x$key == "parent"})]
     if(length(parent_rels)>0){
@@ -168,10 +173,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(doi){
     #methodology to set DOI inspired by NOAA wiki
     #https://geo-ide.noaa.gov/wiki/index.php?title=DOI_Minting_Procedure#Third.2C_Include_the_DOI_and_citation_text_in_the_ISO_Metadata_Record
-    the_doi <- entity$identifiers[["doi"]]
-    if(is.null(the_doi)) the_doi <- entity$identifiers[["conceptdoi_to_save"]]
-    if(is.null(the_doi)) the_doi <- entity$identifiers[["doi_to_save"]]
-    if(!is.null(the_doi) & doi){
+    if(!is.null(the_doi)){
       mdIdentifier <- ISOAnchor$new(
         name = paste0("doi:", the_doi), 
         href = paste0("http://dx.doi.org/", the_doi)
