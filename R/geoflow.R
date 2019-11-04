@@ -31,7 +31,7 @@
 #'    Package: \tab geoflow\cr
 #'    Type: \tab Package\cr
 #'    Version: \tab 0.0.9006\cr
-#'    Date: \tab 2019-10-30\cr
+#'    Date: \tab 2019-11-04\cr
 #'    License: \tab MIT\cr
 #'    LazyLoad: \tab yes\cr
 #'  }
