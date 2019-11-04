@@ -21,35 +21,65 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     stop(errMsg)
   }
   
+  privileges <- if(!is.null(options$privileges)) options$privileges else  c("view","dynamic","featured")
+  
   #to insert or update a metadata into a geonetwork.
   #An insert has to be done in 2 operations (the insert itself, and the privilege setting to "publish" it either to a restrained group or to public)
   #An update has to be done based on the internal Geonetwork id (that can be queried as well
-  privileges <- if(!is.null(options$privileges)) options$privileges else  c("view","dynamic","featured")
-  metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],".rds"))
-  md <- readRDS(metaFile)
-  if(is(md, "ISOMetadata")) privileges <- privileges[privileges!="featured"]
-  metaId <- GN$get(entity$identifiers[["id"]], by = "uuid", output = "id")
-  if(is.null(metaId)){
-    #insert metadata (once inserted only visible to the publisher)
-    group <- if(!is.null(options$group)) options$group else "1"
-    category <- if(!is.null(options$category)) options$category else "datasets"
-    created = GN$insertMetadata(geometa = md, group = group, category = category,
-                                geometa_inspire = geometa_inspire)
-    
-    #config privileges
-    config <- GNPrivConfiguration$new()
-    config$setPrivileges("all", privileges)
-    GN$setPrivConfiguration(id = created, config = config)
-  }else{
-    #update a metadata
-    updated = GN$updateMetadata(id = metaId, geometa = md,
-                                geometa_inspire = geometa_inspire)
-    
-    #config privileges
-    gn_config <- GNPrivConfiguration$new()
-    gn_config$setPrivileges("all", privileges)
-    GN$setPrivConfiguration(id = metaId, config = gn_config)
+  #function doPublish
+  doPublish <- function(mdfile){
+    mdId <- NULL
+    md <- readRDS(metaFile)
+    privs <- privileges
+    if(is(md, "ISOMetadata")){
+      mdId <- md$fileIdentifier
+      privs <- privileges[privileges!="featured"]
+    }
+    if(is(md, "ISOFeatureCatalogue")){
+      mdId <- md$attrs[["uuid"]]
+      privs <- "view"
+    }
+    metaId <- GN$get(mdId, by = "uuid", output = "id")
+    if(is.null(metaId)){
+      #insert metadata (once inserted only visible to the publisher)
+      group <- if(!is.null(options$group)) options$group else "1"
+      category <- if(!is.null(options$category)) options$category else "datasets"
+      created = GN$insertMetadata(geometa = md, group = group, category = category,
+                                  geometa_inspire = geometa_inspire)
+      
+      #config privileges
+      config <- GNPrivConfiguration$new()
+      config$setPrivileges("all", privs)
+      GN$setPrivConfiguration(id = created, config = config)
+    }else{
+      #update a metadata
+      updated = GN$updateMetadata(id = metaId, geometa = md,
+                                  geometa_inspire = geometa_inspire)
+      
+      #config privileges
+      gn_config <- GNPrivConfiguration$new()
+      gn_config$setPrivileges("all", privs)
+      GN$setPrivConfiguration(id = metaId, config = gn_config)
+    }
   }
   
-  return(metaId)
+  #geometa ISO 19115
+  geometa_iso19115_action <- NULL
+  actions <- config$actions[sapply(config$actions, function(x){x$id=="geometa-create-iso-19115"})]
+  if(length(actions)>0) geometa_iso19115_action <- actions[[1]]
+  if(!is.null(geometa_iso19115_action)){
+    metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],".rds"))
+    if(file.exists(metaFile)) doPublish(metaFile)
+  }
+  #geometa ISO 19110
+  geometa_iso19110_action <- NULL
+  actions <- config$actions[sapply(config$actions, function(x){x$id=="geometa-create-iso-19110"})]
+  if(length(actions)>0) geometa_iso19110_action <- actions[[1]]
+  if(!is.null(geometa_iso19110_action)){
+    geometa_inspire <- FALSE
+    metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_dsd",".rds"))
+    if(file.exists(metaFile)) doPublish(metaFile)
+  }
+  
+  return(TRUE)
 }

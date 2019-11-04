@@ -536,6 +536,7 @@ with `list_actions()`. The list of actions managed by `geoflow` are:
 | id                           | type                 | definition                                                             |
 | :--------------------------- | :------------------- | :--------------------------------------------------------------------- |
 | geometa-create-iso-19115     | Metadata production  | Produce an ISO/OGC 19115/19139 metadata object                         |
+| geometa-create-iso-19110     | Metadata production  | Produce an ISO 19110/19139 metadata object                             |
 | ows4R-publish-iso-19139      | Metadata publication | Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol |
 | geonapi-publish-iso-19139    | Metadata publication | Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API    |
 | geosapi-publish-ogc-services | Data publication     | Publish vector data to GeoServer OGC web-services (WMS/WFS)            |

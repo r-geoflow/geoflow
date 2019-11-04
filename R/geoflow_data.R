@@ -20,6 +20,8 @@ geoflow_data <- R6Class("geoflow_data",
     workspace = NULL,
     datastore = NULL,
     features = NULL,
+    attributes = NULL,
+    variables = NULL,
     initialize = function(str = NULL){
       if(!is.null(str)){
         data_props <-  extract_cell_components(sanitize_str(str))
@@ -140,6 +142,27 @@ geoflow_data <- R6Class("geoflow_data",
         #datastore
         datastores <- data_props[sapply(data_props, function(x){x$key=="datastore"})]
         if(length(datastores)>0) self$setDatastore(datastores[[1]]$values[[1]])
+        
+        #attributes
+        attributes <- data_props[sapply(data_props, function(x){x$key=="attribute"})]
+        get_attributes = list()
+        invisible(lapply(attributes, function(attribute){
+          for(value in attribute$values){
+            if(!(value %in% get_attributes)) get_attributes[[length(get_attributes)+1]] <<- value
+          }
+        }))
+        if(length(get_attributes)>0) self$attributes <- get_attributes
+        
+        #variables
+        variables <- data_props[sapply(data_props, function(x){x$key=="variable"})]
+        get_variables = list()
+        invisible(lapply(variables, function(variable){
+          for(value in variable$values){
+            if(!(value %in% get_variables)) get_variables[[length(get_variables)+1]] <<- value
+          }
+        }))
+        if(length(get_variables)>0) self$variables <- get_variables
+        
       }
     },
     

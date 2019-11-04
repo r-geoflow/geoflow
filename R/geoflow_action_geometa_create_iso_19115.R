@@ -475,7 +475,20 @@ geometa_create_iso_19115 <- function(entity, config, options){
     dq2$addReport(dc_inspire2)
   }
   
-  #TODO content information --> Feature Catalogue description (if data handling)
+  #content information --> Feature Catalogue description (if data handling)
+  fc_action <- NULL
+  actions <- config$actions[sapply(config$actions, function(x){x$id=="geometa-create-iso-19110"})]
+  if(length(actions)>0) fc_action <- actions[[1]]
+  if(!is.null(fc_action)){
+    fcIdentifier <- paste0(entity$identifiers[["id"]],"_dsd")
+    config$logger.info("Adding content information (feature catalogue description) to ISO 19115")
+    fcd <- ISOFeatureCatalogueDescription$new()
+    fcd$setComplianceCode(TRUE)
+    fcd$addLanguage(entity$language)
+    fcd$setIncludedWithDataset(FALSE)
+    fcd$featureCatalogueCitation <- list(ISOAttributes$new(uuidref = fcIdentifier))
+    md$addContentInfo(fcd)
+  }
   
   #we save the metadata
   saveRDS(md, file.path(getwd(), "metadata", paste0(entity$identifiers[["id"]], ".rds")))

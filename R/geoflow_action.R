@@ -38,6 +38,15 @@ register_actions <- function(){
       )
     ),
     geoflow_action$new(
+      id = "geometa-create-iso-19110",
+      type = "Metadata production",
+      def = "Produce an ISO 19110/19139 metadata object",
+      fun = geometa_create_iso_19110,
+      options = list(
+        doi = list(desc = "Add entity DOI - if defined - as metadata identifier and online resource", default = FALSE)
+      )
+    ),
+    geoflow_action$new(
       id="ows4R-publish-iso-19139",
       type = "Metadata publication",
       def = "Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol",
