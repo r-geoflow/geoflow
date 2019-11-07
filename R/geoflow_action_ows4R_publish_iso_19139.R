@@ -28,11 +28,11 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
     if(is(md, "ISOFeatureCatalogue")) meta_id <- md$attrs[["uuid"]]
     meta_dc <- CSW$getRecordById(meta_id)
     if(is.null(meta_dc)){
-      config$logger.info(sprintf("Inserting new record with id '%s'", meta_dc))
-      CSW$insertRecord(record = md, geometa_inspire = geometa_inspire)
+      config$logger.info(sprintf("Inserting new record with id '%s'", meta_id))
+      CSW$insertRecord(record = md, geometa_inspire = inspire)
     }else{
-      config$logger.info(sprintf("Updating existing record with id '%s'", meta_dc))
-      CSW$updateRecord(record = md, geometa_inspire = geometa_inspire)
+      config$logger.info(sprintf("Updating existing record with id '%s'", meta_id))
+      CSW$updateRecord(record = md, geometa_inspire = inspire)
     }
   }
   
