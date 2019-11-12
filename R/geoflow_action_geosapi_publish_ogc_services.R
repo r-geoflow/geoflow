@@ -3,10 +3,6 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   #for the timebeing, this action targets Vector data (featureType)
   #Later this action may also target coverage, but it's not yet supported by geosapi
   
-  if(!require("geosapi")){
-    stop("Package 'geosapi' is required for this action")
-  }
-  
   #check presence of data
   if(is.null(entity$data)){
     warnMsg <- sprintf("No data object associated to entity '%s'. Skipping data publication!", 

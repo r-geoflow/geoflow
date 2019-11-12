@@ -6,14 +6,6 @@
 require(geoflow, quietly = TRUE)
 require(testthat)
 
-test_that("geoflow loads properly CRAN packages",{
-  #TODO
-})
-
-test_that("geoflow loads properly GitHub packages",{
-  #TODO
-})
-
 test_that("gsheet handler is working properly",{
   #try to init workflow
   cfg_file = system.file("extdata/config_example_gsheets.json", package = "geoflow")
@@ -23,7 +15,7 @@ test_that("gsheet handler is working properly",{
   expect_equal(length(CFG$metadata$content), 2L)
   expect_equal(names(CFG$metadat$content), c("contacts", "entities"))
   expect_equal(length(CFG$metadata$content$contacts), 3L)
-  expect_equal(length(CFG$metadata$content$entities), 1L)
+  expect_equal(length(CFG$metadata$content$entities), 6L)
 })
 
 test_that("gsheet handler - entities only",{

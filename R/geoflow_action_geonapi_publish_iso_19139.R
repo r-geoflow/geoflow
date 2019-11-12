@@ -1,12 +1,5 @@
 geonapi_publish_iso_19139 <- function(entity, config, options){
   
-  if(!require("geometa")){
-    stop("Package 'geometa' is required for this action")
-  }
-  if(!require("geonapi")){
-    stop("Package 'geonapi' is required for this action")
-  }
-  
   geometa_inspire <- if(!is.null(options$geometa_inspire)) options$geometa_inspire else FALSE
   if(geometa_inspire){
     config$logger.info("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its CSW-T publication")

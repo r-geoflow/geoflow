@@ -52,8 +52,7 @@ matrix:
     #GeoNetwork
     - docker run 
       -v $TRAVIS_BUILD_DIR/tests/resources/config-view-service-override.xml:/etc/geonetwork/config-view-service-override.xml 
-      -d -p 8282:8080 
-      geonetwork:3.6.0 
+      -d -p 8282:8282 geonetwork:3.6.0 
       bash -c 'export CATALINA_OPTS="$CATALINA_OPTS -Dgeonetwork.jeeves.configuration.overrides.file=/etc/geonetwork/config-view-service-override.xml";/entrypoint.sh catalina.sh run'
 
 

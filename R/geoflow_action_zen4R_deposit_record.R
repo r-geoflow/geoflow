@@ -1,9 +1,5 @@
 zen4R_deposit_record <- function(entity, config, options){
   
-  if(!require("zen4R")){
-    stop("This action requires the 'zen4R' package")
-  }
-  
   ZENODO <- config$software$output$zenodo
   
   if(is.null(ZENODO)){

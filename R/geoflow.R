@@ -4,6 +4,7 @@
 #' @docType package
 #' 
 #' @import R6
+#' @import methods
 #' @import jsonlite
 #' @import xml2
 #' @import plyr

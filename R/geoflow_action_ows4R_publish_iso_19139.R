@@ -4,13 +4,6 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
   if(geometa_inspire){
     config$logger.info("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its CSW-T publication")
   }
-    
-  if(!require("geometa")){
-    stop("Package 'geometa' is required for this action")
-  }
-  if(!require("ows4R")){
-    stop("Package 'ows4R' is required for this action")
-  }
 
   #shortcut for csw config
   CSW <- config$software$output$csw

@@ -3,7 +3,7 @@
 #' @title executeWorkflowJob
 #' @description \code{executeWorkflowJob} allows to execute a workflow job
 #'
-#' @usage executeWorkflowJob(config)
+#' @usage executeWorkflowJob(config, jobdir)
 #'                 
 #' @param config a configuration object as read by \code{initWorkflow}
 #' @param jobdir the Job directory

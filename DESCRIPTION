@@ -10,7 +10,8 @@ Maintainer: Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 Depends: R (>= 3.3), methods, geosapi, geonapi, geometa, ows4R, zen4R
 Imports: R6, jsonlite, xml2, plyr, readr, gsheet, readxl, DBI, RPostgreSQL, RSQLite, sp, sf, rgdal, rgeos
 Suggests: testthat
-Description: R engine to orchestrate and run geospatial (meta)data workflows
+Description: Provides an engine to manage Spatial Data Infrastructures (SDI) and to orchestrate, run and automate 
+  geospatial (meta)data workflows in compliance with international standards (ISO, OGC).
 License: MIT + file LICENSE
 URL: https://github.com/eblondel/geoflow
 BugReports: https://github.com/eblondel/geoflow

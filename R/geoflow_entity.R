@@ -556,7 +556,8 @@ geoflow_entity <- R6Class("geoflow_entity",
     #enrichWithRelations
     enrichWithRelations = function(config){
       geosapi_action <- NULL
-      actions <- config$actions[sapply(config$actions, function(x){regexpr("geosapi",x$id)>0})]
+      actions <- list()
+      if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geosapi",x$id)>0})]
       if(length(actions)>0) geosapi_action <- actions[[1]]
       #dynamic relations related to OGC services (only executed if geosapi action is handled and enabled in workflow)
       if(!is.null(geosapi_action)) if(!is.null(self$data)) if(self$data$uploadType != "other"){
