@@ -3,6 +3,8 @@
 #
 # Description: Unit tests for initWorkflow.R
 #=======================
+require(geoflow, quietly = TRUE)
+require(testthat)
 
 test_that("geoflow loads properly CRAN packages",{
   #TODO

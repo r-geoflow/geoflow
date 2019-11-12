@@ -1,0 +1,7 @@
+<overrides xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="config-overrides.xsd">
+  <file name=".*/WEB-INF/config/config-service-xml-api.xml">
+    <replaceAtt xpath="services/service[@name='xml.metadata.get']/class/param[@name='skipInfo']" 
+                attName="value" value="n"/>
+  </file>
+</overrides>
