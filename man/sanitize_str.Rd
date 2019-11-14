@@ -6,6 +6,12 @@
 \usage{
 sanitize_str(str)
 }
+\arguments{
+\item{str}{a string as object of class \code{character}}
+}
 \description{
-sanitize_str
+\code{sanitize_str} sanitizes a string definition in geoflow
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

@@ -7,5 +7,9 @@
 get_temp_directory()
 }
 \description{
-get_temp_directory
+\code{set_temp_directory} get the temp directory name used by geoflow
+to download data and store temporary files. Default is set to "geoflow_temp_data".
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

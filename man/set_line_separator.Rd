@@ -4,8 +4,15 @@
 \alias{set_line_separator}
 \title{set_line_separator}
 \usage{
-set_line_separator(x = "_\\n")
+set_line_separator(x)
+}
+\arguments{
+\item{x}{a string as object of class \code{character} representing the line separator.}
 }
 \description{
-set_line_separator
+\code{set_line_separator} set the line separator to be used by geoflow
+when extracting cell components for tabular data content handling.
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

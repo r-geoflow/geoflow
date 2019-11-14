@@ -7,5 +7,10 @@
 get_line_separator()
 }
 \description{
-get_line_separator
+\code{get_line_separator} get the line separator used by geoflow
+when extracting cell components for tabular data content handling. Default is 
+set to an underscore followed by a line break.
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

@@ -4,8 +4,19 @@
 \alias{list_software}
 \title{list_software}
 \usage{
-list_software(raw = FALSE)
+list_software(raw)
+}
+\arguments{
+\item{raw}{Default value is \code{FALSE}, meaning the software will be listed as
+\code{data.frame}. The output If \code{TRUE} the raw list of \link{geoflow_software} 
+is returned.}
+}
+\value{
+an object of class \code{data.frame} (or \code{list} of \link{geoflow_software} if raw = FALSE)
 }
 \description{
-list_software
+\code{list_software} lists the software supported by geoflow.
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

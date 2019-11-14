@@ -1,5 +1,116 @@
-#'geoflow_entity
-#'@export
+#' geoflow_entity
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' 
+#' @name geoflow_entity
+#' @title Geoflow entity class
+#' @description This class models a entity object
+#' @keywords entity
+#' @return Object of \code{\link{R6Class}} for modelling a entity object
+#' @format \code{\link{R6Class}} object.
+#' 
+#' @section Methods:
+#' \describe{
+#'  \item{\code{new()}}{
+#'    This method is used to instantiate a geoflow_entity object
+#'  }
+#'  \item{\code{setIdentifier(key, id)}}{
+#'    Set an identifier given a key. Default key is "id", but others can be specified, eg "doi".
+#'  }
+#'  \item{\code{setDate(date)}}{
+#'    Set the date, object of class \code{Date} or \code{POSIX}
+#'  }
+#'  \item{\code{setLanguage(language)}}{
+#'    Set the language used for the entity description (metadata). Default is "eng".
+#'  }
+#'  \item{\code{setType(key, type)}}{
+#'    Set the type of description. By default a generic type (key = "generic") is defined to "dataset", and
+#'    will be used as default type for actions that perform metadata production / publication.
+#'  }
+#'  \item{\code{setTitle(title)}}{
+#'    Set entity title
+#'  }
+#'  \item{\code{setDescription(description)}}{
+#'    Set entity description
+#'  }
+#'  \item{\code{addSubject(subject)}}{
+#'    Add a subject, object of class \code{geoflow_subject}.
+#'  }
+#'  \item{\code{addContact(contact)}}{
+#'    Add a contact, object of class \code{geoflow_contact}
+#'  }
+#'  \item{\code{addRelation(relation)}}{
+#'    Add a relation, object of class \code{geoflow_relation}
+#'  }
+#'  \item{\code{addRight(right)}}{
+#'    Add a right, object of class \code{geoflow_right}
+#'  }
+#'  \item{\code{setSpatialExtent(wkt,bbox,data,crs)}}{
+#'    Set spatial extent. Various ways can be used to set the spatial extent 1) with a WKT string,
+#'    2) with a bbox, object of class \code{matrix}, or 3) specifying a data object (from \pkg{sf}).
+#'    The \code{crs} (coordinate reference system) should be specified with the crs SRID (number).
+#'    The spatial extent is not necessarily a bounding box but can be one or more geometries.
+#'  }
+#'  \item{\code{setSpatialBbox(wkt,bbox,data,crs)}}{
+#'    Set spatial bbox. Various ways can be used to set the spatial extent 1) with a WKT string,
+#'    2) with a bbox, object of class \code{matrix}, or 3) specifying a data object (from \pkg{sf}).
+#'    The \code{crs} (coordinate reference system) should be specified with the crs SRID (number).
+#'  }
+#'  \item{\code{setSrid(srid)}}{
+#'    Set the SRID
+#'  }
+#'  \item{\code{setTemporalExtent(str)}}{
+#'    Set the temporal extent from a string representation (object of class \code{character}) of
+#'    an ISO date / datetime (timestamp) or interval.
+#'  }
+#'  \item{\code{setProvenance(provenance)}}{
+#'    Set the provenance as object of class \code{geoflow_provenance}.
+#'  }
+#'  \item{\code{setData(data)}}{
+#'    Set the related data object of class \code{geoflow_data}
+#'  }
+#'  \item{\code{copyDataToJobDir(config, jobdir)}}{
+#'    This function will look at data object associated to the entity (previously set with \code{setData}),
+#'    and will try to (download)/copy the data source to the geoflow job directory.
+#'  }
+#'  \item{\code{enrichWithFeatures(config)}}{
+#'    This function will enrich the entity with data features, but trying to read the spatial data (eg shapefile,
+#'    sql query - if a database input software is declared in the geoflow config). This method will overwrite 
+#'    spatial metadata such as the bounding box and temporal extent. Note that the user spatial extent is not overwriten
+#'    since it may content finer geometries than a bounding box
+#'  }
+#'  \item{\code{enrichWithRelations(config)}}{
+#'    This function that will enrich the entity with relations. At now this is essentially related to adding 
+#'    relations if a Geoserver (geosapi) publishing action is enabled in which case this function will add 1) 
+#'    a thumbnail link built from OGC WMS service, 2) a WMS protocol relation, 3) WFS data protocols in common 
+#'    formats (GML, GeoJSON, ESRI Shapefile).
+#'  }
+#'  \item{\code{enrichWithSubjects(config)}}{
+#'    This function is expected to enrich entities with subjects. Related to data vocabularies / thesauri / ontologies.
+#'    NOT YET IMPLEMENTED
+#'  }
+#'  \item{\code{getContacts(pretty)}}{
+#'    Get the list of entity contacts. By default, a list of \code{geoflow_contact} will be returned. To
+#'    return the list of entity contacts as \code{data.frame}, set \code{pretty = TRUE}.
+#'  }
+#'  \item{\code{getRelations(pretty)}}{
+#'    Get the list of entity relations. By default, a list of \code{geoflow_relation} will be returned. To
+#'    return the list of entity relations as \code{data.frame}, set \code{pretty = TRUE}.
+#'  }
+#'  \item{\code{getSubjects(pretty)}}{
+#'    Get the list of entity subjects. By default, a list of \code{geoflow_subjects} will be returned. To
+#'    return the list of entity subjects as \code{data.frame}, set \code{pretty = TRUE}.
+#'  }
+#'  \item{\code{setStatus(status)}}{
+#'    Set a simple status either "draft" or "published". This method is required to deal with Zenodo (zen4R)
+#'    publishing action.
+#'  }
+#' }
+#' 
+#' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
+#'
 geoflow_entity <- R6Class("geoflow_entity",
   public = list(
     identifiers = list(),
@@ -22,7 +133,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     initialize = function(){},
     
     #setIdentifier
-    setIdentifier = function(key, id){
+    setIdentifier = function(key = "id", id){
       self$identifiers[[key]] <- id
     },
     
@@ -40,7 +151,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #setType
-    setType = function(key, type){
+    setType = function(key = "generic", type){
       self$types[[key]] <- type
     },
     

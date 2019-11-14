@@ -20,7 +20,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
   #An insert has to be done in 2 operations (the insert itself, and the privilege setting to "publish" it either to a restrained group or to public)
   #An update has to be done based on the internal Geonetwork id (that can be queried as well
   #function doPublish
-  doPublish <- function(mdfile){
+  doPublish <- function(mdfile, inspire){
     mdId <- NULL
     md <- readRDS(metaFile)
     privs <- privileges
@@ -38,7 +38,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
       group <- if(!is.null(options$group)) options$group else "1"
       category <- if(!is.null(options$category)) options$category else "datasets"
       created = GN$insertMetadata(geometa = md, group = group, category = category,
-                                  geometa_inspire = geometa_inspire)
+                                  geometa_inspire = inspire)
       
       #config privileges
       config <- GNPrivConfiguration$new()
@@ -47,7 +47,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     }else{
       #update a metadata
       updated = GN$updateMetadata(id = metaId, geometa = md,
-                                  geometa_inspire = geometa_inspire)
+                                  geometa_inspire = inspire)
       
       #config privileges
       gn_config <- GNPrivConfiguration$new()
@@ -62,7 +62,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
   if(length(actions)>0) geometa_iso19115_action <- actions[[1]]
   if(!is.null(geometa_iso19115_action)){
     metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],".rds"))
-    if(file.exists(metaFile)) doPublish(metaFile)
+    if(file.exists(metaFile)) doPublish(metaFile, geometa_inspire)
   }
   #geometa ISO 19110
   geometa_iso19110_action <- NULL
@@ -71,7 +71,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
   if(!is.null(geometa_iso19110_action)){
     geometa_inspire <- FALSE
     metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_dsd",".rds"))
-    if(file.exists(metaFile)) doPublish(metaFile)
+    if(file.exists(metaFile)) doPublish(metaFile, geometa_inspire)
   }
   
   return(TRUE)

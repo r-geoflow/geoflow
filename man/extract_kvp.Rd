@@ -6,6 +6,13 @@
 \usage{
 extract_kvp(str)
 }
+\arguments{
+\item{str}{a string as object of class \code{character}}
+}
 \description{
-extract_kvp
+\code{extract_kvp} parses a string into a key value pair represented by
+a \code{geoflow_kvp} object.
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

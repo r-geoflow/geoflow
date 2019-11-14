@@ -1,5 +1,52 @@
-#'geoflow_subject
-#'@export
+#' geoflow_subject
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' 
+#' @name geoflow_subject
+#' @title Geoflow subject class
+#' @description This class models a subject
+#' @keywords subject
+#' @return Object of \code{\link{R6Class}} for modelling a subject
+#' @format \code{\link{R6Class}} object.
+#' 
+#' @examples
+#' \dontrun{
+#'   subject <- geoflow_subject$new()
+#'   subject$setName("General")
+#'   subject$setUri("http://somelink/general")
+#'   subject$addKeyword("keyword1", "http://somelink/keyword1")
+#'   subject$addKeyword("keyword2", "http://somelink/keyword2")
+#'   subject$addKeyword("keyword3", "http://somelink/keyword3")
+#' }
+#' 
+#' @section Methods:
+#' \describe{
+#'  \item{\code{new)}}{
+#'    This method is used to instantiate a geoflow_subject object
+#'  }
+#'  \item{\code{setName(name)}}{
+#'    Sets name 
+#'  }
+#'  \item{\code{setUri(uri)}}{
+#'    Sets URI
+#'  }
+#'  \item{\code{setDate(dateType, date)}}{
+#'    Sets a date (with a given date type)
+#'  }
+#'  \item{\code{addKeyword(keyword, uri)}}{
+#'    Adds a keyword
+#'  }
+#'  \item{\code{getKeywords(pretty = FALSE)}}{
+#'    Gets the keywords. If \code{pretty} is \code{TRUE}, then the method
+#'    returns a \code{data.frame}, else it returns a list of \code{geoflow_keyword}
+#'    (default behavior).
+#'  }
+#' }
+#' 
+#' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
+#'
 geoflow_subject <- R6Class("geoflow_subject",
   public = list(
     name = NULL,

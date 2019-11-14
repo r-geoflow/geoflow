@@ -7,5 +7,11 @@
 register_contact_handlers()
 }
 \description{
-register_contact_handlers
+\code{register_contact_handlers} registers the default contact handlers for geoflow
+}
+\note{
+Internal function called on load by geoflow
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

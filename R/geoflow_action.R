@@ -1,5 +1,38 @@
-#'geoflow_action
-#'@export
+#' geoflow_action
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' 
+#' @name geoflow_action
+#' @title Geoflow action class
+#' @description This class models an action to be executed by geoflow
+#' @keywords action
+#' @return Object of \code{\link{R6Class}} for modelling an action
+#' @format \code{\link{R6Class}} object.
+#' 
+#' @examples
+#' \dontrun{
+#'   action <- geoflow_action$new(
+#'    id = "some-id",
+#'    type = "some purpose",
+#'    def = "some definition",
+#'    fun = function(config, entity){},
+#'    options = list(
+#'      option_name = list(desc = "option description", default = FALSE)
+#'    )
+#'  )
+#' }
+#' 
+#' @section Methods:
+#' \describe{
+#'  \item{\code{new(id, type, def, fun, script, options)}}{
+#'    This method is used to instantiate a geoflow_action object
+#'  }
+#' }
+#' 
+#' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
+#'
 geoflow_action <- R6Class("geoflow_action",
   public = list(
     id = NA,
@@ -19,8 +52,18 @@ geoflow_action <- R6Class("geoflow_action",
   )
 )
 
-#'register_actions
-#'@export
+#' @name register_actions
+#' @aliases register_actions
+#' @title register_actions
+#' @description \code{register_actions} registers default geoflow actions
+#'
+#' @usage register_actions()
+#' 
+#' @note Function called on load by geoflow
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 register_actions <- function(){
   
   objs <- list(
@@ -91,8 +134,22 @@ register_actions <- function(){
   .geoflow$actions <- objs
 }
 
-#'list_actions
-#'@export
+#' @name list_actions
+#' @aliases list_actions
+#' @title list_actions
+#' @description \code{list_actions} lists the actions supported by geoflow.
+#'
+#' @usage list_actions(raw)
+#' 
+#' @param raw Default value is \code{FALSE}, meaning the actions will be listed as
+#' \code{data.frame}. The output If \code{TRUE} the raw list of \link{geoflow_action} 
+#' is returned.
+#' 
+#' @return an object of class \code{data.frame} (or \code{list} of \link{geoflow_action} if raw = FALSE)
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 list_actions <- function(raw = FALSE){
   actions <- .geoflow$actions 
   if(raw){
@@ -110,8 +167,20 @@ list_actions <- function(raw = FALSE){
   return(actions)
 }
 
-#'list_action_options
-#'@export
+#' @name list_action_options
+#' @aliases list_action_options
+#' @title list_action_options
+#' @description \code{list_action_options} lists the options of a given action supported by geoflow.
+#'
+#' @usage list_action_options(id)
+#' 
+#' @param id An action identifier
+#' 
+#' @return an object of class \code{data.frame} listing the action options.
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 list_action_options <- function(id){
   out <- NULL
   actions <- list_actions(raw = TRUE)

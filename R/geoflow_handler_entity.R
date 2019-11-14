@@ -1,5 +1,4 @@
-#' handle_entities_df
-#' @export
+#handle_entities_df
 handle_entities_df <- function(config, source){
   
   if(!is(source, "data.frame")){
@@ -176,8 +175,7 @@ handle_entities_df <- function(config, source){
   return(entities)
 }
 
-#' handle_entities_gsheets
-#' @export
+#handle_entities_gsheets
 handle_entities_gsheet <- function(config, source){
 
   #read gsheet URL
@@ -188,8 +186,7 @@ handle_entities_gsheet <- function(config, source){
   return(entities)
 }
 
-#' handle_entities_csv
-#' @export
+#handle_entities_csv
 handle_entities_csv <- function(config, source){
   
   #read csv TODO -> options management: sep, encoding etc
@@ -200,8 +197,7 @@ handle_entities_csv <- function(config, source){
   return(entities)
 }
 
-#' handle_entities_excel
-#' @export
+#handle_entities_excel
 handle_entities_excel <- function(config, source){
   
   #read excel TODO -> options management: sep, encoding etc
@@ -212,8 +208,7 @@ handle_entities_excel <- function(config, source){
   return(entities)
 }
 
-#' handle_entities_dbi
-#' @export
+#handle_entities_dbi
 handle_entities_dbi <- function(config, source){
   dbi <- config$software$input$dbi
   if(is.null(dbi)){

@@ -15,7 +15,7 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
   }
   
   #function to publish
-  doPublish <- function(md){
+  doPublish <- function(md, inspire){
     meta_id <- NULL
     if(is(md, "ISOMetadata")) meta_id <- md$fileIdentifier
     if(is(md, "ISOFeatureCatalogue")) meta_id <- md$attrs[["uuid"]]
@@ -36,7 +36,7 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
   if(!is.null(geometa_iso19115_action)){
     metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],".rds"))
     md <- readRDS(metaFile)
-    if(file.exists(metaFile)) doPublish(md)
+    if(file.exists(metaFile)) doPublish(md, geometa_inspire)
   }
   #geometa ISO 19110
   geometa_iso19110_action <- NULL
@@ -46,7 +46,7 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
     geometa_inspire <- FALSE
     metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_dsd",".rds"))
     md <- readRDS(metaFile)
-    if(file.exists(metaFile)) doPublish(md)
+    if(file.exists(metaFile)) doPublish(md, geometa_inspire)
   }
   
   return(TRUE)

@@ -4,8 +4,15 @@
 \alias{extract_cell_components}
 \title{extract_cell_components}
 \usage{
-extract_cell_components(x)
+extract_cell_components(str)
+}
+\arguments{
+\item{x}{a string as object of class \code{character}}
 }
 \description{
-extract_cell_components
+\code{extract_cell_components} extracts the components of a cell
+when using tabular data content handlers (for entity and contact).
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

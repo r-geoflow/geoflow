@@ -7,5 +7,11 @@
 register_entity_handlers()
 }
 \description{
-register_entity_handlers
+\code{register_entity_handlers} registers the default entity handlers for geoflow
+}
+\note{
+Internal function called on load by geoflow
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

@@ -1,5 +1,45 @@
-#'geoflow_provenance
-#'@export
+#' geoflow_provenance
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' 
+#' @name geoflow_provenance
+#' @title Geoflow provenance class
+#' @description This class models an provenance
+#' @keywords provenance
+#' @return Object of \code{\link{R6Class}} for modelling an provenance
+#' @format \code{\link{R6Class}} object.
+#' 
+#' @examples
+#' \dontrun{
+#'   provenance <- geoflow_provenance$new()
+#'   provenance$setStatement("statement")
+#'   process1 <- geoflow_process$new()
+#'   process1$setRationale("task 1")
+#'   process1$setDescription("Performs task 1")
+#'   provenance$addProcess(process1)
+#'   process2 <- geoflow_process$new()
+#'   process2$setRationale("task 2")
+#'   process2$setDescription("Performs task 2")
+#'   provenance$addProcess(process2)
+#' }
+#' 
+#' @section Methods:
+#' \describe{
+#'  \item{\code{new(str)}}{
+#'    This method is used to instantiate a geoflow_provenance object
+#'  }
+#'  \item{\code{setStatement(statement)}}{
+#'    Set statement, object of class \code{character}
+#'  }
+#'  \item{\code{addProcess(process)}}{
+#'    Adds process, object of class \code{geoflow_process}
+#'  }
+#' }
+#' 
+#' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
+#'
 geoflow_provenance <- R6Class("geoflow_provenance",
    list(
      statement = NULL,

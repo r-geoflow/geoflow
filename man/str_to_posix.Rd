@@ -6,6 +6,12 @@
 \usage{
 str_to_posix(str)
 }
+\arguments{
+\item{str}{a string as object of class \code{character}}
+}
 \description{
-str_to_posix
+\code{str_to_posix} parses a string into a \code{POSIX} object
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

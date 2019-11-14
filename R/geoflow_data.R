@@ -1,5 +1,89 @@
-#'geoflow_data
-#'@export
+#' geoflow_data
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' 
+#' @name geoflow_data
+#' @title Geoflow data class
+#' @description This class models a data object
+#' @keywords data
+#' @return Object of \code{\link{R6Class}} for modelling a data object
+#' @format \code{\link{R6Class}} object.
+#' 
+#' @section Methods:
+#' \describe{
+#'  \item{\code{new(str)}}{
+#'    This method is used to instantiate a geoflow_data object
+#'  }
+#'  \item{\code{setSource(source)}}{
+#'    Set source, object of class \code{"character"} (single source), or \code{list}.
+#'    For spatial source, a single source will be used, while for sources of type 'other'
+#'    (eg PDF files), multiple sources can be specified
+#'  }
+#'  \item{\code{setSql(sql)}}{
+#'    Sets SQL source. This is a convenience method for users that want to specify directly
+#'    a SQL source. This method is called internally when a source SQL file has been set using
+#'    \code{setSource}
+#'  }
+#'  \item{setUpload(upload)}{
+#'    Set whether the source data should be uploaded to the sofware output declared in the geoflow
+#'    configuration or not. By default it is assumed that upload should be performed (upload \code{TRUE}).
+#'  }
+#'  \item{\code{getAllowedUploadTypes()}}{
+#'    get the allowed upload types
+#'  }
+#'  \item{\code{setUploadType(uploadType)}}{
+#'    The upload type is a simplification of the data mime type and is used to identify the type of source
+#'    set for the data object. By default it is assumed to be "other" (undefined). The upload types currently
+#'    allowed in geoflow can be listed with \code{$getAllowedUploadTypes()}. Those are: "other", "shp" (for zipped
+#'    ESRI shapefiles), "dbtable", "dbview", "dbquery".
+#'  }
+#'  \item{\code{setUploadZip(uploadZip)}}{
+#'    Sets whether a zipped version of the data file(s) should be uploaded. Default is \code{FALSE}
+#'  }
+#'  \item{\code{setUploadZipOnly(uploadZipOnly)}}{
+#'    Sets whether a zipped version of the data file(s) only should be uploaded. Default is \code{FALSE}
+#'  }
+#'  \item{\code{setCqlFilter(cqlfilter)}}{
+#'    Sets a CQL filter. In case of spatial data, once the data is read by geoflow (during initialization phase),
+#'    the CQL filter will be applied to the data.
+#'  }
+#'  \item{\code{setWorkspace(workspace)}}{
+#'    Sets a workspace name, object of class \code{character}. Used as target workspace name for GeoServer action.
+#'  }
+#'  \item{\code{setDatastore(datastore)}}{
+#'    Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action.
+#'  }
+#'  \item{\code{setLayername(layername)}}{
+#'    Sets a layername, object of class \code{character}. Used as target layer name for Geoserver action.
+#'  }
+#'  \item{\code{addStyle(style)}}{
+#'    Adds a style name, object of class \code{character}. Used as layer style name(s) for GeoServer action.
+#'  }
+#'  \item{\code{setParameter(name, fieldname, regexp, defaultvalue)}}{
+#'    Set virtual parameter definition for setting virtual SQL view parametized layers in Geoserver, when \code{uploadType} is
+#'    set to \code{dbquery}.The arguments here follow the definition of virtual parameters in GeoServer, ie a name (alias),
+#'    the corresponding field name in the DBMS, a regular expression for validation of parameter values (required to 
+#'    prevent SQL injection risks), and a default value.
+#'  }
+#'  \item{\code{setGeometryField(geometryField)}}{
+#'    Sets the name of the geometry field in the target GeoServer SQL view parametrized layer
+#'  }
+#'  \item{\code{setGeometryType(geometryType)}}{
+#'    Sets the geometry type in the target GeoServer SQL view parametrized layer
+#'  }
+#'  \item{\code{setAttributes(attributes)}}{
+#'    Sets attributes definition.
+#'  }
+#'  \item{\code{setVariables(variables)}}{
+#'    Sets variables definition.
+#'  }
+#'  
+#' }
+#' 
+#' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
+#'
 geoflow_data <- R6Class("geoflow_data",
   private = list(
     supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "other")
@@ -11,15 +95,15 @@ geoflow_data <- R6Class("geoflow_data",
     uploadType = "other",
     uploadZip = FALSE,
     uploadZipOnly = FALSE,
-    layername = NULL,
     cqlfilter = NULL,
-    geometryField = NULL,
-    geometryType = NULL,
-    parameters = list(),
-    styles = list(),
+    features = NULL,
     workspace = NULL,
     datastore = NULL,
-    features = NULL,
+    layername = NULL,
+    styles = list(),
+    parameters = list(),
+    geometryField = NULL,
+    geometryType = NULL,
     attributes = NULL,
     variables = NULL,
     initialize = function(str = NULL){
@@ -166,9 +250,9 @@ geoflow_data <- R6Class("geoflow_data",
       }
     },
     
-    #setLayername
-    setLayername = function(layername){
-      self$layername <- layername
+    #getAllowedUploadTypes
+    getAllowedUploadTypes = function(){
+      return(private$supportedUploadTypes)
     },
     
     #setUploadType
@@ -210,6 +294,31 @@ geoflow_data <- R6Class("geoflow_data",
     setCqlFilter = function(cqlfilter){
       self$cqlfilter <- cqlfilter
     },
+
+    #setFeatures
+    setFeatures = function(features){
+      self$features <- features
+    },
+        
+    #setWorkspace
+    setWorkspace = function(workspace){
+      self$workspace <- workspace
+    },
+    
+    #setDatastore
+    setDatastore = function(datastore){
+      self$datastore <- datastore
+    },
+    
+    #setLayername
+    setLayername = function(layername){
+      self$layername <- layername
+    },
+    
+    #addStyle
+    addStyle = function(style){
+      self$styles <- c(self$styles, style)
+    },
     
     #setParameter
     setParameter = function(name, fieldname, regexp, defaultvalue){
@@ -231,24 +340,14 @@ geoflow_data <- R6Class("geoflow_data",
       self$geometryType <- geometryType
     },
     
-    #addStyle
-    addStyle = function(style){
-      self$styles <- c(self$styles, style)
+    #setAttributes
+    setAttributes = function(attributes){
+      self$attributes <- attributes
     },
     
-    #setWorkspace
-    setWorkspace = function(workspace){
-      self$workspace <- workspace
-    },
-    
-    #setDatastore
-    setDatastore = function(datastore){
-      self$datastore <- datastore
-    },
-    
-    #setFeatures
-    setFeatures = function(features){
-      self$features <- features
+    #setVariables
+    setVariables = function(variables){
+      self$variables <- variables
     }
     
   )

@@ -4,8 +4,19 @@
 \alias{list_actions}
 \title{list_actions}
 \usage{
-list_actions(raw = FALSE)
+list_actions(raw)
+}
+\arguments{
+\item{raw}{Default value is \code{FALSE}, meaning the actions will be listed as
+\code{data.frame}. The output If \code{TRUE} the raw list of \link{geoflow_action} 
+is returned.}
+}
+\value{
+an object of class \code{data.frame} (or \code{list} of \link{geoflow_action} if raw = FALSE)
 }
 \description{
-list_actions
+\code{list_actions} lists the actions supported by geoflow.
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

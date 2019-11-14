@@ -1,5 +1,74 @@
-#'geoflow_software
-#'@export
+#' geoflow_software
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' 
+#' @name geoflow_software
+#' @title Geoflow software class
+#' @description This class models a software to be used by geoflow
+#' @keywords software
+#' @return Object of \code{\link{R6Class}} for modelling a software
+#' @format \code{\link{R6Class}} object.
+#' 
+#' @examples
+#' \dontrun{
+#'   software<- geoflow_software$new(
+#'    id = "some-id",
+#'    type = "output",
+#'    software_type = "software",
+#'    definition = "definition",
+#'    handler = function(){},
+#'    arguments = list(
+#'      url = list(def = "the software url")
+#'    ),
+#'    attributes = list(
+#'      workspace = list(def = "a workspace name in the software")
+#'    )
+#'  )
+#' }
+#' 
+#' @section Methods:
+#' \describe{
+#'  \item{\code{new(id, type, software_type, definition, handler, arguments, attributes)}}{
+#'    This method is used to instantiate a geoflow_software object
+#'  }
+#'  \item{\code{setId(id)}}{
+#'    Set id
+#'  }
+#'  \item{\code{setType(type)}}{
+#'    Set type, a value of class \code{character} "input" or "output"
+#'  }
+#'  \item{\code{setSoftwareType(software_type)}}{
+#'    Set software type
+#'  }
+#'  \item{\code{setDefinition(definition)}}{
+#'    Set definition
+#'  }
+#'  \item{\code{setAttributes(attributes)}}{
+#'    Set attributes
+#'  }
+#'  \item{\code{setProperties(...)}}{
+#'    Set properties. Function called when setting the software properties
+#'    from the geoflow configuration.
+#'  }
+#'  \item{\code{setArguments(arguments)}}{
+#'    Set arguments
+#'  }
+#'  \item{\code{setParameters(...)}}{
+#'    Set parameters. Function called when setting the software parameters
+#'    from the geoflow configuration.
+#'  }
+#'  \item{\code{setHandler(handler)}}{
+#'    Set handler (a function)
+#'  }
+#'  \item{\code{getHandlerInstance()}}{
+#'    Get an instance of the handler
+#'  }
+#' }
+#' 
+#' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
+#'
 geoflow_software <- R6Class("geoflow_software",
   public = list(
     id = NULL,
@@ -64,11 +133,6 @@ geoflow_software <- R6Class("geoflow_software",
       }
     },
     
-    #setHandler
-    setHandler = function(handler){
-      self$handler <- handler
-    },
-    
     #setArguments
     setArguments = function(arguments){
       self$arguments <- arguments
@@ -87,6 +151,11 @@ geoflow_software <- R6Class("geoflow_software",
           self$parameters[[paramName]] <- params[[paramName]]
         }
       }
+    },
+    
+    #setHandler
+    setHandler = function(handler){
+      self$handler <- handler
     },
     
     #getHandlerInstance
@@ -110,8 +179,18 @@ geoflow_software <- R6Class("geoflow_software",
   )
 )
 
-#'register_software
-#'@export
+#' @name register_software
+#' @aliases register_software
+#' @title register_software
+#' @description \code{register_software} registers default geoflow software
+#'
+#' @usage register_software()
+#' 
+#' @note Function called on load by geoflow
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 register_software <- function(){
   
   software <- list(
@@ -204,8 +283,22 @@ register_software <- function(){
   .geoflow$software <- software
 }
 
-#'list_software
-#'@export
+#' @name list_software
+#' @aliases list_software
+#' @title list_software
+#' @description \code{list_software} lists the software supported by geoflow.
+#'
+#' @usage list_software(raw)
+#' 
+#' @param raw Default value is \code{FALSE}, meaning the software will be listed as
+#' \code{data.frame}. The output If \code{TRUE} the raw list of \link{geoflow_software} 
+#' is returned.
+#' 
+#' @return an object of class \code{data.frame} (or \code{list} of \link{geoflow_software} if raw = FALSE)
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 list_software <- function(raw = FALSE){
   software <- .geoflow$software
   if(raw){
@@ -223,8 +316,20 @@ list_software <- function(raw = FALSE){
   return(software)
 }
 
-#'list_software_parameters
-#'@export
+#' @name list_software_parameters
+#' @aliases list_software_parameters
+#' @title list_software_parameters
+#' @description \code{list_software_parameters} lists the parameters of a given software supported by geoflow.
+#'
+#' @usage list_software_parameters(software_type)
+#' 
+#' @param software_type A software type
+#' 
+#' @return an object of class \code{data.frame} listing the software parameters
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 list_software_parameters <- function(software_type){
   out <- NULL
   software <- .geoflow$software[sapply(.geoflow$software, function(x){x$software_type == software_type})]
@@ -243,8 +348,20 @@ list_software_parameters <- function(software_type){
   return(out)
 }
 
-#'list_software_properties
-#'@export
+#' @name list_software_properties
+#' @aliases list_software_properties
+#' @title list_software_properties
+#' @description \code{list_software_properties} lists the properties of a given software supported by geoflow.
+#'
+#' @usage list_software_properties(software_type)
+#' 
+#' @param software_type A software type
+#' 
+#' @return an object of class \code{data.frame} listing the software properties
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 list_software_properties <- function(software_type){
   out <- NULL
   software <- .geoflow$software[sapply(.geoflow$software, function(x){x$software_type == software_type})]

@@ -7,5 +7,11 @@
 register_actions()
 }
 \description{
-register_actions
+\code{register_actions} registers default geoflow actions
+}
+\note{
+Function called on load by geoflow
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

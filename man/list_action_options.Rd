@@ -6,6 +6,15 @@
 \usage{
 list_action_options(id)
 }
+\arguments{
+\item{id}{An action identifier}
+}
+\value{
+an object of class \code{data.frame} listing the action options.
+}
 \description{
-list_action_options
+\code{list_action_options} lists the options of a given action supported by geoflow.
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

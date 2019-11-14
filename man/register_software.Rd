@@ -7,5 +7,11 @@
 register_software()
 }
 \description{
-register_software
+\code{register_software} registers default geoflow software
+}
+\note{
+Function called on load by geoflow
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

@@ -1,5 +1,4 @@
-#' handle_contacts_df
-#' @export
+#handle_contacts_df
 handle_contacts_df <- function(config, source){
   
   if(!is(source, "data.frame")){
@@ -45,8 +44,7 @@ handle_contacts_df <- function(config, source){
   return(contacts)
 }
 
-#' handle_contacts_gsheet
-#' @export
+#handle_contacts_gsheet
 handle_contacts_gsheet <- function(config, source){
   
   #read gsheet URL
@@ -57,8 +55,7 @@ handle_contacts_gsheet <- function(config, source){
   return(contacts)
 }
 
-#' handle_contacts_csv
-#' @export
+#handle_contacts_csv
 handle_contacts_csv <- function(config, source){
   
   #read csv TODO -> options management: sep, encoding etc
@@ -69,8 +66,7 @@ handle_contacts_csv <- function(config, source){
   return(contacts)
 }
 
-#' handle_contacts_excel
-#' @export
+#handle_contacts_excel
 handle_contacts_excel <- function(config, source){
   
   #read excel TODO -> options management: sep, encoding etc
@@ -81,8 +77,7 @@ handle_contacts_excel <- function(config, source){
   return(contacts)
 }
 
-#' handle_contacts_dbi
-#' @export
+#handle_contacts_dbi
 handle_contacts_dbi <- function(config, source){
   dbi <- config$software$input$dbi
   if(is.null(dbi)){

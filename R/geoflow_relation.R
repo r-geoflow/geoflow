@@ -1,5 +1,46 @@
-#'geoflow_relation
-#'@export
+#' geoflow_relation
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' 
+#' @name geoflow_relation
+#' @title Geoflow relation class
+#' @description This class models an relation
+#' @keywords relation
+#' @return Object of \code{\link{R6Class}} for modelling an relation
+#' @format \code{\link{R6Class}} object.
+#' 
+#' @examples
+#' \dontrun{
+#'   relation <- geoflow_relation$new()
+#'   relation$setKey("wms")
+#'   relation$setLink("http://somelink/wms")
+#'   relation$setName("layername")
+#'   relation$setDescription("layer description")
+#' }
+#' 
+#' @section Methods:
+#' \describe{
+#'  \item{\code{new(str)}}{
+#'    This method is used to instantiate a geoflow_relation object
+#'  }
+#'  \item{\code{setKey(key)}}{
+#'    Set relation key
+#'  }
+#'  \item{\code{setLink(link)}}{
+#'    Set relation link
+#'  }
+#'  \item{\code{setName(name)}}{
+#'    Set relation name
+#'  }
+#'  \item{\code{setDescription(description)}}{
+#'   Set relation description
+#'  }
+#' }
+#' 
+#' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
+#'
 geoflow_relation <- R6Class("geoflow_relation",
  public = list(
    key = NULL,

@@ -2,10 +2,19 @@
 % Please edit documentation in R/geoflow_utils.R
 \name{filter_sf_by_cqlfilter}
 \alias{filter_sf_by_cqlfilter}
-\title{filter_sf_bycqlfilter}
+\title{filter_sf_by_cqlfilter}
 \usage{
 filter_sf_by_cqlfilter(sfdata, cqlfilter)
 }
+\arguments{
+\item{sfdata}{object of class \code{sf}}
+
+\item{cqlfilter}{object of class \code{character} representing a CQL filter}
+}
 \description{
-filter_sf_bycqlfilter
+\code{filter_sf_by_cqlfilter} filters an object of class \code{sf} using
+a CQL syntax. This function is minimalistic and only basic CQL filters are supported.
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

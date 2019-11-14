@@ -6,6 +6,15 @@
 \usage{
 list_software_properties(software_type)
 }
+\arguments{
+\item{software_type}{A software type}
+}
+\value{
+an object of class \code{data.frame} listing the software properties
+}
 \description{
-list_software_properties
+\code{list_software_properties} lists the properties of a given software supported by geoflow.
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

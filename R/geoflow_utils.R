@@ -1,5 +1,15 @@
-#'sanitize_str
-#'@export
+#' @name sanitize_str
+#' @aliases sanitize_str
+#' @title sanitize_str
+#' @description \code{sanitize_str} sanitizes a string definition in geoflow
+#'
+#' @usage sanitize_str(str)
+#'                 
+#' @param str a string as object of class \code{character}
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 sanitize_str <- function(str){
   if(!is(str, "character")) return(str)
   if(is.na(str)) return(NA)
@@ -15,8 +25,18 @@ sanitize_str <- function(str){
   return(str)
 }
 
-#' sanitize_date
+#' @name sanitize_date
+#' @aliases sanitize_date
+#' @title sanitize_date
+#' @description \code{sanitize_date} sanitizes a date in geoflow
+#'
+#' @usage sanitize_date(date)
+#'                 
+#' @param date an object o class \code{character}
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
+#'
 sanitize_date <- function(date){
   if(is(date, "character")){
     if(date==""){
@@ -32,8 +52,19 @@ sanitize_date <- function(date){
   return(date)
 }
 
-#'extract_kvp
-#'@export
+#' @name extract_kvp
+#' @aliases extract_kvp
+#' @title extract_kvp
+#' @description \code{extract_kvp} parses a string into a key value pair represented by
+#' a \code{geoflow_kvp} object.
+#'
+#' @usage extract_kvp(str)
+#'                 
+#' @param str a string as object of class \code{character}
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 extract_kvp <- function(str){
   #kvp <- unlist(strsplit(str, ":(?!//|\\d)", perl = T))
   kvp <- unlist(strsplit(str, ":(?!//)", perl = T))
@@ -74,8 +105,18 @@ extract_kvp <- function(str){
   return(list(key = key, values = values))
 }
 
-#'str_to_posix
-#'@export
+#' @name str_to_posix
+#' @aliases str_to_posix
+#' @title str_to_posix
+#' @description \code{str_to_posix} parses a string into a \code{POSIX} object
+#'
+#' @usage str_to_posix(str)
+#'                 
+#' @param str a string as object of class \code{character}
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 str_to_posix <- function(str){
   if(nchar(str)>7){
     str_format <- if(nchar(str)==10) "%Y-%m-%d" else "%Y-%m-%dT%H:%M:%S"
@@ -86,8 +127,20 @@ str_to_posix <- function(str){
   return(out)
 }
 
-#'filter_sf_bycqlfilter
-#'@export
+#' @name filter_sf_by_cqlfilter
+#' @aliases filter_sf_by_cqlfilter
+#' @title filter_sf_by_cqlfilter
+#' @description \code{filter_sf_by_cqlfilter} filters an object of class \code{sf} using
+#' a CQL syntax. This function is minimalistic and only basic CQL filters are supported.
+#' 
+#' @usage filter_sf_by_cqlfilter(sfdata, cqlfilter)
+#'                 
+#' @param sfdata object of class \code{sf}
+#' @param cqlfilter object of class \code{character} representing a CQL filter
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 filter_sf_by_cqlfilter <- function(sfdata, cqlfilter){
   out <- NULL
   rfilter <- gsub(" AND ", " & ", cqlfilter)
@@ -101,35 +154,89 @@ filter_sf_by_cqlfilter <- function(sfdata, cqlfilter){
   return(out)
 }
 
-#'extract_cell_components
-#'@export
+#' @name extract_cell_components
+#' @aliases extract_cell_components
+#' @title extract_cell_components
+#' @description \code{extract_cell_components} extracts the components of a cell
+#' when using tabular data content handlers (for entity and contact).
+#'
+#' @usage extract_cell_components(str)
+#'                 
+#' @param x a string as object of class \code{character}
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 extract_cell_components <- function(x){
   lines <- unlist(strsplit(x, get_line_separator()))
   return(lines)
 }
 
-#'set_line_separator
-#'@export
+#' @name set_line_separator
+#' @aliases set_line_separator
+#' @title set_line_separator
+#' @description \code{set_line_separator} set the line separator to be used by geoflow
+#' when extracting cell components for tabular data content handling.
+#'
+#' @usage set_line_separator(x)
+#'                 
+#' @param x a string as object of class \code{character} representing the line separator.
+#  Default is set to an underscore followed by a line break.
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 set_line_separator <- function(x = "_\n"){
   if(!is(x,"character")) stop("The line separator should be an object of class 'character'")
   .geoflow$LINE_SEPARATOR <- x
 }
 
-#'get_line_separator
-#'@export
+#' @name get_line_separator
+#' @aliases get_line_separator
+#' @title get_line_separator
+#' @description \code{get_line_separator} get the line separator used by geoflow
+#' when extracting cell components for tabular data content handling. Default is 
+#' set to an underscore followed by a line break.
+#'
+#' @usage get_line_separator()
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 get_line_separator <- function(){
   return(.geoflow$LINE_SEPARATOR)
 }
 
-#'set_temp_directory
-#'@export
+#' @name set_temp_directory
+#' @aliases set_temp_directory
+#' @title set_temp_directory
+#' @description \code{set_temp_directory} set the temp directory name to be used by geoflow
+#' to download data and store temporary files.
+#'
+#' @usage set_temp_directory(x)
+#'                 
+#' @param x a string as object of class \code{character} representing the  temp directory.
+#  Default is set to "geoflow_temp_data".
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 set_temp_directory <- function(x = "geoflow_temp_data"){
   if(!is(x,"character")) stop("The dir name should be an object of class 'character'")
   .geoflow$TEMP_DATA_DIR <- x
 }
 
-#'get_temp_directory
-#'@export
+#' @name get_temp_directory
+#' @aliases get_temp_directory
+#' @title get_temp_directory
+#' @description \code{set_temp_directory} get the temp directory name used by geoflow
+#' to download data and store temporary files. Default is set to "geoflow_temp_data".
+#'
+#' @usage get_temp_directory()
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
 get_temp_directory <- function(){
   return(.geoflow$TEMP_DATA_DIR)
 }

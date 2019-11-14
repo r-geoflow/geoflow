@@ -4,8 +4,15 @@
 \alias{set_temp_directory}
 \title{set_temp_directory}
 \usage{
-set_temp_directory(x = "geoflow_temp_data")
+set_temp_directory(x)
+}
+\arguments{
+\item{x}{a string as object of class \code{character} representing the  temp directory.}
 }
 \description{
-set_temp_directory
+\code{set_temp_directory} set the temp directory name to be used by geoflow
+to download data and store temporary files.
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }

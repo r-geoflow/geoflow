@@ -6,6 +6,12 @@
 \usage{
 sanitize_date(date)
 }
+\arguments{
+\item{date}{an object o class \code{character}}
+}
 \description{
-sanitize_date
+\code{sanitize_date} sanitizes a date in geoflow
+}
+\author{
+Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
 }
