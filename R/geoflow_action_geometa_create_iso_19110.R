@@ -152,12 +152,14 @@ geometa_create_iso_19110 <- function(entity, config, options){
     if(addValues){
       featureAttrValues <- unique(featureAttrValues)
       for(featureAttrValue in featureAttrValues){
-        val <- ISOListedValue$new()
-        if(!is(featureAttrValue, "character")) featureAttrValue <- as(featureAttrValue, "character")
-        val$setCode(featureAttrValue)
-        val$setLabel(featureAttrValue)
-        val$setDefinition(featureAttrValue)
-        fat$listedValue <- c(fat$listedValue, val)
+        if(!is.na(featureAttrValue)){
+          val <- ISOListedValue$new()
+          if(!is(featureAttrValue, "character")) featureAttrValue <- as(featureAttrValue, "character")
+          val$setCode(featureAttrValue)
+          val$setLabel(featureAttrValue)
+          val$setDefinition(featureAttrValue)
+          fat$listedValue <- c(fat$listedValue, val)
+        }
       }
     }
       
