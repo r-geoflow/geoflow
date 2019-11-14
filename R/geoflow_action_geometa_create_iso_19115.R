@@ -117,7 +117,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ident <- ISODataIdentification$new()
   ident$setAbstract(entity$descriptions[["abstract"]])
   ident$setPurpose(entity$descriptions[["purpose"]])
-  #TODO credit (N)
+  ident$setCredit(entity$descriptions[["credit"]])
   #TODO status (N)
   ident$setLanguage(entity$language)
   ident$setCharacterSet("utf8")
