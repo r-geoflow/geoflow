@@ -120,7 +120,9 @@ zen4R_deposit_record <- function(entity, config, options){
     }
     
     #date
-    zenodo_metadata$setPublicationDate(entity$date)
+    pubDates <- entity$dates[sapply(entity$dates, function(date){date$key == "publication"})]
+    date <- if(length(pubDates)>0) pubDates[[1]]$value else entity$dates[[1]]$value
+    zenodo_metadata$setPublicationDate(date)
     #upload type
     #TODO think on how to map upload types between Dublin core, ISO/OGC metadata, Zenodo  
     if(!is.null(entity$types[["generic"]])) zenodo_metadata$setUploadType(entity$types[["generic"]])

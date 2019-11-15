@@ -26,8 +26,8 @@ geoflow_entity
  \item{\code{setIdentifier(key, id)}}{
    Set an identifier given a key. Default key is "id", but others can be specified, eg "doi".
  }
- \item{\code{setDate(date)}}{
-   Set the date, object of class \code{Date} or \code{POSIX}
+ \item{\code{addDate(dateType, date)}}{
+   Add a date object of class \code{Date} or \code{POSIXt}, with a date type, object of class \code{character}.
  }
  \item{\code{setLanguage(language)}}{
    Set the language used for the entity description (metadata). Default is "eng".

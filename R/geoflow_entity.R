@@ -19,8 +19,8 @@
 #'  \item{\code{setIdentifier(key, id)}}{
 #'    Set an identifier given a key. Default key is "id", but others can be specified, eg "doi".
 #'  }
-#'  \item{\code{setDate(date)}}{
-#'    Set the date, object of class \code{Date} or \code{POSIX}
+#'  \item{\code{addDate(dateType, date)}}{
+#'    Add a date object of class \code{Date} or \code{POSIXt}, with a date type, object of class \code{character}.
 #'  }
 #'  \item{\code{setLanguage(language)}}{
 #'    Set the language used for the entity description (metadata). Default is "eng".
@@ -114,7 +114,7 @@
 geoflow_entity <- R6Class("geoflow_entity",
   public = list(
     identifiers = list(),
-    date = NULL,
+    dates = list(),
     language = "eng",
     types = list(generic = "dataset"),
     title = NULL,
@@ -130,19 +130,21 @@ geoflow_entity <- R6Class("geoflow_entity",
     provenance = NULL,
     data = NULL,
     status = NULL,
-    initialize = function(){},
+    initialize = function(){
+      self$addDate("creation", Sys.time())
+    },
     
     #setIdentifier
     setIdentifier = function(key = "id", id){
       self$identifiers[[key]] <- id
     },
     
-    #setDate
-    setDate = function(date){
-      if(!is(date, "Date") & !is(date, "POSIXt")){
-        stop("The date should be either a 'Date' or 'POSIXt' object")
-      }
-      self$date <- date
+    #addDate
+    addDate = function(dateType, date){
+      date_obj <- geoflow_date$new()
+      date_obj$setKey(dateType)
+      date_obj$setValue(date)
+      self$dates[[length(self$dates)+1]] <- date_obj
     },
     
     #setLanguage

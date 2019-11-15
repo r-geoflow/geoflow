@@ -15,8 +15,33 @@ handle_entities_df <- function(config, source){
     source_entity <- source[i,]
     entity <- geoflow_entity$new()
     
-    date <- sanitize_date(source_entity[,"Date"])
-    if(!is.na(date)) entity$setDate(date)
+    src_date <- sanitize_str(as(source_entity[,"Date"], "character"))
+    dates <- if(!is.na(src_date)) extract_cell_components(src_date) else list()
+    if(length(dates)>0){
+      if(length(dates)==1){
+        if(regexpr(":",dates) == -1 && nchar(dates)>0){
+          entity$dates <- list()
+          entity$addDate("creation", dates)
+        }else{
+          date_kvp <- extract_kvp(dates)
+          for(date in date_kvp$values){
+            entity$addDate(date_kvp$key, date)
+          }
+        }
+      }else{
+        for(date in dates){
+          if(regexpr(":",date) == -1){
+            entity$dates <- list()
+            entity$addDate("creation", date)
+          }else{
+            date_kvp <- extract_kvp(date)
+            for(adate in date_kvp$values){
+              entity$addDate(date_kvp$key, adate)
+            }
+          }
+        }
+      }
+    }
     
     #types
     src_type <- sanitize_str(source_entity[,"Type"])

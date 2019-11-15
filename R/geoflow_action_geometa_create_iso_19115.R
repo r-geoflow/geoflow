@@ -117,7 +117,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ident <- ISODataIdentification$new()
   ident$setAbstract(entity$descriptions[["abstract"]])
   ident$setPurpose(entity$descriptions[["purpose"]])
-  ident$setCredit(entity$descriptions[["credit"]])
+  ident$addCredit(entity$descriptions[["credit"]])
   #TODO status (N)
   ident$setLanguage(entity$language)
   ident$setCharacterSet("utf8")
@@ -160,15 +160,17 @@ geometa_create_iso_19115 <- function(entity, config, options){
   }
 
   #citation
+  now <- Sys.time()
   ct <- ISOCitation$new()
   ct$setTitle(entity$title)
-  d <- ISODate$new()
-  d$setDate(Sys.Date())
-  d$setDateType("publication")
-  ct$addDate(d)
-  ct$setEdition("1.0") #TODO
-  editionDate <- if(!is.null(entity$date)) entity$date else Sys.Date()
-  ct$setEditionDate(editionDate)
+  for(date in entity$dates){
+    d <- ISODate$new()
+    d$setDate(date$value)
+    d$setDateType(date$key)
+    ct$addDate(d) 
+  }
+  ct$setEditionDate(now)
+  ct$setEdition(format(now, "%Y-%m-%dT%H:%m:%S"))
   
   #set metadata identifier
   ct$addIdentifier(ISOMetaIdentifier$new(code = mdId))
