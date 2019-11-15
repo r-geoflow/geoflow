@@ -117,6 +117,8 @@ geometa_create_iso_19110 <- function(entity, config, options){
   
   for(featureAttrName in colnames(features)){
     
+    fat_attr_register <- NULL
+    
     #create attribute
     fat <- ISOFeatureAttribute$new()
     #name
@@ -124,6 +126,17 @@ geometa_create_iso_19110 <- function(entity, config, options){
     fat_attrs <- entity$data$attributes[unlist(entity$data$attributes) == featureAttrName]
     if(length(fat_attrs)>0){
       fat_attr_desc <- attr(fat_attrs[[1]], "description")
+      fat_attr_uri <- attr(fat_attrs[[1]], "uri")
+      if(!is.null(fat_attr_uri)){
+        registers <- config$registers
+        registers <- registers[sapply(registers, function(x){x$id == fat_attr_uri})]
+        if(length(registers)==0){
+          warnMsg <- sprintf("Unknown register '%s'. Ignored for creating feature catalogue", fat_attr_uri)
+          config$logger.warn(warnMsg)
+        }else{
+          fat_attr_register <- registers[[1]]
+        }
+      }
       if(!is.null(fat_attr_desc)) memberName <- fat_attr_desc
     }
     fat_vars <- entity$data$variables[unlist(entity$data$variables) == featureAttrName]
@@ -156,8 +169,19 @@ geometa_create_iso_19110 <- function(entity, config, options){
           val <- ISOListedValue$new()
           if(!is(featureAttrValue, "character")) featureAttrValue <- as(featureAttrValue, "character")
           val$setCode(featureAttrValue)
-          val$setLabel(featureAttrValue)
-          val$setDefinition(featureAttrValue)
+          if(!is.null(fat_attr_register)){
+            reg_item <- fat_attr_register$data[fat_attr_register$data$code == featureAttrValue,]
+            if(nrow(reg_item)>0){
+              val$setLabel(reg_item[1L,"label"])
+              val$setDefinition(reg_item[1L, "definition"])
+            }else{
+              val$setLabel(featureAttrValue)
+              val$setDefinition(featureAttrValue)
+            }
+          }else{
+            val$setLabel(featureAttrValue)
+            val$setDefinition(featureAttrValue) 
+          }
           fat$listedValue <- c(fat$listedValue, val)
         }
       }
