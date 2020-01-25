@@ -147,6 +147,53 @@ initWorkflow <- function(file){
     }
   }
   
+  #registers
+  if(!is.null(config$registers)){
+    fetched_registers <- list()
+    for(reg in config$registers){
+      register_to_fetch <- NULL
+      isCustom <- FALSE
+      if(!is.null(reg$script)){
+        isCustom <- TRUE
+      }
+      
+      if(!isCustom){
+        if(is.null(reg$id)){
+          errMsg <- "An 'register' should have an id. Please check your configuration file. In case of a custom register, the id should be the function name."
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
+        available_registers <- list_registers(raw=TRUE)
+        available_register_ids <- sapply(available_registers, function(x){x$id})
+        if(!(reg$id %in% available_register_ids)){
+          stop(sprintf("The register '%s' is not among available geoflow registers", reg$id))
+        }
+        register_to_fetch <- available_registers[[1]]
+      }else{
+        source(reg$script)
+        customfun <- eval(parse(text = reg$id))
+        if(class(customfun)=="try-error"){
+          errMsg <- sprintf("Error while trying to evaluate custom function '%s", reg$id)
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
+        if(class(customfun)!="function"){
+          errMsg <- sprintf("'%s' is not a function!", reg$id)
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
+        register_to_fetch <- geoflow_register$new(
+          id = reg$id, 
+          def = reg$def, 
+          fun = customfun
+        )
+      }
+      if(!is.null(register_to_fetch)) register_to_fetch$fetch()
+      fetched_registers <- c(fetched_registers, register_to_fetch)
+    }
+    config$registers <- fetched_registers
+  }
+  
   #metadata elements
   if(!is.null(config$metadata)){
     config$logger.info("Loading metadata elements...")

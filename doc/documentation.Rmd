@@ -32,9 +32,10 @@ Many thanks to the following organizations that have provided fundings for stren
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.3 Configuration components – ``mode``](#geoflow_config_mode)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.4 Configuration components – ``metadata``](#geoflow_config_metadata)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.5 Configuration components – ``software``](#geoflow_config_software)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.6 Configuration components – ``actions``](#geoflow_config_actions)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.7 Configuration components – ``profile``](#geoflow_config_profile)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.8 Configuration components – ``options``](#geoflow_config_options)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.6 Configuration components – ``registers``](#geoflow_config_register)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.7 Configuration components – ``actions``](#geoflow_config_actions)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.8 Configuration components – ``profile``](#geoflow_config_profile)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.9 Configuration components – ``options``](#geoflow_config_options)<br/>
 &nbsp;&nbsp;&nbsp;[4.4 How to create a geoflow configuration file](#geoflow_config_create)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.4.1 Create manually a configuration file](#geoflow_config_manual)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.4.2 Use the configuration Shiny User Interface](#geoflow_config_shiny)<br/>
@@ -141,6 +142,7 @@ If we take the different blocks that define the structure of a geoflow configura
   "mode": "entity",
   "metadata": { <metadata sources defined here> },
   "software": [ <pieces of software defined here> ],
+  "registers": [ <register(s) defined here> ],
   "actions": [ <actions defined here>  ],
   "profile": { <global profile (metadata) defined here> },
   "options": { <global options defined here> },
@@ -387,9 +389,70 @@ Since it is a list of software, the base JSON definition will be an _array_ (usi
 DOCUMENTATION IN PREPARATION
 
 
+<a name="geoflow_config_register"/>
+
+##### 4.3.6 Configuration components – ``registers``
+
+###### Description
+
+The ``registers`` part of the configuration consists in listing the registers needed for the workflow. Registers are here to fetch reference data (eg. list of species names, list of countries, etc) that the user want to exploit in actions, to enrich subjects or
+to enrich ISO 19110 feature attribute values with labels.
+
+* **List of registers managed by geoflow**
+
+By default [geoflow](https://github.com/eblondel/geoflow) does not yet handle registers but it's planned to handle common standard registers (e.g. list of ISO countries).
+
+* **How to configure a register**
+
+To configure a register, the latter should be provided with various elements:
+* an **id** (mandatory): it should be a user string id to identify the register in question. In case the user wants to handle his own register by mean of a R function, the ``id`` should be the name of the function.
+* a **definition** (mandatory): some description to characterize the register.
+* a **script** (optional): the file path/name of the R script that contains the user named function used to handle his custom register.
+
+
+###### JSON
+
+* JSON snippet for the overall "registers" component
+
+Since it is a list of registers, the base JSON definition will be an _array_ (using square brackets ```[ ]```):
+
+```{json}
+"registers": [
+     <here will be listed the registers>
+]
+```
+
+* **How to use a user's custom register**
+
+As described above, each ``register`` should have an ``id`` and ``definition``. For embed geoflow registers, these are the only information required. The function that is used to fetch the register content is handled internally by geoflow. On the other hand,
+a user's register should come with a function that will read the register and return the register data to R and geoflow. To declare a user function as register handler in the configuration, a ``script`` file path/name should be defined, and the name of the R function should be specified as ``id``.
+
+```{json}
+"registers": [
+  {
+    "id": "my_function",
+    "definition": "My custom register definition",
+    "script": "<path>/my_script_including_my_function.R"
+  }
+]
+```
+
+The function should a return a standard structure for geoflow registers with is an object of class ``data.frame`` with the following columns:
+* **code**: handles each register item code
+* **uri**: handles each register item URI (if existing)
+* **label**: handles each register item label
+* **definition**: handles each register item definition
+
+If this structure is not fulfilled, [geoflow](https://github.com/eblondel/geoflow) will return an error at initialization time. To make sure that your registers are well defined, you can then test to initialize the configuratinon with ``initWorkflow``.
+
+* Where/How registers are used in geoflow
+
+For the time being, the registers are exploited as EXPERIMENTAL FEATURE to enrich feature attribute (if annotated with the register id) listed values in the action to create an ISO 19110 feature catalogue (structural metadata describing the structure of dataset).
+
+
 <a name="geoflow_config_actions"/>
 
-##### 4.3.6 Configuration components – ``actions``
+##### 4.3.7 Configuration components – ``actions``
 
 ###### Description
 
@@ -451,7 +514,7 @@ Since it is a list of _actions_, the base JSON definition will be an _array_ (us
 
 <a name="geoflow_config_profile"/>
 
-##### 4.3.7 Configuration components – ``profile``
+##### 4.3.8 Configuration components – ``profile``
 
 ###### Description
  
@@ -476,7 +539,7 @@ JSON snippet of _profile_:
 
 <a name="geoflow_config_options"/>
 
-##### 4.3.8 Configuration components – ``options``
+##### 4.3.9 Configuration components – ``options``
 
 
 The ``options`` are by definition optional. The table below defines the possible geoflow global options:

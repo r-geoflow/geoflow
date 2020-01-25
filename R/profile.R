@@ -15,6 +15,9 @@
   #software
   register_software()
   
+  #registers
+  register_registers()
+  
   #embedded actions
   register_actions()
   
