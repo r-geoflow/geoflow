@@ -34,9 +34,10 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
   actions <- config$actions[sapply(config$actions, function(x){x$id=="geometa-create-iso-19115"})]
   if(length(actions)>0) geometa_iso19115_action <- actions[[1]]
   if(!is.null(geometa_iso19115_action)){
-    metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],".rds"))
-    md <- readRDS(metaFile)
+    metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_ISO-19115.xml"))
+    md <- geometa::readISO19139(metaFile)
     if(file.exists(metaFile)) doPublish(md, geometa_inspire)
+    rm(md)
   }
   #geometa ISO 19110
   geometa_iso19110_action <- NULL
@@ -44,9 +45,10 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
   if(length(actions)>0) geometa_iso19110_action <- actions[[1]]
   if(!is.null(geometa_iso19110_action)){
     geometa_inspire <- FALSE
-    metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_dsd",".rds"))
-    md <- readRDS(metaFile)
+    metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_ISO-19110.xml"))
+    md <- geometa::readISO19139(metaFile)
     if(file.exists(metaFile)) doPublish(md, geometa_inspire)
+    rm(md)
   }
   
   return(TRUE)

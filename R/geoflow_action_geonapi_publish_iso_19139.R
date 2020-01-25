@@ -22,7 +22,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
   #function doPublish
   doPublish <- function(mdfile, inspire){
     mdId <- NULL
-    md <- readRDS(metaFile)
+    md <- readISO19139(metaFile)
     privs <- privileges
     if(is(md, "ISOMetadata")){
       mdId <- md$fileIdentifier
@@ -54,6 +54,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
       gn_config$setPrivileges("all", privs)
       GN$setPrivConfiguration(id = metaId, config = gn_config)
     }
+    rm(md)
   }
   
   #geometa ISO 19115
@@ -61,7 +62,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
   actions <- config$actions[sapply(config$actions, function(x){x$id=="geometa-create-iso-19115"})]
   if(length(actions)>0) geometa_iso19115_action <- actions[[1]]
   if(!is.null(geometa_iso19115_action)){
-    metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],".rds"))
+    metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_ISO-19115.xml"))
     if(file.exists(metaFile)) doPublish(metaFile, geometa_inspire)
   }
   #geometa ISO 19110
@@ -70,7 +71,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
   if(length(actions)>0) geometa_iso19110_action <- actions[[1]]
   if(!is.null(geometa_iso19110_action)){
     geometa_inspire <- FALSE
-    metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_dsd",".rds"))
+    metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_ISO-19110.xml"))
     if(file.exists(metaFile)) doPublish(metaFile, geometa_inspire)
   }
   

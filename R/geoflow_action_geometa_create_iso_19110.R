@@ -211,8 +211,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
   fc$addFeatureType(ft)
   
   #we save the metadata
-  saveRDS(fc, file.path(getwd(), "metadata", paste0(fcIdentifier, ".rds")))
+  #saveRDS(fc, file.path(getwd(), "metadata", paste0(fcIdentifier, ".rds")))
   fc$save(file.path(getwd(), "metadata", paste0(entity$identifiers[["id"]], "_ISO-19110.xml")))
-  
-  return(fc)
+  rm(fc)
 }
