@@ -102,7 +102,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   featureType$setName(layername)
   nativename <- sourcename
   if(entity$data$upload) nativename <- basefilename
-  if(entity$data$uploadType == "dbquery") nativename <- layername
+  if(startsWith(entity$data$uploadType,"db")) nativename <- layername
   featureType$setNativeName(nativename)
   featureType$setAbstract(entity$descriptions$abstract)
   featureType$setTitle(entity$title)
