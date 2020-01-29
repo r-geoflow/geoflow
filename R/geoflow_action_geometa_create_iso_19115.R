@@ -216,7 +216,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
     res$setName(owner_entity$websiteName)
     contact$setOnlineResource(res)
     rp$setContactInfo(contact) 
-    ct$ct$citedResponsibleParty <- c(ct$citedResponsibleParty, rp)
+    ct$citedResponsibleParty <- c(ct$citedResponsibleParty, rp)
   }
   ident$setCitation(ct)
  
