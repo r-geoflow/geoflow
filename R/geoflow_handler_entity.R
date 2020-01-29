@@ -15,6 +15,9 @@ handle_entities_df <- function(config, source){
     source_entity <- source[i,]
     entity <- geoflow_entity$new()
     
+    #language
+    entity$setLanguage(source_entity[,"Language"])
+    
     src_date <- sanitize_str(as(source_entity[,"Date"], "character"))
     dates <- if(!is.na(src_date)) extract_cell_components(src_date) else list()
     if(length(dates)>0){
