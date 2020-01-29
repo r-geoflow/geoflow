@@ -686,7 +686,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                                       config$software$output$geoserver_config$parameters$url, 
                                       config$software$output$geoserver_config$properties$workspace,
                                       layername, paste(self$spatial_bbox,collapse=","),self$srid))
-        self$relations <- c(new_thumbnail, self$relation) #here we use native vector to put WMS as first thumbnail
+        self$relations <- c(new_thumbnail, self$relations) #here we use native vector to put WMS as first thumbnail
         #WMS
         new_wms <- geoflow_relation$new()
         new_wms$setKey("wms")
