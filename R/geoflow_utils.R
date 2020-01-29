@@ -67,7 +67,7 @@ sanitize_date <- function(date){
 #'
 extract_kvp <- function(str){
   #kvp <- unlist(strsplit(str, ":(?!//|\\d)", perl = T))
-  kvp <- unlist(strsplit(str, ":(?!//)", perl = T))
+  kvp <- unlist(strsplit(str, ':(?!//)\\s*(?=([^"]*"[^"]*")*[^"]*$)', perl = TRUE))
   if(length(kvp)==1) stop("Error while splitting kvp key/value")
   if(length(kvp)>2) kvp[2] <- paste(kvp[2:length(kvp)], collapse=":", sep="")
   
@@ -80,7 +80,7 @@ extract_kvp <- function(str){
   }
   
   #values
-  values <- unlist(strsplit(kvp[2], ","))
+  values <- unlist(strsplit(kvp[2], ',\\s*(?=([^"]*"[^"]*")*[^"]*$)', perl = TRUE))
   values <- lapply(values, function(value){
     value_splits <- unlist(strsplit(value, "@"))
     if(length(value_splits)>1){
@@ -93,9 +93,11 @@ extract_kvp <- function(str){
       attrs <- attributes(value)
       value_splits <- unlist(strsplit(value, "\\["))
       value <- value_splits[1]
+      if(startsWith(value, "\"") && endsWith(value, "\"")) value <- substr(value, 2, nchar(value)-1)
       attributes(value) <- attrs
       des <- value_splits[2]
       des <- substr(des, 1, nchar(des)-1)
+      if(startsWith(des, "\"") && endsWith(des, "\"")) des <- substr(des, 2, nchar(des)-1)
       attr(value, "description") <- des
     }
     

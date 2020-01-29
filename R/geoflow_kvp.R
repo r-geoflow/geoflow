@@ -42,7 +42,7 @@ geoflow_kvp <- R6Class("geoflow_kvp",
     value = NULL,
     initialize = function(str = NULL){
       if(!is.null(str)){
-        kvp <- unlist(strsplit(str,":"))
+        kvp <- unlist(strsplit(str,':\\s*(?=([^"]*"[^"]*")*[^"]*$)', perl = T))
         if(length(kvp)!=2) stop("Invalid Key-value pair string")
         self$setKey(kvp[1])
         self$setValue(kvp[2])
