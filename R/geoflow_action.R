@@ -74,6 +74,7 @@ register_actions <- function(){
       fun = geometa_create_iso_19115,
       options = list(
         doi = list(desc = "Add entity DOI - if defined - as metadata identifier and online resource", default = FALSE),
+        doi_thumbnail = list(desc = "if option 'doi' is true and this option enabled, a DOI thumbnail will be added", default = FALSE),
         inspire = list(desc = "Validates ISO 19139 metadata with INSPIRE reference validator", default = FALSE),
         logo = list(desc = "Add configure profile logo(s) - if defined - as metadata thumbnail(s)", default = FALSE),
         addfeatures = list(desc = "Add entity data features - if defined - as metadata bounding polygon(s)", default = FALSE),

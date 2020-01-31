@@ -9,6 +9,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   inspire <- if(!is.null(options$inspire)) options$inspire else FALSE
   logo <- if(!is.null(options$logo)) options$logo else FALSE
   doi <- if(!is.null(options$doi)) options$doi else FALSE
+  doi_thumbnail <- if(!is.null(options$doi_thumbnail)) options$doi_thumbnail else FALSE
   addfeatures <- if(!is.null(options$addfeatures)) options$addfeatures else FALSE
   featureid <- if(!is.null(options$featureid)){ options$featureid } else { if(!is.null(features)) colnames(features)[1] else NULL} 
   
@@ -237,6 +238,17 @@ geometa_create_iso_19115 <- function(entity, config, options){
       logoThumbnail <- ISOBrowseGraphic$new(fileName = logo, fileDescription = "Logo")
       ident$addGraphicOverview(logoThumbnail)
     }
+  }
+  #option to add doi thumbnail
+  if(doi && doi_thumbnail) if(!is.null(the_doi)) {
+    doiThumbnail <- ISOBrowseGraphic$new(
+      fileName = sprintf("https://img.shields.io/badge/DOI-%s-informational.svg",the_doi),
+      fileDescription =  ISOAnchor$new(
+        name = the_doi, 
+        href = paste0("http://dx.doi.org/", the_doi)
+      )
+    )
+    ident$addGraphicOverview(doiThumbnail)
   }
   
   #maintenance information
