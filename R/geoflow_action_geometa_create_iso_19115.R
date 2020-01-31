@@ -301,6 +301,24 @@ geometa_create_iso_19115 <- function(entity, config, options){
     }
     extent$addGeographicElement(bp)
   }
+  #geographic identifiers
+  geothesauri <- list()
+  if(length(entity$subjects)>0) geothesauri <- entity$subjects[sapply(entity$subjects, function(x){return(tolower(x$name) == "geography")})]
+  if(length(geothesauri)>0){
+    for(geothesaurus in geothesauri){
+      for(geokwd in geothesaurus$keywords){
+        iso_kwd <- geokwd$name
+        if(!is.null(geokwd$uri)){
+          iso_kwd <- ISOAnchor$new(name = geokwd$name, href = geokwd$uri)
+        }
+        geodesc <- ISOGeographicDescription$new()
+        geodesc$setGeographicIdentifier(ISOMetaIdentifier$new(code = iso_kwd))
+        extent$addGeographicElement(geodesc)
+      }
+    }
+  }
+  
+  
   #temporal extent
   if(!is.null(entity$temporal_extent)){
     time <- ISOTemporalExtent$new()
