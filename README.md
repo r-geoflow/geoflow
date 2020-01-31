@@ -19,7 +19,7 @@ Please check the [online documentation](https://github.com/eblondel/geoflow/wiki
 
 Many thanks to the following organizations that have provided fundings for strenghtening the ``geoflow`` package:
 
-<a href="https://en.ird.fr/"><img src="https://en.ird.fr/var/ird/storage/images/media/ird-sites-d-unites-de-recherche/dial/images/logos/logo_ird_2016_longueur_uk/4030160-1-eng-GB/logo_ird_2016_longueur_uk.png" height="60"/></a>
+<a href="https://en.ird.fr/"><img src="http://www.umr-marbec.fr/images/logo-ird-en.png" height=200 width=200/></a><a href="https://www.inrae.fr"><img height=200 width=200 src="https://www.inrae.fr/themes/custom/inrae_socle/logo.svg"></a>  <a href="http://www.fao.org"><img height=200 width=200 src="http://www.fao.org/fileadmin/templates/family-farming-decade/images/FAO-IFAD-Logos/FAO-Logo-EN.svg"></a>
 
 For geoflow sponsoring/funding new developments, enhancements, support requests, please contact me by [e-mail](mailto:emmanuel.blondel1@gmail.com)
 
