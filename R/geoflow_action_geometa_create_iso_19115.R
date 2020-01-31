@@ -27,8 +27,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
     parent_rels <- entity$relations[sapply(entity$relations, function(x){x$key == "parent"})]
     if(length(parent_rels)>0){
       parent <- parent_rels[[1]]
-      parentId <- parent$label
-      if(!is.null(parent$link)) parentId <- ISOAnchor$new(name = parent$label, href = parent$link)
+      parentId <- parent$name
+      if(!is.null(parent$link)) parentId <- ISOAnchor$new(name = parent$name, href = parent$link)
       md$setParentIdentifier(parentId)
     }
   }
