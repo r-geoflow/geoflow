@@ -232,13 +232,6 @@ geometa_create_iso_19115 <- function(entity, config, options){
       ident$addGraphicOverview(go)
     }
   }
-  #option to add logo as thumbnail
-  if(logo && !is.null(config$profile$logos)){
-    for(logo in config$profile$logos){
-      logoThumbnail <- ISOBrowseGraphic$new(fileName = logo, fileDescription = "Logo")
-      ident$addGraphicOverview(logoThumbnail)
-    }
-  }
   #option to add doi thumbnail
   if(doi && doi_thumbnail) if(!is.null(the_doi)) {
     doiThumbnail <- ISOBrowseGraphic$new(
@@ -249,6 +242,13 @@ geometa_create_iso_19115 <- function(entity, config, options){
       )
     )
     ident$addGraphicOverview(doiThumbnail)
+  }
+  #option to add logo as thumbnail
+  if(logo && !is.null(config$profile$logos)){
+    for(logo in config$profile$logos){
+      logoThumbnail <- ISOBrowseGraphic$new(fileName = logo, fileDescription = "Logo")
+      ident$addGraphicOverview(logoThumbnail)
+    }
   }
   
   #maintenance information
