@@ -681,12 +681,12 @@ geoflow_entity <- R6Class("geoflow_entity",
         new_thumbnail <- geoflow_relation$new()
         new_thumbnail$setKey("thumbnail")
         new_thumbnail$setName(layername)
-        new_thumbnail$setDescription(paste0(self$title, " - Map Overview"))
+        new_thumbnail$setDescription(paste0(self$title, " - Layer Overview"))
         new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
                                       config$software$output$geoserver_config$parameters$url, 
                                       config$software$output$geoserver_config$properties$workspace,
                                       layername, paste(self$spatial_bbox,collapse=","),self$srid))
-        self$relations <- c(new_thumbnail, self$relations) #here we use native vector to put WMS as first thumbnail
+        self$relations <- c(self$relations, new_thumbnail)
         #WMS
         new_wms <- geoflow_relation$new()
         new_wms$setKey("wms")
