@@ -71,7 +71,7 @@ geoflow_provenance <- R6Class("geoflow_provenance",
            }
            if(length(processes)>0 & length(processors)>0 & length(processes)==length(processors)){
              for(i in 1:length(processes)){
-               process <- processes[[i]]$values
+               process <- processes[[i]]$values[[1]]
                process_obj <- geoflow_process$new()
                process_des <- attr(process, "description")
                process_obj$setDescription(process_des)
