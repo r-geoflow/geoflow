@@ -55,19 +55,23 @@ geoflow_provenance <- R6Class("geoflow_provenance",
          self$setStatement(state_prop)
          if(length(data_props)>1){
            data_props <- data_props[2:length(data_props)]
-           data_props <- lapply(data_props, function(data_prop){
-             return(extract_kvp(data_prop))
-           })
-           
            #processes
-           processes <- data_props[sapply(data_props, function(x){x$key=="process"})]
-           processors <- data_props[sapply(data_props, function(x){x$key=="processor"})]
-           if(length(processors)!=length(processes)) stop("Number of processors doesn't match the number of process steps")
+           processes <- data_props[sapply(data_props, function(x){startsWith(x, "process:")})]
+           processes <- lapply(processes, function(process){
+             return(extract_kvp(process))
+           })
+           #processors
+           processors <- data_props[sapply(data_props, function(x){startsWith(x,"processor:")})]
+           processors_splits <- unlist(strsplit(processors, ":"))
+           processors <- tolower(unlist(strsplit(processors_splits[2],",")))
+           #control processors vs. processes
+           if(length(processors)!=length(processes)){
+              stop(sprintf("Number of processors [%s] doesn't match the number of processes [%s]",
+                           length(processors), length(processes)))
+           }
            if(length(processes)>0 & length(processors)>0 & length(processes)==length(processors)){
-             processes <- processes[[1]]$values
-             processors <- sapply(processors[[1]]$values, function(val){paste0(val,"@",attr(val,"uri"))})
              for(i in 1:length(processes)){
-               process <- processes[[i]]
+               process <- processes[[i]]$values
                process_obj <- geoflow_process$new()
                process_des <- attr(process, "description")
                process_obj$setDescription(process_des)
