@@ -242,3 +242,69 @@ set_temp_directory <- function(x = "geoflow_temp_data"){
 get_temp_directory <- function(){
   return(.geoflow$TEMP_DATA_DIR)
 }
+
+#' @name enrich_text_from_entity
+#' @aliases enrich_text_from_entity
+#' @title enrich_text_from_entity
+#' @description \code{enrich_text_from_entity} will attempt to enrich an entity text property
+#' from other entity metadata, depending on text variables handled by a pattern in the form
+#' %property%. 
+#' 
+#' - If the entity property is a text, only the name of the property name is required.
+#' 
+#' - If the entity property is a list, then 2 subcases can be distinguished:
+#' 
+#' If it is a named list (such as entity descriptions), the text variable will be compound by
+#' the entity property name and the element_property name, in the form %property:element_property%
+#' 
+#' If it is a unnamed list (such as list of keywords, list of relations, etc), the text variable will handle
+#' four elements: property (entity property name to look at), a key value pair to use for search
+#' within the list, an element_property for which the value should be picked up to enrich the text.
+#' The variable willbe in the form %property:keye:value:element_property%
+#'
+#' @usage enrich_text_from_entity(str, entity)
+#' 
+#' @param str a text to be enriched
+#' @param entity an object of class \code{geoflow_entity}
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+enrich_text_from_entity = function(str, entity){
+  if(!is.character(str)) return(str)
+  outstr <- str
+  indexes <- gregexpr(pattern = "\\%(.*?)\\%", str)[[1]]
+  if(length(indexes)==1) if(indexes == -1) return(str)
+  for(index in indexes){
+    newvalue <- NULL
+    metavar <- unlist(strsplit(substr(str, index+1, nchar(str)),"%"))[1]
+    metavars <- unlist(strsplit(metavar, ":"))
+    meta_prop <- metavars[1]
+    target_props <- entity[[meta_prop]]
+    
+    if(!is.null(target_props)){
+      #character
+      if(is.character(target_props)){
+        newvalue <- target_props
+        #lists
+      }else if(is.list(target_props)){
+        #named lists
+        if(length(names(target_props))){
+          meta_keyname <- metavars[2]
+          newvalue <- target_props[[meta_keyname]]
+        }else{
+          if(length(metavars)!=4) next
+          meta_keyname <- metavars[2]
+          meta_keyvalue <- metavars[3]
+          meta_value <- metavars[4]
+          search <- target_props[sapply(target_props, function(x){x[[meta_keyname]]==meta_keyvalue})]
+          if(length(search)==0) next
+          newvalue <- search[[1]][[meta_value]]
+        }
+      }
+    }
+    if(is.null(newvalue)) next
+    outstr <- sub(pattern = "\\%(.*?)\\%", newvalue, outstr)
+  }
+  return(outstr)
+}

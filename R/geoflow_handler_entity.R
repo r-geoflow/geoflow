@@ -197,6 +197,9 @@ handle_entities_df <- function(config, source){
       entity$enrichWithRelations(config)
     }
     
+    #enrich entities with metadata (other properties)
+    entity$enrichWithMetadata(config)
+    
     entities <- c(entities, entity)
   }
   attr(entities, "source") <- source

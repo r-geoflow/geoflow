@@ -734,6 +734,32 @@ geoflow_entity <- R6Class("geoflow_entity",
       stop("Not yet implemented")
     },
     
+    #enrichWithMetadata
+    enrichWithMetadata = function(config){
+      
+      #enrich title
+      self$title <- enrich_text_from_entity(self$title, self)
+  
+      #enrich descriptions
+      desNames <- names(self$descriptions)
+      self$descriptions <- lapply(self$descriptions, enrich_text_from_entity, self)
+      
+      #enrich relations
+      self$relations <- lapply(self$relations, function(relation){
+        relation$name <- enrich_text_from_entity(relation$name, self)
+        relation$description <- enrich_text_from_entity(relation$description, self)
+        return(relation)
+      })
+      
+      #enrich provenance
+      self$provenance$statement <- enrich_text_from_entity(self$provenance$statement, self)
+      self$provenance$processes <- lapply(self$provenance$processes, function(process){
+        process$rationale <- enrich_text_from_entity(process$rationale, self)
+        process$description <- enrich_text_from_entity(process$description, self)
+        return(process)
+      })
+    },
+    
     #getContacts
     getContacts = function(pretty = FALSE){
       if(pretty){
@@ -820,6 +846,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
       self$status <- status
     }
+    
   )
 )
 
