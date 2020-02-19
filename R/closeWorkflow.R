@@ -11,36 +11,42 @@
 #' @export
 #' 
 closeWorkflow <- function(config){
-  #close DB
-  if(!is.null(config$software$db)){
-    config$logger.info("Closing database connection")
-    DBI::dbDisconnect(config$software$db)
-    config$software$db <- config$software$db_config
-    config$software$db_config <- NULL
+  #close DBs
+  if(!is.null(config$software$input$dbi)){
+    config$logger.info("Closing input database connection")
+    DBI::dbDisconnect(config$software$input$dbi)
+    config$software$input$dbi <- config$software$input$dbi_config
+    config$software$input$dbi_config <- NULL
+  }
+  if(!is.null(config$software$output$dbi)){
+    config$logger.info("Closing output database connection")
+    DBI::dbDisconnect(config$software$output$dbi)
+    config$software$output$dbi <- config$software$output$dbi_config
+    config$software$output$dbi_config <- NULL
   }
   #Geoserver API manager
-  if(!is.null(config$software$geoserver)){
+  if(!is.null(config$software$output$geoserver)){
     config$logger.info("Reset Geoserver API manager")
-    config$software$geoserver <- config$software$geoserver_config
-    config$software$geoserver_config <- NULL
+    config$software$output$geoserver <- config$software$output$geoserver_config
+    config$software$output$geoserver_config <- NULL
   }
   #Geonetwork API manager
-  if(!is.null(config$software$geonetwork)){
+  if(!is.null(config$software$output$geonetwork)){
     config$logger.info("Reset Geonetwork API manager")
-    config$software$geonetwork <- config$software$geonetwork_config
-    config$software$geonetwork_config <- NULL
+    config$software$output$geonetwork <- config$software$output$geonetwork_config
+    config$software$output$geonetwork_config <- NULL
   }
   #WFS
-  if(!is.null(config$software$wfs)){
+  if(!is.null(config$software$output$wfs)){
     config$logger.info("Reset WFS client")
-    config$software$wfs <- config$software$wfs_config
-    config$software$wfs_config <- NULL
+    config$software$output$wfs <- config$software$output$wfs_config
+    config$software$output$wfs_config <- NULL
   }
   #CSW
-  if(!is.null(config$software$csw)){
+  if(!is.null(config$software$output$csw)){
     config$logger.info("Reset CSW client")
-    config$software$csw <- config$software$csw_config
-    config$software$csw_config <- NULL
+    config$software$output$csw <- config$software$output$csw_config
+    config$software$output$csw_config <- NULL
   }
   setwd(config$wd)
   set_line_separator() #default line separator
