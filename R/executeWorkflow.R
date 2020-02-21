@@ -21,6 +21,7 @@ executeWorkflow <- function(file){
   
   #2. Inits workflow job (create directories)
   jobdir <- initWorkflowJob(CFG)
+  CFG$job <- jobdir
   
   #3. Execute the workflow job
   capture.output({

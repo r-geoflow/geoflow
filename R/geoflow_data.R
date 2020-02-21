@@ -106,6 +106,7 @@ geoflow_data <- R6Class("geoflow_data",
     geometryType = NULL,
     attributes = NULL,
     variables = NULL,
+    actions = list(),
     initialize = function(str = NULL){
       if(!is.null(str)){
         data_props <-  extract_cell_components(sanitize_str(str))
@@ -247,6 +248,23 @@ geoflow_data <- R6Class("geoflow_data",
         }))
         if(length(get_variables)>0) self$variables <- get_variables
         
+        #entity actions
+        actions <- data_props[sapply(data_props, function(x){x$key=="action"})]
+        if(length(actions)>0){
+          for(action in actions){
+            action <- action$values[[1]]
+            script <- attr(action, "uri")
+            desc <- attr(action, "description")
+            attributes(action) <- NULL
+            entity_action <- geoflow_action$new(
+              id = action,
+              type = "Entity data action",
+              def = desc,
+              script = script
+            )
+            self$addAction(entity_action)
+          }
+        }
       }
     },
     
@@ -348,6 +366,11 @@ geoflow_data <- R6Class("geoflow_data",
     #setVariables
     setVariables = function(variables){
       self$variables <- variables
+    },
+    
+    #addAction
+    addAction = function(action){
+      self$actions[[length(self$actions)+1]] <- action
     }
     
   )

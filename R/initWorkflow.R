@@ -340,18 +340,21 @@ initWorkflow <- function(file){
             config$logger.error(errMsg)
             stop(errMsg)
           }
-          funparams <- formals(customfun)
+          funparams <- unlist(names(formals(customfun)))
           if(!("entity" %in% funparams)){
+            config$logger.warn(sprintf("Action '%s' - Custom action arguments: [%s]", action$id, paste(funparams, collapse=",")))
             errMsg <- sprintf("Missing parameter 'entity' in function '%s'", action$id)
             config$logger.error(errMsg)
             stop(errMsg)
           }
           if(!("config" %in% funparams)){
+            config$logger.warn(sprintf("Custom action arguments: [%s]", paste(funparams, collapse=",")))
             errMsg <- sprintf("Missing parameter 'config' in function '%s'", action$id)
             config$logger.error(errMsg)
             stop(errMsg)
           }
-          if(!("opts" %in% funparams)){
+          if(!("options" %in% funparams)){
+            config$logger.warn(sprintf("Custom action arguments: [%s]", paste(funparams, collapse=",")))
             errMsg <- sprintf("Missing parameter 'opts' in function '%s'", action$id)
             config$logger.error(errMsg)
             stop(errMsg)

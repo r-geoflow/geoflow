@@ -309,7 +309,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           #case where data is remote and there was no data enrichment in initWorkflow
           warnMsg <- "Copying data from URL to Job data directory!"
           config$logger.warn(warnMsg)
-          download.file(datasource_file, destfile = paste(basefilename, datasource_ext, sep="."))
+          download.file(datasource_file, destfile = paste(basefilename, datasource_ext, sep="."), mode = "wb")
         }else{
           if(is.null(self$data$features)){
             config$logger.info("Copying data local file(s) to Job data directory!")
@@ -845,6 +845,21 @@ geoflow_entity <- R6Class("geoflow_entity",
         stop("The status should be either 'draft' or 'published'")
       }
       self$status <- status
+    },
+    
+    #getJobResource
+    getJobResource = function(config, resourceType, filename){
+      return(file.path(config$job, resourceType, paste(self$identifiers[["id"]], self$data$uploadType, filename, sep="_")))
+    },
+    
+    #getJobDataResource
+    getJobDataResource = function(config, filename){
+      self$getJobResource(config, "data", filename)
+    },
+    
+    #getJobMetadataResource
+    getJobMetadataResource = function(config, filename){
+      self$getJobResource(config, "metadata", filename)
     }
     
   )
