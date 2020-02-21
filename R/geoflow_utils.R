@@ -122,7 +122,7 @@ extract_kvp <- function(str){
 str_to_posix <- function(str){
   if(nchar(str)>7){
     str_format <- if(nchar(str)==10) "%Y-%m-%d" else "%Y-%m-%dT%H:%M:%S"
-    out <- as.POSIXct(str, format = str_format)
+    out <- as.POSIXct(str, format = str_format, tz = ifelse(endsWith(str,"Z"), "UTC", ""))
   }else{
     out <- str
   }
