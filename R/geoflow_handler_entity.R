@@ -162,9 +162,8 @@ handle_entities_df <- function(config, source){
     
     #temporal extent
     temporal_cov <- sanitize_str(source_entity[,"TemporalCoverage"])
-    if(!is.na(temporal_cov) & temporal_cov != ""){
-      entity$setTemporalExtent(temporal_cov)
-    }
+    if(is(temporal_cov, "character")) if(temporal_cov == "") temporal_cov <- NA
+    if(!is.na(temporal_cov)) entity$setTemporalExtent(temporal_cov)
     
     #Rights
     src_rights <- sanitize_str(source_entity[,"Rights"])

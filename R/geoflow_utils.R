@@ -120,12 +120,34 @@ extract_kvp <- function(str){
 #' @export
 #'
 str_to_posix <- function(str){
-  if(nchar(str)>7){
+  out <- str
+  if(is(str,"character")) if(nchar(str)>7){
     str_format <- if(nchar(str)==10) "%Y-%m-%d" else "%Y-%m-%dT%H:%M:%S"
     out <- as.POSIXct(str, format = str_format, tz = ifelse(endsWith(str,"Z"), "UTC", ""))
-  }else{
-    out <- str
   }
+  return(out)
+}
+
+#' @name posix_to_str
+#' @aliases posix_to_str
+#' @title posix_to_str
+#' @description \code{posix_to_str} converts a \code{POSIX} object to ISO string
+#'
+#' @usage posix_to_str(posix)
+#'                 
+#' @param posix a \code{POSIX} object
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+posix_to_str <- function(posix){
+  out <- posix
+  if(!class(posix)[1] %in% c("Date","POSIXct")) return(out)
+  str_format <- "%Y-%m-%dT%H:%M:%S"
+  if(is(posix,"Date")) str_format = "%Y-%m-%d"
+  out <- format(posix, format = str_format)
+  tzone <- attr(posix,"tzone")
+  if(!is.null(tzone)) if(tzone %in% c("UTC","GMT")) out <- paste0(out, "Z")
   return(out)
 }
 

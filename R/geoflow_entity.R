@@ -240,14 +240,16 @@ geoflow_entity <- R6Class("geoflow_entity",
     #setTemporalExtent
     setTemporalExtent = function(str){
       isInstant <- FALSE
-      strs <- unlist(strsplit(str,"/"))
-      if(length(strs)==1) isInstant <- TRUE
+      if(is(str,"character")){
+        str <- unlist(strsplit(str,"/"))
+        if(length(str)==1) isInstant <- TRUE
+      }else if(is(str,"Date")||is(str,"POSIXct")) isInstant <- TRUE
       if(isInstant){
-        self$temporal_extent <- list(instant = str_to_posix(strs))
+        self$temporal_extent <- list(instant = str_to_posix(str))
       }else{
         self$temporal_extent <- list(
-          start = str_to_posix(strs[1]),
-          end = str_to_posix(strs[2])
+          start = str_to_posix(str[1]),
+          end = str_to_posix(str[2])
         )
       }
     },
@@ -860,6 +862,186 @@ geoflow_entity <- R6Class("geoflow_entity",
     #getJobMetadataResource
     getJobMetadataResource = function(config, filename){
       self$getJobResource(config, "metadata", filename)
+    },
+    
+    #asDataFrame
+    asDataFrame = function(line_separator = NULL){
+      if(is.null(line_separator)) line_separator <- get_line_separator()
+      out <- data.frame(
+        #Identifier
+        Identifier = paste0(sapply(names(self$identifiers),function(name){
+          outid <- paste(name, self$identifiers[[name]],sep=":")
+          return(outid)
+        }),collapse=line_separator),
+        #Title
+        Title = self$title,
+        #Description
+        Description = paste0(sapply(names(self$descriptions), function(name){
+          outdesc <- paste(name, self$descriptions[[name]],sep=":")
+          return(outdesc)
+        }),collapse=line_separator),
+        #Subject
+        Subject = paste0(sapply(self$subjects,function(subject){
+          name <- subject$name
+          if(!is.null(subject$uri)) name <- paste(name, subject$uri, sep = "@")
+          kwds <- paste0(sapply(subject$keywords, function(kwd){
+            outkwd <- kwd$name
+            if(!is.null(kwd$uri)) outkwd <- paste(outkwd, kwd$uri, sep="@")
+            return(outkwd)
+          }),collapse=",")
+          outsubj <- paste(name,kwds,sep=":")
+          return(outsubj)
+        }),collapse=line_separator),
+        #Contact
+        Contact = paste0(sapply(unique(sapply(self$contacts, function(contact){contact$role})),function(role){
+          role_contacts <- self$contacts[sapply(self$contacts, function(x){x$role == role})]
+          outrole <- paste(role, paste0(sapply(role_contacts, function(role_c){return(role_c$id)}),collapse=","), sep=":")
+          return(outrole)
+        }),collapse=line_separator),
+        #Date
+        Date = paste0(sapply(self$dates,function(x){
+          outdate <- paste(x$key, x$value,sep=":")
+          return(outdate)
+        }),collapse=line_separator),
+        #Type
+        Type = paste0(sapply(names(self$types),function(type){
+          outtype <- paste(type, self$types[[type]],sep=":")
+          return(outtype)
+        }),collapse=line_separator),
+        #Language
+        Language = self$language,
+        #SpatialCoverage
+        SpatialCoverage = {
+          outsp <- ""
+          if(!is.null(self$spatial_extent)){
+            outsp <- paste(sprintf("SRID=%s",self$srid),st_as_text(self$spatial_extent),sep=";")
+          }
+          outsp
+        },
+        #TemporalCoverage
+        TemporalCoverage = {
+          outime <- ""
+          if(length(self$temporal_extent)>0){
+            if(names(self$temporal_extent)[1] == "instant"){
+              outime <- posix_to_str(self$temporal_extent$instant)
+            }else if(length(names(self$temporal_extent))==2 && names(self$temporal_extent) %in% c("start","end")){
+              start <- posix_to_str(self$temporal_extent$start)
+              end <- posix_to_str(self$temporal_extent$end)
+              outime <- paste0(start,"/",end)
+            }
+          }
+          outime
+        },
+        #Relation
+        Relation = paste0(sapply(self$relations,function(relation){
+          outrel <- paste0(relation$key,":\"",relation$name,"\"")
+          if(!is.null(relation$description)) outrel <- paste0(outrel,"[\"",relation$description,"\"]")
+          if(!is.null(relation$link)) outrel <- paste(outrel, relation$link, sep = "@")
+          return(outrel)
+        }),collapse=line_separator),
+        #Rights
+        Rights = paste0(sapply(self$rights, function(right){
+          value <- right$value
+          if(!endsWith(right$key, "Constraint")) value <- paste0("\"", value,"\"")
+          outright <- paste0(right$key, ":", value)
+          return(outright)
+        }),collapse = line_separator),
+        #Provenance
+        Provenance = {
+          outprov <- paste0("statement:", self$provenance$statement, line_separator)
+          if(length(self$provenance$processes)>0){
+            processes_str <- paste0(sapply(self$provenance$processes, function(process){
+              rationale <- paste0("\"", process$rationale, "\"")
+              outproc <- paste0("process:", rationale)
+              if(!is.null(process$description)){
+                description <- paste0("\"", process$description, "\"")
+                outproc <- paste0(outproc, "[", description, "]")
+              }
+              return(outproc)
+            }),collapse=line_separator)
+            outprov <- paste0(outprov, processes_str, line_separator)
+            processors_str <- paste0("processor:",paste0(sapply(self$provenance$processes, function(process){
+              return(process$processor$id)
+            }),collapse=","))
+            outprov <- paste0(outprov, processors_str)
+          }
+          outprov
+        },
+        #Data
+        Data = {
+          out_sources <- NULL
+          
+          outdata <- paste0("uploadType:", self$data$uploadType, line_separator)
+          outdata <- paste0(outdata, "upload:", tolower(as.character(self$data$upload)), line_separator)
+          outdata <- paste0(outdata, "uploadZip:", tolower(as.character(self$data$uploadZip)), line_separator)
+          outdata <- paste0(outdata, "uploadZipOnly:", tolower(as.character(self$data$uploadZipOnly)), line_separator)
+          if(!is.null(self$data$source)){
+            for(src in self$data$source){
+              src_uri <- attr(src,"uri")
+              attributes(src) <- NULL
+              if(is.null(out_sources)) out_sources <- ""
+              out_sources <- paste0(out_sources, src, "@", src_uri)
+            }
+            outdata <- paste0(outdata, "source:", out_sources, line_separator)
+          }
+          if(!is.null(self$data$sql)) outdata <- paste0(outdata, "sql:", self$data$sql, line_separator)
+          if(!is.null(self$data$workspace)) outdata <- paste0(outdata, "workspace:", self$data$workspace, line_separator)
+          if(!is.null(self$data$datastore)) outdata <- paste0(outdata, "datastore:", self$data$datastore, line_separator)
+          if(!is.null(self$data$layername)) outdata <- paste0(outdata, "layername:", self$data$layername, line_separator)
+          if(!is.null(self$data$cqlfilter)) outdata <- paste0(outdata, "cqlfilter:", self$data$cqlfilter, line_separator)
+          if(length(self$data$styles)>0){
+            out_styles <- paste0(self$data$styles, collapse=",")
+            outdata <- paste0(outdata, "style:", out_styles, line_separator)
+          }
+          if(length(self$data$parameters)>0){
+            out_params <- paste0(names(self$data$parameters), function(paramName){
+              param <- self$data$parameters[[paramName]]
+              out_param <- paste0("parameter:", paramName, ",", param$fieldname, ",", param$regexp, ",", param$defaultValue)
+              return(out_param)
+            },collapse=line_separator)
+            outdata <- paste0(outdata, out_params,line_separator)
+          }
+          if(!is.null(self$data$geometryField)) outdata <- paste0(outdata, "geometryField:", self$data$geometryField, line_separator)
+          if(!is.null(self$data$geometryType)) outdata <- paste0(outdata, "geometryType:", self$data$geometryType, line_separator)
+          if(length(self$data$attributes)>0) {
+            out_attrs <- paste0(sapply(self$data$attributes, function(attribute){
+              uri <- attr(attribute, "uri")
+              desc <- attr(attribute, "description")
+              attributes(attribute) <- NULL
+              out_attr <- attribute
+              if(!is.null(desc)) out_attr <- paste0(out_attr, "[\"", out_attr, "\"]")
+              if(!is.null(uri)) out_attr <- paste0(out_attr, "@", uri)
+              return(out_attr)
+            }), collapse = ",")
+            outdata <- paste0(outdata, "attribute:", out_attrs, line_separator)
+            
+          }
+          if(length(self$data$variables)>0) for(variable in self$data$variables){
+            out_vars <- paste0(sapply(self$data$variables, function(variable){
+              uri <- attr(variable, "uri")
+              desc <- attr(variable, "description")
+              attributes(variable) <- NULL
+              out_var <- variable
+              if(!is.null(desc)) out_var <- paste0(out_var, "[\"", out_var, "\"]")
+              return(out_var)
+            }),collapse=",")
+            outdata <- paste0(outdata, "variable:", out_vars, line_separator)
+          }
+          if(length(self$data$actions)){
+            for(action in self$data$actions){
+              out_act <- paste0("action:", action$id)
+              if(!is.null(action$def)) out_act <- paste0(out_act, "[\"", action$def, "\"]")
+              if(!is.null(action$script)) out_act <- paste0(out_act, "@", action$script)
+              outdata <- paste0(outdata, out_act, line_separator)
+            }
+          }
+          if(endsWith(outdata, line_separator)) outdata <- substr(outdata, 0, nchar(outdata)-2)
+          outdata
+          
+        },
+        stringsAsFactors = FALSE
+      )
+      return(out)
     }
     
   )
