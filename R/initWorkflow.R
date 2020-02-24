@@ -261,7 +261,7 @@ initWorkflow <- function(file){
                     config$logger.warn("Warning: 2 contacts identified with same id/role! Check your contacts")
                   }
                   contact_from_directory <- contact_from_directory[[1]]
-                  newcontact <- contact_from_directory
+                  newcontact <- contact_from_directory$clone(deep=TRUE)
                   newcontact$setId(id)
                   newcontact$setRole(role)
                 }
