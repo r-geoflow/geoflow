@@ -219,6 +219,10 @@ initWorkflow <- function(file){
       config$logger.info(sprintf("Successfuly fetched %s contacts!",length(contacts)))
       config$metadata$content$contacts <- contacts
       config$logger.info(sprintf("Successfuly loaded %s contacts!",length(contacts)))
+      #add function to get them easily
+      config$getContacts = function(){
+        return(config$metadata$content$contacts)
+      }
     }
     
     #metadata entities
@@ -297,6 +301,10 @@ initWorkflow <- function(file){
       }
       config$metadata$content$entities <- entities
       config$logger.info(sprintf("Successfuly loaded %s entities!",length(entities)))
+      #add function to get them easily
+      config$getEntities <- function(){
+        return(config$metadata$content$entities)
+      }
     }
     
   }
