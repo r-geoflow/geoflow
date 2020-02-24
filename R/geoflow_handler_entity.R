@@ -33,9 +33,12 @@ handle_entities_df <- function(config, source){
         }
       }else{
         for(date in dates){
-          if(regexpr(":",date) == -1){
+          if(regexpr("creation:",date)>0){
             entity$dates <- list()
-            entity$addDate("creation", date)
+            date_kvp <- extract_kvp(date)
+            for(adate in date_kvp$values){
+              entity$addDate(date_kvp$key, adate)
+            }
           }else{
             date_kvp <- extract_kvp(date)
             for(adate in date_kvp$values){
