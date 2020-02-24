@@ -274,7 +274,7 @@ initWorkflow <- function(file){
           newentity$contacts <- newentity$contacts[!sapply(newentity$contacts, is.null)]
           
           #we look at data provenance
-          if(!is.null(entity$provenance)){
+          if(!is.null(entity$provenance)) if(is(entity$provenance, "geoflow_provenance")){
             newprov <- entity$provenance$clone()
             if(length(entity$provenance$processes)>0){
               newprov$processes <- lapply(entity$provenance$processes, function(process){
