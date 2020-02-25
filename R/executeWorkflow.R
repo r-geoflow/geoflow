@@ -28,6 +28,7 @@ executeWorkflow <- function(file){
     exec <- try(executeWorkflowJob(CFG, jobdir))
     if(class(exec)=="try-error"){
       setwd(CFG$wd)
+      closeWorkflow(CFG)
     }
   }, file = file.path(jobdir, "job-logs.txt"))
   
