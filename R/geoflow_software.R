@@ -80,7 +80,10 @@ geoflow_software <- R6Class("geoflow_software",
     parameters = list(),
     attributes = list(),
     properties = list(),
-    initialize = function(id = NULL, type = NULL, software_type, definition, handler, arguments, attributes = list()){
+    actions = list(),
+    initialize = function(id = NULL, type = NULL, software_type, definition, handler, 
+                          arguments, attributes = list(),
+                          actions = list()){
       self$setId(id)
       if(!is.null(type)) self$setType(type)
       self$setSoftwareType(software_type)
@@ -88,6 +91,7 @@ geoflow_software <- R6Class("geoflow_software",
       self$setHandler(handler)
       self$setArguments(arguments)
       self$setAttributes(attributes)
+      self$setActions(actions)
     },
     
     #setId
@@ -153,6 +157,11 @@ geoflow_software <- R6Class("geoflow_software",
       }
     },
     
+    #setActions
+    setActions = function(actions){
+      self$actions <- actions
+    },
+    
     #setHandler
     setHandler = function(handler){
       self$handler <- handler
@@ -206,6 +215,27 @@ register_software <- function(){
         host = list(def = "Hostname"),
         port = list(def = "Port number"),
         dbname = list(def = "Database name")
+      ),
+      attributes = list(
+        sqlonstart = list(def = "An SQL script to be run on workflow start"),
+        sqlonend = list(def = "An SQL script to be run on workflow end")
+      ),
+      actions = list(
+        onstart = function(config, software, software_config){
+          if(!is.null(software_config$properties$sqlonstart)){
+            config$logger.info(sprintf("DBI [id='%s'] Execute 'onstart' action",software_config$id))
+            config$logger.info(sprintf("SQL script = %s", software_config$properties$sqlonstart))
+            sql <- paste0(readLines("D:/sandbox-geoflow/myscript_onstart.sql"),collapse="\n")
+            out <- try(DBI::dbSendQuery(software, sql))
+            if(class(out)=="try-error"){
+              errMsg <- sprintf("DBI [id='%s'] Error while executing SQL script '%s'",software_config$id, software$config_properties$sqlonstart)
+              config$logger.error(errMsg)
+              stop(errMsg)
+            }
+          }else{
+            config$logger.info(sprintf("DBI [id='%s'] No 'sqlonstart' property. Skipping 'onstart' action",software_config$id))
+          }
+        }
       )
     ),
     #OGC WFS
@@ -261,6 +291,22 @@ register_software <- function(){
       attributes = list(
         workspace = list(def = "GeoServer workspace name"),
         datastore = list(def = "GeoServer datastore name")
+      ),
+      actions = list(
+        onstart = function(config, software, software_config){
+          config$logger.info("Executing GeoServer 'onstart' action")
+          if(!is.null(config$properties$workspace)){
+            ws <- software$getWorkspace(config$properties$workspace)
+            if(is.null(ws)){
+              software$createWorkspace(config$properties$workspace, paste0("http://",config$properties$workspace))
+            }
+          }
+          #TODO to be completed with datastore creation cases
+        },
+        onend = function(config, software, software_config){
+          config$logger.info("Executing GeoServer 'onend' action")
+          software$reload()
+        }
       )
     ),
     #ZENODO

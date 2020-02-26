@@ -17,6 +17,35 @@ executeWorkflowJob <- function(config, jobdir){
     #options
     skipFileDownload <- if(!is.null(config$options$skipFileDownload)) config$options$skipFileDownload else FALSE
   
+    #Actions onstart
+    config$logger.info("---------------------------------------------------------------------------------------")
+    config$logger.info("Executing software actions 'onstart' ...")
+    
+    #function to run software actions
+    runSoftwareActions <- function(config, softwareType, actionType){
+      software_list <- config$software[[softwareType]]
+      if(length(software_list)>0){
+        software_names <- names(software_list)
+        software_names <- software_names[!endsWith(software_names, "_config")]
+        for(software_name in software_names){
+          software <- software_list[[software_name]]
+          software_cfg <- software_list[[paste0(software_name, "_config")]]
+          if(length(software_cfg$actions)>0){
+            if(actionType %in% names(software_cfg$actions)){
+              config$logger.info(sprintf("Executing input software action '%s'",actionType))
+              software_cfg$actions[[actionType]](config, software, software_cfg)
+            }
+          }
+        }
+      }
+    }
+    #run software 'onstart' actions
+    runSoftwareActions(config, "input", "onstart")
+    runSoftwareActions(config, "output", "onstart")
+    
+    #workflow actions
+    config$logger.info("---------------------------------------------------------------------------------------")
+    config$logger.info("Executing entity actions ...")
     actions <- config$actions
     if(is.null(actions)){
       config$logger.warn("No actions enabled for this workflow!")
@@ -194,4 +223,11 @@ executeWorkflowJob <- function(config, jobdir){
         eval(expr = parse(action$script))
       }
     }
+    
+    #Actions onend
+    config$logger.info("---------------------------------------------------------------------------------------")
+    config$logger.info("Executing software actions 'onend' ...")
+    #run software 'onend' actions
+    runSoftwareActions(config, "input", "onend")
+    runSoftwareActions(config, "output", "onend")
 }

@@ -126,6 +126,7 @@ initWorkflow <- function(file){
         target_software$setType(software$type)
         if(!is.null(software$parameters)) target_software$setParameters(unlist(software$parameters))
         client <- target_software$getHandlerInstance()
+        software$actions <- target_software$actions
       }else{
         client_handler <- eval(parse(text=software$handler))
         if(class(client_handler)=="try-error"){
