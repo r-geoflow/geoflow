@@ -78,14 +78,20 @@ executeWorkflowJob <- function(config, jobdir){
           if(!is.null(entity$data) & !skipFileDownload) entity$copyDataToJobDir(config, jobdir)
           
           #run sequence of entity data actions (if any)
-          if(!is.null(entity$data)) if(length(entity$data$actions)>0){
-            for(i in 1:length(entity$data$actions)){
-              entity_action <- entity$data$actions[[i]]
-              config$logger.info(sprintf("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script))
-              source(entity_action$script, local = TRUE)
+          if(!is.null(entity$data)) {
+            if(entity$data$run){
+              if(length(entity$data$actions)>0){
+                for(i in 1:length(entity$data$actions)){
+                  entity_action <- entity$data$actions[[i]]
+                  config$logger.info(sprintf("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script))
+                  source(entity_action$script, local = TRUE)
+                }
+                #we trigger entity enrichment (in case entity data action involved modification of entity)
+                entity$enrichWithMetadata()
+              }
+            }else{
+              config$logger.info("Execution of entity data actions is disabled")
             }
-            #we trigger entity enrichment (in case entity data action involved modification of entity)
-            entity$enrichWithMetadata()
           }
           
           #run sequence of global actions

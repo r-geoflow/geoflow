@@ -79,6 +79,9 @@
 #'  \item{\code{setVariables(variables)}}{
 #'    Sets variables definition.
 #'  }
+#'  \item{\code{addAction(action)}}{
+#'    Adds an entity local action to be run
+#'  }
 #'  
 #' }
 #' 
@@ -107,6 +110,7 @@ geoflow_data <- R6Class("geoflow_data",
     attributes = NULL,
     variables = NULL,
     actions = list(),
+    run = TRUE,
     initialize = function(str = NULL){
       if(!is.null(str)){
         data_props <-  extract_cell_components(sanitize_str(str))
@@ -248,6 +252,9 @@ geoflow_data <- R6Class("geoflow_data",
         }))
         if(length(get_variables)>0) self$variables <- get_variables
         
+        #run entity actions
+        runs <- data_props[sapply(data_props, function(x){x$key=="run"})]
+        if(length(runs)>0) self$run = as.logical(runs[[1]]$values[[1]])
         #entity actions
         actions <- data_props[sapply(data_props, function(x){x$key=="action"})]
         if(length(actions)>0){

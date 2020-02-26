@@ -86,6 +86,9 @@ geoflow_data
  \item{\code{setVariables(variables)}}{
    Sets variables definition.
  }
+ \item{\code{addAction(action)}}{
+   Adds an entity local action to be run
+ }
  
 }
 }
