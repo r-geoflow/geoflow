@@ -203,7 +203,10 @@ geoflow_software <- R6Class("geoflow_software",
 register_software <- function(){
   
   software <- list(
+    
+    #-------------------------------------------------------------------------------------------------------
     #DBI
+    #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(
       software_type = "dbi",
       definition = "Data Base Interface powered by 'DBI' package",
@@ -217,28 +220,79 @@ register_software <- function(){
         dbname = list(def = "Database name")
       ),
       attributes = list(
-        sqlonstart = list(def = "An SQL script to be run on workflow start"),
-        sqlonend = list(def = "An SQL script to be run on workflow end")
+        onstart_sql = list(def = "An SQL script to be run on workflow start"),
+        onstart_r = list(def = "R instructions to generate a SQL. It should be made of 2 properties 'script' (name
+                         of the R script) that should include a function standardized with parameter config (being the
+                         DBI software config) and will outpout a character representing the SQL. The name of the function 
+                         is to specify in 'fun' property")
       ),
       actions = list(
         onstart = function(config, software, software_config){
-          if(!is.null(software_config$properties$sqlonstart)){
+          if(!is.null(software_config$properties$onstart_sql) || !is.null(software_config$properties$onstart_r)){
             config$logger.info(sprintf("DBI [id='%s'] Execute 'onstart' action",software_config$id))
-            config$logger.info(sprintf("SQL script = %s", software_config$properties$sqlonstart))
-            sql <- paste0(readLines("D:/sandbox-geoflow/myscript_onstart.sql"),collapse="\n")
+            
+            sql <- NULL
+            if(!is.null(software_config$properties$onstart_sql)){
+              config$logger.info(sprintf("SQL script = %s", software_config$properties$onstart_sql))
+              sql <- paste0(readLines("D:/sandbox-geoflow/myscript_onstart.sql"),collapse="\n")
+              
+            }else if(!is.null(software_config$properties$onstart_r)){
+              if(is.null(software_config$properties$onstart_r$script)){
+                errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Missing 'script'",software_config$id)
+                config$logger.error(errMsg)
+                stop(errMsg)
+              }
+              if(is.null(software_config$properties$onstart_r$fun)){
+                errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Missing 'fun'",software_config$id)
+                config$logger.error(errMsg)
+                stop(errMsg)
+              }
+              src <- try(source(software_config$properties$onstart_r$script))
+              if(class(src)=="try-error"){
+                errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Error while sourcing script '%s'",
+                                  software_config$id, software_config$properties$onstart_r$script)
+                config$logger.error(errMsg)
+                stop(errMsg)
+              }
+              onstart_r_fun <- eval(parse(text=software_config$properties$onstart_r$fun))
+              print(class(onstart_r_fun))
+              sql <- try(onstart_r_fun(config, software, software_config))
+              if(class(sql)=="try-error"){
+                errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Error while executing function '%s'",
+                                  software_config$id, software_config$properties$onstart_r$fun)
+                config$logger.error(errMsg)
+                stop(errMsg)
+              }
+            }
+            config$logger.info(sprintf("DBI [id='%s'] Executing SQL",software_config$id))
+            config$logger.info(paste0("\n", sql))
+            
+            #write sql to file
+            if (!dir.exists("sql")){
+              config$logger.info(sprintf("Creating 'sql' directory: %s", file.path(getwd(), "sql")))
+              dir.create(file.path(getwd(), "sql"))
+            }
+            sqlfilename <- paste0(software_config$id, "_onstart.sql")
+            config$logger.info(sprintf("DBI [id='%s'] Writing SQL file '%s' to job directory",software_config$id, sqlfilename))
+            writeChar(sql, file.path(getwd(), "sql", sqlfilename), eos = NULL)
+            
+            #send sql to dB
             out <- try(DBI::dbSendQuery(software, sql))
             if(class(out)=="try-error"){
-              errMsg <- sprintf("DBI [id='%s'] Error while executing SQL script '%s'",software_config$id, software$config_properties$sqlonstart)
+              errMsg <- sprintf("DBI [id='%s'] Error while executing SQL",software_config$id)
               config$logger.error(errMsg)
               stop(errMsg)
             }
+            config$logger.info(sprintf("DBI [id='%s'] Successful SQL execution!",software_config$id))
           }else{
             config$logger.info(sprintf("DBI [id='%s'] No 'sqlonstart' property. Skipping 'onstart' action",software_config$id))
           }
         }
       )
     ),
+    #-------------------------------------------------------------------------------------------------------
     #OGC WFS
+    #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(
       software_type = "csw",
       definition = "OGC Catalogue Service for the Web (CSW) client powered by 'ows4R' package",
@@ -251,7 +305,9 @@ register_software <- function(){
         logger = list(def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)")
       )
     ),
+    #-------------------------------------------------------------------------------------------------------
     #OGC WFS
+    #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(
       software_type = "wfs",
       definition = "OGC Web Feature Service (WFS) client powered by 'ows4R' package",
@@ -264,7 +320,9 @@ register_software <- function(){
         logger = list(def = "Level for 'ows4R' logger messages (NULL, 'INFO' or 'DEBUG')")
       )
     ),
+    #-------------------------------------------------------------------------------------------------------
     #GEONETWORK API
+    #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(
       software_type = "geonetwork",
       definition = "GeoNetwork API Client, powered by 'geonapi' package",
@@ -277,7 +335,9 @@ register_software <- function(){
         logger = list(def = "Level for 'geonapi' logger messages (NULL, 'INFO' or 'DEBUG')")
       )
     ),
+    #-------------------------------------------------------------------------------------------------------
     #GEOSERVER API
+    #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(
       software_type = "geoserver",
       definition = "GeoServer REST API Client, powered by 'geosapi' package",
@@ -309,7 +369,9 @@ register_software <- function(){
         }
       )
     ),
+    #-------------------------------------------------------------------------------------------------------
     #ZENODO
+    #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(
       software_type = "zenodo",
       definition = "Zenodo client powered by 'zen4R' package",
