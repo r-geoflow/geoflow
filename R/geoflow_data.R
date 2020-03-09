@@ -16,34 +16,48 @@
 #'  \item{\code{new(str)}}{
 #'    This method is used to instantiate a geoflow_data object
 #'  }
+#'  \item{\code{getAllowedSourceTypes()}}{
+#'    get the allowed source types
+#'  }
+#'  \item{\code{setSourceType(sourceType)}}{
+#'    The source type is a simplification of the data mime type and is used to identify the type of source
+#'    set for the data object. By default it is assumed to be "other" (undefined). The source types currently
+#'    allowed in geoflow can be listed with \code{$getAllowedSourcedTypes()}. Those are: "other", "shp" (for zipped
+#'    ESRI shapefiles), "dbtable", "dbview", "dbquery".
+#'  }
 #'  \item{\code{setSource(source)}}{
 #'    Set source, object of class \code{"character"} (single source), or \code{list}.
 #'    For spatial source, a single source will be used, while for sources of type 'other'
 #'    (eg PDF files), multiple sources can be specified
 #'  }
-#'  \item{\code{setSql(sql)}}{
-#'    Sets SQL source. This is a convenience method for users that want to specify directly
-#'    a SQL source. This method is called internally when a source SQL file has been set using
-#'    \code{setSource}
+#'  \item{\code{setSourcedZip(sourceZip)}}{
+#'    Sets whether a zipped version of the data file(s) should be created from source files. Default is \code{FALSE}
+#'  }
+#'  \item{\code{setSourceZipOnly(sourceZipOnly)}}{
+#'    Sets whether a zipped version of the data file(s) only should be created from source files. Default is \code{FALSE}
 #'  }
 #'  \item{setUpload(upload)}{
 #'    Set whether the source data should be uploaded to the sofware output declared in the geoflow
 #'    configuration or not. By default it is assumed that upload should be performed (upload \code{TRUE}).
 #'  }
+#'  \item{setUploadSource(uploadSource)}{
+#'    Set the source to upload in output software, alternative to the source. If leave empty, the source will be used
+#'    as uploadSource. A typical use case is when we want to get a CSV source to import in a database, and use the
+#'    dbtable (or view/query) as upload source for publication in software like geoserver.
+#'  }
 #'  \item{\code{getAllowedUploadTypes()}}{
 #'    get the allowed upload types
 #'  }
 #'  \item{\code{setUploadType(uploadType)}}{
-#'    The upload type is a simplification of the data mime type and is used to identify the type of source
-#'    set for the data object. By default it is assumed to be "other" (undefined). The upload types currently
-#'    allowed in geoflow can be listed with \code{$getAllowedUploadTypes()}. Those are: "other", "shp" (for zipped
-#'    ESRI shapefiles), "dbtable", "dbview", "dbquery".
+#'    The upload type is a simplification of the data mime type and is used to identify the type of data uploaded. 
+#'    By default it is assumed to be "other" (undefined). The upload types currently allowed in geoflow can be 
+#'    listed with \code{$getAllowedUploadTypes()}. Those are: "other", "shp" (for zipped ESRI shapefiles), "dbtable", 
+#'    "dbview", "dbquery".
 #'  }
-#'  \item{\code{setUploadZip(uploadZip)}}{
-#'    Sets whether a zipped version of the data file(s) should be uploaded. Default is \code{FALSE}
-#'  }
-#'  \item{\code{setUploadZipOnly(uploadZipOnly)}}{
-#'    Sets whether a zipped version of the data file(s) only should be uploaded. Default is \code{FALSE}
+#'  \item{\code{setSql(sql)}}{
+#'    Sets SQL source. This is a convenience method for users that want to specify directly
+#'    a SQL source. This method is called internally when a source SQL file has been set using
+#'    \code{setSource}
 #'  }
 #'  \item{\code{setCqlFilter(cqlfilter)}}{
 #'    Sets a CQL filter. In case of spatial data, once the data is read by geoflow (during initialization phase),
@@ -89,15 +103,18 @@
 #'
 geoflow_data <- R6Class("geoflow_data",
   private = list(
+    supportedSourceTypes = c("dbtable", "dbview", "dbquery","shp", "other"),
     supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "other")
   ),
   public = list(
     source = NULL,
+    sourceType = "other",
+    sourceZip = FALSE,
+    sourceZipOnly = FALSE,
     sql = NULL,
     upload = TRUE,
+    uploadSource = NULL,
     uploadType = "other",
-    uploadZip = FALSE,
-    uploadZipOnly = FALSE,
     cqlfilter = NULL,
     features = NULL,
     workspace = NULL,
@@ -118,14 +135,55 @@ geoflow_data <- R6Class("geoflow_data",
           return(extract_kvp(data_prop))
         })
         
+        
+        #source
+        if(!any(sapply(data_props, function(x){x$key=="source"}))){
+          stop("The data 'source' is mandatory")
+        }
+        self$setSource(data_props$source$values)
+        
+        #sourceZip
+        if(!is.null(data_props$sourceZip)){
+          sourceZip <- as.logical(tolower(data_props$sourceZip$values[[1]]))
+          if(!is.na(sourceZip)){
+            self$setSourceZip(sourceZip) 
+          }
+        }else{
+          self$setSourceZip(FALSE) 
+        }
+        
+        #sourceZipOnly
+        if(!is.null(data_props$sourceZipOnly)){
+          sourceZipOnly <- as.logical(tolower(data_props$sourceZipOnly$values[[1]]))
+          if(!is.na(sourceZipOnly)){
+            self$setSourceZipOnly(sourceZipOnly) 
+          }
+        }else{
+          self$setSourceZipOnly(FALSE) 
+        }
+        
+        #sourceType
+        names(data_props) <- sapply(data_props, function(x){x$key})
+        if(!any(sapply(data_props, function(x){x$key=="sourceType"}))){
+          self$setSourceType("other")
+        }else{
+          self$setSourceType(data_props$sourceType$values[[1]])
+        }
+        
+        #uploadSource
+        if(!any(sapply(data_props, function(x){x$key=="uploadSource"}))){
+          self$setUploadSource(self$source)
+        }else{
+          self$setUploadSource(data_props$uploadSource$values)
+        }
+        
         #uploadType
         names(data_props) <- sapply(data_props, function(x){x$key})
         if(!any(sapply(data_props, function(x){x$key=="uploadType"}))){
-          self$setUploadType("other")
+          self$setUploadType(self$sourceType)
         }else{
           self$setUploadType(data_props$uploadType$values[[1]])
         }
-        
         
         #upload
         if(!is.null(data_props$upload)){
@@ -137,42 +195,17 @@ geoflow_data <- R6Class("geoflow_data",
           self$setUpload(TRUE) 
         }
         
-        #uploadZip
-        if(!is.null(data_props$uploadZip)){
-          uploadZip <- as.logical(tolower(data_props$uploadZip$values[[1]]))
-          if(!is.na(uploadZip)){
-            self$setUploadZip(uploadZip) 
-          }
-        }else{
-          self$setUploadZip(FALSE) 
+        #layername (if any)
+        #not mandatory, can be used for subset layers
+        if(!is.null(data_props$layername)){
+          self$setLayername(data_props$layername$values[[1]])
         }
-        
-        #uploadZipOnly
-        if(!is.null(data_props$uploadZipOnly)){
-          uploadZipOnly <- as.logical(tolower(data_props$uploadZipOnly$values[[1]]))
-          if(!is.na(uploadZipOnly)){
-            self$setUploadZipOnly(uploadZipOnly) 
-          }
-        }else{
-          self$setUploadZipOnly(FALSE) 
-        }
-        
-        #source
-        if(!any(sapply(data_props, function(x){x$key=="source"}))){
-          stop("The data 'source' is mandatory")
-        }
-        self$setSource(data_props$source$values)
         
         #sql
         if(!is.null(data_props$sql)){
           self$setSql(data_props$sql$values[[1]])
         }
         
-        #layername (if any)
-        #not mandatory, can be used for subset layers
-        if(!is.null(data_props$layername)){
-          self$setLayername(data_props$layername$values[[1]])
-        }
         #cql filter
         if(!is.null(data_props$cqlfilter)){
           self$setCqlFilter(data_props$cqlfilter$values[[1]])
@@ -180,7 +213,7 @@ geoflow_data <- R6Class("geoflow_data",
         #params
         params <- data_props[sapply(data_props, function(x){x$key=="parameter"})]
         if(length(params)>0){
-          if(self$type != "dbquery"){
+          if(self$uploadType != "dbquery"){
             stop("The specification of service parameters is only possible for a 'dbquery' upload type!")
           }
           #check and set parameter
@@ -275,6 +308,42 @@ geoflow_data <- R6Class("geoflow_data",
       }
     },
     
+    #getAllowedSourceTypes
+    getAllowedSourceTypes = function(){
+      return(private$supportedSourceTypes)
+    },
+    
+    #setSourceType
+    setSourceType = function(sourceType){
+      if(!(sourceType %in% private$supportedSourceTypes)){
+        errMsg <- sprintf("Source type should be among values [%s]", paste0(private$supportedSourceTypes, collapse=","))
+        stop(errMsg)
+      }
+      self$sourceType <- sourceType
+    },
+    
+    #setSource
+    setSource = function(source){
+      if(!is(source, "list")) source <- list(source)
+      self$source <- source
+    },
+    
+    #setSourceZip
+    setSourceZip = function(sourceZip){
+      self$sourceZip <- sourceZip
+    },
+    
+    #setSourceZipOnly
+    setSourceZipOnly = function(sourceZipOnly){
+      self$sourceZipOnly <- sourceZipOnly
+    },
+    
+    #setUploadSource
+    setUploadSource = function(uploadSource){
+      if(!is(uploadSource, "list")) uploadSource <- list(uploadSource)
+      self$uploadSource <- uploadSource
+    },
+    
     #getAllowedUploadTypes
     getAllowedUploadTypes = function(){
       return(private$supportedUploadTypes)
@@ -292,22 +361,6 @@ geoflow_data <- R6Class("geoflow_data",
     #setUpload
     setUpload = function(upload){
       self$upload <- upload
-    },
-    
-    #setUploadZip
-    setUploadZip = function(uploadZip){
-      self$uploadZip <- uploadZip
-    },
-    
-    #setUploadZipOnly
-    setUploadZipOnly = function(uploadZipOnly){
-      self$uploadZipOnly <- uploadZipOnly
-    },
-    
-    #setSource
-    setSource = function(source){
-      if(!is(source, "list")) source <- list(source)
-      self$source <- source
     },
     
     #setSql

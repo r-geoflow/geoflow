@@ -23,7 +23,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   #layername/sourcename
   layername <- if(!is.null(entity$data$layername)) entity$data$layername else entity$identifiers$id
   sourcename <- if(!is.null(datasource_name)) datasource_name else layername
-  basefilename <- paste0(entity$identifiers$id, "_", entity$data$uploadType,"_", layername)
+  basefilename <- paste0(entity$identifiers$id, "_", entity$data$sourceType,"_", layername)
   filename <- paste0(basefilename, ".zip")
   
   #shortcut for gs config

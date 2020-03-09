@@ -299,7 +299,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                                    i, datasource, datasource_file, jobdir))
         
         resourceId <- if(!is.null(self$data$layername) & i==1) self$data$layername else datasource_name
-        basefilename <- paste0(self$identifiers$id, "_", self$data$uploadType,"_",resourceId)
+        basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",resourceId)
       
         #here either we only pickup zipped files and re-distribute them in job data directory
         #or we write it from entity$data$features if the latter is not NULL and if writer available (for now only shp)
@@ -351,13 +351,13 @@ geoflow_entity <- R6Class("geoflow_entity",
             
           }else{
             config$logger.info("Writing entity data features to job data directory!")
-            switch(self$data$uploadType,
+            switch(self$data$sourceType,
               "shp" = {
                 sf::st_write(self$data$features, paste0(basefilename, ".shp"), delete_dsn = FALSE)
                 data.files <- list.files(pattern = basefilename)
                 zip(zipfile = paste0(basefilename, ".zip"), files = data.files)
               },{
-                config$logger.warn(sprintf("Entity data features writer not implemented for type '%s'", self$data$uploadType))
+                config$logger.warn(sprintf("Entity data features writer not implemented for type '%s'", self$data$sourceType))
               }
             )
             #we also copy the source with its native name
@@ -373,21 +373,21 @@ geoflow_entity <- R6Class("geoflow_entity",
         }
       }
       
-      if(self$data$uploadType == "other" & self$data$uploadZip){
-        config$logger.info("uploadZip = TRUE: Zip sources into single data file")
+      if(self$data$sourceType == "other" & self$data$sourceZip){
+        config$logger.info("sourceZip = TRUE: Zip sources into single data file")
         data.files <- list.files()
         print(data.files)
         zip(zipfile = paste0(self$identifiers$id, "_files", ".zip"), files = data.files)
-        if(self$data$uploadZipOnly){
-          config$logger.info("uploadZipOnly = TRUE: deleting zipped, they will not be uploaded")
+        if(self$data$sourceZipOnly){
+          config$logger.info("sourceZipOnly = TRUE: deleting zipped, they will not be uploaded")
           for(data.file in data.files){
             unlink(data.file, force = TRUE)
           }
         }else{
-          config$logger.info("uploadZipOnly = FALSE: both zip and zipped files will be uploaded")
+          config$logger.info("sourceZipOnly = FALSE: both zip and zipped files will be uploaded")
         }
       }else{
-        config$logger.info("uploadZip = FALSE: source files will be uploaded")
+        config$logger.info("sourceZip = FALSE: source files will be uploaded")
       }
       
       setwd(wd)
@@ -400,13 +400,18 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(length(self$data$source)>1) 
         config$logger.warn("More than one data sources, entity metadata enrichment with data based on the first source only!")
       
+      if(self$data$sourceType == "other"){
+        config$logger.warn("Metadata dynamic handling based on 'data' not implemented for type 'other'")
+        return(NULL)
+      }
+      
       datasource <- self$data$source[[1]]
       datasource_name <- unlist(strsplit(datasource, "\\."))[1]
       datasource_file <- attr(datasource, "uri")
       attributes(datasource) <- NULL
       
       types_without_file <- c("dbtable","dbview","dbquery")
-      datasource_file_needed <- !(self$data$uploadType %in% types_without_file)
+      datasource_file_needed <- !(self$data$sourceType %in% types_without_file)
       if(datasource_file_needed && is.null(datasource_file)){
         warnMsg <- sprintf("No source file/URL for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
         config$logger.warn(warnMsg)
@@ -419,7 +424,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         dir.create(TEMP_DATA_DIR)
       }
       
-      switch(self$data$uploadType,
+      switch(self$data$sourceType,
            #shp - ESRI Shapefile (if remote, shapefiles should be zipped)
            #---------------------------------------------------------------------------------
            "shp" = {
@@ -663,7 +668,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             },
             #other format handlers to come
             {
-              config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$uploadType))
+              config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$sourceType))
             }
       ) 
     },
@@ -675,7 +680,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geosapi",x$id)>0})]
       if(length(actions)>0) geosapi_action <- actions[[1]]
       #dynamic relations related to OGC services (only executed if geosapi action is handled and enabled in workflow)
-      if(!is.null(geosapi_action)) if(!is.null(self$data)) if(self$data$uploadType != "other"){
+      if(!is.null(geosapi_action)) if(!is.null(self$data)) if(self$data$sourceType != "other"){
         
         layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
         
@@ -851,7 +856,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #getJobResource
     getJobResource = function(config, resourceType, filename){
-      return(file.path(config$job, resourceType, paste(self$identifiers[["id"]], self$data$uploadType, filename, sep="_")))
+      return(file.path(config$job, resourceType, paste(self$identifiers[["id"]], self$data$sourceType, filename, sep="_")))
     },
     
     #getJobDataResource
@@ -971,10 +976,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         Data = {
           out_sources <- NULL
           
-          outdata <- paste0("uploadType:", self$data$uploadType, line_separator)
-          outdata <- paste0(outdata, "upload:", tolower(as.character(self$data$upload)), line_separator)
-          outdata <- paste0(outdata, "uploadZip:", tolower(as.character(self$data$uploadZip)), line_separator)
-          outdata <- paste0(outdata, "uploadZipOnly:", tolower(as.character(self$data$uploadZipOnly)), line_separator)
+          outdata <- ""
           if(!is.null(self$data$source)){
             for(src in self$data$source){
               src_uri <- attr(src,"uri")
@@ -984,6 +986,22 @@ geoflow_entity <- R6Class("geoflow_entity",
             }
             outdata <- paste0(outdata, "source:", out_sources, line_separator)
           }
+          outdata <- paste0("sourceType:", self$data$sourceType, line_separator)
+          outdata <- paste0(outdata, "sourceZip:", tolower(as.character(self$data$sourceZip)), line_separator)
+          outdata <- paste0(outdata, "sourceZipOnly:", tolower(as.character(self$data$sourceZipOnly)), line_separator)
+          out_upload_sources <- NULL
+          if(!is.null(self$data$uploadource)){
+            for(src in self$data$uploadSource){
+              src_uri <- attr(src,"uri")
+              attributes(src) <- NULL
+              if(is.null(out_upload_sources)) out_upload_sources <- ""
+              out_upload_sources <- paste0(out_upload_sources, src, "@", src_uri)
+            }
+            outdata <- paste0(outdata, "uploadSource:", out_upload_sources, line_separator)
+          }
+          outdata <- paste0(outdata, "uploadType:", tolower(as.character(self$data$uploadType)), line_separator)
+          outdata <- paste0(outdata, "upload:", tolower(as.character(self$data$upload)), line_separator)
+          
           if(!is.null(self$data$sql)) outdata <- paste0(outdata, "sql:", self$data$sql, line_separator)
           if(!is.null(self$data$workspace)) outdata <- paste0(outdata, "workspace:", self$data$workspace, line_separator)
           if(!is.null(self$data$datastore)) outdata <- paste0(outdata, "datastore:", self$data$datastore, line_separator)

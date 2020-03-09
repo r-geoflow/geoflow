@@ -23,34 +23,48 @@ geoflow_data
  \item{\code{new(str)}}{
    This method is used to instantiate a geoflow_data object
  }
+ \item{\code{getAllowedSourceTypes()}}{
+   get the allowed source types
+ }
+ \item{\code{setSourceType(sourceType)}}{
+   The source type is a simplification of the data mime type and is used to identify the type of source
+   set for the data object. By default it is assumed to be "other" (undefined). The source types currently
+   allowed in geoflow can be listed with \code{$getAllowedSourcedTypes()}. Those are: "other", "shp" (for zipped
+   ESRI shapefiles), "dbtable", "dbview", "dbquery".
+ }
  \item{\code{setSource(source)}}{
    Set source, object of class \code{"character"} (single source), or \code{list}.
    For spatial source, a single source will be used, while for sources of type 'other'
    (eg PDF files), multiple sources can be specified
  }
- \item{\code{setSql(sql)}}{
-   Sets SQL source. This is a convenience method for users that want to specify directly
-   a SQL source. This method is called internally when a source SQL file has been set using
-   \code{setSource}
+ \item{\code{setSourcedZip(sourceZip)}}{
+   Sets whether a zipped version of the data file(s) should be created from source files. Default is \code{FALSE}
+ }
+ \item{\code{setSourceZipOnly(sourceZipOnly)}}{
+   Sets whether a zipped version of the data file(s) only should be created from source files. Default is \code{FALSE}
  }
  \item{setUpload(upload)}{
    Set whether the source data should be uploaded to the sofware output declared in the geoflow
    configuration or not. By default it is assumed that upload should be performed (upload \code{TRUE}).
  }
+ \item{setUploadSource(uploadSource)}{
+   Set the source to upload in output software, alternative to the source. If leave empty, the source will be used
+   as uploadSource. A typical use case is when we want to get a CSV source to import in a database, and use the
+   dbtable (or view/query) as upload source for publication in software like geoserver.
+ }
  \item{\code{getAllowedUploadTypes()}}{
    get the allowed upload types
  }
  \item{\code{setUploadType(uploadType)}}{
-   The upload type is a simplification of the data mime type and is used to identify the type of source
-   set for the data object. By default it is assumed to be "other" (undefined). The upload types currently
-   allowed in geoflow can be listed with \code{$getAllowedUploadTypes()}. Those are: "other", "shp" (for zipped
-   ESRI shapefiles), "dbtable", "dbview", "dbquery".
+   The upload type is a simplification of the data mime type and is used to identify the type of data uploaded. 
+   By default it is assumed to be "other" (undefined). The upload types currently allowed in geoflow can be 
+   listed with \code{$getAllowedUploadTypes()}. Those are: "other", "shp" (for zipped ESRI shapefiles), "dbtable", 
+   "dbview", "dbquery".
  }
- \item{\code{setUploadZip(uploadZip)}}{
-   Sets whether a zipped version of the data file(s) should be uploaded. Default is \code{FALSE}
- }
- \item{\code{setUploadZipOnly(uploadZipOnly)}}{
-   Sets whether a zipped version of the data file(s) only should be uploaded. Default is \code{FALSE}
+ \item{\code{setSql(sql)}}{
+   Sets SQL source. This is a convenience method for users that want to specify directly
+   a SQL source. This method is called internally when a source SQL file has been set using
+   \code{setSource}
  }
  \item{\code{setCqlFilter(cqlfilter)}}{
    Sets a CQL filter. In case of spatial data, once the data is read by geoflow (during initialization phase),
