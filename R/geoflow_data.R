@@ -134,7 +134,7 @@ geoflow_data <- R6Class("geoflow_data",
         data_props <- lapply(data_props, function(data_prop){
           return(extract_kvp(data_prop))
         })
-        
+        names(data_props) <- sapply(data_props, function(x){x$key})
         
         #source
         if(!any(sapply(data_props, function(x){x$key=="source"}))){
@@ -163,7 +163,6 @@ geoflow_data <- R6Class("geoflow_data",
         }
         
         #sourceType
-        names(data_props) <- sapply(data_props, function(x){x$key})
         if(!any(sapply(data_props, function(x){x$key=="sourceType"}))){
           self$setSourceType("other")
         }else{
