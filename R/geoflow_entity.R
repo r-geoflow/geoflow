@@ -311,7 +311,18 @@ geoflow_entity <- R6Class("geoflow_entity",
           #case where data is remote and there was no data enrichment in initWorkflow
           warnMsg <- "Copying data from URL to Job data directory!"
           config$logger.warn(warnMsg)
-          download.file(datasource_file, destfile = paste(basefilename, datasource_ext, sep="."), mode = "wb")
+          googledrive_baseurl <- "https://drive.google.com/open?id="
+          if(startsWith(datasource_file, googledrive_baseurl)){
+            #managing download through google drive
+            config$logger.info("Downloading file using Google Drive R interface")
+            drive_id <- unlist(strsplit(datasource_file, "id="))[2]
+            drive_id <- unlist(strsplit(drive_id, "&export"))[1] #control in case export param is appended
+            googledrive::drive_download(file = googledrive::as_id(drive_id), path = paste(basefilename, datasource_ext, sep="."))
+          }else{
+            #classic download
+            config$logger.info("Downloading file using standard R download")
+            download.file(datasource_file, destfile = paste(basefilename, datasource_ext, sep="."), mode = "wb")
+          }
         }else{
           if(is.null(self$data$features)){
             config$logger.info("Copying data local file(s) to Job data directory!")
@@ -436,7 +447,17 @@ geoflow_entity <- R6Class("geoflow_entity",
              if(isSourceUrl){
                warnMsg <- "Downloading remote data from URL to temporary geoflow temporary data directory!"
                config$logger.warn(warnMsg)
-               download.file(datasource_file, destfile = trgFilename, mode = "wb")
+               googledrive_baseurl <- "https://drive.google.com/open?id="
+               if(startsWith(datasource_file, googledrive_baseurl)){
+                 #managing download through google drive
+                 config$logger.info("Downloading file using Google Drive R interface")
+                 drive_id <- unlist(strsplit(datasource_file, "id="))[2]
+                 drive_id <- unlist(strsplit(drive_id, "&export"))[1] #control in case export param is appended
+                 googledrive::drive_download(file = googledrive::as_id(drive_id), path = trgFilename)
+               }else{
+                 #classic download
+                 download.file(datasource_file, destfile = trgFilename, mode = "wb")
+               }
                unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
                shpExists <- TRUE
              }else{
