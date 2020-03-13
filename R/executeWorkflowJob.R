@@ -6,12 +6,15 @@
 #' @usage executeWorkflowJob(config, jobdir)
 #'                 
 #' @param config a configuration object as read by \code{initWorkflow}
-#' @param jobdir the Job directory
+#' @param jobdir the Job directory. Optional, by default inherited with the configuration.
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'    
-executeWorkflowJob <- function(config, jobdir){
+executeWorkflowJob <- function(config, jobdir = NULL){
+  
+    if(is.null(jobdir)) jobdir <- config$job
+  
     config$logger.info("Executing workflow job...")
     
     #options

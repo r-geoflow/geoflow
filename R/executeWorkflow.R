@@ -18,23 +18,23 @@ executeWorkflow <- function(file){
   options(encoding = "UTF-8")
   
   #1. Init the workflow based on configuration file
-  CFG <- initWorkflow(file)
+  config <- initWorkflow(file)
   
   #2. Inits workflow job (create directories)
-  jobdir <- initWorkflowJob(CFG)
-  CFG$job <- jobdir
+  jobdir <- initWorkflowJob(config)
+  config$job <- jobdir
   
   #3. Execute the workflow job
   capture.output({
-    exec <- try(executeWorkflowJob(CFG, jobdir))
+    exec <- try(executeWorkflowJob(config))
     if(class(exec)=="try-error"){
-      setwd(CFG$wd)
-      closeWorkflow(CFG)
+      setwd(config$wd)
+      closeWorkflow(config)
     }
   }, file = file.path(jobdir, "job-logs.txt"))
   
   #4. close workflow
-  closeWorkflow(CFG)
+  closeWorkflow(config)
   
   #reset options
   options(.defaultOptions)

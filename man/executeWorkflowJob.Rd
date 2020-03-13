@@ -9,7 +9,7 @@ executeWorkflowJob(config, jobdir)
 \arguments{
 \item{config}{a configuration object as read by \code{initWorkflow}}
 
-\item{jobdir}{the Job directory}
+\item{jobdir}{the Job directory. Optional, by default inherited with the configuration.}
 }
 \description{
 \code{executeWorkflowJob} allows to execute a workflow job

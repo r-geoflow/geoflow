@@ -272,7 +272,9 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #copyDataToJobDir
-    copyDataToJobDir = function(config, jobdir){
+    copyDataToJobDir = function(config, jobdir = NULL){
+      
+      if(is.null(jobdir)) jobdir <- config$job
       
       wd <- getwd()
       setwd(file.path(jobdir,"data"))
