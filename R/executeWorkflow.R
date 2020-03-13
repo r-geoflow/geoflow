@@ -15,6 +15,7 @@ executeWorkflow <- function(file){
   #options
   .defaultOptions <- options()
   options(stringsAsFactors = FALSE)
+  options(encoding = "UTF-8")
   
   #1. Init the workflow based on configuration file
   CFG <- initWorkflow(file)
