@@ -130,6 +130,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     provenance = NULL,
     data = NULL,
     status = NULL,
+    resources = list(),
     initialize = function(){
       self$addDate("creation", Sys.time())
     },
@@ -283,7 +284,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         datasource <- self$data$source[[i]]
         datasource_parts <- unlist(strsplit(datasource, "\\."))
         datasource_name <- datasource_parts[1]
-        datasource_ext <- ifelse(length(datasource_parts)>1, datasource_parts[2], "zip")
+        datasource_ext <- ifelse(length(datasource_parts)>1, datasource_parts[2], "zip") #TODO to see to improve that
         datasource_file <- attr(datasource, "uri")
         attributes(datasource) <- NULL
         
@@ -888,6 +889,11 @@ geoflow_entity <- R6Class("geoflow_entity",
     #getJobMetadataResource
     getJobMetadataResource = function(config, filename){
       self$getJobResource(config, "metadata", filename)
+    },
+    
+    #addResource
+    addResource = function(id, resource){
+      self$resources[[id]] <- resource
     },
     
     #asDataFrame
