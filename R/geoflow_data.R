@@ -289,6 +289,24 @@ geoflow_data <- R6Class("geoflow_data",
         if(length(runs)>0) self$run = as.logical(runs[[1]]$values[[1]])
         #entity actions
         actions <- data_props[sapply(data_props, function(x){x$key=="action"})]
+        #entity action options (common to all local entity actions if more than one action)
+        action_options <- data_props[sapply(data_props, function(x){startsWith(x$key, "action_option")})]
+        action_options_names <- sapply(names(action_options), function(x){unlist(strsplit(x,"action_option_"))[2]})
+        action_options <- lapply(action_options, function(x){
+          out_opt <- unlist(x$values)
+          if(length(out_opt)==1){
+            if(!is.na(as.logical(out_opt))) out_opt <- as.logical(out_opt)
+          }else{
+            out_opt <- sapply(out_opt, function(el){
+              if(!is.na(as.logical(el))) el <- as.logical(el)
+              return(el)
+            })
+            names(out_opt) <- NULL
+          }
+          return(out_opt)
+        })
+        names(action_options) <- action_options_names
+        
         if(length(actions)>0){
           for(action in actions){
             action <- action$values[[1]]
@@ -299,7 +317,10 @@ geoflow_data <- R6Class("geoflow_data",
               id = action,
               type = "Entity data action",
               def = desc,
-              script = script
+              fun = eval(expr = parse(text = paste0("function(entity, config, options){
+                source(\"",script,"\", local = TRUE)
+              }"))),
+              options = action_options
             )
             self$addAction(entity_action)
           }

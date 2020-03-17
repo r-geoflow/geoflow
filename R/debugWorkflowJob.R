@@ -73,7 +73,7 @@ debugWorkflow <- function(file, entityIndex = 1,
           for(i in 1:length(entity$data$actions)){
             entity_action <- entity$data$actions[[i]]
             config$logger.info(sprintf("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script))
-            source(entity_action$script, local = TRUE)
+            entity_action$fun(entity, config, entity_action$options)
           }
           #we trigger entity enrichment (in case entity data action involved modification of entity)
           entity$enrichWithMetadata()
