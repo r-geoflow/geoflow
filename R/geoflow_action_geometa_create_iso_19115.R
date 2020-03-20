@@ -133,7 +133,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   #adding contacts
   for(entity_contact in entity$contacts){
-    if(tolower(entity_contact$role) != "metadata"){
+    if(tolower(entity_contact$role) != "pointOfContact"){
       rp <- ISOResponsibleParty$new()
       rp$setIndividualName(paste(entity_contact$firstName, entity_contact$lastName))
       rp$setOrganisationName(entity_contact$organizationName)
