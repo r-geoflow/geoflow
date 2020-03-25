@@ -130,7 +130,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           if(length(actions)>0) for(i in 1:length(actions)){
             action <- actions[[i]]
             config$logger.info(sprintf("Executing Action %s: %s - for entity %s", i, action$id, entity$identifiers[["id"]]))
-            action$fun(entity, config, action$options)
+            action$fun(entity = entity, config = config, options = action$options)
           }
           #if zenodo is among actions, file upload (and possibly publish) to be managed here
           if(withZenodo){
