@@ -202,7 +202,8 @@ geoflow_data <- R6Class("geoflow_data",
         
         #sql
         if(!is.null(data_props$sql)){
-          self$setSql(data_props$sql$values[[1]])
+          sql <- paste(data_props$sql$values, collapse=",")
+          self$setSql(sql)
         }
         
         #cql filter
@@ -217,8 +218,8 @@ geoflow_data <- R6Class("geoflow_data",
           }
           #check and set parameter
           for(param in params){
-            if(length(param$values)!=3){
-              stop("Parameter definition should be compound by 3 elements: fieldname (with alias), regexp and default value")
+            if(length(param$values)!=4){
+              stop("Parameter definition should be compound by 4 elements: fieldname, alias, regexp and default value")
             }
             fieldname <- param$values[[1]]
             param_alias <- attr(fieldname, "description")
@@ -229,7 +230,7 @@ geoflow_data <- R6Class("geoflow_data",
             self$setParameter(param_alias, fieldname, regexp, defaultvalue)
           }
           #check compliance of dbquery
-          sqlquery <- self$source
+          sqlquery <- self$sql
           #with fieldnames
           if(!all(sapply(self$parameters, function(x){regexpr(x$fieldname,sqlquery)>0}))){
             stop("At least one parameter fieldname declared is not used in the data source query!")
