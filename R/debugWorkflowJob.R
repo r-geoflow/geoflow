@@ -28,6 +28,7 @@ debugWorkflow <- function(file, entityIndex = 1,
   
   #1. Init the workflow based on configuration file
   config <- initWorkflow(file)
+  assign("config", config, envir = .GlobalEnv)
   
   #2. Inits workflow job (create directories)
   jobdir <- initWorkflowJob(config)
@@ -36,6 +37,7 @@ debugWorkflow <- function(file, entityIndex = 1,
   #entities
   entities <- config$getEntities()
   entity <- entities[[entityIndex]]
+  assign("entity", entity, envir = .GlobalEnv)
 
   #run software actions?
   if(runSoftwareActions){
@@ -74,6 +76,7 @@ debugWorkflow <- function(file, entityIndex = 1,
             entity_action <- entity$data$actions[[i]]
             config$logger.info(sprintf("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script))
             entity_action$fun(entity, config, entity_action$options)
+            assign("options", entity_action$options, envir = .GlobalEnv)
           }
           #we trigger entity enrichment (in case entity data action involved modification of entity)
           entity$enrichWithMetadata()
@@ -83,8 +86,4 @@ debugWorkflow <- function(file, entityIndex = 1,
       }
     }
   }
-  
-  assign("config", config, envir = .GlobalEnv)
-  assign("entity", entity, envir = .GlobalEnv)
-  
 }
