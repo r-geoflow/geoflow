@@ -182,11 +182,15 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   #build layer
   layer <- GSLayer$new()
   layer$setName(layername)
-  for(i in 1:length(entity$data$styles)){
-    style <- entity$data$styles[i]
-    if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
+  if(length(entity$data$styles)>0){
+    for(i in 1:length(entity$data$styles)){
+      style <- entity$data$styles[i]
+      if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
+    }
+  }else{
+    layer$setDefaultStyle("generic")
   }
-  
+
   #publish
   try(GS$unpublishLayer(workspace, datastore, layername))
   out <- GS$publishLayer(workspace, datastore, featureType, layer)
