@@ -1083,7 +1083,10 @@ geoflow_entity <- R6Class("geoflow_entity",
             }
             action_options <- self$data$actions[[1]]$options
             for(optname in names(action_options)){
-              outdata <- paste0(outdata, sprintf("action_option_%s:%s", optname, action_options[[optname]]),
+              optvalue <- action_options[[optname]]
+              if(length(optvalue)>0) optvalue <- paste0(optvalue, collapse=",")
+              if(is.logical(optvalue)) optvalue <- tolower(as.character(optvalue))
+              outdata <- paste0(outdata, sprintf("action_option_%s:%s", optname, optvalue),
                                 line_separator)
             }
           }
