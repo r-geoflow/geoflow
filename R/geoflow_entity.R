@@ -1043,7 +1043,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           if(length(self$data$parameters)>0){
             out_params <- paste0(sapply(names(self$data$parameters), function(paramName){
               param <- self$data$parameters[[paramName]]
-              out_param <- paste0("parameter:", paramName, ",", param$fieldname, ",", param$regexp, ",", param$defaultValue)
+              out_param <- paste0("parameter:", paramName, ",", param$fieldname, ",", param$regexp, ",", param$defaultvalue)
               return(out_param)
             }),collapse=line_separator)
             outdata <- paste0(outdata, out_params,line_separator)
