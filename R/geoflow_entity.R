@@ -927,7 +927,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           return(outsubj)
         }),collapse=line_separator),
         #Contact
-        Contact = paste0(sapply(unique(sapply(self$contacts, function(contact){contact$role})),function(role){
+        Creator = paste0(sapply(unique(sapply(self$contacts, function(contact){contact$role})),function(role){
           role_contacts <- self$contacts[sapply(self$contacts, function(x){x$role == role})]
           outrole <- paste(role, paste0(sapply(role_contacts, function(role_c){return(role_c$id)}),collapse=","), sep=":")
           return(outrole)
