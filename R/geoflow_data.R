@@ -218,8 +218,8 @@ geoflow_data <- R6Class("geoflow_data",
           }
           #check and set parameter
           for(param in params){
-            if(length(param$values)!=4){
-              stop("Parameter definition should be compound by 4 elements: fieldname, alias, regexp and default value")
+            if(length(param$values)!=3){
+              stop("Parameter definition should be compound by 3 elements: fieldname, alias, regexp and default value")
             }
             fieldname <- param$values[[1]]
             param_alias <- attr(fieldname, "description")
