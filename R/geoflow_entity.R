@@ -1043,13 +1043,14 @@ geoflow_entity <- R6Class("geoflow_entity",
           if(length(self$data$parameters)>0){
             out_params <- paste0(sapply(names(self$data$parameters), function(paramName){
               param <- self$data$parameters[[paramName]]
-              out_param <- paste0("parameter:", paramName, ",", param$fieldname, ",", param$regexp, ",", param$defaultvalue)
+              out_param <- paste0("parameter:", param$fieldname, "[", paramName, "],", param$regexp, ",", param$defaultvalue)
               return(out_param)
             }),collapse=line_separator)
             outdata <- paste0(outdata, out_params,line_separator)
           }
-          if(!is.null(self$data$geometryField)) outdata <- paste0(outdata, "geometryField:", self$data$geometryField, line_separator)
-          if(!is.null(self$data$geometryType)) outdata <- paste0(outdata, "geometryType:", self$data$geometryType, line_separator)
+          if(!is.null(self$data$geometryField) && !is.null(self$data$geometryType)){
+            outdata <- paste0(outdata, "geometry:", self$data$geometryField, ",", self$data$geometryType, line_separator)
+          }
           if(length(self$data$attributes)>0) {
             out_attrs <- paste0(sapply(self$data$attributes, function(attribute){
               uri <- attr(attribute, "uri")
@@ -1081,6 +1082,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               if(!is.null(action$script)) out_act <- paste0(out_act, "@", action$script)
               outdata <- paste0(outdata, out_act, line_separator)
             }
+            outdata <- paste0(outdata, "run:", tolower(as.character(self$data$run)), line_separator)
             action_options <- self$data$actions[[1]]$options
             for(optname in names(action_options)){
               optvalue <- action_options[[optname]]
