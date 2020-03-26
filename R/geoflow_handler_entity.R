@@ -258,7 +258,7 @@ handle_entities_dbi <- function(config, source){
       stop(errMsg)
     }
   }else{
-    source <- try(DBI::dbReadTable(dbi, source))
+    source <- try(DBI::dbGetQuery(dbi, sprintf("select * from %s", source)))
     if(class(source)=="try-error"){
       errMsg <- sprintf("Error while trying to read DB table/view '%s'. Check if it exists in DB.", source)
       config$logger.error(errMsg)
