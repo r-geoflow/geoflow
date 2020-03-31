@@ -108,6 +108,7 @@ geoflow_data <- R6Class("geoflow_data",
   ),
   public = list(
     source = NULL,
+    sourceSql = NULL,
     sourceType = "other",
     sourceZip = FALSE,
     sourceZipOnly = FALSE,
@@ -124,6 +125,8 @@ geoflow_data <- R6Class("geoflow_data",
     parameters = list(),
     geometryField = NULL,
     geometryType = NULL,
+    featureType = NULL,
+    featureTypeObj = NULL,
     attributes = NULL,
     variables = NULL,
     actions = list(),
@@ -265,6 +268,10 @@ geoflow_data <- R6Class("geoflow_data",
         datastores <- data_props[sapply(data_props, function(x){x$key=="datastore"})]
         if(length(datastores)>0) self$setDatastore(datastores[[1]]$values[[1]])
         
+        #feature type
+        fts <- data_props[sapply(data_props, function(x){x$key=="featuretype"})]
+        if(length(fts)>0) self$setFeatureType(fts[[1]]$values[[1]])
+        
         #attributes
         attributes <- data_props[sapply(data_props, function(x){x$key=="attribute"})]
         get_attributes = list()
@@ -348,6 +355,11 @@ geoflow_data <- R6Class("geoflow_data",
     setSource = function(source){
       if(!is(source, "list")) source <- list(source)
       self$source <- source
+    },
+    
+    #setSourceSql
+    setSourceSql = function(sourceSql){
+      self$sourceSql <- sourceSql
     },
     
     #setSourceZip
@@ -438,6 +450,16 @@ geoflow_data <- R6Class("geoflow_data",
     #setGeometryType
     setGeometryType = function(geometryType){
       self$geometryType <- geometryType
+    },
+    
+    #setFeatureType
+    setFeatureType = function(featureType){
+      self$featureType = featureType
+    },
+    
+    #setFeatureTypeObj
+    setFeatureTypeObj = function(featureTypeObj){
+      self$featureTypeObj = featureTypeObj
     },
     
     #setAttributes

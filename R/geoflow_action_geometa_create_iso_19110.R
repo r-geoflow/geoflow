@@ -12,6 +12,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
   
   #options
   doi <- if(!is.null(options$doi)) options$doi else FALSE
+  exclude_values_for <- if(!is.null(options$exclude_values_for)) options$exclude_values_for else list()
   
   #feature catalogue creation
   #-----------------------------------------------------------------------------------------------------
@@ -112,26 +113,27 @@ geometa_create_iso_19110 <- function(entity, config, options){
   ft$setCode(layername)
   ft$setIsAbstract(FALSE)
   
-  add_all_attrs <- TRUE
-  if(length(entity$data$attributes)>0 | length(entity$data$variables)>0) add_all_attrs <- FALSE
-  
   for(featureAttrName in colnames(features)){
-    
+
     fat_attr_register <- NULL
     
     #create attribute
     fat <- ISOFeatureAttribute$new()
-    #name
+    #default name (from data)
     memberName <- featureAttrName
-    fat_attrs <- entity$data$attributes[unlist(entity$data$attributes) == featureAttrName]
-    if(length(fat_attrs)>0){
-      fat_attr_desc <- attr(fat_attrs[[1]], "description")
-      fat_attr_uri <- attr(fat_attrs[[1]], "uri")
-      if(!is.null(fat_attr_uri)){
+    
+    fat_attr <- NULL
+    fat_attr_desc <- NULL
+    fto <- entity$data$featureTypeObj
+    if(!is.null(fto)) fat_attr <- fto$getMemberById(featureAttrName)
+    if(!is.null(fat_attr)){
+      fat_attr_desc <- fat_attr$name
+      registerId <- fat_attr$registerId
+      if(!is.null(registerId)) if(!is.na(registerId)){
         registers <- config$registers
-        registers <- registers[sapply(registers, function(x){x$id == fat_attr_uri})]
+        registers <- registers[sapply(registers, function(x){x$id == registerId})]
         if(length(registers)==0){
-          warnMsg <- sprintf("Unknown register '%s'. Ignored for creating feature catalogue", fat_attr_uri)
+          warnMsg <- sprintf("Unknown register '%s'. Ignored for creating feature catalogue", registerId)
           config$logger.warn(warnMsg)
         }else{
           fat_attr_register <- registers[[1]]
@@ -139,28 +141,28 @@ geometa_create_iso_19110 <- function(entity, config, options){
       }
       if(!is.null(fat_attr_desc)) memberName <- fat_attr_desc
     }
-    fat_vars <- entity$data$variables[unlist(entity$data$variables) == featureAttrName]
-    if(length(fat_vars)>0){
-      fat_var_desc <- attr(fat_vars[[1]], "description")
-      if(!is.null(fat_var_desc)) memberName <- fat_var_desc
-    }
     fat$setMemberName(memberName)
-    #type (definition) -> attribute or variable
-    fat_def <- "attribute" #default definition
-    if(featureAttrName %in% entity$data$variables) fat_def <- "variable"
-    fat$setDefinition(fat_def)
+    fat$setDefinition(fat_attr$def)
     fat$setCardinality(lower=1,upper=1)
     #code
     fat$setCode(featureAttrName)
     
     #add listed values
-    featureAttrValues <- features[,featureAttrName][[1]]
+    featureAttrValues <- switch(class(features)[1],
+        "sf" = features[,featureAttrName][[1]],
+        "data.frame" = features[,featureAttrName]
+    )
     addValues <- TRUE
     if(is(featureAttrValues, "sfc")){
       addValues <- FALSE
+    }else if(featureAttrName %in% exclude_values_for){
+      addValues <- FALSE
     }else{
-      if(!add_all_attrs & !(featureAttrName %in% entity$data$attributes)) addValues <- FALSE
-      if(featureAttrName %in% entity$data$variables) addValues <- FALSE
+      if(is.null(fat_attr)){
+        addValues <- FALSE
+      }else{
+        if(fat_attr$type == "variable") addValues <- FALSE
+      }
     }
     if(addValues){
       featureAttrValues <- unique(featureAttrValues)
@@ -176,18 +178,16 @@ geometa_create_iso_19110 <- function(entity, config, options){
               val$setDefinition(reg_item[1L, "definition"])
             }else{
               val$setLabel(featureAttrValue)
-              val$setDefinition(featureAttrValue)
             }
           }else{
             val$setLabel(featureAttrValue)
-            val$setDefinition(featureAttrValue) 
           }
           fat$listedValue <- c(fat$listedValue, val)
         }
       }
     }
       
-    #add type
+    #add primitive type + data type (attribute or variable) as valueType
     fat_type <- switch(class(featureAttrValues)[1],
       "integer" = "xsd:int",
       "numeric" = "xsd:decimal",
@@ -202,7 +202,8 @@ geometa_create_iso_19110 <- function(entity, config, options){
       "sfc_POLYGON" = "gml:PolygonPropertyType",
       "sfc_MULTIPOLYGON" = "gml:MultiPolygonPropertyType"
     )
-    fat$setValueType(fat_type)
+    fat_type_anchor <- ISOAnchor$new(name = fat_type, href = fat_attr$type)
+    fat$setValueType(fat_type_anchor)
     
     #add feature attribute as carrierOfCharacteristic
     ft$carrierOfCharacteristics <- c(ft$carrierOfCharacteristics, fat)

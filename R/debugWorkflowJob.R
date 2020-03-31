@@ -66,6 +66,14 @@ debugWorkflow <- function(file, entityIndex = 1,
   
   #copy data?
   if(copyData) entity$copyDataToJobDir(config)
+
+  #enrich metadata with dynamic properties
+  if(!is.null(entity$data)){
+    #data features
+    entity$enrichWithFeatures(config)
+    #data relations (eg. geosapi & OGC data protocol online resources)
+    entity$enrichWithRelations(config)
+  }
   
   #runLocalActions?
   if(runLocalActions){

@@ -313,19 +313,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         if(isSourceUrl && is.null(self$data$features)){
           #case where data is remote and there was no data enrichment in initWorkflow
           warnMsg <- "Copying data from URL to Job data directory!"
-          config$logger.warn(warnMsg)
-          googledrive_baseurl <- "https://drive.google.com/open?id="
-          if(startsWith(datasource_file, googledrive_baseurl)){
-            #managing download through google drive
-            config$logger.info("Downloading file using Google Drive R interface")
-            drive_id <- unlist(strsplit(datasource_file, "id="))[2]
-            drive_id <- unlist(strsplit(drive_id, "&export"))[1] #control in case export param is appended
-            googledrive::drive_download(file = googledrive::as_id(drive_id), path = paste(basefilename, datasource_ext, sep="."))
-          }else{
-            #classic download
-            config$logger.info("Downloading file using standard R download")
-            download.file(datasource_file, destfile = paste(basefilename, datasource_ext, sep="."), mode = "wb")
-          }
+          download_file(datasource_file, paste(basefilename, datasource_ext, sep="."))
         }else{
           if(is.null(self$data$features)){
             config$logger.info("Copying data local file(s) to Job data directory!")
@@ -450,17 +438,7 @@ geoflow_entity <- R6Class("geoflow_entity",
              if(isSourceUrl){
                warnMsg <- "Downloading remote data from URL to temporary geoflow temporary data directory!"
                config$logger.warn(warnMsg)
-               googledrive_baseurl <- "https://drive.google.com/open?id="
-               if(startsWith(datasource_file, googledrive_baseurl)){
-                 #managing download through google drive
-                 config$logger.info("Downloading file using Google Drive R interface")
-                 drive_id <- unlist(strsplit(datasource_file, "id="))[2]
-                 drive_id <- unlist(strsplit(drive_id, "&export"))[1] #control in case export param is appended
-                 googledrive::drive_download(file = googledrive::as_id(drive_id), path = trgFilename)
-               }else{
-                 #classic download
-                 download.file(datasource_file, destfile = trgFilename, mode = "wb")
-               }
+               download_file(datasource_file, trgFilename)
                unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
                shpExists <- TRUE
              }else{
@@ -605,7 +583,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 if(isSourceUrl){
                   warnMsg <- "Downloading remote SQL file from URL to temporary geoflow temporary data directory!"
                   config$logger.warn(warnMsg)
-                  download.file(datasource_file, destfile = trgFilename, mode = "wb")
+                  download_file(datasource_file, trgFilename)
                   sqlFileExists <- TRUE
                 }else{
                   data.files <- list.files(path = dirname(datasource_file), pattern = datasource_name)
@@ -622,10 +600,10 @@ geoflow_entity <- R6Class("geoflow_entity",
                 config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
                 sql <- paste(readLines(sqlfile), collapse="")
                 config$logger.info(sql)
-                self$data$setSql(sql)
+                self$data$setSourceSql(sql)
                 unlink(sqlfile)
               }else{
-                if(is.null(self$data$sql)){
+                if(is.null(self$data$sourceSql)){
                   warnMsg <- sprintf("No SQL file nor 'sql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
                   config$logger.warn(warnMsg)
                   return(FALSE)
@@ -634,13 +612,12 @@ geoflow_entity <- R6Class("geoflow_entity",
               
               DBI <- config$software$input$dbi
               if(!is.null(DBI)){
-                sf.data <- try(sf::st_read(DBI, query = self$data$sql))
+                sf.data <- try(sf::st_read(DBI, query = self$data$sourceSql))
                 if(!is.null(sf.data)){
                   if(class(sf.data)[1]=="try-error"){
-                    errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", self$data$sql)
+                    errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", self$data$sourceSql)
                     config$logger.error(errMsg)
                     return(FALSE)
-                    
                   }
                   #we try to apply the cql filter specified as data property
                   if(!is.null(self$data$cqlfilter)){

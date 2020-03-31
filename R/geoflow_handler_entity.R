@@ -188,19 +188,57 @@ handle_entities_df <- function(config, source){
       if(data != ""){
         data_obj <- geoflow_data$new(str = data)
         entity$setData(data_obj)
+        
+        #check existence of feature type in dictionary
+        dict = config$getDictionary()
+        if(!is.null(dict)){
+          featureTypeObj <- dict$getFeatureTypeById(id = entity$data$featureType)
+          if(is.null(featureTypeObj)){
+            config$logger.warn(sprintf("No featuretype '%s' declared in dictionary!", entity$data$featureType))
+          }else{
+            entity$data$setFeatureTypeObj(featureTypeObj)
+          }
+        }
+        
+        #build featuretype for attributes/variables if declared
+        if(length(entity$data$attributes)>0 | length(entity$data$attributes)>0){
+          featureTypeObj <- geoflow_featuretype$new(id = entity$identifiers[["id"]])
+          if(length(entity$data$attributes)>0){
+            for(attribute in entity$data$attributes){
+              attr_desc <- attr(attribute,"description")
+              attr_handler <- attr(attribute, "uri")
+              attributes(attribute) <- NULL
+              member <- geoflow_featuremember$new(
+                type = "attribute",
+                code = attribute,
+                name = attr_desc,
+                def = NA,
+                defSource = NA,
+                registerId = attr_handler
+              )
+              featureTypeObj$addMember(member)
+            }
+          }
+          if(length(entity$data$variables)>0){
+            for(variable in entity$data$variables){
+              var_desc <- attr(variable,"description")
+              var_handler <- attr(variable, "uri")
+              attributes(variable) <- NULL
+              member <- geoflow_featuremember$new(
+                type = "variable",
+                code = variable,
+                name = var_desc,
+                def = NA,
+                defSource = NA,
+                registerId = var_handler
+              )
+              featureTypeObj$addMember(member)
+            }
+          }
+          entity$data$setFeatureTypeObj(featureTypeObj)
+        }
       }
     }
-    
-    #enrich metadata with dynamic properties
-    if(!is.null(entity$data)){
-      #data features
-      entity$enrichWithFeatures(config)
-      #data relations (eg. geosapi & OGC data protocol online resources)
-      entity$enrichWithRelations(config)
-    }
-    
-    #enrich entities with metadata (other properties)
-    entity$enrichWithMetadata(config)
     
     entities <- c(entities, entity)
   }

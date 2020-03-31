@@ -42,8 +42,8 @@ geoflow_register <- R6Class("geoflow_register",
     },
     
     #check
-    fetch = function(){
-      fetched <- self$fun()
+    fetch = function(config = NULL){
+      fetched <- self$fun(config)
       if(inherits(fetched, "try-error")){
         stop(sprintf("Unexpected error while fetching register '%s. Check the register function", self$id))
       }

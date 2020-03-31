@@ -148,10 +148,47 @@ initWorkflow <- function(file){
     }
   }
   
+  config_registers <- config$registers #store eventual config$registers
+  
+  #loading dictionnary
+  #metadata elements
+  if(!is.null(config$metadata)){
+    config$metadata$content <- list()
+    
+    #metadata dictionary
+    cfg_md_dictionary <- config$metadata$dictionary
+    if(!is.null(cfg_md_dictionary)){
+      config$logger.info("Loading data dictionary...")
+      md_dict_handler <- loadHandler(config, "dictionary")
+      config$logger.info("Execute handler to load dictionary...")
+      dictionary <- md_dict_handler(config, source = cfg_md_dictionary$source)
+      
+      if(!is(dictionary, "geoflow_dictionary")){
+        errMsg <- "The output of the dictionary handler should return an object of class 'geoflow_dictionary'"
+        config$logger.error(errMsg)
+        stop(errMsg)
+      }
+      
+      #keep source dictionary part of the config
+      config$src_dictionary <- dictionary$source
+      
+      config$logger.info("Successfuly fetched dictionary !")
+      config$metadata$content$dictionary <- dictionary
+      #add function to get them easily
+      config$getDictionary <- function(){
+        return(config$metadata$content$dictionary)
+      }
+      
+      config$registers <- dictionary$getRegisters()
+      
+    }
+  }
+  
   #registers
-  if(!is.null(config$registers)){
+  #registers can be configured either through config or through dictionnary
+  if(!is.null(config_registers)){
     fetched_registers <- list()
-    for(reg in config$registers){
+    for(reg in config_registers){
       register_to_fetch <- NULL
       isCustom <- FALSE
       if(!is.null(reg$script)){
@@ -189,16 +226,20 @@ initWorkflow <- function(file){
           fun = customfun
         )
       }
-      if(!is.null(register_to_fetch)) register_to_fetch$fetch()
-      fetched_registers <- c(fetched_registers, register_to_fetch)
+      if(!is.null(register_to_fetch)) register_to_fetch$fetch(config)
+      
+      if(!(reg$id %in% sapply(fetched_registers, function(x){x$id}))){
+        fetched_registers <- c(fetched_registers, register_to_fetch)
+      }
+      
     }
-    config$registers <- fetched_registers
+    config$registers <- c(config$registers, fetched_registers)
   }
   
   #metadata elements
   if(!is.null(config$metadata)){
     config$logger.info("Loading metadata elements...")
-    config$metadata$content <- list()
+    if(is.null(config$metadata$content)) config$metadata$content <- list()
     
     #metadata contacts
     cfg_md_contacts <- config$metadata$contacts
@@ -400,7 +441,7 @@ loadHandler <- function(config, elem){
 
   h <- config_md_elem$handler
   if(is.null(h)){
-    errMsg <- "Missing 'handler' for metadata contacts (default handler id, or function name from custom script)"
+    errMsg <- sprintf("Missing 'handler' for metadata '%s' (default handler id, or function name from custom script)", elem)
     config$logger.error(errMsg)
     stop(errMsg)
   }
@@ -412,7 +453,8 @@ loadHandler <- function(config, elem){
     #in case handler id is specified
     md_default_handlers <- switch(elem,
       "contacts" = list_contact_handlers(raw=TRUE),
-      "entities" = list_entity_handlers(raw=TRUE)
+      "entities" = list_entity_handlers(raw=TRUE),
+      "dictionary" = list_dictionary_handlers(raw=TRUE)
     )
     md_default_handler_ids <- sapply(md_default_handlers, function(x){x$id})
     if(!(h %in% md_default_handler_ids)){

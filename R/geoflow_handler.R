@@ -192,3 +192,74 @@ list_entity_handlers <- function(raw = FALSE){
   return(handlers)
 }
 
+#' @name register_dictionary_handlers
+#' @aliases register_dictionary_handlers
+#' @title register_dictionary_handlers
+#' @description \code{register_dictionary_handlers} registers the default dictionary handlers for geoflow
+#'
+#' @usage register_dictionary_handlers()
+#' 
+#' @note Internal function called on load by geoflow
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+register_dictionary_handlers <- function(){
+  handlers <- list(
+    geoflow_handler$new(
+      id = "csv",
+      def = "Handle dictionary from a CSV file",
+      fun = handle_dictionary_csv
+    ),
+    geoflow_handler$new(
+      id = "excel",
+      def = "Handle dictionary from a Microsoft Excel (xls,xlsx) file",
+      fun = handle_dictionary_excel
+    ),
+    geoflow_handler$new(
+      id = "gsheet",
+      def = "Handle dictionary from a Google spreadsheet",
+      fun = handle_dictionary_gsheet
+    ),
+    geoflow_handler$new(
+      id = "dbi",
+      def = "Handle dictionary from a DB source",
+      fun = handle_dictionary_dbi
+    )
+  )
+  .geoflow$dictionary_handlers <- handlers
+}
+
+#' @name list_dictionary_handlers
+#' @aliases list_dictionary_handlers
+#' @title list_dictionary_handlers
+#' @description \code{list_dictionary_handlers} lists the dictionary handlers supported by geoflow.
+#'
+#' @usage list_dictionary_handlers(raw)
+#' 
+#' @param raw Default value is \code{FALSE}, meaning the handlers will be listed as
+#' \code{data.frame}. The output If \code{TRUE} the raw list of \link{geoflow_handler} 
+#' is returned.
+#' 
+#' @return an object of class \code{data.frame} (or \code{list} of \link{geoflow_handler} if raw = FALSE)
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+list_dictionary_handlers <- function(raw = FALSE){
+  handlers <- .geoflow$dictionary_handlers 
+  if(raw){
+    return(handlers)
+  }else{
+    handlers <- do.call("rbind", lapply(handlers, function(handler){
+      return(data.frame(
+        id = handler$id,
+        definition = handler$def,
+        stringsAsFactors = FALSE
+      ))
+    }))
+  }
+  return(handlers)
+}
+
+

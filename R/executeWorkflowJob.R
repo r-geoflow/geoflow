@@ -109,6 +109,17 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           #if entity has data we copy data to job data dir
           if(!is.null(entity$data) & !skipFileDownload) entity$copyDataToJobDir(config, jobdir)
           
+          #enrich metadata with dynamic properties
+          if(!is.null(entity$data)){
+            #data features
+            entity$enrichWithFeatures(config)
+            #data relations (eg. geosapi & OGC data protocol online resources)
+            entity$enrichWithRelations(config)
+          }
+          
+          #enrich entities with metadata (other properties)
+          entity$enrichWithMetadata(config)
+          
           #run sequence of entity data actions (if any)
           if(!is.null(entity$data)) {
             if(entity$data$run){
@@ -146,6 +157,8 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             act_options$depositWithFiles <- TRUE
             zen_action$fun(entity, config, act_options)
           }
+          
+          entity$data$features <- NULL
         }
         
         #in case Zenodo was enabled, we create an output table of DOIs & export altered source entities

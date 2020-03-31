@@ -11,6 +11,7 @@
   #embedded handlers
   register_contact_handlers()
   register_entity_handlers()
+  register_dictionary_handlers()
   
   #software
   register_software()

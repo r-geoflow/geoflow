@@ -330,3 +330,27 @@ enrich_text_from_entity = function(str, entity){
   }
   return(outstr)
 }
+
+#' @name download_file
+#' @aliases download_file
+#' @title download_file
+#' @description \code{download_file} downloads the file. Depending on the storage,
+#' different download strategies will be applied, e.g. Google drive file.
+#'
+#' @usage download_file(url, filename)
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+download_file <- function(url, filename){
+  googledrive_baseurl <- "https://drive.google.com/open?id="
+  if(startsWith(url, googledrive_baseurl)){
+    #managing download through google drive
+    drive_id <- unlist(strsplit(url, "id="))[2]
+    drive_id <- unlist(strsplit(drive_id, "&export"))[1] #control in case export param is appended
+    googledrive::drive_download(file = googledrive::as_id(drive_id), path = filename)
+  }else{
+    #classic download
+    download.file(datasource_file, destfile = filename, mode = "wb")
+  }
+}
