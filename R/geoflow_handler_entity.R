@@ -190,7 +190,7 @@ handle_entities_df <- function(config, source){
         entity$setData(data_obj)
         
         #check existence of feature type in dictionary
-        dict = config$getDictionary()
+        dict = config$metadata$content$dictionary
         if(!is.null(dict)){
           featureTypeObj <- dict$getFeatureTypeById(id = entity$data$featureType)
           if(is.null(featureTypeObj)){
