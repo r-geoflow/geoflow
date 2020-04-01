@@ -13,6 +13,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
   #options
   doi <- if(!is.null(options$doi)) options$doi else FALSE
   exclude_values_for <- if(!is.null(options$exclude_values_for)) options$exclude_values_for else list()
+  extra_columns <- if(!is.null(options$extra_columns)) options$extra_columns else list()
   
   #feature catalogue creation
   #-----------------------------------------------------------------------------------------------------
@@ -113,7 +114,8 @@ geometa_create_iso_19110 <- function(entity, config, options){
   ft$setCode(layername)
   ft$setIsAbstract(FALSE)
   
-  for(featureAttrName in colnames(features)){
+  columns <- c(colnames(features), unlist(extra_columns))
+  for(featureAttrName in columns){
 
     fat_attr_register <- NULL
     
@@ -148,10 +150,15 @@ geometa_create_iso_19110 <- function(entity, config, options){
     fat$setCode(featureAttrName)
     
     #add listed values
-    featureAttrValues <- switch(class(features)[1],
-        "sf" = features[,featureAttrName][[1]],
-        "data.frame" = features[,featureAttrName]
-    )
+    if(featureAttrName %in% colnames(features)){
+      featureAttrValues <- switch(class(features)[1],
+          "sf" = features[,featureAttrName][[1]],
+          "data.frame" = features[,featureAttrName]
+      )
+    }else{
+      featureAttrValues <- fat_attr_register$data$code
+    }
+    
     addValues <- TRUE
     if(is(featureAttrValues, "sfc")){
       addValues <- FALSE
@@ -202,7 +209,9 @@ geometa_create_iso_19110 <- function(entity, config, options){
       "sfc_POLYGON" = "gml:PolygonPropertyType",
       "sfc_MULTIPOLYGON" = "gml:MultiPolygonPropertyType"
     )
-    fat_type_anchor <- ISOAnchor$new(name = fat_type, href = fat_attr$type)
+    fat_type <- "attribute"
+    if(!is.null(fat_attr)) fat_type <- fat_attr$type
+    fat_type_anchor <- ISOAnchor$new(name = fat_type, href = fat_type)
     fat$setValueType(fat_type_anchor)
     
     #add feature attribute as carrierOfCharacteristic
