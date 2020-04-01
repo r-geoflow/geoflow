@@ -25,12 +25,16 @@ handle_dictionary_df <- function(config, source){
     rowNb <- nrow(ft_df)
     for(i in 1:rowNb){
       ftm <- ft_df[i,]
+      defSource <- ftm$DefinitionSource
+      if(!is.na(defSource)){
+        defSource <- extract_kvp(paste0("str:",defSource))$values[[1]]
+      }
       member <- geoflow_featuremember$new(
         type = ftm$MemberType,
         code = ftm$MemberCode,
         name = ftm$MemberName,
         def = ftm$Definition,
-        defSource = ftm$DefinitionSource,
+        defSource = defSource,
         registerId = ftm$RegisterId
       )
       featuretype$addMember(member)
