@@ -291,6 +291,19 @@ register_software <- function(){
       )
     ),
     #-------------------------------------------------------------------------------------------------------
+    #GOOGLE DRIVE
+    #-------------------------------------------------------------------------------------------------------    
+    geoflow_software$new(
+      software_type = "googledrive",
+      definition = "Google Drive access powered by 'googledrive' package",
+      handler = googledrive::drive_auth,
+      arguments = list(
+        email = list(def = "User email to authenticate in Google Drive"),
+        path = list(def = "An optional path within the Google drive repository. Default will be the root"),
+        token = list(def = "The user authentication token. To get your token in R: gargle::token_fetch()$credentials$access_token")
+      )
+    ),
+    #-------------------------------------------------------------------------------------------------------
     #OGC WFS
     #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(

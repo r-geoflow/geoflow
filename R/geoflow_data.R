@@ -269,7 +269,7 @@ geoflow_data <- R6Class("geoflow_data",
         if(length(datastores)>0) self$setDatastore(datastores[[1]]$values[[1]])
         
         #feature type
-        fts <- data_props[sapply(data_props, function(x){x$key=="featuretype"})]
+        fts <- data_props[sapply(data_props, function(x){x$key=="featureType"})]
         if(length(fts)>0) self$setFeatureType(fts[[1]]$values[[1]])
         
         #attributes

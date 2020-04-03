@@ -192,9 +192,14 @@ handle_entities_df <- function(config, source){
         #check existence of feature type in dictionary
         dict = config$metadata$content$dictionary
         if(!is.null(dict)){
-          featureTypeObj <- dict$getFeatureTypeById(id = entity$data$featureType)
+          ft <- entity$data$featureType
+          if(is.null(entity$data$featureType)){
+            config$logger.warn("No data featureType declared. Set feature type to dataset identifier")
+            ft <- entity$identifiers[["id"]]
+          }
+          featureTypeObj <- dict$getFeatureTypeById(id = ft)
           if(is.null(featureTypeObj)){
-            config$logger.warn(sprintf("No featuretype '%s' declared in dictionary!", entity$data$featureType))
+            config$logger.warn(sprintf("No featuretype '%s' declared in dictionary!", ft))
           }else{
             entity$data$setFeatureTypeObj(featureTypeObj)
           }
