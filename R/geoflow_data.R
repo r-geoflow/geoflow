@@ -103,10 +103,12 @@
 #'
 geoflow_data <- R6Class("geoflow_data",
   private = list(
+    supportedAccessValues = c("default", "googledrive"),
     supportedSourceTypes = c("dbtable", "dbview", "dbquery","shp", "other"),
     supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "other")
   ),
   public = list(
+    access = "default",
     source = NULL,
     sourceSql = NULL,
     sourceType = "other",
@@ -138,6 +140,11 @@ geoflow_data <- R6Class("geoflow_data",
           return(extract_kvp(data_prop))
         })
         names(data_props) <- sapply(data_props, function(x){x$key})
+        
+        #access to use for reaching sources
+        if(!is.null(data_props$access)){
+          self$setAccess(data_props$access$values[[1]]) 
+        }
         
         #source
         if(!any(sapply(data_props, function(x){x$key=="source"}))){
@@ -335,6 +342,20 @@ geoflow_data <- R6Class("geoflow_data",
           }
         }
       }
+    },
+    
+    #getAllowedSourceValues
+    getAllowedSourceValues = function(){
+      return(private$supportedAccessValues)
+    },
+    
+    #setAccess
+    setAccess = function(access){
+      if(!(access %in% private$supportedAccessValues)){
+        errMsg <- sprintf("Access should be among values [%s]", paste0(private$supportedAccessValues, collapse=","))
+        stop(errMsg)
+      }
+      self$access <- access
     },
     
     #getAllowedSourceTypes

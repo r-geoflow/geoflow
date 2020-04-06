@@ -288,6 +288,14 @@ geoflow_entity <- R6Class("geoflow_entity",
         datasource_name <- datasource_parts[1]
         datasource_ext <- ifelse(length(datasource_parts)>1, datasource_parts[2], "zip") #TODO to see to improve that
         datasource_file <- attr(datasource, "uri")
+        if(is.null(datasource_file) && self$data$access == "googledrive"){
+          config$logger.info(sprintf("Google Drive access - resolve dataset ID for '%s'", datasource))
+          gdr <- googledrive::drive_get(datasource)
+          if(!is.null(gdr)){
+            config$logger.info(sprintf("Resolved ID: %s", gdr$id[1]))
+            datasource_file <- paste0("https://drive.google.com/open?id=", gdr$id[1])
+          }
+        }
         attributes(datasource) <- NULL
         
         
@@ -410,6 +418,14 @@ geoflow_entity <- R6Class("geoflow_entity",
       datasource <- self$data$source[[1]]
       datasource_name <- unlist(strsplit(datasource, "\\."))[1]
       datasource_file <- attr(datasource, "uri")
+      if(is.null(datasource_file) && self$data$access == "googledrive"){
+        config$logger.info(sprintf("Google Drive access - resolve dataset ID for '%s'", datasource))
+        gdr <- googledrive::drive_get(datasource)
+        if(!is.null(gdr)){
+          config$logger.info(sprintf("Resolved ID: %s", gdr$id[1]))
+          datasource_file <- paste0("https://drive.google.com/open?id=", gdr$id[1])
+        }
+      }
       attributes(datasource) <- NULL
       
       types_without_file <- c("dbtable","dbview","dbquery")
