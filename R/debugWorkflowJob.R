@@ -28,11 +28,11 @@ debugWorkflow <- function(file, entityIndex = 1,
   
   #1. Init the workflow based on configuration file
   config <- initWorkflow(file)
-  assign("config", config, envir = .GlobalEnv)
   
   #2. Inits workflow job (create directories)
   jobdir <- initWorkflowJob(config)
   config$job <- jobdir
+  assign("config", config, envir = .GlobalEnv)
   
   #entities
   entities <- config$getEntities()
