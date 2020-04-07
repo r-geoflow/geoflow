@@ -99,6 +99,8 @@ extract_kvp <- function(str){
       des <- substr(des, 1, nchar(des)-1)
       if(startsWith(des, "\"") && endsWith(des, "\"")) des <- substr(des, 2, nchar(des)-1)
       attr(value, "description") <- des
+    }else{
+      if(startsWith(value, "\"") && endsWith(value, "\"")) value <- substr(value, 2, nchar(value)-1)
     }
     
     return(value)
