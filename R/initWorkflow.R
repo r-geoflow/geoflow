@@ -404,7 +404,7 @@ initWorkflow <- function(file){
           }
           if(!("options" %in% funparams)){
             config$logger.warn(sprintf("Custom action arguments: [%s]", paste(funparams, collapse=",")))
-            errMsg <- sprintf("Missing parameter 'opts' in function '%s'", action$id)
+            errMsg <- sprintf("Missing parameter 'options' in function '%s'", action$id)
             config$logger.error(errMsg)
             stop(errMsg)
           }
@@ -412,14 +412,16 @@ initWorkflow <- function(file){
             id = action$id,
             type = action$type,
             def = action$def,
-            fun = customfun
+            fun = customfun,
+            options = action$options
           )
         }else if(config$mode == "raw"){
           action_to_trigger <- geoflow_action$new(
             id = action$script,
             type = action$type,
             def = action$def,
-            script = action$script
+            script = action$script,
+            options = action$options
           )
         }
       }
