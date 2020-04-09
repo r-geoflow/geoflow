@@ -1029,6 +1029,10 @@ geoflow_entity <- R6Class("geoflow_entity",
           outdata <- paste0(outdata, "uploadType:", tolower(as.character(self$data$uploadType)), line_separator)
           outdata <- paste0(outdata, "upload:", tolower(as.character(self$data$upload)), line_separator)
           
+          if(!is.null(self$data$featureType)){
+            outdata <- paste0(outdata, "featureType:", tolower(as.character(self$data$featureType)), line_separator)
+          }
+          
           if(!is.null(self$data$sql)) outdata <- paste0(outdata, "sql:", self$data$sql, line_separator)
           if(!is.null(self$data$workspace)) outdata <- paste0(outdata, "workspace:", self$data$workspace, line_separator)
           if(!is.null(self$data$datastore)) outdata <- paste0(outdata, "datastore:", self$data$datastore, line_separator)
