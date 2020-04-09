@@ -999,14 +999,19 @@ geoflow_entity <- R6Class("geoflow_entity",
           out_sources <- list()
           
           outdata <- ""
+          
+          if(!is.null(self$data$access)){
+            outdata <- paste0("access:", self$data$access, line_separator)
+          }
+          
           if(!is.null(self$data$source)){
             for(src in self$data$source){
               src_uri <- attr(src,"uri")
               attributes(src) <- NULL
               if(is.null(out_sources)) out_sources <- ""
-              out_sources <- c(out_sources, paste0(src, "@", src_uri))
+              if(!is.null(src_uri)) out_sources <- c(out_sources, paste0(src, "@", src_uri))
             }
-            outdata <- paste0("source:", paste0(out_sources, collapse=","), line_separator)
+            outdata <- paste0(outdata, "source:", paste0(out_sources, collapse=","), line_separator)
           }
           outdata <- paste0(outdata, "sourceType:", self$data$sourceType, line_separator)
           outdata <- paste0(outdata, "sourceZip:", tolower(as.character(self$data$sourceZip)), line_separator)
