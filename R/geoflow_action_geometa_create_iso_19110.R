@@ -209,9 +209,13 @@ geometa_create_iso_19110 <- function(entity, config, options){
       "sfc_POLYGON" = "gml:PolygonPropertyType",
       "sfc_MULTIPOLYGON" = "gml:MultiPolygonPropertyType"
     )
-    fat_type <- "attribute"
-    if(!is.null(fat_attr)) fat_type <- fat_attr$type
-    fat_type_anchor <- ISOAnchor$new(name = fat_type, href = fat_type)
+    fat_generic_type <- switch(class(featureAttrValues)[1],
+      "integer" = "variable",
+      "numeric" = "variable",
+      "attribute"
+    )
+    if(!is.null(fat_attr)) fat_generic_type <- fat_attr$type
+    fat_type_anchor <- ISOAnchor$new(name = fat_type, href = fat_generic_type)
     fat$setValueType(fat_type_anchor)
     
     #add feature attribute as carrierOfCharacteristic
