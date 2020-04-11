@@ -37,6 +37,8 @@ handle_dictionary_df <- function(config, source){
         defSource = defSource,
         registerId = ftm$RegisterId
       )
+      if(!is.null(ftm$MinOccurs)) member$minOccurs <- ftm$MinOccurs
+      if(!is.null(ftm$MaxOccurs)) member$maxOccurs <- frm$MaxOccurs
       featuretype$addMember(member)
     }
     dict$addFeatureType(featuretype)
