@@ -1009,7 +1009,11 @@ geoflow_entity <- R6Class("geoflow_entity",
               src_uri <- attr(src,"uri")
               attributes(src) <- NULL
               if(is.null(out_sources)) out_sources <- ""
-              if(!is.null(src_uri)) out_sources <- c(out_sources, paste0(src, "@", src_uri))
+              if(!is.null(src_uri)){
+                out_sources <- c(out_sources, paste0(src, "@", src_uri))
+              }else{
+                out_sources <- c(out_sources, src)
+              }
             }
             outdata <- paste0(outdata, "source:", paste0(out_sources, collapse=","), line_separator)
           }
