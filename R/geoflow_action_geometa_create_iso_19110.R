@@ -198,7 +198,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
     }
       
     #add primitive type + data type (attribute or variable) as valueType
-    fat_type <- switch(class(featureAttrValues)[1],
+    fat_type <- switch(class(featureAttrValues[1])[1],
       "integer" = "xsd:int",
       "numeric" = "xsd:decimal",
       "character" = "xsd:string",
@@ -212,7 +212,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
       "sfc_POLYGON" = "gml:PolygonPropertyType",
       "sfc_MULTIPOLYGON" = "gml:MultiPolygonPropertyType"
     )
-    fat_generic_type <- switch(class(featureAttrValues)[1],
+    fat_generic_type <- switch(class(featureAttrValues[1])[1],
       "integer" = "variable",
       "numeric" = "variable",
       "attribute"
