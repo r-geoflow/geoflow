@@ -12,7 +12,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
   
   #options
   doi <- if(!is.null(options$doi)) options$doi else FALSE
-  exclude_attributes <- if(!is.null(options$exclude_attributes)) else list()
+  exclude_attributes <- if(!is.null(options$exclude_attributes)) options$exclude_attributes else list()
   exclude_values_for_attributes <- if(!is.null(options$exclude_values_for_attributes)) options$exclude_values_for_attributes else list()
   extra_attributes <- if(!is.null(options$extra_attributes)) options$extra_attributes else list()
   
