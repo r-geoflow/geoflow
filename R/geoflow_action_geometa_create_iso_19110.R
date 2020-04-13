@@ -12,8 +12,9 @@ geometa_create_iso_19110 <- function(entity, config, options){
   
   #options
   doi <- if(!is.null(options$doi)) options$doi else FALSE
-  exclude_values_for <- if(!is.null(options$exclude_values_for)) options$exclude_values_for else list()
-  extra_columns <- if(!is.null(options$extra_columns)) options$extra_columns else list()
+  exclude_attributes <- if(!is.null(options$exclude_attributes)) else list()
+  exclude_values_for_attributes <- if(!is.null(options$exclude_values_for_attributes)) options$exclude_values_for_attributes else list()
+  extra_attributes <- if(!is.null(options$extra_attributes)) options$extra_attributes else list()
   
   #feature catalogue creation
   #-----------------------------------------------------------------------------------------------------
@@ -114,9 +115,14 @@ geometa_create_iso_19110 <- function(entity, config, options){
   ft$setCode(layername)
   ft$setIsAbstract(FALSE)
   
-  columns <- c(colnames(features), unlist(extra_columns))
+  columns <- c(colnames(features), unlist(extra_attributes))
   for(featureAttrName in columns){
 
+    if(featureAttrName %in% exclude_attributes){
+      config$logger.warn(sprintf("Feature Attribute '%s' is listed in 'exclude_attributes'. Discarding it...", featureAttrName)) 
+      next
+    }
+      
     fat_attr_register <- NULL
     
     #create attribute
@@ -165,7 +171,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
     addValues <- TRUE
     if(is(featureAttrValues, "sfc")){
       addValues <- FALSE
-    }else if(featureAttrName %in% exclude_values_for){
+    }else if(featureAttrName %in% exclude_values_for_attributes){
       addValues <- FALSE
     }else{
       if(is.null(fat_attr)){

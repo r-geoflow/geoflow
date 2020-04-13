@@ -88,8 +88,9 @@ register_actions <- function(){
       fun = geometa_create_iso_19110,
       options = list(
         doi = list(desc = "Add entity DOI - if defined - as metadata identifier and online resource", default = FALSE),
-        exclude_values_for = list(desc = "Column names for which listed values should not be produced", default = list()),
-        extra_columns = list(desc = "Extra columns to add as feature catalog attributes although not in data", default = list())
+        exclude_attributes = list(desc = "Attributes that should be excluded from the ISO 19110 production", default = list()),
+        exclude_values_for_attributes = list(desc = "Attribute names for which listed values should not be produced", default = list()),
+        extra_attributes = list(desc = "Extra attributes to add as feature catalog attributes although not in data", default = list())
       )
     ),
     geoflow_action$new(
