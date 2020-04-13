@@ -182,6 +182,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
     }
     if(addValues){
       featureAttrValues <- unique(featureAttrValues)
+      featureAttrValues <- featureAttrValues[order(featureAttrValues)]
       for(featureAttrValue in featureAttrValues){
         if(!is.na(featureAttrValue)){
           val <- ISOListedValue$new()
