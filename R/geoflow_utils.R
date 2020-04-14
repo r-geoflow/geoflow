@@ -353,6 +353,6 @@ download_file <- function(url, filename){
     googledrive::drive_download(file = googledrive::as_id(drive_id), path = filename)
   }else{
     #classic download
-    download.file(datasource_file, destfile = filename, mode = "wb")
+    download.file(url, destfile = filename, mode = "wb")
   }
 }
