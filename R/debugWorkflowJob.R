@@ -24,7 +24,6 @@ debugWorkflow <- function(file, entityIndex = 1,
   #options
   .defaultOptions <- options()
   options(stringsAsFactors = FALSE)
-  options(encoding = "UTF-8")
   
   #1. Init the workflow based on configuration file
   config <- initWorkflow(file)
