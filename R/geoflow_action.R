@@ -90,7 +90,9 @@ register_actions <- function(){
         doi = list(desc = "Add entity DOI - if defined - as metadata identifier and online resource", default = FALSE),
         exclude_attributes = list(desc = "Attributes that should be excluded from the ISO 19110 production", default = list()),
         exclude_values_for_attributes = list(desc = "Attribute names for which listed values should not be produced", default = list()),
-        extra_attributes = list(desc = "Extra attributes to add as feature catalog attributes although not in data", default = list())
+        extra_attributes = list(desc = "Extra attributes to add as feature catalog attributes although not in data", default = list()),
+        default_min_occurs = list(desc = "The default min occurs value for feature attributes cardinality", default = 1L),
+        default_max_occurs = list(desc = "The default max occurs value for feature attribute cardinality", default = Inf)
       )
     ),
     geoflow_action$new(

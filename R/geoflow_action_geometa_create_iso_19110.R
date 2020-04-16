@@ -15,6 +15,8 @@ geometa_create_iso_19110 <- function(entity, config, options){
   exclude_attributes <- if(!is.null(options$exclude_attributes)) options$exclude_attributes else list()
   exclude_values_for_attributes <- if(!is.null(options$exclude_values_for_attributes)) options$exclude_values_for_attributes else list()
   extra_attributes <- if(!is.null(options$extra_attributes)) options$extra_attributes else list()
+  default_min_occurs <- if(!is.null(options$default_min_occurs)) options$default_min_occurs else 1L
+  default_max_occurs <- if(!is.null(options$default_max_occurs)) options$default_max_occurs else Inf
   
   #feature catalogue creation
   #-----------------------------------------------------------------------------------------------------
@@ -151,8 +153,8 @@ geometa_create_iso_19110 <- function(entity, config, options){
     }
     fat$setMemberName(memberName)
     fat$setDefinition(fat_attr$def)
-    minOccurs <- 1L; if(!is.null(fat_attr)) minOccurs <- fat_attr$minOccurs
-    maxOccurs <- 1L; if(!is.null(fat_attr)) maxOccurs <- fat_attr$maxOccurs
+    minOccurs <- default_min_occurs; if(!is.null(fat_attr)) minOccurs <- fat_attr$minOccurs
+    maxOccurs <- default_max_occurs; if(!is.null(fat_attr)) maxOccurs <- fat_attr$maxOccurs
     if(maxOccurs == "Inf") maxOccurs <- Inf
     fat$setCardinality(lower = minOccurs, upper = maxOccurs)
     #code
