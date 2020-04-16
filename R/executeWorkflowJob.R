@@ -106,9 +106,6 @@ executeWorkflowJob <- function(config, jobdir = NULL){
         
         for(entity in entities){
           
-          #if entity has data we copy data to job data dir
-          if(!is.null(entity$data) & !skipFileDownload) entity$copyDataToJobDir(config, jobdir)
-          
           #enrich metadata with dynamic properties
           if(!is.null(entity$data)){
             #data features
@@ -119,6 +116,9 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           
           #enrich entities with metadata (other properties)
           entity$enrichWithMetadata(config)
+          
+          #if entity has data we copy data to job data dir
+          if(!is.null(entity$data) & !skipFileDownload) entity$copyDataToJobDir(config, jobdir)
           
           #run sequence of entity data actions (if any)
           if(!is.null(entity$data)) {

@@ -342,14 +342,14 @@ geoflow_entity <- R6Class("geoflow_entity",
                 if(length(data.files)>0) zip(zipfile = paste0(basefilename,".zip"), files = data.files)
               }else{
                 config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
-                unzip(zipfile = srcFilename, unzip = getOption("unzip"))
-                data.files <- list.files(pattern = datasource_name)
+                data.files <- unzip(zipfile = srcFilename, unzip = getOption("unzip"))
                 if(length(data.files)>0) for(data.file in data.files){
                   file.copy(from = data.file, to = getwd())
                   fileparts <- unlist(strsplit(data.file,"\\."))
                   fileext <- fileparts[length(fileparts)]
                   file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
                 }
+                unlink(srcFilename)
                 data.files <- list.files(pattern = basefilename)
                 if(length(data.files)>0) zip(zipfile = paste0(basefilename,".zip"), files = data.files)
               }
@@ -363,6 +363,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             config$logger.info("Writing entity data features to job data directory!")
             switch(self$data$sourceType,
               "shp" = {
+                unlink(paste0(basefilename, ".zip"))
                 sf::st_write(self$data$features, paste0(basefilename, ".shp"), delete_dsn = FALSE)
                 data.files <- list.files(pattern = basefilename)
                 zip(zipfile = paste0(basefilename, ".zip"), files = data.files)
