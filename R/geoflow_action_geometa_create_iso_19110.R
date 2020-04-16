@@ -155,6 +155,8 @@ geometa_create_iso_19110 <- function(entity, config, options){
     fat$setDefinition(fat_attr$def)
     minOccurs <- default_min_occurs; if(!is.null(fat_attr)) minOccurs <- fat_attr$minOccurs
     maxOccurs <- default_max_occurs; if(!is.null(fat_attr)) maxOccurs <- fat_attr$maxOccurs
+    if(is.null(minOccurs)) minOccurs <- default_min_occurs
+    if(is.null(maxOccurs)) maxOccurs <- default_max_occurs
     if(maxOccurs == "Inf") maxOccurs <- Inf
     fat$setCardinality(lower = minOccurs, upper = maxOccurs)
     #code
