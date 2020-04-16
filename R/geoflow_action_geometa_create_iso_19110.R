@@ -194,10 +194,10 @@ geometa_create_iso_19110 <- function(entity, config, options){
               val$setLabel(reg_item[1L,"label"])
               val$setDefinition(reg_item[1L, "definition"])
             }else{
-              val$setLabel(featureAttrValue)
+              val$setLabel(NA)
             }
           }else{
-            val$setLabel(featureAttrValue)
+            val$setLabel(NA)
           }
           fat$listedValue <- c(fat$listedValue, val)
         }
