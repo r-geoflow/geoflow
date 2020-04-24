@@ -443,6 +443,13 @@ geoflow_entity <- R6Class("geoflow_entity",
         dir.create(TEMP_DATA_DIR)
       }
       
+      st_encoding <- switch(options("encoding")[[1]],
+        "UTF-8" = "UTF-8",
+        "latin1" = "WINDOWS-1252",
+        "native.enc" = "WINDOWS-1252",
+        "UTF-8"
+      )
+      
       switch(self$data$sourceType,
            #shp - ESRI Shapefile (if remote, shapefiles should be zipped)
            #---------------------------------------------------------------------------------
@@ -478,7 +485,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                #read shapefile
                config$logger.info("Read Shapefiles from geoflow temporary data directory")
                trgShp <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".shp"))
-               sf.data <- sf::st_read(trgShp)
+               sf.data <- sf::st_read(trgShp, options = sprintf("ENCODING=%s",st_encoding))
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
                  if(!is.null(self$data$cqlfilter)){
@@ -513,7 +520,7 @@ geoflow_entity <- R6Class("geoflow_entity",
            "dbtable" = {
              DBI <- config$software$input$dbi
              if(!is.null(DBI)){
-               sf.data <- sf::st_read(DBI, datasource_name)
+               sf.data <- sf::st_read(DBI, datasource_name, options = sprintf("ENCODING=%s",st_encoding))
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
                  if(!is.null(self$data$cqlfilter)){
@@ -553,7 +560,7 @@ geoflow_entity <- R6Class("geoflow_entity",
            "dbview" = {
              DBI <- config$software$input$dbi
              if(!is.null(DBI)){
-               sf.data <- sf::st_read(DBI, datasource_name)
+               sf.data <- sf::st_read(DBI, datasource_name, options = sprintf("ENCODING=%s",st_encoding))
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
                  if(!is.null(self$data$cqlfilter)){
@@ -629,7 +636,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               
               DBI <- config$software$input$dbi
               if(!is.null(DBI)){
-                sf.data <- try(sf::st_read(DBI, query = self$data$sourceSql))
+                sf.data <- try(sf::st_read(DBI, query = self$data$sourceSql, options = sprintf("ENCODING=%s",st_encoding)))
                 if(!is.null(sf.data)){
                   if(class(sf.data)[1]=="try-error"){
                     errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", self$data$sourceSql)
