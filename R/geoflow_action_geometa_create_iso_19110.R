@@ -195,6 +195,9 @@ geometa_create_iso_19110 <- function(entity, config, options){
           if(!is.null(fat_attr_register)){
             reg_item <- fat_attr_register$data[fat_attr_register$data$code == featureAttrValue,]
             if(nrow(reg_item)>0){
+              if(!is.na(reg_item[1L, "uri"])){
+                val$setCode(ISOAnchor$new(name = featureAttrValue, href = reg_item[1L, "uri"]))
+              }
               val$setLabel(reg_item[1L,"label"])
               val$setDefinition(reg_item[1L, "definition"])
             }else{
