@@ -7,6 +7,8 @@
 #' @import methods
 #' @importFrom utils capture.output
 #' @importFrom utils read.csv write.csv
+#' @importFrom utils unzip
+#' @importFrom zip zip
 #' @import jsonlite
 #' @import xml2
 #' @import plyr
@@ -34,8 +36,8 @@
 #'  \tabular{ll}{
 #'    Package: \tab geoflow\cr
 #'    Type: \tab Package\cr
-#'    Version: \tab 0.0.9014\cr
-#'    Date: \tab 2020-04-13\cr
+#'    Version: \tab 0.0.9015\cr
+#'    Date: \tab 2020-05-13\cr
 #'    License: \tab MIT\cr
 #'    LazyLoad: \tab yes\cr
 #'  }

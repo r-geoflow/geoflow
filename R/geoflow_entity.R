@@ -339,10 +339,10 @@ geoflow_entity <- R6Class("geoflow_entity",
                 }
                 config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
                 data.files <- list.files(pattern = basefilename)
-                if(length(data.files)>0) zip(zipfile = paste0(basefilename,".zip"), files = data.files)
+                if(length(data.files)>0) zip::zip(zipfile = paste0(basefilename,".zip"), files = data.files)
               }else{
                 config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
-                data.files <- unzip(zipfile = srcFilename, unzip = getOption("unzip"))
+                data.files <- utils::unzip(zipfile = srcFilename, unzip = getOption("unzip"))
                 if(length(data.files)>0) for(data.file in data.files){
                   file.copy(from = data.file, to = getwd())
                   fileparts <- unlist(strsplit(data.file,"\\."))
@@ -351,7 +351,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 }
                 unlink(srcFilename)
                 data.files <- list.files(pattern = basefilename)
-                if(length(data.files)>0) zip(zipfile = paste0(basefilename,".zip"), files = data.files)
+                if(length(data.files)>0) zip::zip(zipfile = paste0(basefilename,".zip"), files = data.files)
               }
             }else{
               errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", srcFilename, datasource_name)
@@ -366,7 +366,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 unlink(paste0(basefilename, ".zip"))
                 sf::st_write(self$data$features, paste0(basefilename, ".shp"), delete_dsn = FALSE)
                 data.files <- list.files(pattern = basefilename)
-                zip(zipfile = paste0(basefilename, ".zip"), files = data.files)
+                zip::zip(zipfile = paste0(basefilename, ".zip"), files = data.files)
               },{
                 config$logger.warn(sprintf("Entity data features writer not implemented for type '%s'", self$data$sourceType))
               }
@@ -388,7 +388,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         config$logger.info("sourceZip = TRUE: Zip sources into single data file")
         data.files <- list.files()
         print(data.files)
-        zip(zipfile = paste0(self$identifiers$id, "_files", ".zip"), files = data.files)
+        zip::zip(zipfile = paste0(self$identifiers$id, "_files", ".zip"), files = data.files)
         if(self$data$sourceZipOnly){
           config$logger.info("sourceZipOnly = TRUE: deleting zipped, they will not be uploaded")
           for(data.file in data.files){
@@ -463,7 +463,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                warnMsg <- "Downloading remote data from URL to temporary geoflow temporary data directory!"
                config$logger.warn(warnMsg)
                download_file(datasource_file, trgFilename)
-               unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
+               utils::unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
                shpExists <- TRUE
              }else{
                data.files <- list.files(path = dirname(datasource_file), pattern = datasource_name)
@@ -472,11 +472,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                  config$logger.info("Copying local data to temporary geoflow temporary data directory")
                  isZipped <- any(sapply(data.files, endsWith, ".zip"))
                  if(!isZipped){
-                   zip(zipfile = trgFilename, files = data.files)
+                   zip::zip(zipfile = trgFilename, files = data.files)
                    for(data.file in data.files) file.copy(from = data.file, to = TEMP_DATA_DIR)
                  }else{
                    file.copy(from = datasource_file, to = TEMP_DATA_DIR)
-                   unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
+                   utils::unzip(zipfile = trgFilename, exdir = TEMP_DATA_DIR, unzip = getOption("unzip"))
                  }
                }
              }
