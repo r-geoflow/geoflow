@@ -15,7 +15,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
   exclude_attributes <- if(!is.null(options$exclude_attributes)) options$exclude_attributes else list()
   exclude_values_for_attributes <- if(!is.null(options$exclude_values_for_attributes)) options$exclude_values_for_attributes else list()
   extra_attributes <- if(!is.null(options$extra_attributes)) options$extra_attributes else list()
-  default_min_occurs <- if(!is.null(options$default_min_occurs)) options$default_min_occurs else 1L
+  default_min_occurs <- if(!is.null(options$default_min_occurs)) options$default_min_occurs else 0L
   default_max_occurs <- if(!is.null(options$default_max_occurs)) options$default_max_occurs else Inf
   
   #feature catalogue creation
