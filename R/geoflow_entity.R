@@ -520,7 +520,7 @@ geoflow_entity <- R6Class("geoflow_entity",
            "dbtable" = {
              DBI <- config$software$input$dbi
              if(!is.null(DBI)){
-               sf.data <- sf::st_read(DBI, datasource_name, options = sprintf("ENCODING=%s",st_encoding))
+               sf.data <- sf::st_read(DBI, datasource_name)
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
                  if(!is.null(self$data$cqlfilter)){
@@ -560,7 +560,7 @@ geoflow_entity <- R6Class("geoflow_entity",
            "dbview" = {
              DBI <- config$software$input$dbi
              if(!is.null(DBI)){
-               sf.data <- sf::st_read(DBI, datasource_name, options = sprintf("ENCODING=%s",st_encoding))
+               sf.data <- sf::st_read(DBI, datasource_name)
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
                  if(!is.null(self$data$cqlfilter)){
@@ -636,7 +636,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               
               DBI <- config$software$input$dbi
               if(!is.null(DBI)){
-                sf.data <- try(sf::st_read(DBI, query = self$data$sourceSql, options = sprintf("ENCODING=%s",st_encoding)))
+                sf.data <- try(sf::st_read(DBI, query = self$data$sourceSql))
                 if(!is.null(sf.data)){
                   if(class(sf.data)[1]=="try-error"){
                     errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", self$data$sourceSql)
