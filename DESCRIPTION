@@ -8,7 +8,7 @@ Authors@R: c(
   person("Wilfried", "Heintz", role = c("ctb"), email = "wilfried.heintz@inra.fr", comment = c(ORCID = "0000-0002-9244-9766")))
 Maintainer: Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 Depends: R (>= 3.3), methods, DBI, RPostgreSQL, RSQLite, sp, sf, rgdal, rgeos, geosapi, geonapi, geometa, ows4R, zen4R
-Imports: R6, jsonlite, xml2, plyr, readr, gsheet, readxl, googledrive
+Imports: R6, jsonlite, xml2, plyr, readr, gsheet, readxl, googledrive, zip
 Suggests: testthat
 Description: Provides an engine to manage Spatial Data Infrastructures (SDI) and to orchestrate, run and automate 
   geospatial (meta)data workflows in compliance with international standards (ISO, OGC).

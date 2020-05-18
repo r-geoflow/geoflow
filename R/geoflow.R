@@ -8,7 +8,7 @@
 #' @importFrom utils capture.output
 #' @importFrom utils read.csv write.csv
 #' @importFrom utils unzip
-#' @importFrom zip zip
+#' @importFrom zip zipr
 #' @import jsonlite
 #' @import xml2
 #' @import plyr

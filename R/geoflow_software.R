@@ -399,6 +399,21 @@ register_software <- function(){
                      and optionally specify either a 'query' (ElasticSearch Zenodo query), a list of 'doi', or 'community' for which
                      you want to restrain the cleaning operation.")
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #DATAVERSE
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "dataverse",
+      definition = "Dataverse client powered by 'dataverse' package",
+      handler = list,
+      arguments = list(
+        server = list(def = "Dataverse server URL"),
+        key = list(def = "Dataverse access key")
+      ),
+      attributes = list(
+        dataverse = list(def = "An dataverse identifier to interact with")
+      )
     )
   )
   .geoflow$software <- software
