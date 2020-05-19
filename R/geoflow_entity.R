@@ -225,7 +225,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       spatial_bbox  <- NULL
       if(!is.null(wkt)) spatial_bbox <- sf::st_bbox(sf::st_as_sfc(wkt, crs = crs))
       if(!is.null(bbox)) spatial_bbox <- bbox
-      if(!is.null(data)) spatial_bbox <- sf::st_bbox(data)
+      if(!is.null(data)){
+        if(is(data,"sf")) spatial_bbox <- sf::st_bbox(data)
+      }
       
       if(class(spatial_bbox)[1]=="try-error"){
         stop("The spatial bbox is invalid!")
@@ -485,7 +487,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                #read shapefile
                config$logger.info("Read Shapefiles from geoflow temporary data directory")
                trgShp <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".shp"))
-               sf.data <- sf::st_read(trgShp, options = sprintf("ENCODING=%s",st_encoding))
+               sf.data <- sf::st_read(trgShp, options = "GEOM_POSSIBLE_NAMES=")
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
                  if(!is.null(self$data$cqlfilter)){
@@ -515,8 +517,61 @@ geoflow_entity <- R6Class("geoflow_entity",
                config$logger.warn(warnMsg)
              }
             },
-           #dbtable
+           #csv - CSV file (operated through sf package / OGR CSV driver https://gdal.org/drivers/vector/csv.html)
            #---------------------------------------------------------------------------------
+           "csv" = {
+             trgFilename <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".csv"))
+             
+             csvExists <- FALSE
+             isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
+             if(isSourceUrl){
+               warnMsg <- "Downloading remote data from URL to temporary geoflow temporary data directory!"
+               config$logger.warn(warnMsg)
+               download_file(datasource_file, trgFilename)
+               csvExists <- TRUE
+             }else{
+               data.files <- list.files(path = dirname(datasource_file), pattern = datasource_name)
+               if(length(data.files)>0){
+                 csvExists <- TRUE
+                 config$logger.info("Copying local data to temporary geoflow temporary data directory")
+                 file.copy(from = datasource_file, to = TEMP_DATA_DIR)
+               }
+             }
+             
+             if(csvExists){
+               #read CSV
+               config$logger.info("Read CSV file from geoflow temporary data directory")
+               sf.data <- sf::st_read(trgFilename, options = sprintf("GEOM_POSSIBLE_NAMES=%s", paste0(self$data$getAllowedGeomPossibleNames(),collapse=",")))
+               if(!is.null(sf.data)){
+                 #we try to apply the cql filter specified as data property
+                 if(!is.null(self$data$cqlfilter)){
+                   sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
+                 }
+                 self$data$setFeatures(sf.data)
+                 
+                 #dynamic srid
+                 sf.crs <- sf::st_crs(sf.data)
+                 if(!is.na(sf.crs)){
+                   srid <- if(!is.null(self$srid)) self$srid else ""
+                   if(srid != sf.crs$epsg){
+                     config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, sf.crs$epsg)) 
+                     self$setSrid(sf.crs$epsg)
+                   }
+                 }
+                 #dynamic spatial extent
+                 config$logger.info("Overwriting entity bounding box with shapefile bounding box")
+                 self$setSpatialBbox(data = sf.data)
+                 
+               }else{
+                 warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
+                 config$logger.warn(warnMsg)
+               }
+             }else{
+               warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
+               config$logger.warn(warnMsg)
+             }
+             
+           },
            "dbtable" = {
              DBI <- config$software$input$dbi
              if(!is.null(DBI)){
