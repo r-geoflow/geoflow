@@ -517,7 +517,9 @@ geoflow_entity <- R6Class("geoflow_entity",
                config$logger.warn(warnMsg)
              }
             },
-           #csv - CSV file (operated through sf package / OGR CSV driver https://gdal.org/drivers/vector/csv.html)
+           #csv - CSV file - operated through 
+           # * sf package / OGR CSV driver https://gdal.org/drivers/vector/csv.html) for geometry guess/fetch
+           # * combined with readr for a proper guess of column definitions
            #---------------------------------------------------------------------------------
            "csv" = {
              trgFilename <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".csv"))
@@ -543,6 +545,13 @@ geoflow_entity <- R6Class("geoflow_entity",
                config$logger.info("Read CSV file from geoflow temporary data directory")
                sf.data <- sf::st_read(trgFilename, options = sprintf("GEOM_POSSIBLE_NAMES=%s", paste0(self$data$getAllowedGeomPossibleNames(),collapse=",")))
                if(!is.null(sf.data)){
+                 tbl.data <- as.data.frame(readr::read_csv(trgFilename))
+                 if(is(sf.data,"sf")){
+                   sf.data <- st_set_geometry(tbl.data, st_geometry(sf.data))
+                 }else{
+                   sf.data <- tbl.data
+                 }
+                 
                  #we try to apply the cql filter specified as data property
                  if(!is.null(self$data$cqlfilter)){
                    sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
