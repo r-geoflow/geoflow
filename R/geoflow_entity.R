@@ -334,7 +334,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               if(!isZipped){
                 config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
                 for(data.file in data.files){
-                  file.copy(from = data.file, to = getwd())
+                  file.copy(from = file.path(dirname(srcFilename), data.file), to = getwd())
                   fileparts <- unlist(strsplit(data.file,"\\."))
                   fileext <- fileparts[length(fileparts)]
                   file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
@@ -346,7 +346,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
                 data.files <- utils::unzip(zipfile = srcFilename, unzip = getOption("unzip"))
                 if(length(data.files)>0) for(data.file in data.files){
-                  file.copy(from = data.file, to = getwd())
+                  file.copy(from = file.path(dirname(srcFilename), data.file), to = getwd())
                   fileparts <- unlist(strsplit(data.file,"\\."))
                   fileext <- fileparts[length(fileparts)]
                   file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
