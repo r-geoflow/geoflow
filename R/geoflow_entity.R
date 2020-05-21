@@ -487,7 +487,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                #read shapefile
                config$logger.info("Read Shapefiles from geoflow temporary data directory")
                trgShp <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".shp"))
-               sf.data <- sf::st_read(trgShp, options = "GEOM_POSSIBLE_NAMES=")
+               sf.data <- sf::st_read(trgShp, options = sprintf("ENCODING=%s",st_encoding))
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
                  if(!is.null(self$data$cqlfilter)){
