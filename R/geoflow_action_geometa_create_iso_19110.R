@@ -13,6 +13,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
   #options
   doi <- if(!is.null(options$doi)) options$doi else FALSE
   exclude_attributes <- if(!is.null(options$exclude_attributes)) options$exclude_attributes else list()
+  exclude_attributes_not_in_dictionary <- if(!is.null(options$exclude_attributes_not_in_dictionary)) options$exclude_attributes_not_in_dictionary else FALSE
   exclude_values_for_attributes <- if(!is.null(options$exclude_values_for_attributes)) options$exclude_values_for_attributes else list()
   extra_attributes <- if(!is.null(options$extra_attributes)) options$extra_attributes else list()
   default_min_occurs <- if(!is.null(options$default_min_occurs)) options$default_min_occurs else 0L
@@ -150,6 +151,11 @@ geometa_create_iso_19110 <- function(entity, config, options){
         }
       }
       if(!is.null(fat_attr_desc)) memberName <- fat_attr_desc
+    }else{
+      if(exclude_attributes_not_in_dictionary){
+        config$logger.warn(sprintf("Feature Attribute '%s' not referenced in dictionary and 'exclude_attributes_not_in_dictionary' option is enabled. Discarding it...", featureAttrName)) 
+        next
+      }
     }
     fat$setMemberName(memberName)
     fat$setDefinition(fat_attr$def)
