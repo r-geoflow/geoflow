@@ -25,6 +25,9 @@
 #'  \item{\code{setLanguage(language)}}{
 #'    Set the language used for the entity description (metadata). Default is "eng".
 #'  }
+#'  \item{\code{writeDataResource(obj,type)}}{
+#'    Write sp file in data,zip and load data features.
+#'  }
 #'  \item{\code{setType(key, type)}}{
 #'    Set the type of description. By default a generic type (key = "generic") is defined to "dataset", and
 #'    will be used as default type for actions that perform metadata production / publication.
@@ -152,6 +155,20 @@ geoflow_entity <- R6Class("geoflow_entity",
     setLanguage = function(language){
       self$language <- language
     },
+    
+    #writeDataResource
+    writeDataResource = function(obj=NULL,type="shp"){
+      if(is.null(obj)){obj=self$data$features}
+      uploadDataName<-paste0(self$identifiers$id,"_",self$data$sourceType,"_",if(!is.null(self$data$layername))self$data$layername else(self$identifiers$id))
+      switch(type,
+        "shp"={
+         st_write(obj = obj, paste0("./data/",uploadDataName,".shp"), delete_layer = TRUE)
+         zip::zipr(zipfile = paste0("./data/",uploadDataName, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = uploadDataName)))
+         df<-st_read(paste0("./data/",uploadDataName,".shp"), quiet=TRUE)
+         self$data$features<-df
+         
+         })
+     },
     
     #setType
     setType = function(key = "generic", type){
