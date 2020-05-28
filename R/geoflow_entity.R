@@ -304,8 +304,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       
         datasource <- self$data$source[[i]]
         datasource_parts <- unlist(strsplit(datasource, "\\."))
+        if(length(datasource_parts)<2) stop("Source data file should include a file extension")
         datasource_name <- datasource_parts[1]
-        datasource_ext <- ifelse(length(datasource_parts)>1, datasource_parts[2], "zip") #TODO to see to improve that
+        datasource_ext <- datasource_parts[2]
         datasource_file <- attr(datasource, "uri")
         if(is.null(datasource_file) && self$data$access == "googledrive"){
           config$logger.info(sprintf("Google Drive access - resolve dataset ID for '%s'", datasource))
@@ -317,7 +318,6 @@ geoflow_entity <- R6Class("geoflow_entity",
         }
         attributes(datasource) <- NULL
         
-        
         if(is.null(datasource_file)){
           warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
           config$logger.warn(warnMsg)
@@ -328,8 +328,8 @@ geoflow_entity <- R6Class("geoflow_entity",
         config$logger.info(sprintf("Copying data source %s '%s' (%s) to job directory '%s'",
                                    i, datasource, datasource_file, jobdir))
         
-        resourceId <- if(!is.null(self$data$layername) & i==1) self$data$layername else datasource_name
-        basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",resourceId)
+        
+        basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
       
         #here either we only pickup zipped files and re-distribute them in job data directory
         #or we write it from entity$data$features if the latter is not NULL and if writer available (for now only shp)
@@ -395,7 +395,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             #based on the same source shapefile
             config$logger.info("For entities enriched with spatial data, copy the datasource")
             file.copy(
-              from = file.path(config$wd, get_temp_directory(), paste0(datasource_name, ".", datasource_ext)),
+              from = file.path(config$job, get_temp_directory(), paste0(datasource_name, ".", datasource_ext)),
               to = getwd()
             )
             
@@ -599,6 +599,7 @@ geoflow_entity <- R6Class("geoflow_entity",
              
            },
            "dbtable" = {
+           #---------------------------------------------------------------------------------
              DBI <- config$software$input$dbi
              if(!is.null(DBI)){
                sf.data <- sf::st_read(DBI, datasource_name)

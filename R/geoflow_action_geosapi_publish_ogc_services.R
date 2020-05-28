@@ -22,9 +22,6 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   
   #layername/sourcename
   layername <- if(!is.null(entity$data$layername)) entity$data$layername else entity$identifiers$id
-  if(entity$data$upload) {
-    datasource_name <- paste0(entity$identifiers$id, "_", entity$data$sourceType,"_", layername)
-  }
   
   #shortcut for gs config
   GS <- config$software$output$geoserver
@@ -68,15 +65,14 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     }else{
       uploaded <- FALSE
       config$logger.info("Upload from local file(s)")
-      filename <- paste0(datasource_name, ".zip") #TODO works for shapefile, what about spatialite/h2
-      filepath <- file.path(getwd(), "data", filename)
+      filepath <- file.path(getwd(), "data", datasource)
       if(file.exists(filepath)){
         config$logger.info(sprintf("Upload file '%s' [%s] to GeoServer...", filepath, entity$data$uploadType))
         uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
                                   filename = filepath, extension = entity$data$uploadType, charset = "UTF-8",
                                   contentType = if(entity$data$uploadType=="spatialite") "application/x-sqlite3" else "")
         }else{
-          errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", filepath, datasource_name)
+          errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", filepath, datasource)
           config$logger.error(errMsg)
           stop(errMsg)
       }
