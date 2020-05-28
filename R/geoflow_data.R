@@ -202,8 +202,9 @@ geoflow_data <- R6Class("geoflow_data",
             self$setUpload(upload) 
           }
         }else{
-          self$setUpload(TRUE) 
+          self$setUpload(TRUE)
         }
+        if(startsWith(self$uploadType, "db")) self$setUpload(FALSE)
         
         #layername (if any)
         #not mandatory, can be used for subset layers

@@ -15,16 +15,16 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     config$logger.warn("More than one data sources, geosapi action will consider the first one only!")
   
   #datasource
-  datasource <- entity$data$source[[1]]
+  datasource <- entity$data$uploadSource[[1]]
   datasource_name <- unlist(strsplit(datasource, "\\."))[1]
   datasource_file <- attr(datasource, "uri")
   attributes(datasource) <- NULL
   
   #layername/sourcename
   layername <- if(!is.null(entity$data$layername)) entity$data$layername else entity$identifiers$id
-  sourcename <- if(!is.null(datasource_name)) datasource_name else layername
-  basefilename <- paste0(entity$identifiers$id, "_", entity$data$sourceType,"_", layername)
-  filename <- paste0(basefilename, ".zip")
+  if(entity$data$upload) {
+    datasource_name <- paste0(entity$identifiers$id, "_", entity$data$sourceType,"_", layername)
+  }
   
   #shortcut for gs config
   GS <- config$software$output$geoserver
@@ -60,14 +60,15 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   #upload
   #-------------------------------------------------------------------------------------------------
   if(entity$data$upload){
+
     config$logger.info("Upload mode is set to true")
     if(startsWith(entity$data$uploadType,"db") || entity$data$uploadType == "other"){
       warnMsg <- "Skipping upload: Upload mode is only valid for types 'shp', 'spatialite' or 'h2'"
       config$logger.warn(warnMsg)
     }else{
       uploaded <- FALSE
-
       config$logger.info("Upload from local file(s)")
+      filename <- paste0(datasource_name, ".zip") #TODO works for shapefile, what about spatialite/h2
       filepath <- file.path(getwd(), "data", filename)
       if(file.exists(filepath)){
         config$logger.info(sprintf("Upload file '%s' [%s] to GeoServer...", filepath, entity$data$uploadType))
@@ -75,7 +76,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
                                   filename = filepath, extension = entity$data$uploadType, charset = "UTF-8",
                                   contentType = if(entity$data$uploadType=="spatialite") "application/x-sqlite3" else "")
         }else{
-          errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", filepath, sourcename)
+          errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", filepath, datasource_name)
           config$logger.error(errMsg)
           stop(errMsg)
       }
@@ -100,10 +101,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   #build feature type
   featureType <- GSFeatureType$new()
   featureType$setName(layername)
-  nativename <- sourcename
-  if(entity$data$upload) nativename <- basefilename
-  if(startsWith(entity$data$uploadType,"db")) nativename <- layername
-  featureType$setNativeName(nativename)
+  featureType$setNativeName(datasource_name)
   featureType$setAbstract(entity$descriptions$abstract)
   featureType$setTitle(entity$title)
   featureType$setSrs(epsgCode)
