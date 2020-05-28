@@ -16,4 +16,4 @@ License: MIT + file LICENSE
 URL: https://github.com/eblondel/geoflow
 BugReports: https://github.com/eblondel/geoflow
 LazyLoad: yes
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0

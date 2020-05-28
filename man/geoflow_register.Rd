@@ -4,9 +4,8 @@
 \name{geoflow_register}
 \alias{geoflow_register}
 \title{Geoflow register class}
-\format{\code{\link{R6Class}} object.}
-\usage{
-geoflow_register
+\format{
+\code{\link{R6Class}} object.
 }
 \value{
 Object of \code{\link{R6Class}} for modelling a register
@@ -40,3 +39,57 @@ geoflow_register
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{registers}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_register$new()}}
+\item \href{#method-fetch}{\code{geoflow_register$fetch()}}
+\item \href{#method-check}{\code{geoflow_register$check()}}
+\item \href{#method-clone}{\code{geoflow_register$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_register$new(id, def, fun)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-fetch"></a>}}
+\if{latex}{\out{\hypertarget{method-fetch}{}}}
+\subsection{Method \code{fetch()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_register$fetch(config = NULL)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-check"></a>}}
+\if{latex}{\out{\hypertarget{method-check}{}}}
+\subsection{Method \code{check()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_register$check(data)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_register$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

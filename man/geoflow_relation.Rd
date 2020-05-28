@@ -4,9 +4,8 @@
 \name{geoflow_relation}
 \alias{geoflow_relation}
 \title{Geoflow relation class}
-\format{\code{\link{R6Class}} object.}
-\usage{
-geoflow_relation
+\format{
+\code{\link{R6Class}} object.
 }
 \value{
 Object of \code{\link{R6Class}} for modelling an relation
@@ -52,3 +51,77 @@ geoflow_relation
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{relation}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_relation$new()}}
+\item \href{#method-setKey}{\code{geoflow_relation$setKey()}}
+\item \href{#method-setLink}{\code{geoflow_relation$setLink()}}
+\item \href{#method-setName}{\code{geoflow_relation$setName()}}
+\item \href{#method-setDescription}{\code{geoflow_relation$setDescription()}}
+\item \href{#method-clone}{\code{geoflow_relation$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$new(str = NULL)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\subsection{Method \code{setKey()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setKey(key)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setLink"></a>}}
+\if{latex}{\out{\hypertarget{method-setLink}{}}}
+\subsection{Method \code{setLink()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setLink(link)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-setName}{}}}
+\subsection{Method \code{setName()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setName(name)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDescription"></a>}}
+\if{latex}{\out{\hypertarget{method-setDescription}{}}}
+\subsection{Method \code{setDescription()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setDescription(description)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

@@ -4,9 +4,8 @@
 \name{geoflow_subject}
 \alias{geoflow_subject}
 \title{Geoflow subject class}
-\format{\code{\link{R6Class}} object.}
-\usage{
-geoflow_subject
+\format{
+\code{\link{R6Class}} object.
 }
 \value{
 Object of \code{\link{R6Class}} for modelling a subject
@@ -58,3 +57,87 @@ geoflow_subject
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{subject}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_subject$new()}}
+\item \href{#method-setName}{\code{geoflow_subject$setName()}}
+\item \href{#method-setUri}{\code{geoflow_subject$setUri()}}
+\item \href{#method-setDate}{\code{geoflow_subject$setDate()}}
+\item \href{#method-addKeyword}{\code{geoflow_subject$addKeyword()}}
+\item \href{#method-getKeywords}{\code{geoflow_subject$getKeywords()}}
+\item \href{#method-clone}{\code{geoflow_subject$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$new(str = NULL)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-setName}{}}}
+\subsection{Method \code{setName()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$setName(name)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setUri"></a>}}
+\if{latex}{\out{\hypertarget{method-setUri}{}}}
+\subsection{Method \code{setUri()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$setUri(uri)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDate"></a>}}
+\if{latex}{\out{\hypertarget{method-setDate}{}}}
+\subsection{Method \code{setDate()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$setDate(dateType, date)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addKeyword"></a>}}
+\if{latex}{\out{\hypertarget{method-addKeyword}{}}}
+\subsection{Method \code{addKeyword()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$addKeyword(keyword, uri = NULL)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getKeywords"></a>}}
+\if{latex}{\out{\hypertarget{method-getKeywords}{}}}
+\subsection{Method \code{getKeywords()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$getKeywords(pretty = FALSE)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

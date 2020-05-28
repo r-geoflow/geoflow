@@ -4,9 +4,8 @@
 \name{geoflow_action}
 \alias{geoflow_action}
 \title{Geoflow action class}
-\format{\code{\link{R6Class}} object.}
-\usage{
-geoflow_action
+\format{
+\code{\link{R6Class}} object.
 }
 \value{
 Object of \code{\link{R6Class}} for modelling an action
@@ -44,3 +43,44 @@ geoflow_action
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{action}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_action$new()}}
+\item \href{#method-clone}{\code{geoflow_action$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$new(
+  id,
+  type = "",
+  def = "",
+  fun = NULL,
+  script = NULL,
+  options = list()
+)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

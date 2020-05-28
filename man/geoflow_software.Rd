@@ -4,9 +4,8 @@
 \name{geoflow_software}
 \alias{geoflow_software}
 \title{Geoflow software class}
-\format{\code{\link{R6Class}} object.}
-\usage{
-geoflow_software
+\format{
+\code{\link{R6Class}} object.
 }
 \value{
 Object of \code{\link{R6Class}} for modelling a software
@@ -80,3 +79,156 @@ geoflow_software
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{software}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_software$new()}}
+\item \href{#method-setId}{\code{geoflow_software$setId()}}
+\item \href{#method-setType}{\code{geoflow_software$setType()}}
+\item \href{#method-setSoftwareType}{\code{geoflow_software$setSoftwareType()}}
+\item \href{#method-setDefinition}{\code{geoflow_software$setDefinition()}}
+\item \href{#method-setAttributes}{\code{geoflow_software$setAttributes()}}
+\item \href{#method-setProperties}{\code{geoflow_software$setProperties()}}
+\item \href{#method-setArguments}{\code{geoflow_software$setArguments()}}
+\item \href{#method-setParameters}{\code{geoflow_software$setParameters()}}
+\item \href{#method-setActions}{\code{geoflow_software$setActions()}}
+\item \href{#method-setHandler}{\code{geoflow_software$setHandler()}}
+\item \href{#method-getHandlerInstance}{\code{geoflow_software$getHandlerInstance()}}
+\item \href{#method-clone}{\code{geoflow_software$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$new(
+  id = NULL,
+  type = NULL,
+  software_type,
+  definition,
+  handler,
+  arguments,
+  attributes = list(),
+  actions = list()
+)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setId"></a>}}
+\if{latex}{\out{\hypertarget{method-setId}{}}}
+\subsection{Method \code{setId()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setId(id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setType"></a>}}
+\if{latex}{\out{\hypertarget{method-setType}{}}}
+\subsection{Method \code{setType()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setType(type)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSoftwareType"></a>}}
+\if{latex}{\out{\hypertarget{method-setSoftwareType}{}}}
+\subsection{Method \code{setSoftwareType()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setSoftwareType(software_type)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDefinition"></a>}}
+\if{latex}{\out{\hypertarget{method-setDefinition}{}}}
+\subsection{Method \code{setDefinition()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setDefinition(definition)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setAttributes"></a>}}
+\if{latex}{\out{\hypertarget{method-setAttributes}{}}}
+\subsection{Method \code{setAttributes()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setAttributes(attributes)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setProperties"></a>}}
+\if{latex}{\out{\hypertarget{method-setProperties}{}}}
+\subsection{Method \code{setProperties()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setProperties(...)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setArguments"></a>}}
+\if{latex}{\out{\hypertarget{method-setArguments}{}}}
+\subsection{Method \code{setArguments()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setArguments(arguments)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setParameters"></a>}}
+\if{latex}{\out{\hypertarget{method-setParameters}{}}}
+\subsection{Method \code{setParameters()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setParameters(...)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setActions"></a>}}
+\if{latex}{\out{\hypertarget{method-setActions}{}}}
+\subsection{Method \code{setActions()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setActions(actions)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setHandler"></a>}}
+\if{latex}{\out{\hypertarget{method-setHandler}{}}}
+\subsection{Method \code{setHandler()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setHandler(handler)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getHandlerInstance"></a>}}
+\if{latex}{\out{\hypertarget{method-getHandlerInstance}{}}}
+\subsection{Method \code{getHandlerInstance()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$getHandlerInstance()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

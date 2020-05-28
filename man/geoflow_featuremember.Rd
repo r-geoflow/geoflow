@@ -4,9 +4,8 @@
 \name{geoflow_featuremember}
 \alias{geoflow_featuremember}
 \title{Geoflow feature type class}
-\format{\code{\link{R6Class}} object.}
-\usage{
-geoflow_featuremember
+\format{
+\code{\link{R6Class}} object.
 }
 \value{
 Object of \code{\link{R6Class}} for modelling a dictionary feature type member
@@ -35,3 +34,47 @@ geoflow_featuremember
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{contact}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_featuremember$new()}}
+\item \href{#method-clone}{\code{geoflow_featuremember$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuremember$new(
+  type,
+  code,
+  name,
+  def,
+  defSource = NULL,
+  minOccurs = NULL,
+  maxOccurs = NULL,
+  uom = NULL,
+  registerId = NULL
+)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuremember$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

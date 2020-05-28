@@ -4,9 +4,8 @@
 \name{geoflow_entity}
 \alias{geoflow_entity}
 \title{Geoflow entity class}
-\format{\code{\link{R6Class}} object.}
-\usage{
-geoflow_entity
+\format{
+\code{\link{R6Class}} object.
 }
 \value{
 Object of \code{\link{R6Class}} for modelling a entity object
@@ -31,6 +30,9 @@ geoflow_entity
  }
  \item{\code{setLanguage(language)}}{
    Set the language used for the entity description (metadata). Default is "eng".
+ }
+ \item{\code{writeDataResource(obj,type)}}{
+   Write sp file in data,zip and load data features.
  }
  \item{\code{setType(key, type)}}{
    Set the type of description. By default a generic type (key = "generic") is defined to "dataset", and
@@ -121,3 +123,347 @@ geoflow_entity
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{entity}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_entity$new()}}
+\item \href{#method-setIdentifier}{\code{geoflow_entity$setIdentifier()}}
+\item \href{#method-addDate}{\code{geoflow_entity$addDate()}}
+\item \href{#method-setLanguage}{\code{geoflow_entity$setLanguage()}}
+\item \href{#method-writeDataResource}{\code{geoflow_entity$writeDataResource()}}
+\item \href{#method-setType}{\code{geoflow_entity$setType()}}
+\item \href{#method-setTitle}{\code{geoflow_entity$setTitle()}}
+\item \href{#method-setDescription}{\code{geoflow_entity$setDescription()}}
+\item \href{#method-addSubject}{\code{geoflow_entity$addSubject()}}
+\item \href{#method-addContact}{\code{geoflow_entity$addContact()}}
+\item \href{#method-addRelation}{\code{geoflow_entity$addRelation()}}
+\item \href{#method-addRight}{\code{geoflow_entity$addRight()}}
+\item \href{#method-setSpatialExtent}{\code{geoflow_entity$setSpatialExtent()}}
+\item \href{#method-setSpatialBbox}{\code{geoflow_entity$setSpatialBbox()}}
+\item \href{#method-setSrid}{\code{geoflow_entity$setSrid()}}
+\item \href{#method-setTemporalExtent}{\code{geoflow_entity$setTemporalExtent()}}
+\item \href{#method-setProvenance}{\code{geoflow_entity$setProvenance()}}
+\item \href{#method-setData}{\code{geoflow_entity$setData()}}
+\item \href{#method-copyDataToJobDir}{\code{geoflow_entity$copyDataToJobDir()}}
+\item \href{#method-enrichWithFeatures}{\code{geoflow_entity$enrichWithFeatures()}}
+\item \href{#method-enrichWithRelations}{\code{geoflow_entity$enrichWithRelations()}}
+\item \href{#method-enrichWithSubjects}{\code{geoflow_entity$enrichWithSubjects()}}
+\item \href{#method-enrichWithMetadata}{\code{geoflow_entity$enrichWithMetadata()}}
+\item \href{#method-getContacts}{\code{geoflow_entity$getContacts()}}
+\item \href{#method-getSubjects}{\code{geoflow_entity$getSubjects()}}
+\item \href{#method-getRelations}{\code{geoflow_entity$getRelations()}}
+\item \href{#method-setStatus}{\code{geoflow_entity$setStatus()}}
+\item \href{#method-getJobResource}{\code{geoflow_entity$getJobResource()}}
+\item \href{#method-getJobDataResource}{\code{geoflow_entity$getJobDataResource()}}
+\item \href{#method-getJobMetadataResource}{\code{geoflow_entity$getJobMetadataResource()}}
+\item \href{#method-addResource}{\code{geoflow_entity$addResource()}}
+\item \href{#method-asDataFrame}{\code{geoflow_entity$asDataFrame()}}
+\item \href{#method-clone}{\code{geoflow_entity$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$new()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setIdentifier"></a>}}
+\if{latex}{\out{\hypertarget{method-setIdentifier}{}}}
+\subsection{Method \code{setIdentifier()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setIdentifier(key = "id", id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addDate"></a>}}
+\if{latex}{\out{\hypertarget{method-addDate}{}}}
+\subsection{Method \code{addDate()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addDate(dateType, date)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setLanguage"></a>}}
+\if{latex}{\out{\hypertarget{method-setLanguage}{}}}
+\subsection{Method \code{setLanguage()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setLanguage(language)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-writeDataResource"></a>}}
+\if{latex}{\out{\hypertarget{method-writeDataResource}{}}}
+\subsection{Method \code{writeDataResource()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$writeDataResource(obj = NULL, type = "shp")}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setType"></a>}}
+\if{latex}{\out{\hypertarget{method-setType}{}}}
+\subsection{Method \code{setType()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setType(key = "generic", type)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setTitle"></a>}}
+\if{latex}{\out{\hypertarget{method-setTitle}{}}}
+\subsection{Method \code{setTitle()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setTitle(title)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDescription"></a>}}
+\if{latex}{\out{\hypertarget{method-setDescription}{}}}
+\subsection{Method \code{setDescription()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setDescription(key, description)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addSubject"></a>}}
+\if{latex}{\out{\hypertarget{method-addSubject}{}}}
+\subsection{Method \code{addSubject()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addSubject(subject)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addContact"></a>}}
+\if{latex}{\out{\hypertarget{method-addContact}{}}}
+\subsection{Method \code{addContact()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addContact(contact)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addRelation"></a>}}
+\if{latex}{\out{\hypertarget{method-addRelation}{}}}
+\subsection{Method \code{addRelation()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addRelation(relation)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addRight"></a>}}
+\if{latex}{\out{\hypertarget{method-addRight}{}}}
+\subsection{Method \code{addRight()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addRight(right)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSpatialExtent"></a>}}
+\if{latex}{\out{\hypertarget{method-setSpatialExtent}{}}}
+\subsection{Method \code{setSpatialExtent()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setSpatialExtent(wkt = NULL, bbox = NULL, data = NULL, crs = NA)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSpatialBbox"></a>}}
+\if{latex}{\out{\hypertarget{method-setSpatialBbox}{}}}
+\subsection{Method \code{setSpatialBbox()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setSpatialBbox(wkt = NULL, bbox = NULL, data = NULL, crs = NA)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSrid"></a>}}
+\if{latex}{\out{\hypertarget{method-setSrid}{}}}
+\subsection{Method \code{setSrid()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setSrid(srid)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setTemporalExtent"></a>}}
+\if{latex}{\out{\hypertarget{method-setTemporalExtent}{}}}
+\subsection{Method \code{setTemporalExtent()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setTemporalExtent(str)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setProvenance"></a>}}
+\if{latex}{\out{\hypertarget{method-setProvenance}{}}}
+\subsection{Method \code{setProvenance()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setProvenance(provenance)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setData"></a>}}
+\if{latex}{\out{\hypertarget{method-setData}{}}}
+\subsection{Method \code{setData()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setData(data)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-copyDataToJobDir"></a>}}
+\if{latex}{\out{\hypertarget{method-copyDataToJobDir}{}}}
+\subsection{Method \code{copyDataToJobDir()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$copyDataToJobDir(config, jobdir = NULL)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-enrichWithFeatures"></a>}}
+\if{latex}{\out{\hypertarget{method-enrichWithFeatures}{}}}
+\subsection{Method \code{enrichWithFeatures()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithFeatures(config)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-enrichWithRelations"></a>}}
+\if{latex}{\out{\hypertarget{method-enrichWithRelations}{}}}
+\subsection{Method \code{enrichWithRelations()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithRelations(config)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-enrichWithSubjects"></a>}}
+\if{latex}{\out{\hypertarget{method-enrichWithSubjects}{}}}
+\subsection{Method \code{enrichWithSubjects()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithSubjects(config)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-enrichWithMetadata"></a>}}
+\if{latex}{\out{\hypertarget{method-enrichWithMetadata}{}}}
+\subsection{Method \code{enrichWithMetadata()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithMetadata(config)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getContacts"></a>}}
+\if{latex}{\out{\hypertarget{method-getContacts}{}}}
+\subsection{Method \code{getContacts()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getContacts(pretty = FALSE)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getSubjects"></a>}}
+\if{latex}{\out{\hypertarget{method-getSubjects}{}}}
+\subsection{Method \code{getSubjects()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getSubjects(pretty = FALSE, keywords = FALSE)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getRelations"></a>}}
+\if{latex}{\out{\hypertarget{method-getRelations}{}}}
+\subsection{Method \code{getRelations()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getRelations(pretty = FALSE)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setStatus"></a>}}
+\if{latex}{\out{\hypertarget{method-setStatus}{}}}
+\subsection{Method \code{setStatus()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setStatus(status)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getJobResource"></a>}}
+\if{latex}{\out{\hypertarget{method-getJobResource}{}}}
+\subsection{Method \code{getJobResource()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getJobResource(config, resourceType, filename)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getJobDataResource"></a>}}
+\if{latex}{\out{\hypertarget{method-getJobDataResource}{}}}
+\subsection{Method \code{getJobDataResource()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getJobDataResource(config, filename)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getJobMetadataResource"></a>}}
+\if{latex}{\out{\hypertarget{method-getJobMetadataResource}{}}}
+\subsection{Method \code{getJobMetadataResource()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getJobMetadataResource(config, filename)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addResource"></a>}}
+\if{latex}{\out{\hypertarget{method-addResource}{}}}
+\subsection{Method \code{addResource()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addResource(id, resource)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-asDataFrame"></a>}}
+\if{latex}{\out{\hypertarget{method-asDataFrame}{}}}
+\subsection{Method \code{asDataFrame()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$asDataFrame(line_separator = NULL)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

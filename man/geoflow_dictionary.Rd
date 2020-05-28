@@ -4,9 +4,8 @@
 \name{geoflow_dictionary}
 \alias{geoflow_dictionary}
 \title{Geoflow dictionary class}
-\format{\code{\link{R6Class}} object.}
-\usage{
-geoflow_dictionary
+\format{
+\code{\link{R6Class}} object.
 }
 \value{
 Object of \code{\link{R6Class}} for modelling a dictionary
@@ -35,3 +34,107 @@ geoflow_dictionary
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{contact}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_dictionary$new()}}
+\item \href{#method-setSource}{\code{geoflow_dictionary$setSource()}}
+\item \href{#method-getFeatureTypes}{\code{geoflow_dictionary$getFeatureTypes()}}
+\item \href{#method-getFeatureTypeById}{\code{geoflow_dictionary$getFeatureTypeById()}}
+\item \href{#method-addFeatureType}{\code{geoflow_dictionary$addFeatureType()}}
+\item \href{#method-getRegisters}{\code{geoflow_dictionary$getRegisters()}}
+\item \href{#method-getRegisterById}{\code{geoflow_dictionary$getRegisterById()}}
+\item \href{#method-addRegister}{\code{geoflow_dictionary$addRegister()}}
+\item \href{#method-clone}{\code{geoflow_dictionary$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$new()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSource"></a>}}
+\if{latex}{\out{\hypertarget{method-setSource}{}}}
+\subsection{Method \code{setSource()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$setSource(source)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getFeatureTypes"></a>}}
+\if{latex}{\out{\hypertarget{method-getFeatureTypes}{}}}
+\subsection{Method \code{getFeatureTypes()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$getFeatureTypes()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getFeatureTypeById"></a>}}
+\if{latex}{\out{\hypertarget{method-getFeatureTypeById}{}}}
+\subsection{Method \code{getFeatureTypeById()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$getFeatureTypeById(id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addFeatureType"></a>}}
+\if{latex}{\out{\hypertarget{method-addFeatureType}{}}}
+\subsection{Method \code{addFeatureType()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$addFeatureType(ft)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getRegisters"></a>}}
+\if{latex}{\out{\hypertarget{method-getRegisters}{}}}
+\subsection{Method \code{getRegisters()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$getRegisters()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getRegisterById"></a>}}
+\if{latex}{\out{\hypertarget{method-getRegisterById}{}}}
+\subsection{Method \code{getRegisterById()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$getRegisterById(id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addRegister"></a>}}
+\if{latex}{\out{\hypertarget{method-addRegister}{}}}
+\subsection{Method \code{addRegister()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$addRegister(register)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}
