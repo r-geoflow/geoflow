@@ -157,17 +157,18 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #writeDataResource
-    writeDataResource = function(obj=NULL,type="shp"){
-      if(is.null(obj)){obj=self$data$features}
-      uploadDataName<-paste0(self$identifiers$id,"_",self$data$sourceType,"_",if(!is.null(self$data$layername))self$data$layername else(self$identifiers$id))
+    writeDataResource = function(obj=NULL, resourcename, type="shp"){
+      if(is.null(obj)) obj=self$data$features
+      resourcename_parts <- unlist(strsplit(resourcename, "\\."))
+      if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
       switch(type,
         "shp"={
-         st_write(obj = obj, paste0("./data/",uploadDataName,".shp"), delete_layer = TRUE)
-         zip::zipr(zipfile = paste0("./data/",uploadDataName, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = uploadDataName)))
-         df<-st_read(paste0("./data/",uploadDataName,".shp"), quiet=TRUE)
+         st_write(obj = obj, paste0("./data/",resourcename,".shp"), delete_layer = TRUE)
+         zip::zipr(zipfile = paste0("./data/",resourcename, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = resourcename)))
+         df<-st_read(paste0("./data/",resourcename,".shp"), quiet=TRUE)
          self$data$features<-df
-         
-         })
+        }
+      )
      },
     
     #setType
