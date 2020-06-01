@@ -168,6 +168,21 @@ geometa_create_iso_19110 <- function(entity, config, options){
     fat$setCardinality(lower = minOccurs, upper = maxOccurs)
     #code
     fat$setCode(featureAttrName)
+    #uom
+    uom <- fat_attr$uom
+    if(!is.null(uom)){
+      gmlUom <- GMLUnitDefinition$buildFrom(uom)
+      if(is.null(gmlUom)){
+        gmlUom <- GMLUnitDefinition$new()
+        uomId <- uom
+        uomUri <- attr(uom, "uri")
+        if(is.null(uomUri)) uomUri <- ""
+        gmlUom$setIdentifier(uom, uomUri)
+        uomName <- attr(uom, "description")
+        if(!is.null(uomName)) gmlUom$addName(uomName)
+        fat$setValueMeasurementUnit(gmlUom)
+      }
+    }
     
     #add listed values
     if(featureAttrName %in% colnames(features)){
