@@ -17,3 +17,4 @@ URL: https://github.com/eblondel/geoflow
 BugReports: https://github.com/eblondel/geoflow
 LazyLoad: yes
 RoxygenNote: 7.1.0
+Roxygen: list(r6 = FALSE)
