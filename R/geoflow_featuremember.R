@@ -34,9 +34,10 @@ geoflow_featuremember <- R6Class("geoflow_featuremember",
      defSource = NULL,
      minOccurs = NULL,
      maxOccurs = NULL,
+     uom = NULL,
      registerId = NULL,
      initialize = function(type, code, name, def, defSource = NULL,
-                           minOccurs = NULL, maxOccurs = NULL,
+                           minOccurs = NULL, maxOccurs = NULL, uom = NULL,
                            registerId = NULL){
        if(!type %in% c("attribute", "variable")){
          stop("The member type should be either 'attribute' or 'variable'")
@@ -49,6 +50,7 @@ geoflow_featuremember <- R6Class("geoflow_featuremember",
        self$defSource = defSource
        self$minOccurs = minOccurs
        self$maxOccurs = maxOccurs
+       self$uom = uom
        self$registerId = registerId
      }
    )                                  

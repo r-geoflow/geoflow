@@ -39,6 +39,10 @@ handle_dictionary_df <- function(config, source){
       )
       if(!is.null(ftm$MinOccurs)) member$minOccurs <- ftm$MinOccurs
       if(!is.null(ftm$MaxOccurs)) member$maxOccurs <- ftm$MaxOccurs
+      uom <- ftm$MeasurementUnit
+      if(!is.na(uom)){
+        member$uom <- extract_kvp(paste0("str:", uom))$values[[1]]
+      }
       featuretype$addMember(member)
     }
     dict$addFeatureType(featuretype)

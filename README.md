@@ -1,5 +1,5 @@
 # geoflow
-Update date : 14-05-2020
+
 [![Build Status](https://travis-ci.org/eblondel/geoflow.svg?branch=master)](https://travis-ci.org/eblondel/geoflow)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/geoflow)](https://cran.r-project.org/package=geoflow)
 [![Github_Status_Badge](https://img.shields.io/badge/Github-0.0.9015-blue.svg)](https://github.com/eblondel/geoflow)
