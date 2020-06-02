@@ -7,7 +7,13 @@
 writeWorkflowJobDataResource(obj,type)
 }
 \arguments{
+\item{entity}{a entity object as read by \code{geoflow_entity}}
+
+\item{config}{a configuration object as read by \code{initWorkflow}}
+
 \item{obj}{a sf file}
+
+\item{resourcename}{name of data input}
 
 \item{type}{format to convert into list :"shp","dbtable}
 }

@@ -5,14 +5,17 @@
 #'
 #' @usage writeWorkflowJobDataResource(obj,type)
 #'
+#' @param entity a entity object as read by \code{geoflow_entity} 
+#' @param config a configuration object as read by \code{initWorkflow}
 #' @param obj a sf file
+#' @param resourcename name of data input
 #' @param type format to convert into list :"shp","dbtable 
 #' 
 #' @author Alexandre Bennici, \email{bennicialexandre@@gmail.com}
 #' @export
 #'
 
-writeWorkflowJobDataResource <- function(entity, config,obj,resourcename,type){
+writeWorkflowJobDataResource <- function(entity, config,obj=NULL,resourcename,type){
   if(!type%in%c("shp","dbtable")) config$logger.error('type must be in : "shp" , "dbtable"')
 if(is.null(obj))obj=entity$data$features
   resourcename_parts <- unlist(strsplit(resourcename, "\\."))
@@ -24,8 +27,9 @@ if(is.null(obj))obj=entity$data$features
            config$logger.info("write shp file to data job directory")
            zip::zipr(zipfile = paste0("./data/",resourcename, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = resourcename)))
            config$logger.info("zip datafiles for server export")
+           if(is.null(entity$data$features)){
            df<-st_read(paste0("./data/",resourcename,".shp"), quiet=TRUE)
-           entity$data$features<-df
+           entity$data$features<-df}
            },
           "dbtable"={
            config$logger.info(sprintf("Format type: %s", type))
