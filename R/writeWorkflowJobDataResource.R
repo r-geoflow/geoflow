@@ -27,14 +27,10 @@ if(is.null(obj))obj=entity$data$features
            config$logger.info("write shp file to data job directory")
            zip::zipr(zipfile = paste0("./data/",resourcename, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = resourcename)))
            config$logger.info("zip datafiles for server export")
-           if(is.null(entity$data$features)){
-           df<-st_read(paste0("./data/",resourcename,".shp"), quiet=TRUE)
-           entity$data$features<-df}
            },
           "dbtable"={
            config$logger.info(sprintf("Format type: %s", type))
            st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , layer_options = 'OVERWRITE=YES')
-           entity$data$features<-obj
            }
         )
 }
