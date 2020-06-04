@@ -511,6 +511,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                  if(!is.null(self$data$cqlfilter)){
                    sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
                  }
+                 if(attr(sf.data, "sf_column")== "geometry"){
+                   sf.data$the_geom <- st_geometry(sf.data)
+                   attr(sf.data, "sf_column") <- "the_geom"
+                   sf.data$geometry <- NULL
+                 }
                  self$data$setFeatures(sf.data)
                  
                  #dynamic srid
