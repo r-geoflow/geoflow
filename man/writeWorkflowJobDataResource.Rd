@@ -4,7 +4,7 @@
 \alias{writeWorkflowJobDataResource}
 \title{writeWorkflowJobDataResource}
 \usage{
-writeWorkflowJobDataResource(obj,type)
+writeWorkflowJobDataResource(entity,config,obj,useFeatures,resourcename,useUploadSource,type)
 }
 \arguments{
 \item{entity}{a entity object as read by \code{geoflow_entity}}
@@ -15,7 +15,11 @@ writeWorkflowJobDataResource(obj,type)
 
 \item{resourcename}{name of data input}
 
+\item{useUploadSource}{a boolean condition to define if resourcename is same as uploadSource information}
+
 \item{type}{format to convert into list :"shp","dbtable}
+
+\item{use}{Features a boolean condition to define if features must be attach to obj file}
 }
 \description{
 \code{writeWorkflowJobDataResource} allows to transform datasource into different formats
