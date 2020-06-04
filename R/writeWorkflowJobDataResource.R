@@ -17,7 +17,7 @@
 #' @export
 #'
 
-writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FALSE,resourcename,useUploadSource=FALSE,type){
+writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FALSE,resourcename=NULL,useUploadSource=FALSE,type){
   config$logger.info("------------------------------------------------------------------------------")
   config$logger.info("Write data resource start")
   if(is.null(obj) && !useFeatures){
@@ -30,7 +30,7 @@ writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FAL
     obj<-entity$data$features
   }
   
-  if(is.null(resourcename) && useUploadSource){
+  if(is.null(resourcename) && !useUploadSource){
     errMsg<-"Error: specify a resourcename or useUploadSource = TRUE"
     config$logger.error(errMsg)
     stop(errMsg)  
@@ -49,7 +49,7 @@ writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FAL
   
   resourcename_parts <- unlist(strsplit(resourcename, "\\."))
   if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
-
+  
   switch(type,
          "shp"={
            config$logger.info(sprintf("Format type: %s", type))
@@ -57,13 +57,13 @@ writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FAL
            config$logger.info("write shp file to data job directory")
            zip::zipr(zipfile = paste0("./data/",resourcename, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = resourcename)))
            config$logger.info("zip datafiles for server export")
-           if(useFeatures){
-           config$logger.info("object use to data features") 
-           df<-st_read(paste0("./data/",substring(resourcename,1,nchar(resourcename)-4),".shp"), quiet=TRUE) 
-           entity$data$features<-df
+           if(!useFeatures){
+             config$logger.info("object use to data features") 
+             df<-st_read(paste0("./data/",resourcename,".shp"), quiet=TRUE) 
+             entity$data$features<-df
            }
-           },
-          "dbtable"={
+         },
+         "dbtable"={
            if(is.null(config$software$output$dbi)){
              errMsg<-"Error: no dbi output detected, branch one in the config"
              config$logger.error(errMsg)
@@ -71,9 +71,9 @@ writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FAL
            }  
            config$logger.info(sprintf("Format type: %s", type))
            st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , layer_options = 'OVERWRITE=YES')
-           }
-        )
-config$logger.info("Write data resource end")
-config$logger.info("------------------------------------------------------------------------------")
+         }
+  )
+  config$logger.info("Write data resource end")
+  config$logger.info("------------------------------------------------------------------------------")
 }
 
