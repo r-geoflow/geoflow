@@ -136,6 +136,44 @@ register_actions <- function(){
         update_files = list(desc = "For an existing deposit, indicates if files should be updated", default = TRUE),
         communities = list(desc = "One or more communities to which the deposit should be associated", default = NA)
       )
+    ),
+    geoflow_action$new(
+      id = "import_dbi",
+      type = "Data publication",
+      def = "Import features data into Postgres/Postgis",
+      fun = action_import_dbi,
+      options = list(
+        obj = list(desc = "sf file to upload", default = NA),
+        useFeatures =list(desc = "a boolean condition to define if features must be attach to obj file", default = TRUE),
+        resourcenames=list(desc = "File name upload in database", default = NA),
+        useUploadSource=list(desc = "a boolean condition to define if resourcename is same as uploadSource information", default = TRUE),
+        type=list(desc = "format to convert", default = list("dbi"))
+      )
+    ),
+    geoflow_action$new(
+      id = "import_shp",
+      type = "Data publication",
+      def = "Import features data and zip files",
+      fun = action_import_shp,
+      options = list(
+        obj = list(desc = "sf file to upload", default = NA),
+        useFeatures =list(desc = "a boolean condition to define if features must be attach to obj file", default = TRUE),
+        resourcenames=list(desc = "File name upload in database", default = NA),
+        useUploadSource=list(desc = "a boolean condition to define if resourcename is same as uploadSource information", default = TRUE)
+      )
+    ),
+    geoflow_action$new(
+      id = "import_generic",
+      type = "Data publication",
+      def = "Import features data into several formats",
+      fun = action_import_generic,
+      options = list(
+        obj = list(desc = "sf file to upload", default = NA),
+        useFeatures =list(desc = "a boolean condition to define if features must be attach to obj file", default = TRUE),
+        resourcenames=list(desc = "File name upload in database", default = NA),
+        useUploadSource=list(desc = "a boolean condition to define if resourcename is same as uploadSource information", default = TRUE),
+        type=list(desc = "format to convert", default = c("shp","dbtable"))
+      )
     )
   )
   .geoflow$actions <- objs
