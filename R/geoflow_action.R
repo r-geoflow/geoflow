@@ -136,6 +136,27 @@ register_actions <- function(){
         update_files = list(desc = "For an existing deposit, indicates if files should be updated", default = TRUE),
         communities = list(desc = "One or more communities to which the deposit should be associated", default = NA)
       )
+    ),
+    geoflow_action$new(
+      id = "import_dbi",
+      type = "Data publication",
+      def = "Import features data into Postgres/Postgis",
+      fun = action_import_dbi,
+       ),
+    geoflow_action$new(
+      id = "import_shp",
+      type = "Data publication",
+      def = "Import features data and zip files",
+      fun = action_import_shp,
+       ),
+    geoflow_action$new(
+      id = "import_generic",
+      type = "Data publication",
+      def = "Import features data into several formats",
+      fun = action_import_generic,
+      options = list(
+      type=list(desc = "format to convert", default = NA)
+      )
     )
   )
   .geoflow$actions <- objs
