@@ -301,7 +301,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       
       config$logger.info(sprintf("Copying data to job directory '%s'", jobdir))
       
-      for(i in 1:length(self$data$source)){
+      if(!startsWith(self$data$sourceType, "db")) for(i in 1:length(self$data$source)){
       
         datasource <- self$data$source[[i]]
         datasource_parts <- unlist(strsplit(datasource, "\\."))
