@@ -88,10 +88,10 @@ register_actions <- function(){
       fun = geometa_create_iso_19110,
       options = list(
         doi = list(desc = "Add entity DOI - if defined - as metadata identifier and online resource", default = FALSE),
-        exclude_attributes = list(desc = "Attributes that should be excluded from the ISO 19110 production", default = list()),
+        exclude_attributes = list(desc = "Attributes that should be excluded from the ISO 19110 production", default = NA),
         exclude_attributes_not_in_dictionary = list(desc = "Enable to exclude all attributes/variables not referenced as dictionary/featuretype", default = FALSE),
-        exclude_values_for_attributes = list(desc = "Attribute names for which listed values should not be produced", default = list()),
-        extra_attributes = list(desc = "Extra attributes to add as feature catalog attributes although not in data", default = list()),
+        exclude_values_for_attributes = list(desc = "Attribute names for which listed values should not be produced", default = NA),
+        extra_attributes = list(desc = "Extra attributes to add as feature catalog attributes although not in data", default = NA),
         default_min_occurs = list(desc = "The default min occurs value for feature attributes cardinality", default = 1L),
         default_max_occurs = list(desc = "The default max occurs value for feature attribute cardinality", default = Inf)
       )
