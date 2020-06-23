@@ -77,6 +77,14 @@ writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FAL
            }  
            config$logger.info(sprintf("Format type: %s", type))
            st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , layer_options = 'OVERWRITE=YES')
+           
+           #enforce srid/geometry type in geometry_columns
+           srid <- unlist(strsplit(st_crs(obj)$input, ":"))[2]
+           geometryType <- unlist(strsplit(class(st_geometry(obj))[1], "sfc_"))[2]
+           alter_sql <- sprintf("alter table %s alter column geometry type geometry(%s, %s);", 
+                                resourcename, geometryType, srid)
+           DBI::dbExecute(config$software$output$dbi, alter_sql)
+           
          }
   )
   config$logger.info("Write data resource end")
