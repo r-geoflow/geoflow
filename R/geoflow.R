@@ -16,7 +16,7 @@
 #' @import gsheet
 #' @import readxl
 #' @import DBI
-#' @import RPostgreSQL
+#' @import RPostgres
 #' @import RSQLite
 #' @import sp
 #' @import sf
