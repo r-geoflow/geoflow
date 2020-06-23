@@ -13,13 +13,13 @@ writeWorkflowJobDataResource(entity,config,obj,useFeatures,resourcename,useUploa
 
 \item{obj}{a sf file}
 
+\item{useFeatures}{a boolean condition to define if features must be attach to obj file}
+
 \item{resourcename}{name of data input}
 
 \item{useUploadSource}{a boolean condition to define if resourcename is same as uploadSource information}
 
 \item{type}{format to convert into list :"shp","dbtable}
-
-\item{use}{Features a boolean condition to define if features must be attach to obj file}
 }
 \description{
 \code{writeWorkflowJobDataResource} allows to transform datasource into different formats
