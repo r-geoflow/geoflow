@@ -80,9 +80,10 @@ writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FAL
            
            #enforce srid/geometry type in geometry_columns
            srid <- unlist(strsplit(st_crs(obj)$input, ":"))[2]
+           geometryName <- attr(obj, "sf_column")
            geometryType <- unlist(strsplit(class(st_geometry(obj))[1], "sfc_"))[2]
-           alter_sql <- sprintf("alter table %s alter column geometry type geometry(%s, %s);", 
-                                resourcename, geometryType, srid)
+           alter_sql <- sprintf("alter table %s alter column %s type geometry(%s, %s);", 
+                                resourcename, geometryName, geometryType, srid)
            DBI::dbExecute(config$software$output$dbi, alter_sql)
            
          }
