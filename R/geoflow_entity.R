@@ -846,6 +846,16 @@ geoflow_entity <- R6Class("geoflow_entity",
                                     config$software$output$geoserver_config$properties$workspace,
                                     layername))
         self$addRelation(new_wfs_shp)
+        #CSV
+        new_wfs_csv <- geoflow_relation$new()
+        new_wfs_csv$setKey("wfs")
+        new_wfs_csv$setName(layername)
+        new_wfs_csv$setDescription(paste0(self$title, " - GIS Data Download (CSV)"))
+        new_wfs_csv$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=CSV", 
+                                    config$software$output$geoserver_config$parameters$url, 
+                                    config$software$output$geoserver_config$properties$workspace,
+                                    layername))
+        self$addRelation(new_wfs_csv)
       }
     },
     
