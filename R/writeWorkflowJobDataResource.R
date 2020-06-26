@@ -77,15 +77,15 @@ writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FAL
            }  
            config$logger.info(sprintf("Format type: %s", type))
            if(class(obj)[1]=="sf"){
-           st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , layer_options = 'OVERWRITE=YES')
-           
-           #enforce srid/geometry type in geometry_columns
-           srid <- unlist(strsplit(st_crs(obj)$input, ":"))[2]
-           geometryName <- attr(obj, "sf_column")
-           geometryType <- unlist(strsplit(class(st_geometry(obj))[1], "sfc_"))[2]
-           alter_sql <- sprintf("alter table %s alter column %s type geometry(%s, %s);", 
-                                resourcename, geometryName, geometryType, srid)
-           DBI::dbExecute(config$software$output$dbi, alter_sql)
+             st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , layer_options = 'OVERWRITE=YES')
+             
+             #enforce srid/geometry type in geometry_columns
+             srid <- unlist(strsplit(st_crs(obj)$input, ":"))[2]
+             geometryName <- attr(obj, "sf_column")
+             geometryType <- unlist(strsplit(class(st_geometry(obj))[1], "sfc_"))[2]
+             alter_sql <- sprintf("alter table %s alter column %s type geometry(%s, %s);", 
+                                  resourcename, geometryName, geometryType, srid)
+             DBI::dbExecute(config$software$output$dbi, alter_sql)
            }else{
              dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj , overwrite=TRUE)  
            }
