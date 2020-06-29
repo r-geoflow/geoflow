@@ -180,8 +180,8 @@ geometa_create_iso_19110 <- function(entity, config, options){
         gmlUom$setIdentifier(uom, uomUri)
         uomName <- attr(uom, "description")
         if(!is.null(uomName)) gmlUom$addName(uomName)
-        fat$setValueMeasurementUnit(gmlUom)
       }
+      fat$setValueMeasurementUnit(gmlUom)
     }
     
     #add listed values
