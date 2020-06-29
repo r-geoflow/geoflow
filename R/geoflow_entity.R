@@ -226,8 +226,11 @@ geoflow_entity <- R6Class("geoflow_entity",
       spatial_extent <- NULL
       if(!is.null(wkt)) spatial_extent <- sf::st_as_sfc(wkt, crs = crs)
       if(!is.null(bbox)) spatial_extent <- bbox
-      if(!is.null(data)) spatial_extent <- data
-
+      if(!is.null(data)) {
+        if(!is(data, "sf")) return(NULL)
+        spatial_extent <- data
+      }
+        
       if(class(spatial_extent)[1]=="try-error"){
         stop("The spatial extent is invalid!")
       }
@@ -244,7 +247,11 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(!is.null(wkt)) spatial_bbox <- sf::st_bbox(sf::st_as_sfc(wkt, crs = crs))
       if(!is.null(bbox)) spatial_bbox <- bbox
       if(!is.null(data)){
-        if(is(data,"sf")) spatial_bbox <- sf::st_bbox(data)
+        if(!is(data, "sf")){
+          return(NULL)
+        }else{
+          spatial_bbox <- sf::st_bbox(data)
+        }
       }
       
       if(class(spatial_bbox)[1]=="try-error"){
