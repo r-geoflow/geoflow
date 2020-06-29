@@ -66,6 +66,7 @@ sanitize_date <- function(date){
 #' @export
 #'
 extract_kvp <- function(str){
+  if(endsWith(str,":")) return(NA)
   #kvp <- unlist(strsplit(str, ":(?!//|\\d)", perl = T))
   kvp <- unlist(strsplit(str, ':(?!//)\\s*(?=([^"]*"[^"]*")*[^"]*$)', perl = TRUE))
   if(length(kvp)==1) stop("Error while splitting kvp key/value")

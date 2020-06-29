@@ -1,6 +1,8 @@
 #handle_dictionary_df
 handle_dictionary_df <- function(config, source){
   
+  source [source == ""] <- NA
+  
   if(!is(source, "data.frame")){
     errMsg <- "Error in 'handle_dictionary_df': source parameter should be an object of class 'data.frame'"
     config$logger.error(errMsg)
@@ -86,7 +88,7 @@ handle_dictionary_df <- function(config, source){
 handle_dictionary_gsheet <- function(config, source){
   
   #read gsheet URL
-  source <- as.data.frame(gsheet::gsheet2tbl(source))
+  source <- read.csv(text = gsheet::gsheet2text(source))
   
   #apply generic handler
   dictionary <- handle_dictionary_df(config, source)
