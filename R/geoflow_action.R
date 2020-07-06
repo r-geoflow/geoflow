@@ -142,6 +142,9 @@ register_actions <- function(){
       type = "Data publication",
       def = "Import features data into Postgres/Postgis",
       fun = action_import_dbi,
+      options = list(
+        createIndexes=list(desc = "create indexes for columns", default = FALSE)
+      )
        ),
     geoflow_action$new(
       id = "import_shp",
@@ -155,7 +158,8 @@ register_actions <- function(){
       def = "Import features data into several formats",
       fun = action_import_generic,
       options = list(
-      type=list(desc = "format to convert", default = NA)
+      type=list(desc = "format to convert", default = NA),
+      createIndexes=list(desc = "create indexes for columns", default = FALSE)
       )
     )
   )
