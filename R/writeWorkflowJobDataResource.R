@@ -11,6 +11,7 @@
 #' @param useFeatures a boolean condition to define if features must be attach to obj file
 #' @param resourcename name of data input
 #' @param useUploadSource a boolean condition to define if resourcename is same as uploadSource information
+#' @param createIndexes a boolean condition for possibility to create indexes for each column
 #' @param type format to convert into list :"shp","dbtable 
 #' 
 #' @author Alexandre Bennici, \email{bennicialexandre@@gmail.com}

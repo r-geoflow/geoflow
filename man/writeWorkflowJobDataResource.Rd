@@ -19,6 +19,8 @@ writeWorkflowJobDataResource(entity,config,obj,useFeatures,resourcename,useUploa
 
 \item{useUploadSource}{a boolean condition to define if resourcename is same as uploadSource information}
 
+\item{createIndexes}{a boolean condition for possibility to create indexes for each column}
+
 \item{type}{format to convert into list :"shp","dbtable}
 }
 \description{
