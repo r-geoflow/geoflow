@@ -17,7 +17,7 @@
 #' @export
 #'
 
-writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FALSE,resourcename=NULL,useUploadSource=FALSE,type){
+writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FALSE,resourcename=NULL,useUploadSource=FALSE,createIndexes=FALSE,type){
   config$logger.info("------------------------------------------------------------------------------")
   config$logger.info("Write data resource start")
   if(is.null(obj) && !useFeatures){
@@ -79,15 +79,31 @@ writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FAL
            if(class(obj)[1]=="sf"){
              st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , layer_options = 'OVERWRITE=YES')
              
-             #enforce srid/geometry type in geometry_columns
+                #enforce srid/geometry type in geometry_columns
              srid <- unlist(strsplit(st_crs(obj)$input, ":"))[2]
              geometryName <- attr(obj, "sf_column")
              geometryType <- unlist(strsplit(class(st_geometry(obj))[1], "sfc_"))[2]
              alter_sql <- sprintf("alter table %s alter column %s type geometry(%s, %s);", 
                                   resourcename, geometryName, geometryType, srid)
              DBI::dbExecute(config$software$output$dbi, alter_sql)
+             #create index for each colunm except geometry
+             if(createIndexes){
+               for (column_name in setdiff(names(obj),geometryName)){
+                 config$logger.info(sprintf("Indexes created for column : %s",column_name))
+                 create_index_sql <- sprintf("CREATE INDEX %s_%s_idx  ON %s  (%s);", resourcename, column_name, resourcename, column_name)
+                 DBI::dbExecute(config$software$output$dbi, create_index_sql)
+               }
+             }
            }else{
-             dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj , overwrite=TRUE)  
+             dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj , overwrite=TRUE)
+             #create index for each column
+             if(createIndexes){
+               for (column_name in names(obj)){
+                 config$logger.info(sprintf("Indexes created for column : %s",column_name))
+                 create_index_sql <- sprintf("CREATE INDEX %s_%s_idx  ON %s  (%s);", resourcename, column_name, resourcename, column_name)
+                 DBI::dbExecute(config$software$output$dbi, create_index_sql)
+               }
+             }
            }
          }
   )
