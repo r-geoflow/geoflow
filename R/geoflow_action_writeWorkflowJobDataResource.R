@@ -1,6 +1,6 @@
 #For import in dbi
 action_import_dbi<-function(entity,config,options){
-  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=FALSE,type="dbtable")}
+  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=options$createIndexes,type="dbtable")}
 
 #For enrich features of shp
 action_import_shp<-function(entity,config,options){
@@ -8,6 +8,6 @@ action_import_shp<-function(entity,config,options){
 
 #For generic action
 action_import_generic<-function(entity,config,options){
-  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=FALSE,type=options$type)}
+  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=options$createIndexes,type=options$type)}
 
     
