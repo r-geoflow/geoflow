@@ -1,8 +1,10 @@
 #For import in dbi
 action_import_dbi<-function(entity,config,options){
-  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=options$createIndexes,type="dbtable")
   #options
-  createIndexes<-ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE) }
+  createIndexes<-ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE) 
+  #function
+  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=options$createIndexes,type="dbtable")
+  }
 
 #For enrich features of shp
 action_import_shp<-function(entity,config,options){
@@ -10,7 +12,9 @@ action_import_shp<-function(entity,config,options){
 
 #For generic action
 action_import_generic<-function(entity,config,options){
-  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=options$createIndexes,type=options$type)
   #options
-  createIndexes<-ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE) }
+  createIndexes<-ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE)
+  #function
+  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=options$createIndexes,type=options$type)
+   }
     
