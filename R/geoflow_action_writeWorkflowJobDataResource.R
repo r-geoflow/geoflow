@@ -3,7 +3,7 @@ action_import_dbi<-function(entity,config,options){
   #options
   createIndexes<-ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE) 
   #function
-  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=options$createIndexes,type="dbtable")
+  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=createIndexes,type="dbtable")
   }
 
 #For enrich features of shp
@@ -15,6 +15,6 @@ action_import_generic<-function(entity,config,options){
   #options
   createIndexes<-ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE)
   #function
-  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=options$createIndexes,type=options$type)
+  writeWorkflowDataResource(entity=entity,config=config,obj=NULL,useFeatures=TRUE,resourcename=NULL,useUploadSource=TRUE,createIndexes=createIndexes,type=options$type)
    }
     
