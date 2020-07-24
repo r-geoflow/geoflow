@@ -255,7 +255,7 @@ zen4R_deposit_record <- function(entity, config, options){
       if(regexpr("zenodo", doi)>0){
         config$metadata$content$entities[[i]]$identifiers[["doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
         config$metadata$content$entities[[i]]$identifiers[["conceptdoi_to_save"]] <- zenodo_metadata$getConceptDOI()
-        config$metadata$content$entities[[i]]$setStatus(ifelse(publish, "published", "draft"))
+        config$metadata$content$entities[[i]]$setStatus("zenodo", ifelse(publish, "published", "draft"))
       }
       break;
     }

@@ -106,9 +106,10 @@
 #'    Get the list of entity subjects. By default, a list of \code{geoflow_subjects} will be returned. To
 #'    return the list of entity subjects as \code{data.frame}, set \code{pretty = TRUE}.
 #'  }
-#'  \item{\code{setStatus(status)}}{
-#'    Set a simple status either "draft" or "published". This method is required to deal with Zenodo (zen4R)
-#'    publishing action.
+#'  \item{\code{setStatus(system, status)}}{
+#'    Set a simple status either "draft" or "published". This method is required to deal with 
+#'    systems that manage DOIs, such as Zenodo (with \pkg{zen4R}) or Dataverse (with \pkg{atom4R})
+#'    publishing actions (Used internally by \pkg{geoflow}).
 #'  }
 #' }
 #' 
@@ -132,7 +133,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     temporal_extent = NULL,
     provenance = NULL,
     data = NULL,
-    status = NULL,
+    status = list(),
     resources = list(),
     initialize = function(){
       self$addDate("creation", Sys.time())
@@ -977,11 +978,11 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #setStatus
-    setStatus = function(status){
+    setStatus = function(system, status){
       if(!(status %in% c("draft", "published"))){
         stop("The status should be either 'draft' or 'published'")
       }
-      self$status <- status
+      self$status[[system]] <- status
     },
     
     #getJobResource

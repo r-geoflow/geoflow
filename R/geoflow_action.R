@@ -138,6 +138,19 @@ register_actions <- function(){
       )
     ),
     geoflow_action$new(
+      id = "atom4R-dataverse-deposit-record",
+      type = "Data publication",
+      def = "Deposits/Publish data and/or metetadata on a Dataverse using the Sword API",
+      fun = atom4R_dataverse_deposit_record,
+      options = list(
+        depositWithFiles = list(desc = "Indicates if the action is uploading files", default = FALSE),
+        publish = list(desc = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", default = FALSE),
+        deleteOldFiles = list(desc = "Indicates if the action should delete old files prior upload new files", default = TRUE),
+        update_metadata = list(desc = "For an existing deposit, indicates if metadata elements should be updated", default = TRUE),
+        update_files = list(desc = "For an existing deposit, indicates if files should be updated", default = TRUE)
+      )
+    ),
+    geoflow_action$new(
       id = "import_dbi",
       type = "Data publication",
       def = "Import features data into Postgres/Postgis",
