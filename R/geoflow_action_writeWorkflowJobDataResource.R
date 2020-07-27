@@ -1,5 +1,5 @@
 #For write generic action
-sf_write_generic<-function(entity, config, options){
+sf_write_generic <- function(entity, config, options){
   #options
   createIndexes <- ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE)
   #function
@@ -16,7 +16,7 @@ sf_write_generic<-function(entity, config, options){
 }
 
 #For write in dbi
-sf_write_dbi<-function(entity, config, options){
+sf_write_dbi <- function(entity, config, options){
   #options
   createIndexes<-ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE) 
   #function
@@ -33,7 +33,7 @@ sf_write_dbi<-function(entity, config, options){
 }
 
 #For write as shp
-sf_write_shp<-function(entity, config, options){
+sf_write_shp <- function(entity, config, options){
   writeWorkflowDataResource(
     entity = entity,
     config = config,
