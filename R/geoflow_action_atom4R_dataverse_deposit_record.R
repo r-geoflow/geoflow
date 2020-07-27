@@ -195,8 +195,31 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
     config$logger.info("Skipping update of Dataverse record files (option 'update_files' and/or 'depositWithFiles FALSE)")
   }
   
+  #publish record?
+  if(publish){
+    #2d verification for publish action, need to have the DOI specified in the entity table
+    if(is.null(entity$identifiers[["doi"]])){
+      config$logger.warn("No DOI specified in entity. Dataverse 'publish' action ignored!")
+      publish <- FALSE
+    }
+    #3rd verification for publish action, need to check that DOI match the one prereserved
+    if(!is.null(entity$identifiers[["doi"]])){
+      if(doi != entity$identifiers[["doi"]]){ 
+        config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Dataverse record Concept DOI (%s). Zenodo 'publish' action ignored!", 
+                                   entity$identifiers[["doi"]], doi))
+        publish <- FALSE
+      }
+    }
+    
+    #publish
+    if(publish){
+      config$logger.warn(sprintf("Dataverse: publishing record for DOI '%s'", doi))
+      SWORD$publishDataverseRecord(paste0("doi:", doi))
+    }
+  }
+  
   #output table of DOIs
-  if(is(out, "AtomEntry")){
+  if(is(out, "AtomEntry") | is(out, "AtomFeed")){
     infoMsg <- switch(action,
       "CREATE" = sprintf("Successfully created Dataverse dataset with id '%s'", 
                          entity$identifiers[["id"]]),
