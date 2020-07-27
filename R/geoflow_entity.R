@@ -395,6 +395,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 sf::st_write(self$data$features, paste0(basefilename, ".shp"), delete_dsn = FALSE)
                 data.files <- list.files(pattern = basefilename)
                 zip::zipr(zipfile = paste0(basefilename, ".zip"), files = data.files)
+                unlink(data.files) #20200727 added backward for Dataverse action
               },{
                 config$logger.warn(sprintf("Entity data features writer not implemented for type '%s'", self$data$sourceType))
               }
