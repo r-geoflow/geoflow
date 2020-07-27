@@ -151,29 +151,29 @@ register_actions <- function(){
       )
     ),
     geoflow_action$new(
-      id = "import_dbi",
+      id = "sf-write-generic",
       type = "Data publication",
+      def = "Import features data into several formats",
+      fun = sf_write_generic,
+      options = list(
+        type=list(desc = "format to convert", default = NA),
+        createIndexes=list(desc = "create indexes for columns", default = FALSE)
+      )
+    ),
+    geoflow_action$new(
+      id = "sf-write-dbi",
+      type = "Data writing",
       def = "Import features data into Postgres/Postgis",
-      fun = action_import_dbi,
+      fun = sf_write_dbi,
       options = list(
         createIndexes=list(desc = "create indexes for columns", default = FALSE)
       )
-       ),
+    ),
     geoflow_action$new(
-      id = "import_shp",
+      id = "sf-write-shp",
       type = "Data publication",
       def = "Import features data and zip files",
-      fun = action_import_shp,
-       ),
-    geoflow_action$new(
-      id = "import_generic",
-      type = "Data publication",
-      def = "Import features data into several formats",
-      fun = action_import_generic,
-      options = list(
-      type=list(desc = "format to convert", default = NA),
-      createIndexes=list(desc = "create indexes for columns", default = FALSE)
-      )
+      fun = sf_write_shp,
     )
   )
   .geoflow$actions <- objs
