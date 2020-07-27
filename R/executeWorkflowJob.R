@@ -68,8 +68,11 @@ executeWorkflowJob <- function(config, jobdir = NULL){
       entities <- config$metadata$content$entities
       if(!is.null(entities)){
         
-        #cleaning in case Zenodo action is enabled with clean properties 
+        #inspect if there are DOI-management related actions
         withZenodo <- any(sapply(actions, function(x){x$id=="zen4R-deposit-record"}))
+        withDataverse <- any(sapply(actions, function(x){x$id=="atom4R-dataverse-deposit-record"}))
+        
+        #cleaning in case Zenodo action is enabled with clean properties 
         if(withZenodo){
           ZENODO_CONFIG <- config$software$output$zenodo_config
           clean <- ZENODO_CONFIG$properties$clean
@@ -161,19 +164,21 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           entity$data$features <- NULL
         }
         
-        #in case Zenodo was enabled, we create an output table of DOIs & export altered source entities
+        #special business logics in case of DOI management
+        #in case Zenodo or Dataverse was enabled, we create an output table of DOIs & export altered source entities
+        ##ZENODO
         if(withZenodo){
-          config$logger.info("Exporting reference list of DOIs to job directory")
+          config$logger.info("Exporting reference list of Zenodo DOIs to job directory")
           out_zenodo_dois <- do.call("rbind", lapply(entities, function(entity){
             return(data.frame(
               Identifier = entity$identifiers[["id"]], 
-              Status = entity$status,
-              DOI_for_allversions = entity$identifiers[["conceptdoi_to_save"]],
-              DOI_for_version = entity$identifiers[["doi_to_save"]],
+              Status = entity$status$zenodo,
+              DOI_for_allversions = entity$identifiers[["zenodo_conceptdoi_to_save"]],
+              DOI_for_version = entity$identifiers[["zenodo_doi_to_save"]],
               stringsAsFactors = FALSE
             ))
           }))
-          write.csv(out_zenodo_dois, file = file.path(getwd(),"metadata", "zenodo_dois.csv"), row.names = FALSE)
+          readr::write_csv(out_zenodo_dois, file.path(getwd(),"metadata", "zenodo_dois.csv"))
       
           config$logger.info("Exporting source entities table enriched with DOIs")
           src_entities <- config$src_entities
@@ -185,7 +190,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             identifier <- paste0(identifier, "doi:", out_zenodo_dois[i,"DOI_for_allversions"])
             return(identifier)
           })
-          write.csv(src_entities, file = file.path(getwd(),"metadata","zenodo_entities_with_doi_for_publication.csv"), row.names = FALSE)
+          readr::write_csv(src_entities, file.path(getwd(),"metadata","zenodo_entities_with_doi_for_publication.csv"))
 
           
           config$logger.info("Exporting workflow configuration for Zenodo DOI publication")
@@ -226,9 +231,63 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           
         }
         
+        #DATAVERSE
+        if(withDataverse){
+          config$logger.info("Exporting reference list of Dataverse DOIs to job directory")
+          out_dataverse_dois <- do.call("rbind", lapply(entities, function(entity){
+            return(data.frame(
+              Identifier = entity$identifiers[["id"]], 
+              Status = entity$status$dataverse,
+              DOI_for_allversions = entity$identifiers[["dataverse_conceptdoi_to_save"]],
+              DOI_for_version = entity$identifiers[["dataverse_doi_to_save"]],
+              stringsAsFactors = FALSE
+            ))
+          }))
+          readr::write_csv(out_dataverse_dois, file.path(getwd(),"metadata", "dataverse_dois.csv"))
+          
+          config$logger.info("Exporting source entities table enriched with Dataverse DOIs")
+          src_entities <- config$src_entities
+          src_entities$Identifier <- sapply(1:nrow(src_entities), function(i){
+            identifier <- src_entities[i, "Identifier"]
+            if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
+            if(regexpr("doi", identifier)>0) return(identifier)
+            if(out_dataverse_dois[i,"Status"] == "published") return(identifier)
+            identifier <- paste0(identifier, "doi:", out_dataverse_dois[i,"DOI_for_allversions"])
+            return(identifier)
+          })
+          readr::write_csv(src_entities, file.path(getwd(),"metadata","dataverse_entities_with_doi_for_publication.csv"))
+          
+          
+          config$logger.info("Exporting workflow configuration for Dataverse DOI publication")
+          src_config <- config$src_config
+          
+          #modifying handler to csv/exported table - to see with @juldebar
+          src_config$metadata$entities$handler <- "csv"
+          src_config$metadata$entities$source <- "dataverse_entities_with_doi_for_publication.csv"
+          
+          #altering publish option
+          dataverse_action <- src_config$actions[sapply(src_config$actions, function(x){x$id=="atom4R-dataverse-deposit-record"})][[1]]
+          dataverse_publish <- if(!is.null(dataverse_action$options$publish)) dataverse_action$options$publish else FALSE
+          invisible(lapply(1:length(src_config$actions), function(i){
+            action <- src_config$actions[[i]]
+            if(action$id=="atom4R-dataverse-deposit-record"){
+              src_config$actions[[i]]$options$publish <<- if(dataverse_publish) FALSE else TRUE
+            }
+          }))
+          #export modified config
+          jsonlite::write_json(
+            src_config, file.path(getwd(),"metadata","dataverse_geoflow_config_for_publication.json"),
+            auto_unbox = TRUE, pretty = TRUE
+          )
+          
+          #modifying global option
+          src_config$options$skipFileDownload <- if(dataverse_publish) FALSE else TRUE
+          
+        }
+        
         #save entities & contacts used
-        write.csv(config$src_entities, file = file.path(getwd(), "metadata", "config_copyof_entities.csv"), row.names = FALSE)
-        write.csv(config$src_contacts, file = file.path(getwd(), "metadata", "config_copyof_contacts.csv"), row.names = FALSE)
+        readr::write_csv(config$src_entities, file.path(getwd(), "metadata", "config_copyof_entities.csv"))
+        readr::write_csv(config$src_contacts, file.path(getwd(), "metadata", "config_copyof_contacts.csv"))
         
       }
     }else if(config$mode == "raw"){

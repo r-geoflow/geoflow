@@ -399,6 +399,22 @@ register_software <- function(){
                      and optionally specify either a 'query' (ElasticSearch Zenodo query), a list of 'doi', or 'community' for which
                      you want to restrain the cleaning operation.")
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #DATAVERSE SWORD CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "sword_for_dataverse",
+      definition = "Dataverse SWORD API Client powered by 'atom4R' package",
+      handler = atom4R::SwordDataverseClient$new,
+      arguments = list(
+        hostname = list(def = "Dataverse base URL"),
+        token = list(def = "Dataverse user authentication token"),
+        logger = list(def = "Level for 'atom4R' logger messages (NULL, 'INFO' or 'DEBUG')")
+      ),
+      attributes = list(
+        dataverse = list(def = "Dataverse id where to deposit/publish records")
+      )
     )
     
   )
