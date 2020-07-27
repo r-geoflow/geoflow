@@ -163,11 +163,12 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
     if(deleteOldFiles & !skipFileDownload){
       config$logger.info("Dataverse: deleting old files...")
       deleted <- SWORD$deleteFilesFromDataverseRecord(paste0("doi:", doi))
+      config$logger.info("Dataverse: files deletion status:")
       config$logger.info(deleted)
     }
     config$logger.info("Dataverse: adding files...")
     #upload data files, if any
-    data_files <- list.files(file.path(getwd(),"data"))
+    data_files <- list.files(file.path(getwd(),"data"), full.names = T)
     if(length(data_files)>0){
       data_files <- data_files[regexpr(entity$identifiers[["id"]],data_files)>0]
       if(length(data_files)>0) data_files <- data_files[!endsWith(data_files, ".rds")]
@@ -181,7 +182,7 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
       }
     }
     #upload metadata files, if any
-    metadata_files <- list.files(file.path(getwd(),"metadata"))
+    metadata_files <- list.files(file.path(getwd(),"metadata"), full.names = T)
     if(length(metadata_files)>0){
       metadata_files <- metadata_files[regexpr(entity$identifiers[["id"]],metadata_files)>0]
       if(length(metadata_files)>0) metadata_files <- metadata_files[!endsWith(metadata_files, ".rds")]
