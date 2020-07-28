@@ -260,6 +260,10 @@ zen4R_deposit_record <- function(entity, config, options){
       break;
     }
   }
+  entity$identifiers[["doi"]] <- zenodo_metadata$getConceptDOI()
+  entity$identifiers[["doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
+  entity$identifiers[["conceptdoi_to_save"]] <- zenodo_metadata$getConceptDOI()
+  entity$setStatus("zenodo", ifelse(publish, "published", "draft"))
   
   #if publish, we save all
   if(publish){

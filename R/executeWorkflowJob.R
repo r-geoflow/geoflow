@@ -161,6 +161,14 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             zen_action$fun(entity, config, act_options)
           }
           
+          #if atom4R/dataverse is among actions, file upload (and possibly publish) to be managed here
+          if(withDataverse){
+            dv_action <- actions[sapply(actions, function(x){x$id=="atom4R-dataverse-deposit-record"})][[1]]
+            act_options <- dv_action$options
+            act_options$depositWithFiles <- TRUE
+            dv_action$fun(entity, config, act_options)
+          }
+          
           entity$data$features <- NULL
         }
         

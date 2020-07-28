@@ -5,7 +5,7 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   
   #options
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
-  publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE #TODO IMPLEMENT
+  publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
   deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
   update_metadata <- if(!is.null(options$update_metadata)) options$update_metadata else TRUE
   update_files <- if(!is.null(options$update_files)) options$update_files else TRUE
@@ -240,6 +240,9 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
         break;
       }
     }
-    
+    entity$identifiers[["doi"]] <- doi_to_save
+    entity$identifiers[["dataverse_doi_to_save"]] <- doi_to_save
+    entity$identifiers[["dataverse_conceptdoi_to_save"]] <- doi_to_save
+    entity$setStatus("dataverse", ifelse(publish, "published", "draft"))
   }
 }
