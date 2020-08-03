@@ -117,7 +117,7 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   ##coverage
   if(!is.null(entity$spatial_extent)){
     cov <- sf::st_as_text(entity$spatial_extent)
-    if(!is.null(entity$srid)) cov <- paste0(entity$srid, ";", cov)
+    if(!is.null(entity$srid)) cov <- paste0("SRID=", entity$srid, ";", cov)
     dcentry$addDCCoverage(cov)
   }
   
