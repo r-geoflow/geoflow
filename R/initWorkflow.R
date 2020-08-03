@@ -228,7 +228,12 @@ initWorkflow <- function(file){
       }
       
     }
-    config$registers <- c(config$registers, fetched_registers)
+    if(all(sapply(config$registers, function(x){class(x)[1] == "geoflow_register"}))){
+      config$registers <- c(config$registers, fetched_registers)
+    }else{
+      config$registers <- fetched_registers
+    }
+    
   }
   
   #metadata elements
