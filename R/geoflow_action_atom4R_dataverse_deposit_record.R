@@ -114,6 +114,12 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
       dcentry$addDCRelation(dc_relation)
     }
   }
+  ##coverage
+  if(!is.null(entity$spatial_extent)){
+    cov <- sf::st_as_text(entity$spatial_extent)
+    if(!is.null(entity$srid)) cov <- paste0(entity$srid, ";", cov)
+    dcentry$addDCCoverage(cov)
+  }
   
   ##sources
   #TODO any sources?
