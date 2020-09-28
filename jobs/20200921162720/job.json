@@ -1,0 +1,100 @@
+{
+  "id": "dataverse-workflow",
+  "profile": {
+	"project": "geoflow - Dataverse",
+	"organization": "CNRS-EDYTEM",
+	"logos": []
+  },
+  "options": {
+	"line_separator": "_\n"
+  },
+  "mode": "entity",
+  "metadata": {
+    "entities": {
+      "handler": "gsheet",
+      "source": "https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit#gid=0"
+    },
+    "contacts" : {
+      "handler": "gsheet",
+      "source": "https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit#gid=0"
+    }
+			
+  },
+  "software": [
+	{
+        "id": "my-dataverse",
+        "type": "output",
+        "software_type": "sword_for_dataverse",
+        "parameters": {
+            "hostname": "https://data-preproduction.inrae.fr",
+			"token": "6260ccc5-4670-431e-ad65-3f301f41f349",
+			"logger": "DEBUG"
+        },
+        "properties" : {
+			"dataverse": "dynids"
+		}
+    },
+	{
+		"id": "my-geonetwork",
+		"type": "output",
+		"software_type": "geonetwork",
+		"parameters": {
+			"url": "https://geonetwork-sdi-lab.d4science.org/geonetwork",
+			"user": "admin",
+			"pwd": "sdilab4you",
+			"version": "3.0.2",
+			"logger": "DEBUG"
+		}
+	},
+	{
+		"id": "my-geoserver",
+		"type": "output",
+		"software_type": "geoserver",
+		"parameters": {
+			"url": "https://geoserver-sdi-lab.d4science.org/geoserver",
+			"user": "admin",
+			"pwd": "sdilab4you",
+			"logger": "DEBUG"
+		},
+		"properties" : {
+			"workspace": "sdilab_geoflow",
+			"datastore": "sdilab_geoflow_shapefiles"
+		}
+	}
+  ],
+  "actions": [
+	{
+	  "id": "atom4R-dataverse-deposit-record",
+	  "run": false
+	},
+	{
+      "id": "geometa-create-iso-19115",
+      "run": false,
+	  "options": {
+		"logo": true,
+		"doi": true,
+		"doi_thumbnail": true,
+		"addfeatures": false
+	  }
+    },
+	{
+      "id": "geometa-create-iso-19110",
+      "run": false
+    },
+	{
+	  "id": "geonapi-publish-iso-19139",
+	  "run": false,
+	  "options": {
+		"geometa_inspire": false
+	  }
+	},
+	{
+	  "id": "geosapi-publish-ogc-services",
+	  "run": false
+	},
+	{
+		"id": "eml-create-eml",
+		"run": true
+	}
+  ]
+}

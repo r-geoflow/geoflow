@@ -78,7 +78,8 @@ register_actions <- function(){
         inspire = list(desc = "Validates ISO 19139 metadata with INSPIRE reference validator", default = FALSE),
         logo = list(desc = "Add configure profile logo(s) - if defined - as metadata thumbnail(s)", default = FALSE),
         addfeatures = list(desc = "Add entity data features - if defined - as metadata bounding polygon(s)", default = FALSE),
-        featureId = list(desc = "ID of entity data features used to identify bounding polygon(s) with option 'addfeatures'", default = NA)
+        featureId = list(desc = "ID of entity data features used to identify bounding polygon(s) with option 'addfeatures'", default = NA),
+        subject_geography = list(desc = "Identifier of the subject handling a Geographic coverage.", default = "geography")
       )
     ),
     geoflow_action$new(
@@ -174,6 +175,15 @@ register_actions <- function(){
       type = "Data publication",
       def = "Import features data and zip files",
       fun = sf_write_shp,
+    ),
+    geoflow_action$new(
+      id = "eml-create-eml",
+      type = "Metadata production",
+      def = "Produce an EML metadata object",
+      fun = eml_create_eml,
+      options = list(
+        subject_taxonomy = list(desc = "Identifier of the subject handling the Taxonomic coverage.", default = "taxonomy")
+      )
     )
   )
   .geoflow$actions <- objs

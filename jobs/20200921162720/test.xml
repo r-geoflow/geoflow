@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:stmml="http://www.xml-cml.org/schema/stmml-1.2" xml:lang="eng" packageId="a78bc440-fc16-11ea-a84b-4b280c1bc992" system="uuid" xsi:schemaLocation="https://eml.ecoinformatics.org/eml-2.2.0 https://eml.ecoinformatics.org/eml-2.2.0/eml.xsd">
+  <dataset>
+    <abstract>
+      <para>My metadata description 1</para>
+    </abstract>
+    <additionalInfo>
+      <para>some supplemental info 1</para>
+    </additionalInfo>
+    <alternateIdentifier>testing</alternateIdentifier>
+    <contact id="https://orcid.org/0000-0002-3519-6141">
+      <individualName>
+        <electronicMailAddress>julien.barde@ird.fr</electronicMailAddress>
+        <givenName>Julien</givenName>
+        <surName>Barde</surName>
+      </individualName>
+      <organizationName>IRD, UMR MARBEC &amp; COI</organizationName>
+      <positionName>Engineer</positionName>
+      <address>rue de l'Institut Ebene Maurice</address>
+      <phone>(+230)8311514</phone>
+      <onlineUrl>http://www.umr-marbec.fr/fr</onlineUrl>
+      <userId directory="https://orcid.org">https://orcid.org/0000-0002-3519-6141</userId>
+    </contact>
+    <contact id="wilfried.heintz@inra.fr">
+      <individualName>
+        <electronicMailAddress>wilfried.heintz@inra.fr</electronicMailAddress>
+        <givenName>Wilfried</givenName>
+        <surName>Heintz</surName>
+      </individualName>
+      <organizationName>INRA</organizationName>
+      <positionName>Engineer</positionName>
+      <address>Auzeville-Tolosane France</address>
+      <onlineUrl>https://www.dynafor.fr/</onlineUrl>
+    </contact>
+    <coverage>
+      <geographicCoverage>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-56</westBoundingCoordinate>
+          <eastBoundingCoordinate>-19.3103</eastBoundingCoordinate>
+          <northBoundingCoordinate>58.6049</northBoundingCoordinate>
+          <southBoundingCoordinate>9.3635</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <temporalCoverage>
+        <rangeOfDates>
+          <beginDate>
+            <calendarDate>2007-03-01</calendarDate>
+          </beginDate>
+          <endDate>
+            <calendarDate>2008-05-11</calendarDate>
+          </endDate>
+        </rangeOfDates>
+      </temporalCoverage>
+    </coverage>
+    <creator id="https://orcid.org/0000-0002-5870-5762">
+      <individualName>
+        <electronicMailAddress>emmanuel.blondel1@gmail.com</electronicMailAddress>
+        <givenName>Emmanuel</givenName>
+        <surName>Blondel</surName>
+      </individualName>
+      <individualName>
+        <electronicMailAddress>emmanuel.blondel1@gmail.com</electronicMailAddress>
+        <givenName>Emmanuel</givenName>
+        <surName>Blondel</surName>
+      </individualName>
+      <organizationName>Independent</organizationName>
+      <positionName>Engineer</positionName>
+      <address>France</address>
+      <onlineUrl>https://eblondel.github.io</onlineUrl>
+      <userId directory="https://orcid.org">https://orcid.org/0000-0002-5870-5762</userId>
+      <userId directory="https://orcid.org">https://orcid.org/0000-0002-5870-5762</userId>
+    </creator>
+    <keywordSet>
+      <keyword>motclé1</keyword>
+      <keyword>motclé2</keyword>
+      <keyword>motclé3</keyword>
+      <keywordThesaurus>General</keywordThesaurus>
+    </keywordSet>
+    <keywordSet>
+      <keyword>espece1</keyword>
+      <keyword>espece2</keyword>
+      <keyword>espece3</keyword>
+      <keywordThesaurus>Especes</keywordThesaurus>
+    </keywordSet>
+    <language>eng</language>
+    <metadataProvider id="https://orcid.org/0000-0002-5870-5762">
+      <individualName>
+        <electronicMailAddress>emmanuel.blondel1@gmail.com</electronicMailAddress>
+        <givenName>Emmanuel</givenName>
+        <surName>Blondel</surName>
+      </individualName>
+      <individualName>
+        <electronicMailAddress>emmanuel.blondel1@gmail.com</electronicMailAddress>
+        <givenName>Emmanuel</givenName>
+        <surName>Blondel</surName>
+      </individualName>
+      <organizationName>Independent</organizationName>
+      <positionName>Engineer</positionName>
+      <address>France</address>
+      <onlineUrl>https://eblondel.github.io</onlineUrl>
+      <userId directory="https://orcid.org">https://orcid.org/0000-0002-5870-5762</userId>
+      <userId directory="https://orcid.org">https://orcid.org/0000-0002-5870-5762</userId>
+    </metadataProvider>
+    <methodStep>
+      <description>rationale1: description1</description>
+    </methodStep>
+    <methodStep>
+      <description>rationale2: description2</description>
+    </methodStep>
+    <methodStep>
+      <description>rationale3: description3</description>
+    </methodStep>
+    <pubDate>2020-09-21 16:28:01</pubDate>
+    <purpose>
+      <para>Some purpose for this metadata 1</para>
+    </purpose>
+    <shortName>blabla</shortName>
+    <title>My Title 1 - with a shapefile associated</title>
+  </dataset>
+</eml:eml>
