@@ -234,7 +234,7 @@ register_software <- function(){
             sql <- NULL
             if(!is.null(software_config$properties$onstart_sql)){
               config$logger.info(sprintf("SQL script = %s", software_config$properties$onstart_sql))
-              sql <- paste0(readLines("D:/sandbox-geoflow/myscript_onstart.sql"),collapse="\n")
+              sql <- paste0(readLines(software_config$properties$onstart_sql),collapse="\n")
               
             }else if(!is.null(software_config$properties$onstart_r)){
               if(is.null(software_config$properties$onstart_r$script)){
