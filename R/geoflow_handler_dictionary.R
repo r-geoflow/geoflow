@@ -54,7 +54,7 @@ handle_dictionary_df <- function(config, source){
   config$logger.info("Loading register scripts from data dictionnary...")
   scripts <- unique(source$RegisterScript)
   scripts <- scripts[!is.na(scripts)]
-  invisible(lapply(scripts, source))
+  invisible(lapply(as.character(scripts), source))
   config$logger.info("Fetching registers from data dictionnary...")
   handlers <- unique(source$RegisterId)
   handlers <- handlers[!is.na(handlers)]
