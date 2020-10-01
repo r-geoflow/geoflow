@@ -35,8 +35,8 @@
 #'  \item{\code{setTitle(title)}}{
 #'    Set entity title
 #'  }
-#'  \item{\code{setDescription(description)}}{
-#'    Set entity description
+#'  \item{\code{setDescription(key, description)}}{
+#'    Set entity description. Allowed key values are 'abstract', 'purpose', 'info', 'project'
 #'  }
 #'  \item{\code{addSubject(subject)}}{
 #'    Add a subject, object of class \code{geoflow_subject}.
@@ -116,6 +116,11 @@
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_entity <- R6Class("geoflow_entity",
+  private = list(
+    allowedKeyValuesFor = list(
+      descriptions = c("abstract", "purpose", "info", "project")
+    ) 
+  ),
   public = list(
     identifiers = list(),
     dates = list(),
@@ -137,6 +142,11 @@ geoflow_entity <- R6Class("geoflow_entity",
     resources = list(),
     initialize = function(){
       self$addDate("creation", Sys.time())
+    },
+    
+    #getAllowedKeyValuesFor
+    getAllowedKeyValuesFor = function(field){
+      return(private$allowedKeyValuesFor[[field]])
     },
     
     #setIdentifier
@@ -184,6 +194,10 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #setDescription
     setDescription = function(key, description){
+      if(!key %in% private$allowedKeyValuesFor$descriptions){
+        stop(sprintf("Description Key should be among the following allowed keys",
+                     paste0(private$allowedKeyValuesFor$descriptions, collapse=",")))
+      }
       self$descriptions[[key]] <- description
     },
     

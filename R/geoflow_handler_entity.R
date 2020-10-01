@@ -83,23 +83,18 @@ handle_entities_df <- function(config, source){
     
     #description
     src_description <- sanitize_str(source_entity[,"Description"])
+    allowedDescKeys <- entity$getAllowedKeyValuesFor("descriptions")
+    hasDescKey <- any(sapply(allowedDescKeys, function(x){startsWith(src_description, x)}))
+    if(!hasDescKey) src_description <- paste0("abstract:", src_description)
     descriptions <- if(!is.na(src_description)) extract_cell_components(src_description) else list()
     if(length(descriptions)>0){
       if(length(descriptions)==1){
-        if(regexpr(":",descriptions) == -1){
-          entity$setDescription("abstract", descriptions)
-        }else{
-          des_kvp <- extract_kvp(descriptions)
-          descriptions <- paste(des_kvp$values, collapse=",")
-          entity$setDescription("abstract", descriptions) 
-        }
+        des_kvp <- extract_kvp(descriptions)
+        entity$setDescription("abstract", paste(des_kvp$values, collapse=",")) 
       }else{
         for(description in descriptions){
-          if(regexpr(":",description) == -1)
-            entity$setDescription("abstract", description)
-          else
-            des_kvp <- extract_kvp(description)
-            entity$setDescription(des_kvp$key, paste(des_kvp$values, collapse=","))
+          des_kvp <- extract_kvp(description)
+          entity$setDescription(des_kvp$key, paste(des_kvp$values, collapse=","))
         }
       }
     }
