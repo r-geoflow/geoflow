@@ -18,6 +18,7 @@ handle_entities_df <- function(config, source){
     #language
     entity$setLanguage(source_entity[,"Language"])
     
+    #dates
     src_date <- sanitize_str(as(source_entity[,"Date"], "character"))
     dates <- if(!is.na(src_date)) extract_cell_components(src_date) else list()
     if(length(dates)>0){
