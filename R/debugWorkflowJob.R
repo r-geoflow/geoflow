@@ -64,7 +64,7 @@ debugWorkflow <- function(file, entityIndex = 1,
   }
   
   #copy data?
-  if(copyData) entity$copyDataToJobDir(config)
+  if(copyData && !is.null(entity$data)) entity$copyDataToJobDir(config)
 
   #enrich metadata with dynamic properties
   if(!is.null(entity$data)){
