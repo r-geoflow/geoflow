@@ -49,7 +49,7 @@ eml_create_eml <- function(entity, config, options){
     if(!is.na(contact$country)) address <- paste(ifelse(is.null(address),"", paste0(address, " ")), contact$country, sep="")
     if(!is.null(address)) person$address <- address
     if(!is.na(contact$voice)) person$phone <- contact$voice
-    if(!is.na(contact$email)) person$individualName$electronicMailAddress <- contact$email
+    if(!is.na(contact$email)) person$lectronicMailAddress <- contact$email
     if(!is.na(contact$websiteUrl)) person$onlineUrl <- contact$websiteUrl
     if(length(contact$identifiers)>0){
       for(id in contact$identifiers){
