@@ -33,21 +33,19 @@ eml_create_eml <- function(entity, config, options){
   #helper functions
   #contactToEML function
   contactToEML <- function(contact){
-    person <- list(
-      id = contact$id,
-      individualName = list(),
-      organizationName = list()
-    )
+    person <- list(id = contact$id)
     if(!is.na(contact$firstName)) person$individualName$givenName <- contact$firstName
     if(!is.na(contact$lastName)) person$individualName$surName <- contact$lastName
     if(!is.na(contact$organizationName)) person$organizationName <- contact$organizationName
     if(!is.na(contact$positionName)) person$positionName <- contact$positionName
-    address <- NULL
-    if(!is.na(contact$postalAddress)) address <- contact$postalAddress
-    if(!is.na(contact$postalCode)) address <- paste(ifelse(is.null(address),"", paste0(address, " ")), contact$postalCode, sep="")
-    if(!is.na(contact$city)) address <- paste(ifelse(is.null(address),"", paste0(address, " ")), contact$city, sep="")
-    if(!is.na(contact$country)) address <- paste(ifelse(is.null(address),"", paste0(address, " ")), contact$country, sep="")
-    if(!is.null(address)) person$address <- address
+    #address
+    address <- list()
+    if(!is.na(contact$postalAddress)) address$deliveryPoint <- contact$postalAddress
+    if(!is.na(contact$postalCode)) address$postalCode<- contact$postalCode
+    if(!is.na(contact$city)) address$city <- contact$city
+    if(!is.na(contact$country)) address$country <- contact$country
+    if(length(address)>0) person$address <- address
+    #contact resources
     if(!is.na(contact$voice)) person$phone <- contact$voice
     if(!is.na(contact$email)) person$lectronicMailAddress <- contact$email
     if(!is.na(contact$websiteUrl)) person$onlineUrl <- contact$websiteUrl
@@ -95,7 +93,10 @@ eml_create_eml <- function(entity, config, options){
   dataset$language <- entity$language
   
   #abstract
-  if(!is.null(entity$descriptions$abstract)) dataset$abstract <- list(para = entity$descriptions$abstract)
+  if(!is.null(entity$descriptions$abstract)) dataset$abstract <- list(
+    section = list(),
+    para = entity$descriptions$abstract
+  )
   
   #keywords
   if(length(entity$subjects)>0){
