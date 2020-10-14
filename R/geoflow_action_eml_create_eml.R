@@ -47,7 +47,7 @@ eml_create_eml <- function(entity, config, options){
     if(length(address)>0) person$address <- address
     #contact resources
     if(!is.na(contact$voice)) person$phone <- contact$voice
-    if(!is.na(contact$email)) person$lectronicMailAddress <- contact$email
+    if(!is.na(contact$email)) person$electronicMailAddress <- contact$email
     if(!is.na(contact$websiteUrl)) person$onlineUrl <- contact$websiteUrl
     if(length(contact$identifiers)>0){
       for(id in contact$identifiers){
@@ -85,7 +85,7 @@ eml_create_eml <- function(entity, config, options){
   if(length(md_providers)>0) dataset$metadataProvider <- contactsToEML(md_providers)
   
   #pubDate
-  dataset$pubDate <- Sys.time()
+  dataset$pubDate <- as(Sys.Date(), "character")
   pub_dates <- entity$dates[sapply(entity$dates, function(x){x$key == "publication"})]
   if(length(pub_dates)>0) dataset$pubDate <- pub_dates[[1]]$value
   
@@ -93,15 +93,14 @@ eml_create_eml <- function(entity, config, options){
   dataset$language <- entity$language
   
   #abstract
-  if(!is.null(entity$descriptions$abstract)) dataset$abstract <- list(
-    section = list(),
+  if(!is.null(entity$descriptions$abstract)) dataset$abstract <- eml$abstract(
     para = entity$descriptions$abstract
   )
   
   #keywords
   if(length(entity$subjects)>0){
     dataset$keywordSet <- lapply(entity$subjects, function(subject){
-      list(
+      eml$keywordSet(
         keywordThesaurus = subject$name,
         keyword = lapply(subject$keywords, function(keyword){keyword$name})
       )
@@ -109,21 +108,51 @@ eml_create_eml <- function(entity, config, options){
   }
   
   #additionalInfo
-  if(!is.null(entity$descriptions$info)) dataset$additionalInfo <- list(para = entity$descriptions$info)
+  if(!is.null(entity$descriptions$info)) dataset$additionalInfo <- eml$additionalInfo(para = entity$descriptions$info)
   
-  #TODO intellectualRights
-  rights <- entity$rights[sapply(entity$rights, function(x){x$key == "use"})]
-  dataset$intellectualRights <- paste(sapply(rights, function(x){x$value}), sep = "\n")
+  #intellectualRights
+  rights <- entity$rights[sapply(entity$rights, function(x){x$key %in% c("useConstraint", "accessConstraint", "otherConstraint")})]
+  if(length(rights)>0){
+    dataset$intellectualRights <- eml$intellectualRights(
+      para = paste(sapply(rights, function(right){right$value}), collapse = "\n")
+    )
+  }
   
-  #TODO license
-  #TODO distribution
+  #licensed
+  licenses <- entity$rights[sapply(entity$rights, function(x){x$key == "license"})]
+  if(length(license)>0){
+    dataset$licensed <- lapply(licenses, function(license){
+      licensed = eml$licensed(identifier = license$value, licenseName = license$value)
+      return(licensed)
+    })
+  }
+  
+  #distribution
+  dataset$distribution = lapply(entity$relations, function(relation){
+    eml_dist = list(
+      online = list(
+        url = list(
+          url = relation$link,
+          "function" = switch(relation$key,
+            "thumbnail" = "information",
+            "parent" = "information",
+            "http" = "information",
+            "wms" = "information",
+            "wfs" = "download",
+            "information"
+          )
+        )
+      )
+    )
+  })
   
   #coverage
   #geo
   if(!is.null(entity$spatial_bbox)){
     if(is.null(dataset$coverage)) dataset$coverage <- list()
-    dataset$coverage$geographicCoverage <- list(
-      boundingCoordinates = list(
+    dataset$coverage$geographicCoverage <- eml$geographicCoverage(
+      geographicDescription = "Bounding box",
+      boundingCoordinates = eml$boundingCoordinates(
         westBoundingCoordinate = entity$spatial_bbox$xmin,
         eastBoundingCoordinate = entity$spatial_bbox$xmax,
         southBoundingCoordinate = entity$spatial_bbox$ymin,
@@ -134,29 +163,36 @@ eml_create_eml <- function(entity, config, options){
   #temporal
   if(!is.null(entity$temporal_extent)){
     if(is.null(dataset$coverage)) dataset$coverage <- list()
-    dataset$coverage$temporalCoverage <- list(
-      rangeOfDates = list(
-        beginDate = list(calendarDate = as.character(as.Date(entity$temporal_extent$start))),
-        endDate = list(calendarDate = as.character(as.Date(entity$temporal_extent$end)))
+    if("instant" %in% names(entity$temporal_extent)){
+      dataset$coverage$temporalCoverage <- eml$temporalCoverage(
+        singleDateTime = list(calendarDate = as.character(as.Date(entity$temporal_extent$instant)))
       )
-    )
+    }else{
+      dataset$coverage$temporalCoverage <- eml$temporalCoverage(
+        rangeOfDates = list(
+          beginDate = list(calendarDate = as.character(as.Date(entity$temporal_extent$start))),
+          endDate = list(calendarDate = as.character(as.Date(entity$temporal_extent$end)))
+        )
+      )
+    }
   }
+  
   #taxonomic
   taxo <- entity$subjects[sapply(entity$subjects, function(x){x$name == taxonomySubject})]
   if(length(taxo)>0){
     taxo <- taxo[[1]]
     if(is.null(dataset$coverage)) dataset$coverage <- list()
-    dataset$coverage$taxonomicCoverage = list(
+    dataset$coverage$taxonomicCoverage = eml$taxonomicCoverage(
       taxonomicClassification = lapply(taxo$keywords, function(keyword){
         kwd_name = keyword$name
         kwd_parts = unlist(strsplit(kwd_name, " "))
-        taxocl <- list(
+        taxocl <- eml$taxonomicClassification(
           taxonRankName = "Genus",
           taxonRankValue = kwd_parts[1]
         )
         if(length(kwd_parts)>1){
           str <- paste(kwd_parts[2:length(kwd_parts)], collapse = " ")
-          taxocl$taxonomicClassification = list(
+          taxocl$taxonomicClassification = eml$taxonomicClassification(
             taxonRankName = "Species",
             taxonRankValue = str
           )
@@ -167,7 +203,7 @@ eml_create_eml <- function(entity, config, options){
   }
   
   #purpose
-  if(!is.null(entity$descriptions$purpose)) dataset$purpose <- list(para = entity$descriptions$purpose)
+  if(!is.null(entity$descriptions$purpose)) dataset$purpose <- eml$purpose(para = entity$descriptions$purpose)
   
   #contact
   pocs <- entity$getContacts()[sapply(entity$getContacts(), function(x){x$role=="pointOfContact"})]
@@ -180,9 +216,11 @@ eml_create_eml <- function(entity, config, options){
   #methods
   if(!is.null(entity$provenance)){
     if(length(entity$provenance$processes)>0){
-      dataset$methodStep <- lapply(entity$provenance$processes, function(process){
-        list(description = paste0(process$rationale, ": ", process$description))
-      })
+      dataset$methods <- eml$methods(
+        methodStep = lapply(entity$provenance$processes, function(process){
+          eml$methodStep(description = paste0(process$rationale, ": ", process$description))
+        })
+      )
     }
   }
   
@@ -192,37 +230,11 @@ eml_create_eml <- function(entity, config, options){
   if(!is.null(entity$descriptions$project)) project <- entity$descriptions$project
   
   #attributes
-  createAttribute = function(attributeName = character(0),
-                             attributeLabel = character(0),
-                             attributeDefinition = character(0),
-                             measurementScale = character(0),
-                             domain = character(0),
-                             formatString = character(0),
-                             definition = character(0),
-                             unit = character(0),
-                             numberType = character(0),
-                             missingValueCode = character(0),
-                             missingValueCodeExplanation = character(0)){
-    data.frame(
-      attributeName = attributeName,
-      attributeLabel = attributeLabel,
-      attributeDefinition = attributeDefinition,
-      measurementScale = measurementScale,
-      domain = domain,
-      formatString = formatString,
-      definition = definition,
-      unit = unit,
-      numberType = numberType,
-      missingValueCode = missingValueCode,
-      missingValueCodeExplanation = missingValueCodeExplanation,
-      stringsAsFactors = FALSE
-    )
-  }
     
   #spatialVector
   if(!is.null(entity$data)) if(!is.null(entity$data$features)){
     features = entity$data$features
-    attributeList = createAttribute()
+    attributeList = list()
     columns <- colnames(features)
     for(featureAttrName in columns){
       config$logger.info(sprintf("EML: adding '%s' to attributeList", featureAttrName))
@@ -232,6 +244,7 @@ eml_create_eml <- function(entity, config, options){
       #default name (from data)
       memberName <- featureAttrName
       
+      #description
       fat_attr <- NULL
       fat_attr_desc <- NULL
       fto <- entity$data$featureTypeObj
@@ -252,6 +265,28 @@ eml_create_eml <- function(entity, config, options){
         if(!is.null(fat_attr_desc)) memberName <- fat_attr_desc
       }
       
+      #featureAttrValues
+      featureAttrValues <- switch(class(features)[1],
+                                  "sf" = features[,featureAttrName][[1]],
+                                  "data.frame" = features[,featureAttrName])
+      
+      #is enumerated domain?
+      enumerated <- TRUE
+      if(is(featureAttrValues, "sfc")){
+        enumerated <- FALSE
+      }else{
+        featureAttrValues <- unique(featureAttrValues)
+        featureAttrValues <- featureAttrValues[!is.na(featureAttrValues)]
+        featureAttrValues <- featureAttrValues[order(featureAttrValues)]
+        if(is.null(fat_attr)){
+          enumerated <- FALSE
+        }else{
+          if(fat_attr$type == "variable") enumerated <- FALSE
+        }
+        if(is.null(fat_attr_register)){
+          if(!is(fat_attr_register$data, "data.frame")) enumerated <- FALSE
+        }
+      }
       
       #uom
       uom <- fat_attr$uom
@@ -277,72 +312,92 @@ eml_create_eml <- function(entity, config, options){
           }
         }
       }
-      if(is.null(uom)) uom = NA
-      
-      #add listed values
-      featureAttrValues <- switch(class(features)[1],
-                                  "sf" = features[,featureAttrName][[1]],
-                                  "data.frame" = features[,featureAttrName]
-      )
+      if(is.null(uom)) uom = "dimensionless"
+
       #measurementScale
       measurementScale <- switch(class(featureAttrValues[1])[1],
-                         "integer" = "ratio",
-                         "numeric" = "ratio",
-                         "character" = "nominal",
-                         "logical" = "ordinal",
-                         "Date" = "dateTime",
-                         "POSIXct" = "dateTime",
-                         "sfc_POINT" = "interval",
-                         "sfc_MULTIPOINT" = "interval",
-                         "sfc_LINESTRING" = "interval",
-                         "sfc_MULTILINESTRING" = "interval",
-                         "sfc_POLYGON" = "interval",
-                         "sfc_MULTIPOLYGON" = "interval"
+       "integer" = eml$measurementScale(ratio = eml$ratio(
+         unit = eml$unit(standardUnit = uom), 
+         numericDomain = eml$numericDomain(
+           numberType = "integer"
+         ))),
+       "numeric" = eml$measurementScale(ratio = eml$ratio(
+         unit = eml$unit(standardUnit = uom), 
+         numericDomain = eml$numericDomain(
+           numberType = "real"
+         ))),
+       "character" = eml$measurementScale(nominal = eml$nominal(
+         nonNumericDomain = {
+           if (enumerated){
+            eml$nonNumericDomain(
+              enumeratedDomain = eml$enumeratedDomain(
+                codeDefinition = lapply(featureAttrValues, function(featureAttrValue){
+                  eml$codeDefinition(
+                    code = featureAttrValue,
+                    definition = {
+                      def = featureAttrValue
+                      reg_item <- fat_attr_register$data[fat_attr_register$data$code == featureAttrValue,]
+                      if(nrow(reg_item)>0){
+                        def = reg_item[1L,"label"]
+                      }
+                      def
+                    },
+                    source = {
+                      src = NULL
+                      reg_item <- fat_attr_register$data[fat_attr_register$data$code == featureAttrValue,]
+                      if(nrow(reg_item)>0){
+                        src = reg_item[1L,"uri"]
+                      }
+                      src
+                    }
+                  )
+                })
+              )
+            )
+          }else{
+            eml$nonNumericDomain(
+              textDomain = eml$textDomain(
+                definition = "Free text",
+                pattern = "\\w"
+              )
+            )
+          }
+         }
+       )),
+       "logical" = eml$measurementScale(ordinal = eml$ordinal(
+         nonNumericDomain = eml$nonNumericDomain(
+           enumeratedDomain = eml$enumeratedDomain(
+             codeDefinition = list(
+               eml$codeDefinition(code = "TRUE", definition = "TRUE"),
+               eml$codeDefinition(code = "FALSE", definition = "FALSE")
+             )
+           )
+         )
+       )),
+       "Date" = eml$measurementScale(dateTime = eml$dateTime(formatString = "YYYY-MM-DDTHH:mm:ss")),
+       "POSIXct" = eml$measurementScale(dateTime = eml$dateTime(formatString = "YYYY-MM-DD")),
+       "sfc_POINT" = eml$measurementScale(interval = eml$interval(unit = eml$unit(standardUnit = uom), numericDomain = eml$numericDomain(numberType = "real"))),
+       "sfc_MULTIPOINT" = eml$measurementScale(interval = eml$interval(unit = eml$unit(standardUnit = uom), numericDomain = eml$numericDomain(numberType = "real"))),
+       "sfc_LINESTRING" = eml$measurementScale(interval = eml$interval(unit = eml$unit(standardUnit = uom), numericDomain = eml$numericDomain(numberType = "real"))),
+       "sfc_MULTILINESTRING" = eml$measurementScale(interval = eml$interval(unit = eml$unit(standardUnit = uom), numericDomain = eml$numericDomain(numberType = "real"))),
+       "sfc_POLYGON" = eml$measurementScale(interval = eml$interval(unit = eml$unit(standardUnit = uom), numericDomain = eml$numericDomain(numberType = "real"))),
+       "sfc_MULTIPOLYGON" = eml$measurementScale(interval = eml$interval(unit = eml$unit(standardUnit = uom), numericDomain = eml$numericDomain(numberType = "real")))
       )
-      #domain
-      domain <- switch(class(featureAttrValues[1])[1],
-                       "integer" = "numericDomain",
-                       "numeric" = "numericDomain",
-                       "character" = "textDomain",
-                       "logical" = "enumeratedDomain",
-                       "Date" = "dateTime",
-                       "POSIXct" = "dateTime",
-                       "sfc_POINT" = "numericDomain",
-                       "sfc_MULTIPOINT" = "numericDomain",
-                       "sfc_LINESTRING" = "numericDomain",
-                       "sfc_MULTILINESTRING" = "numericDomain",
-                       "sfc_POLYGON" = "numericDomain",
-                       "sfc_MULTIPOLYGON" = "numericDomain"
-      )
-      if(domain == "textDomain") if(!is.null(fat_attr_register)) if(is(fat_attr_register$data, "data.frame")){
-        domain = "enumeratedDomain"
-      }
       
-      attribute = createAttribute(
+      attribute = eml$attribute(
         attributeName = featureAttrName,
         attributeLabel = memberName,
-        attributeDefinition = ifelse(is.null(fat_attr_desc), "", fat_attr_desc),
+        attributeDefinition = ifelse(is.null(fat_attr_desc), "-", fat_attr_desc),
         measurementScale = measurementScale,
-        domain = domain,
-        formatString = switch(class(featureAttrValues[1])[1],
-          "Date" = "YYYY-MM-DD",
-          "POSIXct" = "YYYY-MM-DD HH:mm:ss",
-          NA
+        missingValueCode = eml$missingValueCode(
+          code = ifelse(enumerated, "", "NA"),
+          codeExplanation = "-"
         ),
-        definition = switch(domain, "textDomain" = ifelse(is.null(fat_attr_desc), NA, fat_attr_desc), NA),
-        unit = switch(domain, "numericDomain" = uom, NA),
-        numberType = switch(domain,
-          "numericDomain" = {
-            switch(class(featureAttrValues[1])[1],
-              "integer" = "integer",
-              "numeric" = "real",
-              "real"
-            )
-          }, NA),
-        missingValueCode = "NA",
-        missingValueCodeExplanation = NA
+        storageType = eml$storageType(
+          typeSystem = "http://www.w3.org/2001/XMLSchema-datatypes"
+        )
       )
-      attributeList <- rbind(attributeList, attribute)
+      attributeList[[length(attributeList)+1]] <- attribute
       
     }
       
@@ -354,7 +409,7 @@ eml_create_eml <- function(entity, config, options){
         entityName = entity$title,
         entityDescription = entity$descriptions[["abstract"]],
         coverage = dataset$coverage,
-        attributeList = EML::set_attributes(attributes = attributeList),
+        attributeList = eml$attributeList(attribute = attributeList),
         geometry = switch(class(st_geometry(entity$data$features))[1],
           "sfc_POINT" = "Point",
           "sfc_MULTIPOINT" = "MultiPoint",
@@ -365,11 +420,14 @@ eml_create_eml <- function(entity, config, options){
         ),
         geometricObjectCount = nrow(entity$data$features),
         spatialReference = list(horizCoordSysName = {
+          spref = NULL
           if(!is.null(entity$srid)){
-            paste0("EPSG:", entity$srid)
+            spref = paste0("EPSG:", entity$srid)
+            if(entity$srid==4326) spref = "GCS_WGS_1984"
           }else{
-            as(sf::st_crs(entity$data$features), "character")[1]
+            spref = as(sf::st_crs(entity$data$features), "character")[1]
           }
+          spref
         })
       )
     }else{
