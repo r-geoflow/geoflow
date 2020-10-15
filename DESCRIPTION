@@ -8,7 +8,7 @@ Authors@R: c(
   person("Wilfried", "Heintz", role = c("ctb"), email = "wilfried.heintz@inrae.fr", comment = c(ORCID = "0000-0002-9244-9766")),
   person("Alexandre", "Bennici", role = c("ctb")))
 Maintainer: Emmanuel Blondel <emmanuel.blondel1@gmail.com>
-Depends: R (>= 3.3), methods, DBI, RPostgres, RSQLite, sp, sf, rgdal, rgeos, geosapi, geonapi, geometa, ows4R, zen4R, atom4R
+Depends: R (>= 3.3), methods, DBI, RPostgres, RSQLite, sp, sf, rgdal, rgeos, geosapi, geonapi, geometa, ows4R, zen4R, atom4R, dataone
 Imports: R6, jsonlite, xml2, plyr, readr, gsheet, readxl, googledrive, zip
 Remotes:
   eblondel/atom4R

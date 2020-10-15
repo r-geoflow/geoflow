@@ -41,8 +41,8 @@ geoflow_entity
  \item{\code{setTitle(title)}}{
    Set entity title
  }
- \item{\code{setDescription(description)}}{
-   Set entity description
+ \item{\code{setDescription(key, description)}}{
+   Set entity description. Allowed key values are 'abstract', 'purpose', 'info', 'project'
  }
  \item{\code{addSubject(subject)}}{
    Add a subject, object of class \code{geoflow_subject}.

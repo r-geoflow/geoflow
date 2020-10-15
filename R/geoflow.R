@@ -28,6 +28,7 @@
 #' @import ows4R
 #' @import zen4R
 #' @import atom4R
+#' @import dataone
 #' @import googledrive
 #' 
 #' @title  R engine to orchestrate and run geospatial (meta)data workflows

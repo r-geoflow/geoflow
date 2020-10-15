@@ -415,6 +415,32 @@ register_software <- function(){
       attributes = list(
         dataverse = list(def = "Dataverse id where to deposit/publish records")
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #DATAONE CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "dataone",
+      definition = "DataONe API Client powered by 'dataone' package",
+      handler = dataone::D1Client,
+      arguments = list(
+        x = list(def = "Contributing Node URL", handler = dataone::CNode),
+        y = list(def = "Member Node URL", handler = dataone::MNode),
+        token = list(def = "Authorization token")
+      ),
+      attributes = list(),
+      actions = list(
+        onstart = function(config, software, software_config){
+          config$logger.info("Executing DataOne 'onstart' action")
+          options(dataone_test_token = software_config$parameters$token)
+          options(dataone_token = software_config$parameters$token)
+        },
+        onend = function(config, software, software_config){
+          config$logger.info("Executing DataOne 'onend' action")
+          options(dataone_test_token = NULL)
+          options(dataone_token = NULL)
+        }
+      )
     )
     
   )
