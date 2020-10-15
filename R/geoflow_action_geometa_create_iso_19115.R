@@ -12,6 +12,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   doi_thumbnail <- if(!is.null(options$doi_thumbnail)) options$doi_thumbnail else FALSE
   addfeatures <- if(!is.null(options$addfeatures)) options$addfeatures else FALSE
   featureid <- if(!is.null(options$featureid)){ options$featureid } else { if(!is.null(features)) colnames(features)[1] else NULL} 
+  geographySubject <- if(!is.null(options$subject_geography)) options$subject_geography else "geography"
   
   #metadata creation
   #-----------------------------------------------------------------------------------------------------
@@ -315,7 +316,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   }
   #geographic identifiers
   geothesauri <- list()
-  if(length(entity$subjects)>0) geothesauri <- entity$subjects[sapply(entity$subjects, function(x){return(tolower(x$name) == "geography")})]
+  if(length(entity$subjects)>0) geothesauri <- entity$subjects[sapply(entity$subjects, function(x){return(tolower(x$name) == geographySubject)})]
   if(length(geothesauri)>0){
     for(geothesaurus in geothesauri){
       for(geokwd in geothesaurus$keywords){

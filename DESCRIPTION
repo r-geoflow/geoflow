@@ -1,6 +1,6 @@
 Package: geoflow
-Version: 0.0.9016
-Date: 2020-06-23
+Version: 0.0.20201015
+Date: 2020-10-15
 Title: R engine to orchestrate and run geospatial (meta)data workflows
 Authors@R: c(
   person("Emmanuel", "Blondel", role = c("aut", "cre"), email = "emmanuel.blondel1@gmail.com", comment = c(ORCID = "0000-0002-5870-5762")),
@@ -12,7 +12,7 @@ Depends: R (>= 3.3), methods, DBI, RPostgres, RSQLite, sp, sf, rgdal, rgeos, geo
 Imports: R6, jsonlite, xml2, plyr, readr, gsheet, readxl, googledrive, zip
 Remotes:
   eblondel/atom4R
-Suggests: testthat
+Suggests: testthat, EML
 Description: Provides an engine to manage Spatial Data Infrastructures (SDI) and to orchestrate, run and automate 
   geospatial (meta)data workflows in compliance with international standards (ISO, OGC).
 License: MIT + file LICENSE
