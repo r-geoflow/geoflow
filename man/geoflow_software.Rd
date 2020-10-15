@@ -51,6 +51,12 @@ geoflow_software
  \item{\code{setHandler(handler)}}{
    Set handler (a function)
  }
+ \item{\code{checkPackages()}}{
+   Check that all packages required for the software are available, if yes,
+   import them in the R session, and return a \code{data.frame} giving the 
+   packages names and version. If one or more packages are unavailable,
+   an error is thrown and user informed of the missing packages.
+ }
  \item{\code{getHandlerInstance()}}{
    Get an instance of the handler
  }
@@ -64,6 +70,7 @@ geoflow_software
    type = "output",
    software_type = "software",
    definition = "definition",
+   packages = list(),
    handler = function(){},
    arguments = list(
      url = list(def = "the software url")

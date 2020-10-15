@@ -27,8 +27,14 @@ for entities and contacts.
 \section{Methods}{
 
 \describe{
- \item{\code{new(id, def, fun, script)}}{
+ \item{\code{new(id, def, packages, fun, script)}}{
    This method is used to instantiate a geoflow_handler object
+ }
+ \item{\code{checkPackages()}}{
+   Check that all packages required for the handler are available, if yes,
+   import them in the R session, and return a \code{data.frame} giving the 
+   packages names and version. If one or more packages are unavailable,
+   an error is thrown and user informed of the missing packages.
  }
 }
 }
@@ -38,6 +44,7 @@ for entities and contacts.
   handler <- geoflow_handler$new(
    id = "some-id",
    def = "some definition",
+   packages = list(),
    fun = function(config, source){}
  )
 }

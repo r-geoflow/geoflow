@@ -22,6 +22,12 @@ geoflow_action
  \item{\code{new(id, type, def, fun, script, options)}}{
    This method is used to instantiate a geoflow_action object
  }
+ \item{\code{checkPackages()}}{
+   Check that all packages required for the action are available, if yes,
+   import them in the R session, and return a \code{data.frame} giving the 
+   packages names and version. If one or more packages are unavailable,
+   an error is thrown and user informed of the missing packages.
+ }
 }
 }
 
@@ -31,6 +37,7 @@ geoflow_action
    id = "some-id",
    type = "some purpose",
    def = "some definition",
+   packages = list(),
    fun = function(config, entity){},
    options = list(
      option_name = list(desc = "option description", default = FALSE)

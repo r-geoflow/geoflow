@@ -125,6 +125,11 @@ initWorkflow <- function(file){
         target_software$setId(software$id)
         target_software$setType(software$type)
         if(!is.null(software$parameters)) target_software$setParameters(unlist(software$parameters))
+        
+        #check software dependencies
+        target_software$checkPackages()
+        
+        #get handler instance
         client <- target_software$getHandlerInstance()
         software$actions <- target_software$actions
       }else{
@@ -354,7 +359,6 @@ initWorkflow <- function(file){
     return(config$metadata$content$contacts)
   }
   
-  
   #Actions
   if(!is.null(config$actions)){
     
@@ -379,6 +383,10 @@ initWorkflow <- function(file){
           stop(sprintf("The action '%s' is not among available geoflow actions", action$id))
         }
         action_to_trigger <- .geoflow$actions[sapply(.geoflow$actions, function(x){x$id==action$id})][[1]]
+        
+        #check action dependencies
+        action_to_trigger$checkPackages()
+        
         action_to_trigger$options <- action$options
       }else{
         if(config$mode == "entity"){

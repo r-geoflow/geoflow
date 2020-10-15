@@ -20,6 +20,7 @@
 #'   handler <- geoflow_handler$new(
 #'    id = "some-id",
 #'    def = "some definition",
+#'    packages = list(),
 #'    fun = function(config, source){}
 #'  )
 #' }
@@ -29,8 +30,14 @@
 #' 
 #' @section Methods:
 #' \describe{
-#'  \item{\code{new(id, def, fun, script)}}{
+#'  \item{\code{new(id, def, packages, fun, script)}}{
 #'    This method is used to instantiate a geoflow_handler object
+#'  }
+#'  \item{\code{checkPackages()}}{
+#'    Check that all packages required for the handler are available, if yes,
+#'    import them in the R session, and return a \code{data.frame} giving the 
+#'    packages names and version. If one or more packages are unavailable,
+#'    an error is thrown and user informed of the missing packages.
 #'  }
 #' }
 #' 
@@ -40,13 +47,34 @@ geoflow_handler <- R6Class("geoflow_handler",
   public = list(
     id = NA,
     def = NA,
+    packages = list(),
     fun = NA,
     script = NA,
-    initialize = function(id, def = "", fun = NULL, script = NULL){
+    initialize = function(id, def = "", packages = list(), fun = NULL, script = NULL){
       self$id <- id
       self$def <- def
+      self$packages <- packages
       self$fun <- fun
       self$script <- script
+    },
+    
+    #checkPackages
+    checkPackages = function(){
+      #check package dependencies
+      self$INFO(sprintf("Check package dependencies for handler '%s'", self$id))
+      out_pkgs <- try(check_packages(self$packages))
+      if(class(out_pkgs)=="try-error"){
+        errMsg <- sprintf("One or more packages are not imported although required for handler '%s'", self$id)
+        self$ERROR(errMsg)
+        stop(errMsg)
+      }else{
+        if(is.null(out_pkgs)){
+          self$INFO(sprintf("No additional package required for handler '%s':", self$id))
+        }else{
+          self$INFO(sprintf("The following packages have been imported for handler '%s':", self$id))
+          print(out_pkgs)
+        }
+      }
     }
   )
 )
@@ -73,16 +101,19 @@ register_contact_handlers <- function(){
     geoflow_handler$new(
       id = "excel",
       def = "Handle metadata contacts from a Microsoft Excel (xls,xlsx) file",
+      packages = list("readxl"),
       fun = handle_contacts_excel
     ),
     geoflow_handler$new(
       id = "gsheet",
       def = "Handle metadata contacts from a Google spreadsheet",
+      packages = list("gsheet"),
       fun = handle_contacts_gsheet
     ),
     geoflow_handler$new(
       id = "dbi",
       def = "Handle metadata contacts from a DB source",
+      packages = list("DBI"),
       fun = handle_contacts_dbi
     )
   )
@@ -114,6 +145,7 @@ list_contact_handlers <- function(raw = FALSE){
       return(data.frame(
         id = handler$id,
         definition = handler$def,
+        packages = paste(handler$packages, collapse=","),
         stringsAsFactors = FALSE
       ))
     }))
@@ -144,16 +176,19 @@ register_entity_handlers <- function(){
     geoflow_handler$new(
       id = "excel",
       def = "Handle metadata entities from a Microsoft Excel (xls,xlsx) file",
+      packages = list("readxl"),
       fun = handle_entities_excel
     ),
     geoflow_handler$new(
       id = "gsheet",
       def = "Handle metadata entities from a Google spreadsheet",
+      packages = list("gsheet"),
       fun = handle_entities_gsheet
     ),
     geoflow_handler$new(
       id = "dbi",
       def = "Handle metadata entities from a DB source",
+      packages = list("DBI"),
       fun = handle_entities_dbi
     )
   )
@@ -185,6 +220,7 @@ list_entity_handlers <- function(raw = FALSE){
       return(data.frame(
         id = handler$id,
         definition = handler$def,
+        packages = paste(handler$packages, collapse=","),
         stringsAsFactors = FALSE
       ))
     }))
@@ -214,16 +250,19 @@ register_dictionary_handlers <- function(){
     geoflow_handler$new(
       id = "excel",
       def = "Handle dictionary from a Microsoft Excel (xls,xlsx) file",
+      packages = list("readxl"),
       fun = handle_dictionary_excel
     ),
     geoflow_handler$new(
       id = "gsheet",
       def = "Handle dictionary from a Google spreadsheet",
+      packages = list("gsheet"),
       fun = handle_dictionary_gsheet
     ),
     geoflow_handler$new(
       id = "dbi",
       def = "Handle dictionary from a DB source",
+      packages = list("DBI"),
       fun = handle_dictionary_dbi
     )
   )
@@ -255,6 +294,7 @@ list_dictionary_handlers <- function(raw = FALSE){
       return(data.frame(
         id = handler$id,
         definition = handler$def,
+        packages = paste(handler$packages, collapse=","),
         stringsAsFactors = FALSE
       ))
     }))

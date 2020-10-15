@@ -8,28 +8,13 @@
 #' @importFrom utils capture.output
 #' @importFrom utils read.csv write.csv
 #' @importFrom utils unzip
+#' @importFrom utils packageDescription
 #' @importFrom zip zipr
 #' @import jsonlite
 #' @import xml2
 #' @import plyr
 #' @import readr
-#' @import gsheet
-#' @import readxl
-#' @import DBI
-#' @import RPostgres
-#' @import RSQLite
-#' @import sp
 #' @import sf
-#' @import rgdal
-#' @import rgeos
-#' @import geosapi
-#' @import geonapi
-#' @import geometa
-#' @import ows4R
-#' @import zen4R
-#' @import atom4R
-#' @import dataone
-#' @import googledrive
 #' 
 #' @title  R engine to orchestrate and run geospatial (meta)data workflows
 #' @description  R engine to orchestrate and run geospatial (meta)data workflows

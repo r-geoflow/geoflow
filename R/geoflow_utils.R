@@ -357,3 +357,36 @@ download_file <- function(url, filename){
     download.file(url, destfile = filename, mode = "wb")
   }
 }
+
+#' @name check_packages
+#' @aliases check_packages
+#' @title check_packages
+#' @description \code{check_packages} checks availability of a list of R packages in R. This
+#' function is essentially used internally by \pkg{geoflow} in assocation to \code{geoflow_software} and
+#' \code{geoflow_action} that would need specific packages to be imported in R.
+#' 
+#' @usage check_packages(pkgs)
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+check_packages <- function(pkgs){
+  
+  if(length(pkgs)==0) return(NULL)
+  pkgs_df <- do.call("rbind", lapply(pkgs, function(pkg){
+    pkg_loaded <- suppressWarnings(require(pkg, character.only = TRUE))
+    pkg_df <- data.frame(
+      package = pkg,
+      installed = pkg_loaded,
+      version = ifelse(pkg_loaded, as(packageVersion(pkg), "character"), NA),
+      stringsAsFactors = FALSE
+    )
+    return(pkg_df)
+  }))
+  if(any(!pkgs_df$installed)){
+    pkgs_not_installed <- pkgs_df[!pkgs_df$installed,]
+    print(pkgs_not_installed)
+    stop(sprintf("The following package(s) are required but not installed: %s",
+                paste0(pkgs_not_installed$package, collapse=", ")))
+  }
+  return(pkgs_df)
+}

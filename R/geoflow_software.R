@@ -18,6 +18,7 @@
 #'    type = "output",
 #'    software_type = "software",
 #'    definition = "definition",
+#'    packages = list(),
 #'    handler = function(){},
 #'    arguments = list(
 #'      url = list(def = "the software url")
@@ -62,6 +63,12 @@
 #'  \item{\code{setHandler(handler)}}{
 #'    Set handler (a function)
 #'  }
+#'  \item{\code{checkPackages()}}{
+#'    Check that all packages required for the software are available, if yes,
+#'    import them in the R session, and return a \code{data.frame} giving the 
+#'    packages names and version. If one or more packages are unavailable,
+#'    an error is thrown and user informed of the missing packages.
+#'  }
 #'  \item{\code{getHandlerInstance()}}{
 #'    Get an instance of the handler
 #'  }
@@ -70,23 +77,27 @@
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_software <- R6Class("geoflow_software",
+  inherit = geoflowLogger,
   public = list(
     id = NULL,
     type = NULL,
     software_type = NULL,
     definition = NULL,
+    packages = list(),
     handler = NULL,
     arguments = list(),
     parameters = list(),
     attributes = list(),
     properties = list(),
     actions = list(),
-    initialize = function(id = NULL, type = NULL, software_type, definition, handler, 
+    initialize = function(id = NULL, type = NULL, software_type, 
+                          packages = list(), definition, handler, 
                           arguments, attributes = list(),
                           actions = list()){
       self$setId(id)
       if(!is.null(type)) self$setType(type)
       self$setSoftwareType(software_type)
+      self$setPackages(packages)
       self$setDefinition(definition)
       self$setHandler(handler)
       self$setArguments(arguments)
@@ -110,6 +121,11 @@ geoflow_software <- R6Class("geoflow_software",
     #setSoftwareType
     setSoftwareType = function(software_type){
       self$software_type <- software_type
+    },
+    
+    #setPackages
+    setPackages = function(packages){
+      self$packages <- packages
     },
     
     #setDefinition
@@ -167,8 +183,31 @@ geoflow_software <- R6Class("geoflow_software",
       self$handler <- handler
     },
     
+    #checkPackages
+    checkPackages = function(){
+      self$INFO(sprintf("Check package dependencies for software '%s' (%s)", self$id, self$software_type))
+      out_pkgs <- try(check_packages(self$packages))
+      if(class(out_pkgs)=="try-error"){
+        errMsg <- sprintf("One or more packages are not imported although required for software '%s' (%s)", 
+                          self$id, self$software_type)
+        self$ERROR(errMsg)
+        stop(errMsg)
+      }else{
+        if(is.null(out_pkgs)){
+          self$INFO(sprintf("No additional package required for software '%s' (%s):", 
+                            self$id, self$software_type))
+        }else{
+          self$INFO(sprintf("The following packages have been imported for software '%s' (%s):", 
+                            self$id, self$software_type))
+          print(out_pkgs)
+        }
+      }
+    },
+    
     #getHandlerInstance
     getHandlerInstance = function(){
+      
+      #get handler
       handler_params = paste(sapply(names(self$parameters), function(paramName){
         paramValue <- self$parameters[[paramName]]
         if(is.character(paramValue)) paramValue <- paste0("\"",paramValue,"\"")
@@ -210,9 +249,10 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "dbi",
       definition = "Data Base Interface powered by 'DBI' package",
-      handler = DBI::dbConnect,
+      packages = list("DBI", "RSQLite", "RPostgres"),
+      handler = try(DBI::dbConnect, silent = TRUE),
       arguments = list(
-        drv = list(def = "DBI driver name", handler = DBI::dbDriver),
+        drv = list(def = "DBI driver name", handler = try(DBI::dbDriver, silent = TRUE)),
         user = list(def = "Username"),
         password = list(def = "Password"),
         host = list(def = "Hostname"),
@@ -296,7 +336,8 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "googledrive",
       definition = "Google Drive access powered by 'googledrive' package",
-      handler = googledrive::drive_auth,
+      packages = list("gsheet"),
+      handler = try(googledrive::drive_auth, silent = TRUE),
       arguments = list(
         email = list(def = "User email to authenticate in Google Drive"),
         path = list(def = "An optional path within the Google drive repository. Default will be the root"),
@@ -309,7 +350,8 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "csw",
       definition = "OGC Catalogue Service for the Web (CSW) client powered by 'ows4R' package",
-      handler = ows4R::CSWClient$new,
+      packages = list("ows4R"),
+      handler = try(ows4R::CSWClient$new, silent = TRUE),
       arguments = list(
         url = list(def = "CSW service endpoint URL"),
         serviceVersion = list(def = "CSW service version ('2.0.2' or '3.0')"),
@@ -324,7 +366,8 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "wfs",
       definition = "OGC Web Feature Service (WFS) client powered by 'ows4R' package",
-      handler = ows4R::WFSClient$new,
+      packages = list("ows4R"),
+      handler = try(ows4R::WFSClient$new, silent = TRUE),
       arguments = list(
         url = list(def = "WFS service endpoint URL"),
         serviceVersion = list(def = "WFS service version ('1.0.0', '1.1.1', '2.0')"),
@@ -339,7 +382,8 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "geonetwork",
       definition = "GeoNetwork API Client, powered by 'geonapi' package",
-      handler = geonapi::GNManager$new,
+      packages = list("geonapi"),
+      handler = try(geonapi::GNManager$new, silent = TRUE),
       arguments = list(
         url = list(def = "GeoNetwork catalogue URL"),
         version = list(def = "Geonetwork catalogue version"),
@@ -354,7 +398,8 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "geoserver",
       definition = "GeoServer REST API Client, powered by 'geosapi' package",
-      handler = geosapi::GSManager$new,
+      packages = list("geosapi"),
+      handler = try(geosapi::GSManager$new, silent = TRUE),
       arguments = list(
         url = list(def = "GeoServer application URL"),
         user = list(def = "Username for GeoServer authentication"),
@@ -388,7 +433,8 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "zenodo",
       definition = "Zenodo client powered by 'zen4R' package",
-      handler = zen4R::ZenodoManager$new,
+      packages = list("zen4R"),
+      handler = try(zen4R::ZenodoManager$new, silent = TRUE),
       arguments = list(
         url = list(def = "Zenodo API URL. For sandbox tests, use 'https://sandbox.zenodo.org/api', otherwise provided by zen4R by default"),
         token = list(def = "Zenodo user authentication token."),
@@ -406,7 +452,8 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "sword_for_dataverse",
       definition = "Dataverse SWORD API Client powered by 'atom4R' package",
-      handler = atom4R::SwordDataverseClient$new,
+      packages = list("atom4R"),
+      handler = try(atom4R::SwordDataverseClient$new, silent = TRUE),
       arguments = list(
         hostname = list(def = "Dataverse base URL"),
         token = list(def = "Dataverse user authentication token"),
@@ -422,10 +469,11 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "dataone",
       definition = "DataONe API Client powered by 'dataone' package",
-      handler = dataone::D1Client,
+      packages = list("dataone"),
+      handler = try(dataone::D1Client, silent = TRUE),
       arguments = list(
-        x = list(def = "Contributing Node URL", handler = dataone::CNode),
-        y = list(def = "Member Node URL", handler = dataone::MNode),
+        x = list(def = "Contributing Node URL", handler = try(dataone::CNode, silent = TRUE)),
+        y = list(def = "Member Node URL", handler = try(dataone::MNode, silent = TRUE)),
         token = list(def = "Authorization token")
       ),
       attributes = list(),
@@ -472,6 +520,7 @@ list_software <- function(raw = FALSE){
       obj.out <- data.frame(
         software_type = obj$software_type,
         definition = obj$definition,
+        packages = paste(obj$packages, sep=","),
         stringsAsFactors = FALSE
       )
       return(obj.out)
