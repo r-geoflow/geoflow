@@ -113,7 +113,7 @@ register_contact_handlers <- function(){
     geoflow_handler$new(
       id = "dbi",
       def = "Handle metadata contacts from a DB source",
-      packages = list("DBI"),
+      packages = list("DBI", "RSQLite", "RPostgres"),
       fun = handle_contacts_dbi
     )
   )
@@ -188,7 +188,7 @@ register_entity_handlers <- function(){
     geoflow_handler$new(
       id = "dbi",
       def = "Handle metadata entities from a DB source",
-      packages = list("DBI"),
+      packages = list("DBI", "RSQLite", "RPostgres"),
       fun = handle_entities_dbi
     )
   )
@@ -262,7 +262,7 @@ register_dictionary_handlers <- function(){
     geoflow_handler$new(
       id = "dbi",
       def = "Handle dictionary from a DB source",
-      packages = list("DBI"),
+      packages = list("DBI", "RSQLite", "RPostgres"),
       fun = handle_dictionary_dbi
     )
   )
