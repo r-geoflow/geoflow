@@ -304,7 +304,7 @@ eml_create_eml <- function(entity, config, options){
         }
       }else{
         if(is(featureAttrValues, "sfc")){
-          uom <- st_crs(features)$units
+          uom <- sf::st_crs(features)$units
           if(is.null(uom)){
             if(entity$srid == 4326){
               uom <- "degree"
@@ -413,7 +413,7 @@ eml_create_eml <- function(entity, config, options){
         entityDescription = entity$descriptions[["abstract"]],
         coverage = dataset$coverage,
         attributeList = EML::eml$attributeList(attribute = attributeList),
-        geometry = switch(class(st_geometry(entity$data$features))[1],
+        geometry = switch(class(sf::st_geometry(entity$data$features))[1],
           "sfc_POINT" = "Point",
           "sfc_MULTIPOINT" = "MultiPoint",
           "sfc_LINESTRING" = "LineString",
