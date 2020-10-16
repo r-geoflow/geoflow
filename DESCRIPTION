@@ -12,6 +12,8 @@ Depends: R (>= 3.3)
 Imports: R6, methods, jsonlite, xml2, plyr, readr, zip, sf
 Remotes:
   eblondel/atom4R
+  ropensci/datapack
+  DataONEorg/rdataone
 Suggests: 
   testthat, 
   DBI, RPostgres, RSQLite, 
@@ -19,7 +21,7 @@ Suggests:
   gsheet, googledrive, 
   geometa, geosapi, geonapi, ows4R, 
   zen4R, atom4R, 
-  EML, emld, dataone
+  EML, emld, mime, datapack, dataone
 Description: Provides an engine to manage Spatial Data Infrastructures (SDI) and to orchestrate, run and automate 
   geospatial (meta)data workflows in compliance with international standards (ISO, OGC).
 License: MIT + file LICENSE

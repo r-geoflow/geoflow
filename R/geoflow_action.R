@@ -190,8 +190,16 @@ register_actions <- function(){
       )
     ),
     geoflow_action$new(
-      id = "sf-write-generic",
+      id = "dataone-upload-datapackage",
       type = "Data publication",
+      def = "Uploads a data package to a DataOne metacat node",
+      packages = list("mime", "datapack", "dataone"),
+      fun = dataone_upload_datapackage,
+      options = list()
+    ),
+    geoflow_action$new(
+      id = "sf-write-generic",
+      type = "Data writing",
       def = "Import features data into several formats",
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
       fun = sf_write_generic,
@@ -212,7 +220,7 @@ register_actions <- function(){
     ),
     geoflow_action$new(
       id = "sf-write-shp",
-      type = "Data publication",
+      type = "Data writing",
       def = "Import features data and zip files",
       packages = list("sf"),
       fun = sf_write_shp,
@@ -257,7 +265,7 @@ list_actions <- function(raw = FALSE){
         id = action$id,
         type = action$type,
         definition = action$def,
-        packages = paste(action$packages, sep=","),
+        packages = paste(action$packages, collapse=","),
         stringsAsFactors = FALSE
       ))
     }))

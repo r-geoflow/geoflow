@@ -520,7 +520,7 @@ list_software <- function(raw = FALSE){
       obj.out <- data.frame(
         software_type = obj$software_type,
         definition = obj$definition,
-        packages = paste(obj$packages, sep=","),
+        packages = paste(obj$packages, collapse=","),
         stringsAsFactors = FALSE
       )
       return(obj.out)
