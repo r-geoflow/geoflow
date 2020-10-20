@@ -11,8 +11,8 @@ Maintainer: Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 Depends: R (>= 3.3)
 Imports: R6, methods, jsonlite, xml2, plyr, readr, zip, sf
 Remotes:
-  eblondel/atom4R
-  ropensci/datapack
+  eblondel/atom4R,
+  ropensci/datapack,
   DataONEorg/rdataone
 Suggests: 
   testthat, 
