@@ -1,6 +1,6 @@
 Package: geoflow
-Version: 0.0.20201015
-Date: 2020-10-15
+Version: 0.0.20201020
+Date: 2020-10-20
 Title: R engine to orchestrate and run geospatial (meta)data workflows
 Authors@R: c(
   person("Emmanuel", "Blondel", role = c("aut", "cre"), email = "emmanuel.blondel1@gmail.com", comment = c(ORCID = "0000-0002-5870-5762")),
