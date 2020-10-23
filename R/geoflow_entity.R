@@ -545,7 +545,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                  sf.crs <- sf::st_crs(sf.data)
                  if(!is.na(sf.crs)){
                    srid <- if(!is.null(self$srid)) self$srid else ""
-                   if(!is.null(sf.crs$epsg)) if(srid != sf.crs$epsg){
+                   if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
                     config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, sf.crs$epsg)) 
                     self$setSrid(sf.crs$epsg)
                    }
@@ -608,7 +608,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                  sf.crs <- sf::st_crs(sf.data)
                  if(!is.na(sf.crs)){
                    srid <- if(!is.null(self$srid)) self$srid else ""
-                   if(!is.null(sf.crs$epsg)) if(srid != sf.crs$epsg){
+                   if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
                      config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, sf.crs$epsg)) 
                      self$setSrid(sf.crs$epsg)
                    }
@@ -643,7 +643,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                    sf.crs <- sf::st_crs(sf.data)
                    if(!is.na(sf.crs)){
                      srid <- if(!is.null(self$srid)) self$srid else ""
-                     if(!is.null(sf.crs$epsg)) if(srid != sf.crs$epsg){
+                     if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
                        config$logger.info(sprintf("Overwriting entity srid [%s] with DB spatial table srid [%s]", srid, sf.crs$epsg)) 
                        self$setSrid(sf.crs$epsg)
                      }
@@ -683,7 +683,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                    sf.crs <- sf::st_crs(sf.data)
                    if(!is.na(sf.crs)){
                      srid <- if(!is.null(self$srid)) self$srid else ""
-                     if(!is.null(sf.crs$epsg)) if(srid != sf.crs$epsg){
+                     if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
                        config$logger.info(sprintf("Overwriting entity srid [%s] with DB spatial view srid [%s]", srid, sf.crs$epsg)) 
                        self$setSrid(sf.crs$epsg)
                      }
@@ -764,7 +764,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                     sf.crs <- sf::st_crs(sf.data)
                     if(!is.na(sf.crs)){
                       srid <- if(!is.null(self$srid)) self$srid else ""
-                      if(!is.null(sf.crs$epsg)) if(srid != sf.crs$epsg){
+                      if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
                         config$logger.info(sprintf("Overwriting entity srid [%s] with SQL query output srid [%s]", srid, sf.crs$epsg)) 
                         self$setSrid(sf.crs$epsg)
                       }
