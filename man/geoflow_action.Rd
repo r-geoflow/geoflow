@@ -38,6 +38,7 @@ geoflow_action
    type = "some purpose",
    def = "some definition",
    packages = list(),
+   pid_generator = NULL,
    fun = function(config, entity){},
    options = list(
      option_name = list(desc = "option description", default = FALSE)

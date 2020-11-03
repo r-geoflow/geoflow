@@ -21,8 +21,9 @@ dataone_upload_datapackage <- function(entity, config, options){
   #create datapackage
   dp <- switch(action,
     "CREATE" = new("DataPackage"),
-    "UPDATE" = dataone::getDataPackage(DATAONE, identifier = packageId, lazyLoad = TRUE, limit="0MB", quiet=FALSE)
+    "UPDATE" = try(dataone::getDataPackage(DATAONE, identifier = packageId, lazyLoad = TRUE, limit="0MB", quiet=FALSE))
   )
+  
   if(update){
     members <- datapack::getIdentifiers(dp)
   }
@@ -34,7 +35,7 @@ dataone_upload_datapackage <- function(entity, config, options){
     eml_meta_obj <- EML::read_eml(eml_file)
     newPackageId <- eml_meta_obj$packageId
     eml_format <- head(unlist(strsplit(eml_meta_obj$schemaLocation, " ")), n = 1)
-    dp_eml_meta_obj <<- new(
+    dp_eml_meta_obj <- new(
       "DataObject",
       format = eml_format,
       filename = eml_file

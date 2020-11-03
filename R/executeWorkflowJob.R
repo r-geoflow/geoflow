@@ -172,125 +172,14 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           entity$data$features <- NULL
         }
         
-        #special business logics in case of DOI management
-        #in case Zenodo or Dataverse was enabled, we create an output table of DOIs & export altered source entities
-        ##ZENODO
-        if(withZenodo){
-          config$logger.info("Exporting reference list of Zenodo DOIs to job directory")
-          out_zenodo_dois <- do.call("rbind", lapply(entities, function(entity){
-            return(data.frame(
-              Identifier = entity$identifiers[["id"]], 
-              Status = entity$status$zenodo,
-              DOI_for_allversions = entity$identifiers[["zenodo_conceptdoi_to_save"]],
-              DOI_for_version = entity$identifiers[["zenodo_doi_to_save"]],
-              stringsAsFactors = FALSE
-            ))
-          }))
-          readr::write_csv(out_zenodo_dois, file.path(getwd(),"metadata", "zenodo_dois.csv"))
-      
-          config$logger.info("Exporting source entities table enriched with DOIs")
-          src_entities <- config$src_entities
-          src_entities$Identifier <- sapply(1:nrow(src_entities), function(i){
-            identifier <- src_entities[i, "Identifier"]
-            if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
-            if(regexpr("doi", identifier)>0) return(identifier)
-            if(out_zenodo_dois[i,"Status"] == "published") return(identifier)
-            identifier <- paste0(identifier, "doi:", out_zenodo_dois[i,"DOI_for_allversions"])
-            return(identifier)
-          })
-          readr::write_csv(src_entities, file.path(getwd(),"metadata","zenodo_entities_with_doi_for_publication.csv"))
-
-          
-          config$logger.info("Exporting workflow configuration for Zenodo DOI publication")
-          src_config <- config$src_config
-          
-          #modifying handler to csv/exported table - to see with @juldebar
-          src_config$metadata$entities$handler <- "csv"
-          src_config$metadata$entities$source <- "zenodo_entities_with_doi_for_publication.csv"
-          
-          #altering clean property
-          #deactivated for the timebeing, quite dangerous, to discuss with @juldebar
-          #zen_software <- src_config$software[sapply(src_config$software, function(x){x$software_type == "zenodo"})][[1]]
-          #zen_clean <- if(!is.null(zen_software$properties$clean$run)) zen_software$properties$clean$run else FALSE
-          #invisible(lapply(1:length(src_config$software), function(i){
-          #  software <- src_config$software[[i]]
-          #  if(software$software_type=="zenodo"){
-          #    src_config$software[[i]]$properties$clean$run <<- if(zen_clean) FALSE else TRUE
-          #  }
-          #}))
-          
-          #altering publish option
-          zen_action <- src_config$actions[sapply(src_config$actions, function(x){x$id=="zen4R-deposit-record"})][[1]]
-          zen_publish <- if(!is.null(zen_action$options$publish)) zen_action$options$publish else FALSE
-          invisible(lapply(1:length(src_config$actions), function(i){
-            action <- src_config$actions[[i]]
-            if(action$id=="zen4R-deposit-record"){
-              src_config$actions[[i]]$options$publish <<- if(zen_publish) FALSE else TRUE
+        #special business logics in case of PID generators (eg. DOIs)
+        if(length(actions)>0){
+          pid_generators <- actions[sapply(actions, function(x){x$isPIDGenerator()})]
+          if(length(pid_generators)>0){
+            for(pid_generator in pid_generators){
+              pid_generator$exportPIDs(config, entities)
             }
-          }))
-          #export modified config
-          jsonlite::write_json(
-            src_config, file.path(getwd(),"metadata","zenodo_geoflow_config_for_publication.json"),
-            auto_unbox = TRUE, pretty = TRUE
-          )
-          
-          #modifying global option
-          src_config$options$skipFileDownload <- if(zen_publish) FALSE else TRUE
-          
-        }
-        
-        #DATAVERSE
-        if(withDataverse){
-          config$logger.info("Exporting reference list of Dataverse DOIs to job directory")
-          out_dataverse_dois <- do.call("rbind", lapply(entities, function(entity){
-            return(data.frame(
-              Identifier = entity$identifiers[["id"]], 
-              Status = entity$status$dataverse,
-              DOI_for_allversions = entity$identifiers[["dataverse_conceptdoi_to_save"]],
-              DOI_for_version = entity$identifiers[["dataverse_doi_to_save"]],
-              stringsAsFactors = FALSE
-            ))
-          }))
-          readr::write_csv(out_dataverse_dois, file.path(getwd(),"metadata", "dataverse_dois.csv"))
-          
-          config$logger.info("Exporting source entities table enriched with Dataverse DOIs")
-          src_entities <- config$src_entities
-          src_entities$Identifier <- sapply(1:nrow(src_entities), function(i){
-            identifier <- src_entities[i, "Identifier"]
-            if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
-            if(regexpr("doi", identifier)>0) return(identifier)
-            if(out_dataverse_dois[i,"Status"] == "published") return(identifier)
-            identifier <- paste0(identifier, "doi:", out_dataverse_dois[i,"DOI_for_allversions"])
-            return(identifier)
-          })
-          readr::write_csv(src_entities, file.path(getwd(),"metadata","dataverse_entities_with_doi_for_publication.csv"))
-          
-          
-          config$logger.info("Exporting workflow configuration for Dataverse DOI publication")
-          src_config <- config$src_config
-          
-          #modifying handler to csv/exported table - to see with @juldebar
-          src_config$metadata$entities$handler <- "csv"
-          src_config$metadata$entities$source <- "dataverse_entities_with_doi_for_publication.csv"
-          
-          #altering publish option
-          dataverse_action <- src_config$actions[sapply(src_config$actions, function(x){x$id=="atom4R-dataverse-deposit-record"})][[1]]
-          dataverse_publish <- if(!is.null(dataverse_action$options$publish)) dataverse_action$options$publish else FALSE
-          invisible(lapply(1:length(src_config$actions), function(i){
-            action <- src_config$actions[[i]]
-            if(action$id=="atom4R-dataverse-deposit-record"){
-              src_config$actions[[i]]$options$publish <<- if(dataverse_publish) FALSE else TRUE
-            }
-          }))
-          #export modified config
-          jsonlite::write_json(
-            src_config, file.path(getwd(),"metadata","dataverse_geoflow_config_for_publication.json"),
-            auto_unbox = TRUE, pretty = TRUE
-          )
-          
-          #modifying global option
-          src_config$options$skipFileDownload <- if(dataverse_publish) FALSE else TRUE
-          
+          }
         }
         
         #save entities & contacts used

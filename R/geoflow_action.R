@@ -18,6 +18,7 @@
 #'    type = "some purpose",
 #'    def = "some definition",
 #'    packages = list(),
+#'    pid_generator = NULL,
 #'    fun = function(config, entity){},
 #'    options = list(
 #'      option_name = list(desc = "option description", default = FALSE)
@@ -47,15 +48,21 @@ geoflow_action <- R6Class("geoflow_action",
     type = NA,
     def = NA,
     packages = list(),
+    pid_generator = NULL,
+    pid_types = list(),
     fun = NA,
     script = NA,
     options = list(),
-    initialize = function(id, type = "", def = "",  packages = list(),
+    initialize = function(id, type = "", def = "",  
+                          packages = list(), 
+                          pid_generator = NULL, pid_types = list(),
                           fun = NULL, script = NULL, options = list()){
       self$id <- id
       self$type <- type
       self$def <- def
       self$packages <- packages
+      self$pid_generator <- pid_generator
+      self$pid_types <- pid_types
       self$fun <- fun
       self$script <- script
       self$options <- options
@@ -78,6 +85,71 @@ geoflow_action <- R6Class("geoflow_action",
           print(out_pkgs)
         }
       }
+    },
+    
+    #isPidGenerator
+    isPIDGenerator = function(){
+      return(!is.null(self$pid_generator))
+    },
+    
+    #exportPIDs
+    exportPIDs = function(config, entities){
+      if(!self$isPIDGenerator()) return(FALSE);
+      config$logger.info(sprintf("Exporting reference list of '%s' DOIs to job directory for action", self$pid_generator))
+      out_pids <- do.call("rbind", lapply(entities, function(entity){
+        out_entity <- data.frame(
+          Identifier = entity$identifiers[["id"]], 
+          Status = entity$status[[self$pid_generator]],
+          stringsAsFactors = FALSE
+        )
+        for(pid_type in names(self$pid_types)){
+          out_entity[,self$pid_types[[pid_type]]] <- entity$identifiers[[sprintf("%s_%s_to_save", self$pid_generator, pid_type)]]
+        }
+        return(out_entity)
+      }))
+      readr::write_csv(out_pids, file.path(getwd(),"metadata", paste0(self$pid_generator, "_pids.csv")))
+      
+      config$logger.info(sprintf("Exporting source entities table enriched with '%s' DOIs", self$pid_generator))
+      src_entities <- config$src_entities
+      src_entities$Identifier <- sapply(1:nrow(src_entities), function(i){
+        identifier <- src_entities[i, "Identifier"]
+        if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
+        if(regexpr(.geoflow$LINE_SEPARATOR, identifier)>0) return(identifier)
+        if(out_pids[i,"Status"] == "published") return(identifier)
+        for(pid_type in names(self$pid_types)){
+          if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
+          identifier <- paste0(identifier, pid_type, ":", out_pids[i,self$pid_types[[pid_type]]]) 
+        }
+        return(identifier)
+      })
+      readr::write_csv(src_entities, file.path(getwd(),"metadata",paste0(self$pid_generator, "_entities_with_pids_for_publication.csv")))
+      
+      config$logger.info(sprintf("Exporting workflow configuration for '%s' DOI publication", self$pid_generator))
+      src_config <- config$src_config
+      
+      
+      #modifying handler to csv/exported table - to see with @juldebar
+      src_config$metadata$entities$handler <- "csv"
+      src_config$metadata$entities$source <- paste0(self$pid_generator, "_entities_with_pids_for_publication.csv")
+      
+      #altering publish option
+      pid_action <- src_config$actions[sapply(src_config$actions, function(x){x$id==self$id})][[1]]
+      pid_publish <- if(!is.null(pid_action$options$publish)) pid_action$options$publish else FALSE
+      invisible(lapply(1:length(src_config$actions), function(i){
+        action <- src_config$actions[[i]]
+        if(action$id==self$id){
+          src_config$actions[[i]]$options$publish <<- if(pid_publish) FALSE else TRUE
+        }
+      }))
+      
+      #modifying global option
+      src_config$options$skipFileDownload <- if(pid_publish) FALSE else TRUE
+      
+      #export modified config
+      jsonlite::write_json(
+        src_config, file.path(getwd(),"metadata",paste0(self$pid_generator, "_geoflow_config_for_publication.json")),
+        auto_unbox = TRUE, pretty = TRUE
+      )
     }
     
   )
@@ -164,6 +236,11 @@ register_actions <- function(){
       id = "zen4R-deposit-record",
       type = "Data publication",
       def = "Deposits/Publish data and/or metadata in the Zenodo infrastructure",
+      pid_generator = "zenodo",
+      pid_types = list(
+        doi = "DOI_for_version",
+        conceptdoi = "DOI_for_allversions"
+      ),
       packages = list("zen4R"),
       fun = zen4R_deposit_record,
       options = list(
@@ -179,6 +256,10 @@ register_actions <- function(){
       id = "atom4R-dataverse-deposit-record",
       type = "Data publication",
       def = "Deposits/Publish data and/or metetadata on a Dataverse using the Sword API",
+      pid_generator = "dataverse",
+      pid_types = list(
+        doi = "DOI_for_version"
+      ),
       packages = list("atom4R"),
       fun = atom4R_dataverse_deposit_record,
       options = list(
@@ -193,6 +274,10 @@ register_actions <- function(){
       id = "dataone-upload-datapackage",
       type = "Data publication",
       def = "Uploads a data package to a DataOne metacat node",
+      pid_generator = "dataone",
+      pid_types = list(
+        packageId = "PackageId"
+      ),
       packages = list("mime", "datapack", "dataone"),
       fun = dataone_upload_datapackage,
       options = list()
@@ -265,6 +350,7 @@ list_actions <- function(raw = FALSE){
         id = action$id,
         type = action$type,
         definition = action$def,
+        pid_generator = action$isPIDGenerator(),
         packages = paste(action$packages, collapse=","),
         stringsAsFactors = FALSE
       ))
