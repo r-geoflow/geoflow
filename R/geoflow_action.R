@@ -383,7 +383,7 @@ list_action_options <- function(id){
     out <- data.frame(
       name = names(action$options),
       definition = sapply(action$options, function(x){x$desc}),
-      default = sapply(action$options, function(x){x$default}),
+      default = paste0(sapply(action$options, function(x){x$default}), collapse=","),
       stringsAsFactors = FALSE
     )
     row.names(out) <- 1:nrow(out)
