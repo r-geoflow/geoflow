@@ -1,6 +1,7 @@
 .onLoad <- function (libname, pkgname) { # nocov start
   
-  #packageStartupMessage("Setting .geoflow object...")
+  message("Setting .geoflow object at line 3...")
+  print("Setting .geoflow object at line 4...")
   #out <- try(assign(".geoflow", new.env(), envir= asNamespace(pkgname)))
   #packageStartupMessage(out)
   
