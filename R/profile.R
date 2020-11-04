@@ -1,6 +1,8 @@
 .onLoad <- function (libname, pkgname) { # nocov start
   
-  assign(".geoflow", new.env(), envir= asNamespace(pkgname))
+  packageStartupMessage("Setting .geoflow object...")
+  out <- try(assign(".geoflow", new.env(), envir= asNamespace(pkgname)))
+  packageStartupMessage(out)
   
   #default line separator
   packageStartupMessage("Setting line separator...")
