@@ -29,6 +29,6 @@
   
   #embedded actions
   message("Loading actions...")
-  register_actions()
+  #register_actions()
   
 } # nocov end
