@@ -308,7 +308,7 @@ register_actions <- function(){
       type = "Data writing",
       def = "Import features data and zip files",
       packages = list("sf"),
-      fun = sf_write_shp,
+      fun = sf_write_shp
     ),
     geoflow_action$new(
       id = "eml-create-eml",
