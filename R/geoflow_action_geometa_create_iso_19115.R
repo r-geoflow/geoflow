@@ -40,7 +40,12 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md$setMetadataStandardName("ISO 19115:2003/19139")
   md$setMetadataStandardVersion("1.0")
   md$setDataSetURI(md$fileIdentifier)
-  md$setHierarchyLevel(entity$types[["generic"]])
+  
+  dctype <- entity$types[["generic"]]
+  dctype_idx = which(tolower(ISOHierarchyLevel$values()) == tolower(dctype))
+  dctype_iso = ISOHierarchyLevel$values()[dctype_idx]
+  if(length(dctype_iso)==0) dctype_iso = "dataset"
+  md$setHierarchyLevel(dctype_iso)
   
   #add contacts
   for(entity_contact in entity$contacts){
@@ -431,7 +436,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(!is.null(entity$provenance)){
     dq_lineage <- ISODataQuality$new()
     dq_lineage_scope <- ISOScope$new()
-    dq_lineage_scope$setLevel(entity$types[["generic"]])
+    dq_lineage_scope$setLevel(dctype_iso)
     dq_lineage$setScope(dq_lineage_scope)
     lineage <- ISOLineage$new()
     lineage$setStatement(entity$provenance$statement)
@@ -478,7 +483,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(inspire){
     dq2 <- ISODataQuality$new()
     scope2 <- ISOScope$new()
-    scope2$setLevel(entity$types[["generic"]])
+    scope2$setLevel(dctype_iso)
     dq2$setScope(scope2)
     
     #INSPIRE - interoperability of spatial data sets and services

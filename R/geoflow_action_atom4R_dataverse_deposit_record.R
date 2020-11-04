@@ -57,7 +57,12 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   ##title
   dcentry$addDCTitle(entity$title)
   ##type
-  dcentry$addDCType(entity$types[["generic"]])
+  dctype <- entity$types[["generic"]]
+  dctype_allowed <- getDCMIVocabulary(id = "http://purl.org/dc/dcmitype/")$get()$label
+  dctype_idx <- which(tolower(dctype_allowed) == tolower(dctype))
+  dctype_dataverse <- dctype_allowed[dctype_idx]
+  if(length(dctype_dataverse)==0) dctype_dataverse <- "Dataset"
+  dcentry$addDCType(dctype_dataverse)
   ##subjects
   subjects <- entity$subjects
   if(length(subjects)>0) subjects <- subjects[sapply(subjects, function(x){return(x$name != "topic")})]
