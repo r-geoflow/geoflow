@@ -1,8 +1,7 @@
 .onLoad <- function (libname, pkgname) { # nocov start
   
   message("Setting package .geoflow hidden property object")
-  out <- try(assign(".geoflow", new.env(), envir= asNamespace(pkgname)))
-  message(as(out, "character"))
+  assign(".geoflow", new.env(), envir= asNamespace(pkgname))
   
   #default line separator
   message("Setting line separator...")
