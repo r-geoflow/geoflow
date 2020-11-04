@@ -10,6 +10,7 @@
 #' @importFrom utils unzip
 #' @importFrom utils packageDescription
 #' @importFrom zip zipr
+#' @import httr
 #' @import jsonlite
 #' @import xml2
 #' @import plyr
