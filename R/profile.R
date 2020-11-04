@@ -1,36 +1,35 @@
 .onLoad <- function (libname, pkgname) { # nocov start
   
-  message("Setting .geoflow object at line 3...")
-  print("Setting .geoflow object at line 4...")
-  #out <- try(assign(".geoflow", new.env(), envir= asNamespace(pkgname)))
-  #packageStartupMessage(out)
+  message("Setting package .geoflow hidden property object")
+  out <- try(assign(".geoflow", new.env(), envir= asNamespace(pkgname)))
+  message(as(out, "character"))
   
   #default line separator
-  packageStartupMessage("Setting line separator...")
+  message("Setting line separator...")
   set_line_separator()
   
   #defaut temp directory
-  packageStartupMessage("Setting temp directory...")
+  message("Setting temp directory...")
   set_temp_directory()
   
   #embedded handlers
-  packageStartupMessage("Loading 'contact' handlers...")
+  message("Loading 'contact' handlers...")
   register_contact_handlers()
-  packageStartupMessage("Loading 'entity' handlers...")
+  message("Loading 'entity' handlers...")
   register_entity_handlers()
-  packageStartupMessage("Loading 'dictionary' handlers...")
+  message("Loading 'dictionary' handlers...")
   register_dictionary_handlers()
   
   #software
-  packageStartupMessage("Loading software...")
+  message("Loading software...")
   register_software()
   
   #registers
-  packageStartupMessage("Loading registers...")
+  message("Loading registers...")
   register_registers()
   
   #embedded actions
-  packageStartupMessage("Loading actions...")
+  message("Loading actions...")
   register_actions()
   
 } # nocov end
