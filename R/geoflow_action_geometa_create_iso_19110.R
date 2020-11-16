@@ -53,7 +53,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
   owners <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
   if(length(owners)==0) main_entity <- entity$contacts[[1]] else main_entity <- owners[[1]]
   producer <- ISOResponsibleParty$new()
-  producer$setIndividualName(paste(main_entity$firstName, main_entity$lastName))
+  if(!is.na(main_entity$firstName) && !is.na(main_entity$lastName)) producer$setIndividualName(paste(main_entity$firstName, main_entity$lastName))
   producer$setOrganisationName(main_entity$organizationName)
   producer$setPositionName(main_entity$positionName)
   producer$setRole(main_entity$role)

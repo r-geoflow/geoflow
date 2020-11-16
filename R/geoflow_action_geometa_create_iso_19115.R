@@ -51,7 +51,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   for(entity_contact in entity$contacts){
     if(tolower(entity_contact$role) == "metadata"){
       rp <- ISOResponsibleParty$new()
-      rp$setIndividualName(paste(entity_contact$firstName, entity_contact$lastName))
+      if(!is.na(entity_contact$firstName) && !is.na(entity_contact$lastName)) rp$setIndividualName(paste(entity_contact$firstName, entity_contact$lastName))
       rp$setOrganisationName(entity_contact$organizationName)
       rp$setPositionName(entity_contact$positionName)
       rp$setRole("pointOfContact")
@@ -139,9 +139,9 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   #adding contacts
   for(entity_contact in entity$contacts){
-    if(tolower(entity_contact$role) != "pointOfContact"){
+    if(tolower(entity_contact$role) != "metadata"){
       rp <- ISOResponsibleParty$new()
-      rp$setIndividualName(paste(entity_contact$firstName, entity_contact$lastName))
+      if(!is.na(entity_contact$firstName) && !is.na(entity_contact$lastName)) rp$setIndividualName(paste(entity_contact$firstName, entity_contact$lastName))
       rp$setOrganisationName(entity_contact$organizationName)
       rp$setPositionName(entity_contact$positionName)
       rp$setRole(entity_contact$role)
@@ -202,7 +202,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(length(owners)==0) owners <- list(entity$contacts[[1]])
   for(owner_entity in owners){
     rp <- ISOResponsibleParty$new()
-    rp$setIndividualName(paste(owner_entity$firstName, owner_entity$lastName))
+    if(!is.na(owner_entity$firstName) && !is.na(owner_entity$lastName)) rp$setIndividualName(paste(owner_entity$firstName, owner_entity$lastName))
     rp$setOrganisationName(owner_entity$organizationName)
     rp$setPositionName(owner_entity$positionName)
     rp$setRole(owner_entity$role)
