@@ -24,8 +24,8 @@
 #'  \tabular{ll}{
 #'    Package: \tab geoflow\cr
 #'    Type: \tab Package\cr
-#'    Version: \tab 0.0.20201104\cr
-#'    Date: \tab 2020-11-04\cr
+#'    Version: \tab 0.0.20201116\cr
+#'    Date: \tab 2020-11-16\cr
 #'    License: \tab MIT\cr
 #'    LazyLoad: \tab yes\cr
 #'  }
