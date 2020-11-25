@@ -15,6 +15,7 @@ executeWorkflow <- function(file){
   #options
   .defaultOptions <- options()
   options(stringsAsFactors = FALSE)
+  options(gargle_oob_default = TRUE)
   
   #1. Init the workflow based on configuration file
   config <- initWorkflow(file)
