@@ -591,7 +591,9 @@ geoflow_entity <- R6Class("geoflow_entity",
                config$logger.info("Read CSV file from geoflow temporary data directory")
                sf.data <- sf::st_read(trgFilename, options = sprintf("GEOM_POSSIBLE_NAMES=%s", paste0(self$data$getAllowedGeomPossibleNames(),collapse=",")))
                if(!is.null(sf.data)){
-                 tbl.data <- as.data.frame(readr::read_csv(trgFilename))
+                 tbl.spec <- readr::spec_csv(trgFilename)
+                 tbl.spec[1]$cols = sapply(tbl.spec[1]$cols, function(x){spec = x;if(is(x, "collector_logical")) spec = col_character(); return(spec)})
+                 tbl.data <- as.data.frame(readr::read_csv(trgFilename, col_types = tbl.spec))
                  if(is(sf.data,"sf")){
                    sf.data <- st_set_geometry(tbl.data, st_geometry(sf.data))
                  }else{
