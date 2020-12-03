@@ -2,6 +2,9 @@
 sf_write_generic <- function(entity, config, options){
   #options
   createIndexes <- ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE)
+  overwrite <- ifelse(!is.null(options$overwrite), overwrite, TRUE)
+  append <- ifelse(!is.null(options$append), append, TRUE)
+  chunk.size <- ifelse(!is.null(options$chunk.size), options$chunk.size, 0L)
   #function
   writeWorkflowDataResource(
     entity = entity,
@@ -11,6 +14,9 @@ sf_write_generic <- function(entity, config, options){
     resourcename = NULL,
     useUploadSource = TRUE,
     createIndexes = createIndexes,
+    overwrite = overwrite,
+    append = append,
+    chunk.size = chunk.size,
     type=options$type
   )
 }
@@ -18,7 +24,10 @@ sf_write_generic <- function(entity, config, options){
 #For write in dbi
 sf_write_dbi <- function(entity, config, options){
   #options
-  createIndexes<-ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE) 
+  createIndexes <- ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE)
+  overwrite <- ifelse(!is.null(options$overwrite), overwrite, TRUE)
+  append <- ifelse(!is.null(options$append), append, TRUE)
+  chunk.size <- ifelse(!is.null(options$chunk.size), options$chunk.size, 0L)
   #function
   writeWorkflowDataResource(
     entity = entity,
@@ -28,6 +37,9 @@ sf_write_dbi <- function(entity, config, options){
     resourcename = NULL,
     useUploadSource = TRUE,
     createIndexes = createIndexes,
+    overwrite = overwrite,
+    append = append,
+    chunk.size = chunk.size,
     type = "dbtable"
   )
 }

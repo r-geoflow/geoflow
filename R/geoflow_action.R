@@ -290,7 +290,10 @@ register_actions <- function(){
       fun = sf_write_generic,
       options = list(
         type=list(desc = "format to convert", default = NA),
-        createIndexes=list(desc = "create indexes for columns", default = FALSE)
+        createIndexes=list(desc = "create indexes for columns", default = FALSE),
+        overwrite=list(desc = "Overwrite policy", default = TRUE),
+        append=list(desc = "Append policy", default = FALSE),
+        chunk.size=list(desc = "Size of DB upload data chunk. Default is 0L, meaning no chunking is operated.", default = 0L)
       )
     ),
     geoflow_action$new(
@@ -300,7 +303,10 @@ register_actions <- function(){
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
       fun = sf_write_dbi,
       options = list(
-        createIndexes=list(desc = "create indexes for columns", default = FALSE)
+        createIndexes=list(desc = "create indexes for columns", default = FALSE),
+        overwrite=list(desc = "Overwrite policy", default = TRUE),
+        append=list(desc = "Append policy", default = FALSE),
+        chunk.size=list(desc = "Size of DB upload data chunk. Default is 0L, meaning no chunking is operated.", default = 0L)
       )
     ),
     geoflow_action$new(

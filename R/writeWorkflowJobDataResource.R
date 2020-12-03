@@ -12,13 +12,20 @@
 #' @param resourcename name of data input
 #' @param useUploadSource a boolean condition to define if resourcename is same as uploadSource information
 #' @param createIndexes a boolean condition for possibility to create indexes for each column
-#' @param type format to convert into list :"shp","dbtable 
+#' @param overwrite a boolean condition for writing to DB. Default is \code{TRUE}
+#' @param append a boolean condition for appending to DB existing table. Default is \code{FALSE}
+#' @param chunk.size an object of class \code{integer} giving the size of chunks to apply for DB upload.
+#' Default is equal to \code{OL}, meaning DB upload will be done without chunking.
+#' @param type format to convert into list :"shp","dbtable" 
 #' 
 #' @author Alexandre Bennici, \email{bennicialexandre@@gmail.com}
 #' @export
 #'
 
-writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FALSE,resourcename=NULL,useUploadSource=FALSE,createIndexes=FALSE,type){
+writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
+                                         useFeatures=FALSE, resourcename=NULL, useUploadSource=FALSE,
+                                         createIndexes=FALSE, overwrite=TRUE, append = FALSE, chunk.size = 0L, 
+                                         type){
   config$logger.info("------------------------------------------------------------------------------")
   config$logger.info("Write data resource start")
   if(is.null(obj) && !useFeatures){
@@ -78,15 +85,44 @@ writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FAL
            }  
            config$logger.info(sprintf("Format type: %s", type))
            if(class(obj)[1]=="sf"){
-             st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , layer_options = 'OVERWRITE=YES')
+             #sf upload
+             if(chunk.size>0){
+               chunks <- split(obj, ceiling(seq_along(1:nrow(obj))/chunk.size))
+               config$logger.info(sprintf("Upload DB data by chunks [nb of chunks: %s]", length(chunks)))
+               
+               #1st chunk with overwrite param applied
+               config$logger.info(sprintf("Upload data to DB: chunk 1 of %s", length(chunks)))
+               st_write(obj = chunks[[1]], dsn = config$software$output$dbi, layer =resourcename , 
+                        layer_options = paste0('OVERWRITE=',ifelse(overwrite,'YES','NO')),
+                        append = append)
+               
+               #then apply to other chunks with fixed overwrite=NO
+               if(length(chunks)>1){
+                 chunk_idx = 2
+                 outchunk = lapply(chunks[2:length(chunks)], function(chunk){
+                   config$logger.info(sprintf("Upload data to DB: chunk %s of %s", chunk_idx, length(chunks)))
+                   st_write(obj = chunk, dsn = config$software$output$dbi, layer = resourcename, 
+                            append = TRUE)
+                   chunk_idx <<- chunk_idx+1
+                 })
+               }
+             }else{
+               #no chunking
+               config$logger.info("Upload data to DB as single chunk")
+               st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , 
+                        layer_options = paste0('OVERWRITE=',ifelse(overwrite,'YES','NO')),
+                        append = append)
+             }
              
-                #enforce srid/geometry type in geometry_columns
-             srid <- unlist(strsplit(st_crs(obj)$input, ":"))[2]
+             #enforce srid/geometry type in geometry_columns
+             srid <- st_crs(obj, parameters = TRUE)$epsg
              geometryName <- attr(obj, "sf_column")
              geometryType <- unlist(strsplit(class(st_geometry(obj))[1], "sfc_"))[2]
-             alter_sql <- sprintf("alter table %s alter column %s type geometry(%s, %s);", 
+             if(!is.na(srid)){
+              alter_sql <- sprintf("alter table %s alter column %s type geometry(%s, %s);", 
                                   resourcename, geometryName, geometryType, srid)
-             DBI::dbExecute(config$software$output$dbi, alter_sql)
+              DBI::dbExecute(config$software$output$dbi, alter_sql)
+             }
              #create index for each colunm except geometry
              if(createIndexes){
                for (column_name in setdiff(names(obj),geometryName)){
@@ -96,7 +132,31 @@ writeWorkflowJobDataResource <- function(entity, config,obj=NULL,useFeatures=FAL
                }
              }
            }else{
-             dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj , overwrite=TRUE)
+             if(chunk.size>0){
+               chunks <- split(obj, ceiling(seq_along(1:nrow(obj))/chunk.size))
+               config$logger.info(sprintf("Upload DB data by chunks [nb of chunks: %s]", length(chunks)))
+               
+               #1st chunk with overwrite param applied
+               config$logger.info(sprintf("Upload data to DB: chunk 1 of %s", length(chunks)))
+               dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=chunks[[1]],
+                            overwrite = overwrite, append = append)
+               
+               #then apply to other chunks with fixed overwrite=NO
+               if(length(chunks)>1){
+                 chunk_idx = 2
+                 outchunk = lapply(chunks[2:length(chunks)], function(chunk){
+                   config$logger.info(sprintf("Upload data to DB: chunk %s of %s", chunk_idx, length(chunks)))
+                   dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=chunk, append = TRUE)
+                   chunk_idx <<- chunk_idx+1
+                 })
+               }
+             }else{
+               #no chunking
+               config$logger.info("Upload data to DB as single chunk")
+               dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj,
+                            overwrite = overwrite, append = append)
+             }
+             
              #create index for each column
              if(createIndexes){
                for (column_name in names(obj)){

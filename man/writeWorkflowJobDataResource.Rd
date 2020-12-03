@@ -21,7 +21,12 @@ writeWorkflowJobDataResource(entity,config,obj,useFeatures,resourcename,useUploa
 
 \item{createIndexes}{a boolean condition for possibility to create indexes for each column}
 
-\item{type}{format to convert into list :"shp","dbtable}
+\item{overwrite}{a boolean condition for writing to DB. Default is \code{TRUE}}
+
+\item{chunk.size}{an object of class \code{integer} giving the size of chunks to apply for DB upload.
+Default is equal to \code{OL}, meaning DB upload will be done without chunking.}
+
+\item{type}{format to convert into list :"shp","dbtable"}
 }
 \description{
 \code{writeWorkflowJobDataResource} allows to transform datasource into different formats
