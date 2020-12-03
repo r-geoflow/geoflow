@@ -741,7 +741,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 unlink(sqlfile)
               }else{
                 if(is.null(self$data$sourceSql)){
-                  warnMsg <- sprintf("No SQL file nor 'sql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
+                  warnMsg <- sprintf("No SQL file provided as 'source' nor 'sourceSql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
                   config$logger.warn(warnMsg)
                   return(FALSE)
                 }
