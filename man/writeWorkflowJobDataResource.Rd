@@ -23,6 +23,8 @@ writeWorkflowJobDataResource(entity,config,obj,useFeatures,resourcename,useUploa
 
 \item{overwrite}{a boolean condition for writing to DB. Default is \code{TRUE}}
 
+\item{append}{a boolean condition for appending to DB existing table. Default is \code{FALSE}}
+
 \item{chunk.size}{an object of class \code{integer} giving the size of chunks to apply for DB upload.
 Default is equal to \code{OL}, meaning DB upload will be done without chunking.}
 
