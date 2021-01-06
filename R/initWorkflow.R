@@ -158,7 +158,7 @@ initWorkflow <- function(file){
   #loading dictionnary
   #metadata elements
   if(!is.null(config$metadata)){
-    config$metadata$content <- list()
+    if(is.null(config$metadata$content)) config$metadata$content <- list()
     
     #metadata dictionary
     cfg_md_dictionary <- config$metadata$dictionary
