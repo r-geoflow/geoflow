@@ -128,7 +128,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                for (column_name in setdiff(names(obj),geometryName)){
                  config$logger.info(sprintf("Drop index for column : %s",column_name))
                  drop_index_sql <- sprintf("DROP INDEX %s_%s_idx;", resourcename, column_name)
-                 DBI::dbExecute(config$software$output$dbi, drop_index_sql)
+                 try(DBI::dbExecute(config$software$output$dbi, drop_index_sql))
                }
                for (column_name in setdiff(names(obj),geometryName)){
                  config$logger.info(sprintf("Indexes created for column : %s",column_name))
