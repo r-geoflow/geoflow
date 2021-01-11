@@ -126,6 +126,11 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
              #create index for each colunm except geometry
              if(createIndexes){
                for (column_name in setdiff(names(obj),geometryName)){
+                 config$logger.info(sprintf("Drop index for column : %s",column_name))
+                 drop_index_sql <- sprintf("DROP INDEX %s_%s_idx;", resourcename, column_name)
+                 DBI::dbExecute(config$software$output$dbi, drop_index_sql)
+               }
+               for (column_name in setdiff(names(obj),geometryName)){
                  config$logger.info(sprintf("Indexes created for column : %s",column_name))
                  create_index_sql <- sprintf("CREATE INDEX %s_%s_idx  ON %s  (%s);", resourcename, column_name, resourcename, column_name)
                  DBI::dbExecute(config$software$output$dbi, create_index_sql)
@@ -160,7 +165,12 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
              #create index for each column
              if(createIndexes){
                for (column_name in names(obj)){
-                 config$logger.info(sprintf("Indexes created for column : %s",column_name))
+                 config$logger.info(sprintf("Drop index for column : %s",column_name))
+                 drop_index_sql <- sprintf("DROP INDEX %s_%s_idx;", resourcename, column_name)
+                 DBI::dbExecute(config$software$output$dbi, drop_index_sql)
+               }
+               for (column_name in names(obj)){
+                 config$logger.info(sprintf("Create index for column : %s",column_name))
                  create_index_sql <- sprintf("CREATE INDEX %s_%s_idx  ON %s  (%s);", resourcename, column_name, resourcename, column_name)
                  DBI::dbExecute(config$software$output$dbi, create_index_sql)
                }
