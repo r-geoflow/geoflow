@@ -6,7 +6,7 @@ sf_write_generic <- function(entity, config, options){
   append <- ifelse(!is.null(options$append), append, TRUE)
   chunk.size <- ifelse(!is.null(options$chunk.size), options$chunk.size, 0L)
   #function
-  writeWorkflowDataResource(
+  writeWorkflowJobDataResource(
     entity = entity,
     config = config,
     obj = NULL,
@@ -29,7 +29,7 @@ sf_write_dbi <- function(entity, config, options){
   append <- ifelse(!is.null(options$append), append, TRUE)
   chunk.size <- ifelse(!is.null(options$chunk.size), options$chunk.size, 0L)
   #function
-  writeWorkflowDataResource(
+  writeWorkflowJobDataResource(
     entity = entity,
     config = config,
     obj = NULL,
@@ -46,7 +46,7 @@ sf_write_dbi <- function(entity, config, options){
 
 #For write as shp
 sf_write_shp <- function(entity, config, options){
-  writeWorkflowDataResource(
+  writeWorkflowJobDataResource(
     entity = entity,
     config = config,
     obj = NULL,
