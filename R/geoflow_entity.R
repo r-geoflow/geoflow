@@ -282,18 +282,22 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #setTemporalExtent
     setTemporalExtent = function(str){
-      isInstant <- FALSE
-      if(is(str,"character")){
-        str <- unlist(strsplit(str,"/"))
-        if(length(str)==1) isInstant <- TRUE
-      }else if(is(str,"Date")||is(str,"POSIXct")) isInstant <- TRUE
-      if(isInstant){
-        self$temporal_extent <- list(instant = str_to_posix(str))
+      if(is.null(str)){
+        self$temporal_extent = NULL
       }else{
-        self$temporal_extent <- list(
-          start = str_to_posix(str[1]),
-          end = str_to_posix(str[2])
-        )
+        isInstant <- FALSE
+        if(is(str,"character")){
+          str <- unlist(strsplit(str,"/"))
+          if(length(str)==1) isInstant <- TRUE
+        }else if(is(str,"Date")||is(str,"POSIXct")) isInstant <- TRUE
+        if(isInstant){
+          self$temporal_extent <- list(instant = str_to_posix(str))
+        }else{
+          self$temporal_extent <- list(
+            start = str_to_posix(str[1]),
+            end = str_to_posix(str[2])
+          )
+        }
       }
     },
     
