@@ -112,7 +112,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           #enrich metadata with dynamic properties
           if(!is.null(entity$data)){
             #data features
-            if(is.null(entity$data$features)) entity$enrichWithFeatures(config)
+            if(is.null(entity$data$features) & !skipFileDownload) entity$enrichWithFeatures(config)
             #data relations (eg. geosapi & OGC data protocol online resources)
             entity$enrichWithRelations(config)
           }
