@@ -38,6 +38,9 @@ debugWorkflow <- function(file, entityIndex = 1,
   entity <- entities[[entityIndex]]
   assign("entity", entity, envir = .GlobalEnv)
 
+  #skipFileDownload
+  skipFileDownload <- if(!is.null(config$options$skipFileDownload)) config$options$skipFileDownload else FALSE
+  
   #run software actions?
   if(runSoftwareActions){
     #function to run software actions
@@ -64,12 +67,16 @@ debugWorkflow <- function(file, entityIndex = 1,
   }
   
   #copy data?
+  if(skipFileDownload){
+    config$logger.warn("'skipFileDownload' is enabled in the config, copyData set to FALSE!")
+    copyData <- !skipFileDownload
+  }
   if(copyData && !is.null(entity$data)) entity$copyDataToJobDir(config)
 
   #enrich metadata with dynamic properties
   if(!is.null(entity$data)){
     #data features
-    if(is.null(entity$data$features)) entity$enrichWithFeatures(config)
+    if(is.null(entity$data$features) & !skipFileDownload) entity$enrichWithFeatures(config)
     #data relations (eg. geosapi & OGC data protocol online resources)
     entity$enrichWithRelations(config)
   }
