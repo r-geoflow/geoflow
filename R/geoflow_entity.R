@@ -822,7 +822,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geosapi",x$id)>0})]
       if(length(actions)>0) geosapi_action <- actions[[1]]
       #dynamic relations related to OGC services (only executed if geosapi action is handled and enabled in workflow)
-      if(!is.null(geosapi_action)) if(!is.null(self$data$features)){
+      if(!is.null(geosapi_action)) if(!is.null(self$data)){
         
         layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
         
