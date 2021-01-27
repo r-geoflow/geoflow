@@ -454,7 +454,9 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #enrichWithFeatures
     enrichWithFeatures = function(config){
-    
+      
+      skipDynamicBbox <- if(!is.null(config$options$skipDynamicBbox)) config$options$skipDynamicBbox else FALSE
+      
       if(length(self$data$source)>1) 
         config$logger.warn("More than one data sources, entity metadata enrichment with data based on the first source only!")
       
@@ -556,7 +558,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                  }
                  #dynamic spatial extent
                  config$logger.info("Overwriting entity bounding box with shapefile bounding box")
-                 self$setSpatialBbox(data = sf.data)
+                 if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                    
                }else{
                  warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
@@ -621,7 +623,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                  }
                  #dynamic spatial extent
                  config$logger.info("Overwriting entity bounding box with shapefile bounding box")
-                 self$setSpatialBbox(data = sf.data)
+                 if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                  
                }else{
                  warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
@@ -656,7 +658,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                    }
                    #dynamic spatial extent
                    config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
-                   self$setSpatialBbox(data = sf.data)
+                   if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                  }else{
                    warnMsg <- sprintf("DB table '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
                    config$logger.warn(warnMsg)
@@ -696,7 +698,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                    }
                    #dynamic spatial extent
                    config$logger.info("Overwriting entity bounding box with DB spatial view bounding box")
-                   self$setSpatialBbox(data = sf.data)
+                   if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                  }else{
                    warnMsg <- sprintf("DB view '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
                    config$logger.warn(warnMsg)
@@ -777,7 +779,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                     }
                     #dynamic spatial extent
                     config$logger.info("Overwriting entity bounding box with SQL query output bounding box")
-                    self$setSpatialBbox(data = sf.data)
+                    if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                     #dynamic view properties required
                     
                     geomtype <- as.character(unique(sf::st_geometry_type(sf.data))[1])
