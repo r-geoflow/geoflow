@@ -143,6 +143,6 @@ handle_dictionary_dbi <- function(config, source){
   }
   
   #apply generic handler
-  dictionary <- handle_dictionarys_df(config, source)
+  dictionary <- handle_dictionary_df(config, source)
   return(dictionary)
 }
