@@ -116,7 +116,10 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
              
              #enforce srid/geometry type in geometry_columns
              srid <- st_crs(obj, parameters = TRUE)$epsg
-             if(is.null(srid)) srid <- 4326
+             if(is.null(srid)){
+              srid <- 4326
+              st_crs(obj) <- srid
+             }
              geometryName <- attr(obj, "sf_column")
              geometryType <- unlist(strsplit(class(st_geometry(obj))[1], "sfc_"))[2]
              if(!is.na(srid)){
