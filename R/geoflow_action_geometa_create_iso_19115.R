@@ -67,10 +67,12 @@ geometa_create_iso_19115 <- function(entity, config, options){
       address$setCountry(entity_contact$country)
       address$setEmail(entity_contact$email)
       contact$setAddress(address)
-      res <- ISOOnlineResource$new()
-      res$setLinkage(entity_contact$websiteUrl)
-      res$setName(entity_contact$websiteName)
-      contact$setOnlineResource(res)
+      if(!is.null(entity_contact$websiteUrl)){
+        res <- ISOOnlineResource$new()
+        res$setLinkage(entity_contact$websiteUrl)
+        res$setName(entity_contact$websiteName)
+        contact$setOnlineResource(res)
+      }
       rp$setContactInfo(contact)
       md$addContact(rp)
     }
@@ -157,10 +159,12 @@ geometa_create_iso_19115 <- function(entity, config, options){
       address$setCountry(entity_contact$country)
       address$setEmail(entity_contact$email)
       contact$setAddress(address)
-      res <- ISOOnlineResource$new()
-      res$setLinkage(entity_contact$websiteUrl)
-      res$setName(entity_contact$websiteName)
-      contact$setOnlineResource(res)
+      if(!is.null(entity_contact$websiteUrl)){
+        res <- ISOOnlineResource$new()
+        res$setLinkage(entity_contact$websiteUrl)
+        res$setName(entity_contact$websiteName)
+        contact$setOnlineResource(res)
+      }
       rp$setContactInfo(contact)
       ident$addPointOfContact(rp)
     }
@@ -218,10 +222,12 @@ geometa_create_iso_19115 <- function(entity, config, options){
     address$setCountry(owner_entity$country)
     address$setEmail(owner_entity$email)
     contact$setAddress(address)
-    res <- ISOOnlineResource$new()
-    res$setLinkage(owner_entity$websiteUrl)
-    res$setName(owner_entity$websiteName)
-    contact$setOnlineResource(res)
+    if(!is.null(owner_entity$websiteUrl)){
+      res <- ISOOnlineResource$new()
+      res$setLinkage(owner_entity$websiteUrl)
+      res$setName(owner_entity$websiteName)
+      contact$setOnlineResource(res)  
+    }
     rp$setContactInfo(contact) 
     ct$citedResponsibleParty <- c(ct$citedResponsibleParty, rp)
   }
@@ -466,10 +472,12 @@ geometa_create_iso_19115 <- function(entity, config, options){
         address$setCountry(processor$country)
         address$setEmail(processor$email)
         contact$setAddress(address)
-        res <- ISOOnlineResource$new()
-        res$setLinkage(processor$websiteUrl)
-        res$setName(processor$websiteName)
-        contact$setOnlineResource(res)
+        if(!is.null(processor$websiteUrl)){
+          res <- ISOOnlineResource$new()
+          res$setLinkage(processor$websiteUrl)
+          res$setName(processor$websiteName)
+          contact$setOnlineResource(res) 
+        }
         rpp$setContactInfo(contact) 
         processStep$addProcessor(rpp)
         lineage$addProcessStep(processStep)
