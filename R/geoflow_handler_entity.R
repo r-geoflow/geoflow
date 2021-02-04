@@ -48,6 +48,8 @@ handle_entities_df <- function(config, source){
           }
         }
       }
+    }else{
+      entity$addDate("creation", Sys.time())
     }
     
     #types

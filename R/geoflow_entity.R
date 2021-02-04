@@ -141,7 +141,6 @@ geoflow_entity <- R6Class("geoflow_entity",
     status = list(),
     resources = list(),
     initialize = function(){
-      self$addDate("creation", Sys.time())
     },
     
     #getAllowedKeyValuesFor
