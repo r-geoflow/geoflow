@@ -177,7 +177,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
     ct$addDate(d) 
   }
   ct$setEditionDate(now)
-  ct$setEdition(format(now, "%Y-%m-%dT%H:%m:%S"))
+  ct$setEdition(paste0("v", format(now, "%Y-%m-%dT%H:%m:%S")))
   
   #set metadata identifier
   ct$addIdentifier(ISOMetaIdentifier$new(code = mdId))
