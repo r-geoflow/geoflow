@@ -41,7 +41,7 @@ geoflow_right <- R6Class("geoflow_right",
       if(!is.null(str)){
         right <- extract_kvp(str)
         self$setKey(right$key)
-        self$setValue(right$values[[1]])
+        self$setValue(paste(right$values, collapse=","))
       }
     },
     
