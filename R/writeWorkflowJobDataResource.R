@@ -84,6 +84,11 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
              stop(errMsg)   
            }  
            config$logger.info(sprintf("Format type: %s", type))
+           if(overwrite){
+             config$logger.info(sprintf("Overwrite is 'true', try to drop table %s", resourcename))
+             drop_sql <- sprintf("DROP TABLE IF EXISTS %s", resourcename)
+             try(DBI::dbExecute(config$software$output$dbi, drop_sql), silent = TRUE)
+           }
            if(class(obj)[1]=="sf"){
              
              #srid
