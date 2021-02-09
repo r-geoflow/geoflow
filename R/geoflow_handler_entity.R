@@ -61,7 +61,7 @@ handle_entities_df <- function(config, source){
       }else{
         for(type in types){
           if(regexpr(":",type) == -1){
-            entity$setDescription("generic", type)
+            entity$setType("generic", type)
           }else{
             type_kvp <- extract_kvp(type)
             entity$setType(type_kvp$key, type_kvp$values[[1]])

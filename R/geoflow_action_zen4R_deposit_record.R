@@ -253,16 +253,16 @@ zen4R_deposit_record <- function(entity, config, options){
     ent <- config$metadata$content$entities[[i]]
     if(ent$identifiers[["id"]]==entity$identifiers[["id"]]){
       if(regexpr("zenodo", doi)>0){
-        config$metadata$content$entities[[i]]$identifiers[["doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
-        config$metadata$content$entities[[i]]$identifiers[["conceptdoi_to_save"]] <- zenodo_metadata$getConceptDOI()
+        config$metadata$content$entities[[i]]$identifiers[["zenodo_doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
+        config$metadata$content$entities[[i]]$identifiers[["zenodo_conceptdoi_to_save"]] <- zenodo_metadata$getConceptDOI()
         config$metadata$content$entities[[i]]$setStatus("zenodo", ifelse(publish, "published", "draft"))
       }
       break;
     }
   }
   entity$identifiers[["doi"]] <- zenodo_metadata$getConceptDOI()
-  entity$identifiers[["doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
-  entity$identifiers[["conceptdoi_to_save"]] <- zenodo_metadata$getConceptDOI()
+  entity$identifiers[["zenodo_doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
+  entity$identifiers[["zenodo_conceptdoi_to_save"]] <- zenodo_metadata$getConceptDOI()
   entity$setStatus("zenodo", ifelse(publish, "published", "draft"))
   
   #if publish, we save all
