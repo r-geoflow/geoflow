@@ -25,7 +25,7 @@ handle_contacts_df <- function(config, source){
     contact$setCountry(source_contact[,"Country"])
     contact$setVoice(source_contact[,"Voice"])
     contact$setFacsimile(source_contact[,"Facsimile"])
-    contact$setWebsiteUrl(source_contact[,"WebsiteUrl"])
+    if(!is.na(source_contact[,"WebsiteUrl"])& source_contact[,"WebsiteUrl"]!="") contact$setWebsiteUrl(source_contact[,"WebsiteUrl"])
     contact$setWebsiteName(source_contact[,"WebsiteName"])
     
     srcId <- sanitize_str(source_contact[,"Identifier"])
