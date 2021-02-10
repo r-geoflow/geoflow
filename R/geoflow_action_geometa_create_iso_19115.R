@@ -14,6 +14,39 @@ geometa_create_iso_19115 <- function(entity, config, options){
   featureid <- if(!is.null(options$featureid)){ options$featureid } else { if(!is.null(features)) colnames(features)[1] else NULL} 
   geographySubject <- if(!is.null(options$subject_geography)) options$subject_geography else "geography"
   
+#'  \item{\code{createResponsibleParty(x, role)}}{
+#'    create a responsible party for contact
+#'  }
+
+#createResponsibleParty  
+  createResponsibleParty = function(x, role){
+    if(is.null(role)) role <- x$role 
+    rp <- ISOResponsibleParty$new()
+    if(!is.na(x$firstName) && !is.na(x$lastName)) rp$setIndividualName(paste(x$firstName, x$lastName))
+    rp$setOrganisationName(x$organizationName)
+    rp$setPositionName(x$positionName)
+    rp$setRole(role)
+    contact <- ISOContact$new()
+    phone <- ISOTelephone$new()
+    phone$setVoice(x$voice)
+    phone$setFacsimile(x$facsimile)
+    contact$setPhone(phone)
+    address <- ISOAddress$new()
+    address$setDeliveryPoint(x$postalAddress)
+    address$setCity(x$city)
+    address$setPostalCode(x$postalCode)
+    address$setCountry(x$country)
+    address$setEmail(x$email)
+    contact$setAddress(address)
+    if(!is.null(x$websiteUrl)){
+      res <- ISOOnlineResource$new()
+      res$setLinkage(x$websiteUrl)
+      res$setName(x$websiteName)
+      contact$setOnlineResource(res)
+    }
+    rp$setContactInfo(contact)
+  }
+  
   #metadata creation
   #-----------------------------------------------------------------------------------------------------
   #create geometa object
@@ -58,30 +91,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #add contacts
   for(entity_contact in entity$contacts){
     if(tolower(entity_contact$role) == "metadata"){
-      rp <- ISOResponsibleParty$new()
-      if(!is.na(entity_contact$firstName) && !is.na(entity_contact$lastName)) rp$setIndividualName(paste(entity_contact$firstName, entity_contact$lastName))
-      rp$setOrganisationName(entity_contact$organizationName)
-      rp$setPositionName(entity_contact$positionName)
-      rp$setRole("pointOfContact")
-      contact <- ISOContact$new()
-      phone <- ISOTelephone$new()
-      phone$setVoice(entity_contact$voice)
-      phone$setFacsimile(entity_contact$facsimile)
-      contact$setPhone(phone)
-      address <- ISOAddress$new()
-      address$setDeliveryPoint(entity_contact$postalAddress)
-      address$setCity(entity_contact$city)
-      address$setPostalCode(entity_contact$postalCode)
-      address$setCountry(entity_contact$country)
-      address$setEmail(entity_contact$email)
-      contact$setAddress(address)
-      if(!is.null(entity_contact$websiteUrl)){
-        res <- ISOOnlineResource$new()
-        res$setLinkage(entity_contact$websiteUrl)
-        res$setName(entity_contact$websiteName)
-        contact$setOnlineResource(res)
-      }
-      rp$setContactInfo(contact)
+      rp<-createResponsibleParty(entity_contact,"pointOfContact") 
       md$addContact(rp)
     }
   }
@@ -150,30 +160,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #adding contacts
   for(entity_contact in entity$contacts){
     if(tolower(entity_contact$role) != "metadata"){
-      rp <- ISOResponsibleParty$new()
-      if(!is.na(entity_contact$firstName) && !is.na(entity_contact$lastName)) rp$setIndividualName(paste(entity_contact$firstName, entity_contact$lastName))
-      rp$setOrganisationName(entity_contact$organizationName)
-      rp$setPositionName(entity_contact$positionName)
-      rp$setRole(entity_contact$role)
-      contact <- ISOContact$new()
-      phone <- ISOTelephone$new()
-      phone$setVoice(entity_contact$voice)
-      phone$setFacsimile(entity_contact$facsimile)
-      contact$setPhone(phone)
-      address <- ISOAddress$new()
-      address$setDeliveryPoint(entity_contact$postalAddress)
-      address$setCity(entity_contact$city)
-      address$setPostalCode(entity_contact$postalCode)
-      address$setCountry(entity_contact$country)
-      address$setEmail(entity_contact$email)
-      contact$setAddress(address)
-      if(!is.null(entity_contact$websiteUrl)){
-        res <- ISOOnlineResource$new()
-        res$setLinkage(entity_contact$websiteUrl)
-        res$setName(entity_contact$websiteName)
-        contact$setOnlineResource(res)
-      }
-      rp$setContactInfo(contact)
+      rp<-createResponsibleParty(entity_contact) 
       ident$addPointOfContact(rp)
     }
   }
@@ -213,30 +200,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   owners <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
   if(length(owners)==0) owners <- list(entity$contacts[[1]])
   for(owner_entity in owners){
-    rp <- ISOResponsibleParty$new()
-    if(!is.na(owner_entity$firstName) && !is.na(owner_entity$lastName)) rp$setIndividualName(paste(owner_entity$firstName, owner_entity$lastName))
-    rp$setOrganisationName(owner_entity$organizationName)
-    rp$setPositionName(owner_entity$positionName)
-    rp$setRole(owner_entity$role)
-    contact <- ISOContact$new()
-    phone <- ISOTelephone$new()
-    phone$setVoice(owner_entity$voice)
-    phone$setFacsimile(owner_entity$facsimile)
-    contact$setPhone(phone)
-    address <- ISOAddress$new()
-    address$setDeliveryPoint(owner_entity$postalAddress)
-    address$setCity(owner_entity$city)
-    address$setPostalCode(owner_entity$postalCode)
-    address$setCountry(owner_entity$country)
-    address$setEmail(owner_entity$email)
-    contact$setAddress(address)
-    if(!is.null(owner_entity$websiteUrl)){
-      res <- ISOOnlineResource$new()
-      res$setLinkage(owner_entity$websiteUrl)
-      res$setName(owner_entity$websiteName)
-      contact$setOnlineResource(res)  
-    }
-    rp$setContactInfo(contact) 
+    rp<-createResponsibleParty(owner_entity) 
     ct$citedResponsibleParty <- c(ct$citedResponsibleParty, rp)
   }
   ident$setCitation(ct)
@@ -463,30 +427,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
         
         #processor as responsability party
         processor <- process$processor
-        rpp <- ISOResponsibleParty$new()
-        rpp$setIndividualName(paste(processor$firstName, processor$lastName))
-        rpp$setOrganisationName(processor$organizationName)
-        rpp$setPositionName(processor$positionName)
-        rpp$setRole(processor$role)
-        contact <- ISOContact$new()
-        phone <- ISOTelephone$new()
-        phone$setVoice(processor$voice)
-        phone$setFacsimile(processor$facsimile)
-        contact$setPhone(phone)
-        address <- ISOAddress$new()
-        address$setDeliveryPoint(processor$postalAddress)
-        address$setCity(processor$city)
-        address$setPostalCode(processor$postalCode)
-        address$setCountry(processor$country)
-        address$setEmail(processor$email)
-        contact$setAddress(address)
-        if(!is.null(processor$websiteUrl)){
-          res <- ISOOnlineResource$new()
-          res$setLinkage(processor$websiteUrl)
-          res$setName(processor$websiteName)
-          contact$setOnlineResource(res) 
-        }
-        rpp$setContactInfo(contact) 
+        rpp<-createResponsibleParty(processor) 
         processStep$addProcessor(rpp)
         lineage$addProcessStep(processStep)
       }
