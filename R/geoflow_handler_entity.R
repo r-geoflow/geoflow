@@ -83,7 +83,7 @@ handle_entities_df <- function(config, source){
     
     #title
     entity$setTitle(source_entity[,"Title"])
-    
+
     #description
     src_description <- sanitize_str(source_entity[,"Description"])
     allowedDescKeys <- entity$getAllowedKeyValuesFor("descriptions")
@@ -265,7 +265,7 @@ handle_entities_gsheet <- function(config, source){
 handle_entities_csv <- function(config, source){
   
   #read csv TODO -> options management: sep, encoding etc
-  source <- read.csv(source)
+  source <- read.csv(source,stringsAsFactors = F)
   
   #apply generic handler
   entities <- handle_entities_df(config, source)
