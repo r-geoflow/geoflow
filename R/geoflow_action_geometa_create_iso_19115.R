@@ -14,7 +14,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   featureid <- if(!is.null(options$featureid)){ options$featureid } else { if(!is.null(features)) colnames(features)[1] else NULL} 
   geographySubject <- if(!is.null(options$subject_geography)) options$subject_geography else "geography"
   
-  createResponsibleParty = function(x, role){
+  createResponsibleParty = function(x, role = NULL){
     if(is.null(role)) role <- x$role 
     rp <- ISOResponsibleParty$new()
     if(!is.na(x$firstName) && !is.na(x$lastName)) rp$setIndividualName(paste(x$firstName, x$lastName))
