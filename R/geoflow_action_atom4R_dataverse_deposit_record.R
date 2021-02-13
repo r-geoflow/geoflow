@@ -65,7 +65,7 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   dcentry$addDCType(dctype_dataverse)
   ##subjects
   subjects <- entity$subjects
-  if(length(subjects)>0) subjects <- subjects[sapply(subjects, function(x){return(x$name != "topic")})]
+  if(length(subjects)>0) subjects <- subjects[sapply(subjects, function(x){return(x$key != "topic")})]
   if(length(subjects)>0) for(subject in subjects){
     for(kwd in subject$keywords){
       dcentry$addDCSubject(kwd$name)

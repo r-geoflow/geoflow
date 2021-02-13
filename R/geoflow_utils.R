@@ -79,6 +79,20 @@ extract_kvp <- function(str){
     key <- key_splits[1]
     attr(key,"uri") <- key_splits[2]
   }
+  hasDescription <- regexpr("\\[", key)>0 & endsWith(key, "]")
+  if(hasDescription){
+    attrs <- attributes(key)
+    value_splits <- unlist(strsplit(key, "\\["))
+    key <- value_splits[1]
+    if(startsWith(key, "\"") && endsWith(key, "\"")) key <- substr(key, 2, nchar(key)-1)
+    attributes(key) <- attrs
+    des <- value_splits[2]
+    des <- substr(des, 1, nchar(des)-1)
+    if(startsWith(des, "\"") && endsWith(des, "\"")) des <- substr(des, 2, nchar(des)-1)
+    attr(key, "description") <- des
+  }else{
+    if(startsWith(key, "\"") && endsWith(key, "\"")) key <- substr(key, 2, nchar(key)-1)
+  }
   
   #values
   values <- unlist(strsplit(kvp[2], ',\\s*(?=([^"]*"[^"]*")*[^"]*$)', perl = TRUE))

@@ -14,6 +14,7 @@
 #' @examples
 #' \dontrun{
 #'   subject <- geoflow_subject$new()
+#'   subject$setKey("theme")
 #'   subject$setName("General")
 #'   subject$setUri("http://somelink/general")
 #'   subject$addKeyword("keyword1", "http://somelink/keyword1")
@@ -25,6 +26,9 @@
 #' \describe{
 #'  \item{\code{new)}}{
 #'    This method is used to instantiate a geoflow_subject object
+#'  }
+#'  \item{\code{setKey(key)}}{
+#'    Set key
 #'  }
 #'  \item{\code{setName(name)}}{
 #'    Sets name 
@@ -49,6 +53,7 @@
 #'
 geoflow_subject <- R6Class("geoflow_subject",
   public = list(
+    key = NULL,
     name = NULL,
     uri = NULL,
     dates = list(),
@@ -56,10 +61,21 @@ geoflow_subject <- R6Class("geoflow_subject",
     initialize = function(str = NULL){
       if(!is.null(str)){
         subject_kvp <- extract_kvp(str)
-        self$setName(subject_kvp$key)
-        self$setUri(attr(subject_kvp$key,"uri"))
+        key <- subject_kvp$key
+        self$setKey(key)
+        uri <- attr(key, "uri")
+        name <- attr(key, "description")
+        attr(key, "uri") <- NULL
+        attr(key, "description") <- NULL
+        self$setUri(uri)
+        self$setName(name)
         invisible(lapply(subject_kvp$values, self$addKeyword))
       }
+    },
+    
+    #setKey
+    setKey = function(key){
+      self$key <- key
     },
     
     #setName

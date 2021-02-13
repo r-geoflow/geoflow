@@ -178,7 +178,7 @@ eml_create_eml <- function(entity, config, options){
   }
   
   #taxonomic
-  taxo <- entity$subjects[sapply(entity$subjects, function(x){x$name == taxonomySubject})]
+  taxo <- entity$subjects[sapply(entity$subjects, function(x){x$key == taxonomySubject})]
   if(length(taxo)>0){
     taxo <- taxo[[1]]
     if(is.null(dataset$coverage)) dataset$coverage <- list()

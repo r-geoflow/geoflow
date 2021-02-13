@@ -22,6 +22,9 @@ geoflow_subject
  \item{\code{new)}}{
    This method is used to instantiate a geoflow_subject object
  }
+ \item{\code{setKey(key)}}{
+   Set key
+ }
  \item{\code{setName(name)}}{
    Sets name 
  }
@@ -45,6 +48,7 @@ geoflow_subject
 \examples{
 \dontrun{
   subject <- geoflow_subject$new()
+  subject$setKey("theme")
   subject$setName("General")
   subject$setUri("http://somelink/general")
   subject$addKeyword("keyword1", "http://somelink/keyword1")

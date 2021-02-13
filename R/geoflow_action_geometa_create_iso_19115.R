@@ -14,9 +14,11 @@ geometa_create_iso_19115 <- function(entity, config, options){
   featureid <- if(!is.null(options$featureid)){ options$featureid } else { if(!is.null(features)) colnames(features)[1] else NULL} 
   geographySubject <- if(!is.null(options$subject_geography)) options$subject_geography else "geography"
   
-  createResponsibleParty = function(x, role){
+  createResponsibleParty = function(x, role=NULL){
     if(is.null(role)) role <- x$role 
     rp <- ISOResponsibleParty$new()
+    if(is.null(x$firstName)) x$firstName = NA
+    if(is.null(x$lastName)) x$lastName = NA
     if(!is.na(x$firstName) && !is.na(x$lastName)) rp$setIndividualName(paste(x$firstName, x$lastName))
     rp$setOrganisationName(x$organizationName)
     rp$setPositionName(x$positionName)
@@ -146,7 +148,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ident$setCharacterSet("utf8")
   #topic categories
   topics <- list()
-  if(length(entity$subjects)>0) topics <- entity$subjects[sapply(entity$subjects, function(x){return(tolower(x$name) == "topic")})]
+  if(length(entity$subjects)>0) topics <- entity$subjects[sapply(entity$subjects, function(x){return(tolower(x$key) == "topic")})]
   if(length(topics)>0){
     for(topic in topics){
       for(topicCategory in topic$keywords) ident$addTopicCategory(topicCategory$name)
@@ -295,7 +297,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   }
   #geographic identifiers
   geothesauri <- list()
-  if(length(entity$subjects)>0) geothesauri <- entity$subjects[sapply(entity$subjects, function(x){return(tolower(x$name) == geographySubject)})]
+  if(length(entity$subjects)>0) geothesauri <- entity$subjects[sapply(entity$subjects, function(x){return(tolower(x$key) == geographySubject)})]
   if(length(geothesauri)>0){
     for(geothesaurus in geothesauri){
       for(geokwd in geothesaurus$keywords){
@@ -328,7 +330,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   #thesaurus/keywords
   subjects <- entity$subjects
-  if(length(subjects)>0) subjects <- subjects[sapply(subjects, function(x){return(x$name != "topic")})]
+  if(length(subjects)>0) subjects <- subjects[sapply(subjects, function(x){return(x$key != "topic")})]
   if(length(subjects)>0) for(subject in subjects){
     #add keywords
     kwds <- ISOKeywords$new()
@@ -339,30 +341,33 @@ geometa_create_iso_19115 <- function(entity, config, options){
       }
       kwds$addKeyword(iso_kwd)
     }
-    kwds$setKeywordType("theme") #TODO need to handle keywordType in thesaurus table definition...
-    th <- ISOCitation$new()
-    title <- subject$name
-    if(!is.null(subject$uri)){
-      title <- ISOAnchor$new(name = subject$name, href = subject$uri)
-    }
-    th$setTitle(title)
-    
-    if(length(subject$dates)>0){
-      for(subj_datetype in names(subject$dates)){
-        subj_date <- ISODate$new()
-        subj_date$setDate(subject$dates[[subj_datetype]])
-        subj_date$setDateType(subj_datetype)
-        th$addDate(subj_date) 
+    kwds$setKeywordType(subject$key)
+    #theausurus
+    if(!is.null(subject$name)){
+      th <- ISOCitation$new()
+      title <- subject$name
+      if(!is.null(subject$uri)){
+        title <- ISOAnchor$new(name = subject$name, href = subject$uri)
       }
-    }else{
-      #TODO thesaurus date (likely to be different that current date). Required for ISO validity
-      #this is a limitation of tabular approach to fill metadata
-      d <- ISODate$new()
-      d$setDate(Sys.Date())
-      d$setDateType("lastRevision")
-      th$addDate(d) 
+      th$setTitle(title)
+      
+      if(length(subject$dates)>0){
+        for(subj_datetype in names(subject$dates)){
+          subj_date <- ISODate$new()
+          subj_date$setDate(subject$dates[[subj_datetype]])
+          subj_date$setDateType(subj_datetype)
+          th$addDate(subj_date) 
+        }
+      }else{
+        #TODO thesaurus date (likely to be different that current date). Required for ISO validity
+        #this is a limitation of tabular approach to fill metadata
+        d <- ISODate$new()
+        d$setDate(Sys.Date())
+        d$setDateType("lastRevision")
+        th$addDate(d) 
+      }
+      kwds$setThesaurusName(th)
     }
-    kwds$setThesaurusName(th)
     ident$addKeywords(kwds)
   }
   
