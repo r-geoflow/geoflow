@@ -218,19 +218,15 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(length(entity$formats)>0){
     resourceFormats = entity$formats[sapply(entity$formats, function(x){x$key == "resource"})]
     for(resourceFormat in resourceFormats){
-      if(!is.null(resourceFormat$description)){
-        format = ISOFormat$new()
-        format_name = resourceFormat$name
-        if(!is.null(resourceFormat$uri)){
-          format_name <- ISOAnchor$new(name = resourceFormat$name, href = resourceFormat$uri)
-        }
-        format$setName(format_name)
-        format$setVersion(NA)
-        format$setSpecification(resourceFormat$description)
-      }else{
-        format = ISOFormat$buildFrom(resourceFormat$name)
-        format$setVersion(NA)
+      format = ISOFormat$new()
+      format_name = resourceFormat$name
+      if(!is.null(resourceFormat$uri)){
+        format_name <- ISOAnchor$new(name = resourceFormat$name, href = resourceFormat$uri)
       }
+      format$setName(format_name)
+      if(!is.null(ISOFormat$buildFrom)) format = ISOFormat$buildFrom(resourceFormat$name)
+      format$setVersion(NA)
+      format$setSpecification(resourceFormat$description)
       ident$addFormat(format)
     }
   }
@@ -413,19 +409,15 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(length(entity$formats)>0){
     distFormats = entity$formats[sapply(entity$formats, function(x){x$key == "distribution"})]
     for(distFormat in distFormats){
-      if(!is.null(resourceFormat$description)){
-        format = ISOFormat$new()
-        format_name = distFormat$name
-        if(!is.null(distFormat$uri)){
-          format_name <- ISOAnchor$new(name = distFormat$name, href = distFormat$uri)
-        }
-        format$setName(format_name)
-        format$setversion(NA)
-        format$setSpecification(distFormat$description)
-      }else{
-        format = ISOFormat$buildFrom(distFormat$name)
-        format$setVersion(NA)
+      format = ISOFormat$new()
+      format_name = distFormat$name
+      if(!is.null(distFormat$uri)){
+        format_name <- ISOAnchor$new(name = distFormat$name, href = distFormat$uri)
       }
+      format$setName(format_name)
+      if(!is.null(ISOFormat$buildFrom)) format = ISOFormat$buildFrom(distFormat$name)
+      format$setVersion(NA)
+      format$setSpecification(distFormat$description)
       distrib$addFormat(format)
     }
   }

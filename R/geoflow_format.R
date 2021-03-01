@@ -52,12 +52,13 @@ geoflow_format <- R6Class("geoflow_format",
        format_kvp <- extract_kvp(str)
        key <- format_kvp$key
        self$setKey(key)
-       uri <- attr(key, "uri")
-       description <- attr(key, "description")
-       attr(key, "uri") <- NULL
-       attr(key, "description") <- NULL
+       value = format_kvp$values[[1]]
+       uri <- attr(value, "uri")
+       description <- attr(value, "description")
+       attr(value, "uri") <- NULL
+       attr(value, "description") <- NULL
        self$setUri(uri)
-       self$setName(format_kvp$values[[1]])
+       self$setName(value)
        self$setDescription(description)
      }
    },
