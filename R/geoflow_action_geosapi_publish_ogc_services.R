@@ -16,9 +16,13 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   
   #datasource
   datasource <- entity$data$uploadSource[[1]]
-  datasource_name <- unlist(strsplit(datasource, "\\."))[1]
-  datasource_file <- attr(datasource, "uri")
-  attributes(datasource) <- NULL
+  datasource_name <- NULL
+  datasource_file <- NULL
+  if(!is.null(datasource)){
+    datasource_name <- unlist(strsplit(datasource, "\\."))[1]
+    datasource_file <- attr(datasource, "uri")
+    attributes(datasource) <- NULL
+  }
   
   #layername/sourcename
   layername <- if(!is.null(entity$data$layername)) entity$data$layername else entity$identifiers$id

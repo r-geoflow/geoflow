@@ -214,6 +214,26 @@ geometa_create_iso_19115 <- function(entity, config, options){
       ident$addGraphicOverview(go)
     }
   }
+  #resource formats
+  if(length(entity$formats)>0){
+    resourceFormats = entity$formats[sapply(entity$formats, function(x){x$key == "resource"})]
+    for(resourceFormat in resourceFormats){
+      if(!is.null(resourceFormat$description)){
+        format = ISOFormat$new()
+        format_name = resourceFormat$name
+        if(!is.null(resourceFormat$uri)){
+          format_name <- ISOAnchor$new(name = resourceFormat$name, href = resourceFormat$uri)
+        }
+        format$setName(format_name)
+        format$setVersion(NA)
+        format$setSpecification(resourceFormat$description)
+      }else{
+        format = ISOFormat$buildFrom(resourceFormat$name)
+        format$setVersion(NA)
+      }
+      ident$addFormat(format)
+    }
+  }
   #option to add doi thumbnail
   if(doi && doi_thumbnail) if(!is.null(the_doi)) {
     doiThumbnail <- ISOBrowseGraphic$new(
@@ -387,6 +407,27 @@ geometa_create_iso_19115 <- function(entity, config, options){
     doi_or$setDescription("Digital Object Identifier")
     doi_or$setProtocol("WWW:LINK-1.0-http--link")
     dto$addOnlineResource(doi_or)
+  }
+  
+  #add distribution formats
+  if(length(entity$formats)>0){
+    distFormats = entity$formats[sapply(entity$formats, function(x){x$key == "distribution"})]
+    for(distFormat in distFormats){
+      if(!is.null(resourceFormat$description)){
+        format = ISOFormat$new()
+        format_name = distFormat$name
+        if(!is.null(distFormat$uri)){
+          format_name <- ISOAnchor$new(name = distFormat$name, href = distFormat$uri)
+        }
+        format$setName(format_name)
+        format$setversion(NA)
+        format$setSpecification(distFormat$description)
+      }else{
+        format = ISOFormat$buildFrom(distFormat$name)
+        format$setVersion(NA)
+      }
+      distrib$addFormat(format)
+    }
   }
   
   #add online resource for each relation

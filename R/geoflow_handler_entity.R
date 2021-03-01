@@ -111,6 +111,16 @@ handle_entities_df <- function(config, source){
         entity$addSubject(subject_obj)
       }))
     }
+    
+    #formats
+    src_format <- sanitize_str(source_entity[,"Format"])
+    formats <- if(!is.na(src_format)) extract_cell_components(src_format) else list()
+    if(length(formats)>0){
+      invisible(lapply(formats, function(format){
+        format_obj <- geoflow_format$new(str = format)
+        entity$addFormat(format_obj)
+      }))
+    }
       
     #contacts
     src_contact <- sanitize_str(source_entity[,"Creator"])

@@ -129,6 +129,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     title = NULL,
     descriptions = list(),
     subjects = list(),
+    formats = list(),
     contacts = list(),
     relations = list(),
     rights = list(),
@@ -206,6 +207,14 @@ geoflow_entity <- R6Class("geoflow_entity",
         stop("The argument should be an object of class 'geoflow_subject'")
       }
       self$subjects <- c(self$subjects, subject)
+    },
+    
+    #addFormat
+    addFormat = function(format){
+      if(!is(format, "geoflow_format")){
+        stop("The argument should be an object of class 'geoflow_format'")
+      }
+      self$formats <- c(self$formats, format)
     },
     
     #addContact
