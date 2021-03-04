@@ -175,22 +175,25 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ct <- ISOCitation$new()
   ct$setTitle(entity$title)
   for(date in entity$dates){
-    d <- ISODate$new()
-    d$setDate(date$value)
-    d$setDateType(date$key)
-    ct$addDate(d) 
+    if(date$key != "edition"){
+      d <- ISODate$new()
+      d$setDate(date$value)
+      d$setDateType(date$key)
+      ct$addDate(d)
+    }
   }
   #edition date
-  editionDate = now
   editionDates = entity$dates[sapply(entity$dates, function(x){x$key == "edition"})]
   if(length(editionDates)>0){
     editionDate = editionDates[[1]]$value
+    ct$setEditionDate(editionDate)
   }
-  ct$setEditionDate(editionDate)
+  
   #edition
-  edition = paste0("v", format(now, "%Y-%m-%dT%H:%m:%S"))
-  if(!is.null(entity$descriptions[["edition"]])) edition = entity$descriptions[["edition"]]
-  ct$setEdition(edition)
+  if(!is.null(entity$descriptions[["edition"]])){
+    edition = entity$descriptions[["edition"]]
+    ct$setEdition(edition)
+  }
   
   #set metadata identifier
   ct$addIdentifier(ISOMetaIdentifier$new(code = mdId))
