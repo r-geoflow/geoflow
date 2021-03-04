@@ -78,7 +78,7 @@ geoflow_provenance <- R6Class("geoflow_provenance",
                attr(process, "description") <- NULL
                process_obj$setRationale(process)
                processor_obj <- geoflow_contact$new()
-               processor_obj$setId(processors[i])
+               processor_obj$setIdentifier(key = "id", processors[i])
                processor_obj$setRole("processor")
                process_obj$setProcessor(processor_obj)
                self$addProcess(process_obj)

@@ -136,7 +136,7 @@ handle_entities_df <- function(config, source){
             config$logger.warn(sprintf("Warning: In entity %s, empty contact id will be ignored!", i))
           }else{
             contact_obj <- geoflow_contact$new()
-            contact_obj$setId(contact_id)
+            contact_obj$setIdentifier(key = "id", contact_id)
             contact_obj$setRole(contact_splits[1])
             entity$addContact(contact_obj)
           }

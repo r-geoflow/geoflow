@@ -13,7 +13,25 @@ handle_contacts_df <- function(config, source){
   for(i in 1:rowNum){
     source_contact <- source[i,]
     contact <- geoflow_contact$new()
-    contact$setId(tolower(source_contact[,"Email"]))
+    
+    #identifier
+    id <- sanitize_str(source_contact[,"Identifier"])
+    if(!is.na(id)){
+      config$logger.warn("Use 'Identifier' columln as contact Ids. Make sure to use these identifiers in your dataset contact references")
+      identifiers <-extract_cell_components(id)
+      for(identifier in identifiers){
+        if(regexpr(":",identifier) == -1){
+          contact$setIdentifier("id", identifier)
+        }else{
+          id_kvp <- extract_kvp(identifier)
+          contact$setIdentifier(id_kvp$key, id_kvp$values[[1]])
+        }
+      }
+    }else{
+      config$logger.warn("Use 'Email' column as contact Ids. Make sure to upgrade your 'contacts' table to include contact ids in the 'Identifier' column")
+      contact$setIdentifier("id", tolower(source_contact[,"Email"]))
+    }
+    
     contact$setEmail(tolower(source_contact[,"Email"]))
     contact$setFirstName(source_contact[,"FirstName"])
     contact$setLastName(source_contact[,"LastName"])
@@ -28,16 +46,6 @@ handle_contacts_df <- function(config, source){
     if(!is.na(source_contact[,"WebsiteUrl"])& source_contact[,"WebsiteUrl"]!="") contact$setWebsiteUrl(source_contact[,"WebsiteUrl"])
     contact$setWebsiteName(source_contact[,"WebsiteName"])
     
-    srcId <- sanitize_str(source_contact[,"Identifier"])
-    if(!is.na(srcId)){
-      identifiers <- extract_cell_components(srcId)
-      if(length(identifiers)>0){
-        invisible(lapply(identifiers, function(identifier){
-          id_obj <- geoflow_kvp$new(str = identifier)
-          contact$addIdentifier(id_obj)
-        }))
-      }
-    }
     contacts <- c(contacts, contact)
   }
   attr(contacts, "source") <- source

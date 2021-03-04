@@ -125,9 +125,14 @@ geoflow_contact <- R6Class("geoflow_contact",
     identifiers = list(),
     initialize = function(){},
     
+    #setIdentifier
+    setIdentifier = function(key = "id", id){
+      self$identifiers[[key]] <- id
+    },
+    
     #setId
     setId = function(id){
-      self$id <- id
+      self$setIdentifier(key = "id", id)
     },
     
     #setFirstName
@@ -198,14 +203,6 @@ geoflow_contact <- R6Class("geoflow_contact",
     #setCountry
     setCountry = function(country){
       self$country <- country
-    },
-    
-    #addIdentifier
-    addIdentifier = function(identifier){
-      if(!is(identifier, "geoflow_kvp")){
-        stop("The argument should be an object of class 'geoflow_kvp'")
-      }
-      self$identifiers = c(self$identifiers, identifier)
     }
    
   )                                  
