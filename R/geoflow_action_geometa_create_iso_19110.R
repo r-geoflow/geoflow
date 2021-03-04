@@ -74,6 +74,12 @@ geometa_create_iso_19110 <- function(entity, config, options){
   res$setName(main_entity$websiteName)
   contact$setOnlineResource(res)
   producer$setContactInfo(contact) 
+  
+  orcid = main_entity$identifiers[["orcid"]]
+  if(!is.null(orcid)){
+    producer$parentAttrs[["xlink:href"]] <- paste0("https://orcid.org/", orcid)
+  }
+  
   fc$setProducer(producer)
   
   #citation

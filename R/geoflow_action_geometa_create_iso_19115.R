@@ -42,6 +42,13 @@ geometa_create_iso_19115 <- function(entity, config, options){
       contact$setOnlineResource(res)
     }
     rp$setContactInfo(contact)
+    
+    #check existence of ORCID
+    orcid = x$identifiers[["orcid"]]
+    if(!is.null(orcid)){
+      rp$parentAttrs[["xlink:href"]] <- paste0("https://orcid.org/", orcid)
+    }
+    
     return(rp)
   }
   
