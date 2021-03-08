@@ -643,6 +643,67 @@ geoflow_entity <- R6Class("geoflow_entity",
              }
              
            },
+           #gpkg - GeoPackage file - operated through sf package
+           #---------------------------------------------------------------------------------
+           "gpkg" = {
+             trgFilename <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".gpkg"))
+             
+             gpkgExists <- FALSE
+             isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
+             if(isSourceUrl){
+               warnMsg <- "Downloading remote data from URL to temporary geoflow temporary data directory!"
+               config$logger.warn(warnMsg)
+               download_file(datasource_file, trgFilename)
+               gpkgExists <- TRUE
+             }else{
+               data.files <- list.files(path = dirname(datasource_file), pattern = datasource_name)
+               if(length(data.files)>0){
+                 gpkgExists <- TRUE
+                 config$logger.info("Copying local data to temporary geoflow temporary data directory")
+                 file.copy(from = datasource_file, to = TEMP_DATA_DIR)
+               }
+             }
+             
+             if(gpkgExists){
+               #read CSV
+               config$logger.info("Read GPKG file from geoflow temporary data directory")
+               if(!is.null(self$data$sourceSql)){
+                 sf.data <- sf::st_read(trgFilename, query = self$data$sourceSql)
+               }else{
+                 sf.data <- sf::st_read(trgFilename)
+               }
+               
+               if(!is.null(sf.data)){
+                 
+                 #we try to apply the cql filter specified as data property
+                 if(!is.null(self$data$cqlfilter)){
+                   sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
+                 }
+                 self$data$setFeatures(sf.data)
+                 
+                 #dynamic srid
+                 sf.crs <- sf::st_crs(sf.data)
+                 if(!is.na(sf.crs)){
+                   srid <- if(!is.null(self$srid)) self$srid else ""
+                   if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
+                     config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, sf.crs$epsg)) 
+                     self$setSrid(sf.crs$epsg)
+                   }
+                 }
+                 #dynamic spatial extent
+                 config$logger.info("Overwriting entity bounding box with shapefile bounding box")
+                 if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
+                 
+               }else{
+                 warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
+                 config$logger.warn(warnMsg)
+               }
+             }else{
+               warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
+               config$logger.warn(warnMsg)
+             }
+             
+           },
            "dbtable" = {
            #---------------------------------------------------------------------------------
              DBI <- config$software$input$dbi
