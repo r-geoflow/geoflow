@@ -19,14 +19,23 @@ handle_contacts_df <- function(config, source){
     if(!is.na(id)){
       config$logger.warn("Use 'Identifier' columln as contact Ids. Make sure to use these identifiers in your dataset contact references")
       identifiers <-extract_cell_components(id)
-      for(identifier in identifiers){
-        if(regexpr(":",identifier) == -1){
-          contact$setIdentifier("id", identifier)
+      
+      invisible(lapply(identifiers, function(identifier){
+        identifier_splits <- unlist(strsplit(identifier, ":"))
+        identifier_key <- "id"
+        identifier_value <- ""
+        if(length(identifier_splits)>1){
+          identifier_key <- identifier_splits[1]
+          identifier_value <- identifier_splits[2]
         }else{
-          id_kvp <- extract_kvp(identifier)
-          contact$setIdentifier(id_kvp$key, id_kvp$values[[1]])
+          identifier_value <- identifier_splits
         }
-      }
+        if(is.na(identifier_value)){
+          config$logger.warn("Warning: Empty contact id will be ignored!")
+        }else{
+          contact$setIdentifier(key = identifier_key, identifier_value)
+        }
+      }))
     }else{
       config$logger.warn("Use 'Email' column as contact Ids. Make sure to upgrade your 'contacts' table to include contact ids in the 'Identifier' column")
       contact$setIdentifier("id", tolower(source_contact[,"Email"]))
