@@ -17,7 +17,7 @@ handle_contacts_df <- function(config, source){
     #identifier
     id <- sanitize_str(source_contact[,"Identifier"])
     if(!is.na(id)){
-      config$logger.warn("Use 'Identifier' columln as contact Ids. Make sure to use these identifiers in your dataset contact references")
+      config$logger.warn("Use 'Identifier' column as contact Ids. Make sure to use these identifiers in your dataset contact references")
       identifiers <-extract_cell_components(id)
       
       invisible(lapply(identifiers, function(identifier){
