@@ -183,9 +183,16 @@ executeWorkflowJob <- function(config, jobdir = NULL){
         }
         
         #save entities & contacts used
-        if(!is.null(config$src_entities)) readr::write_csv(config$src_entities, file.path(getwd(), "metadata", "config_copyof_entities.csv"))
-        if(!is.null(config$src_contacts)) readr::write_csv(config$src_contacts, file.path(getwd(), "metadata", "config_copyof_contacts.csv"))
-        
+        if(!is.null(config$src_entities)){
+          for(i in 1:length(config$src_entities)){
+            readr::write_csv(config$src_entities[[i]], file.path(getwd(), "metadata", sprintf("config_copyof_entities_%s.csv", i)))
+          }
+        }
+        if(!is.null(config$src_contacts)){
+          for(i in 1:length(config$src_contacts)){
+            readr::write_csv(config$src_contacts[[i]], file.path(getwd(), "metadata", sprintf("config_copyof_contacts_%s.csv", i)))
+          }
+        }
       }
     }else if(config$mode == "raw"){
       #execute raw actions (--> not based on metadata entities)

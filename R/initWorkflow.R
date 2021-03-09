@@ -164,7 +164,7 @@ initWorkflow <- function(file){
     cfg_md_dictionary <- config$metadata$dictionary
     if(!is.null(cfg_md_dictionary)){
       config$logger.info("Loading data dictionary...")
-      md_dict_handler <- loadHandler(config, "dictionary")
+      md_dict_handler <- loadHandler(config, config$metadata$dictionary, type = "dictionary")
       config$logger.info("Execute handler to load dictionary...")
       dictionary <- md_dict_handler(config, source = cfg_md_dictionary$source)
       
@@ -238,7 +238,6 @@ initWorkflow <- function(file){
     }else{
       config$registers <- fetched_registers
     }
-    
   }
   
   #metadata elements
@@ -249,19 +248,32 @@ initWorkflow <- function(file){
     #metadata contacts
     cfg_md_contacts <- config$metadata$contacts
     if(!is.null(cfg_md_contacts)){
-      config$logger.info("Loading metadata contacts...")
-      md_contact_handler <- loadHandler(config, "contacts")
-      config$logger.info("Execute contact handler to load contacts...")
-      contacts <- md_contact_handler(config, source = cfg_md_contacts$source)
-      
-      if(!is(contacts, "list") | !all(sapply(contacts, is, "geoflow_contact"))){
-        errMsg <- "The output of the contacts handler should return a list of objects of class 'geoflow_entity_contact'"
-        config$logger.error(errMsg)
-        stop(errMsg)
+      #manage contact handlers as array/object as backward compatibility for object
+      isarray_contacts <- length(names(cfg_md_contacts))==0
+      if(!isarray_contacts){
+        config$metadata$contacts <- list(config$metadata$contacts)
+        cfg_md_contacts <- config$metadata$contacts
       }
-      
-      #keep source contacts part of the config
-      config$src_contacts <- attr(contacts, "source")
+      #collating contacts from contact handlers
+      config$logger.info("Loading metadata contacts...")
+      config$src_contacts <- list()
+      contacts <- do.call("c", lapply(cfg_md_contacts, function(x){
+        config$logger.info(sprintf("Loading metadata contacts from '%s' [with '%s' handler]...", 
+                                   x$source, x$handler))
+        md_contact_handler <- loadHandler(config, x, type = "contacts")
+        config$logger.info("Execute contact handler to load contacts...")
+        contacts <- md_contact_handler(config, source = x$source)
+        
+        if(!is(contacts, "list") | !all(sapply(contacts, is, "geoflow_contact"))){
+          errMsg <- "The output of the contacts handler should return a list of objects of class 'geoflow_entity_contact'"
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
+        
+        #keep source contacts part of the config
+        config$src_contacts[[length(config$src_contacts)+1]] <<- attr(contacts, "source")
+        return(contacts)
+      }))
       
       config$logger.info(sprintf("Successfuly fetched %s contacts!",length(contacts)))
       config$metadata$content$contacts <- contacts
@@ -271,20 +283,33 @@ initWorkflow <- function(file){
     #metadata entities
     cfg_md_entities <- config$metadata$entities
     if(!is.null(cfg_md_entities)){
-      config$logger.info("Loading metadata entities...")
-      md_entity_handler <- loadHandler(config, "entities")
-      config$logger.info("Execute handler to load entities...")
-      entities <- md_entity_handler(config, source = cfg_md_entities$source)
-      
-      if(!is(entities, "list") | !all(sapply(entities, is, "geoflow_entity"))){
-        errMsg <- "The output of the entities handler should return a list of objects of class 'geoflow_entity'"
-        config$logger.error(errMsg)
-        stop(errMsg)
+      #manage entity handlers as array/object as backward compatibility for object
+      isarray_entities <- length(names(cfg_md_entities))==0
+      if(!isarray_entities){
+        config$metadata$entities <- list(config$metadata$entities)
+        cfg_md_entities <- config$metadata$entities
       }
+      #collating entities from entity handlers
+      config$logger.info("Loading metadata entities...")
+      config$src_entities <- list()
+      entities <- do.call("c", lapply(cfg_md_entities, function(x){
+        config$logger.info(sprintf("Loading metadata entities from '%s' [with '%s' handler]...", 
+                                   x$source, x$handler))
+        md_entity_handler <- loadHandler(config, x, type = "entities")
+        config$logger.info("Execute handler to load entities...")
+        entities <- md_entity_handler(config, source = x$source)
+        
+        if(!is(entities, "list") | !all(sapply(entities, is, "geoflow_entity"))){
+          errMsg <- "The output of the entities handler should return a list of objects of class 'geoflow_entity'"
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
       
-      #keep source entities part of the config
-      config$src_entities <- attr(entities, "source")
-      
+        #keep source entities part of the config
+        config$src_entities[[length(config$src_entities)+1]] <<- attr(entities, "source")
+        return(entities)
+      }))
+        
       config$logger.info(sprintf("Successfuly fetched %s entities!",length(entities)))
       if(!is.null(config$metadata$content$contacts)){
         config$logger.info("Enrich metadata entities from directory of contacts")
@@ -448,24 +473,22 @@ initWorkflow <- function(file){
 }
 
 #loadHandler
-loadHandler <- function(config, elem){
+loadHandler <- function(config, element, type){
   md_handler <- NULL
-  config_md_elem <- config$metadata[[elem]]
-  if(is.null(config_md_elem)) return(md_handler)
-
-  h <- config_md_elem$handler
+  if(is.null(element)) return(md_handler)
+  h <- element$handler
   if(is.null(h)){
-    errMsg <- sprintf("Missing 'handler' for metadata '%s' (default handler id, or function name from custom script)", elem)
+    errMsg <- "Missing 'handler' (default handler id, or function name from custom script)"
     config$logger.error(errMsg)
     stop(errMsg)
   }
   
   #type of handler
-  isHandlerId <- is.null(config_md_elem$script)
+  isHandlerId <- is.null(element$script)
   if(isHandlerId){
     config$logger.info("Try to use embedded contacts handler")
     #in case handler id is specified
-    md_default_handlers <- switch(elem,
+    md_default_handlers <- switch(type,
       "contacts" = list_contact_handlers(raw=TRUE),
       "entities" = list_entity_handlers(raw=TRUE),
       "dictionary" = list_dictionary_handlers(raw=TRUE)
@@ -475,7 +498,7 @@ loadHandler <- function(config, elem){
       errMsg <- sprintf("Unknown handler '%s'. Available handlers are: %s",
                         h, paste(md_default_handler_ids, collapse=","))
     }
-    h_src <- config_md_elem$source
+    h_src <- element$source
     if(is.null(h_src)){
       errMsg <- sprintf("Missing 'source' for handler '%s'", h)
     }
@@ -484,7 +507,7 @@ loadHandler <- function(config, elem){
    
   }else{
     #in case handler is a script
-    h_script <- config_md_elem$script
+    h_script <- element$script
     config$logger.info(sprintf("Try to use custom handler '%s' from script '%s'", h, h_script))
     if(!file.exists(h_script)){
       errMsg <- sprintf("File '%s' does not exist in current directory!", h_script)
