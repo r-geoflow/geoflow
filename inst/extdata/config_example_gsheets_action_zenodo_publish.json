@@ -6,10 +6,12 @@
   },
   "mode": "entity",
   "metadata": {
-    "entities": {
-      "handler": "gsheet",
-      "source": "https://docs.google.com/spreadsheets/d/1XXXI1mFWbf_x8sk_bseh5Vra8fgg_kSFuTA0WNF9O7Q/edit?usp=sharing"
-    }
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1XXXI1mFWbf_x8sk_bseh5Vra8fgg_kSFuTA0WNF9O7Q/edit?usp=sharing"
+      }
+    ]
   },
   "software": [
     {

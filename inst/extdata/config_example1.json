@@ -15,16 +15,20 @@
     "scripts": []
   },
   "metadata": {
-    "entities": {
-      "script" : "my_script1.R",
-      "handler": "my_script1_function",
-      "source": "eventual_source_file_or_url"
-    },
-    "contacts" : {
-      "script" : "my_script1.R",
-      "handler": "my_script1_function",
-      "source": "eventual_source_file_or_url"
-    }
+    "entities": [
+      {
+        "script" : "my_script1.R",
+        "handler": "my_script1_function",
+        "source": "eventual_source_file_or_url"
+      }
+    ],
+    "contacts" : [
+      {
+        "script" : "my_script1.R",
+        "handler": "my_script1_function",
+        "source": "eventual_source_file_or_url"
+      }
+    ]
   },
   "software": [
     { 

@@ -21,10 +21,12 @@
     "scripts": []
   },
   "metadata": {
-    "entities": {
-      "handler": "gsheet",
-      "source": "https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing"
-    }
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing"
+      }
+    ]
   },
   "software": [],
   "actions": []
