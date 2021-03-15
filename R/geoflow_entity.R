@@ -968,11 +968,10 @@ geoflow_entity <- R6Class("geoflow_entity",
     #enrichWithMetadata
     enrichWithMetadata = function(config){
       
-      #enrich title
-      self$title <- enrich_text_from_entity(self$title, self)
+      #enrich titles
+      self$titles <- lapply(self$titles, enrich_text_from_entity, self)
   
       #enrich descriptions
-      desNames <- names(self$descriptions)
       self$descriptions <- lapply(self$descriptions, enrich_text_from_entity, self)
       
       #enrich relations
