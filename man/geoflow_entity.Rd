@@ -38,8 +38,8 @@ geoflow_entity
    Set the type of description. By default a generic type (key = "generic") is defined to "dataset", and
    will be used as default type for actions that perform metadata production / publication.
  }
- \item{\code{setTitle(title)}}{
-   Set entity title
+ \item{\code{setTitle(key, title)}}{
+   Set entity title. Allowed key values are 'title', 'alternative'
  }
  \item{\code{setDescription(key, description)}}{
    Set entity description. Allowed key values are 'abstract', 'purpose', 'info', 'project'
