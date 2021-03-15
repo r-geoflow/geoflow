@@ -105,7 +105,7 @@ geoflow_data <- R6Class("geoflow_data",
   private = list(
     supportedAccessValues = c("default", "googledrive"),
     supportedSourceTypes = c("dbtable", "dbview", "dbquery","shp", "csv", "gpkg", "other"),
-    supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "other"),
+    supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "gpkg", "other"),
     supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb")
   ),
   public = list(
