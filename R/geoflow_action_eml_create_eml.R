@@ -21,11 +21,11 @@ eml_create_eml <- function(entity, config, options){
     dataset$alternateIdentifier <- list(directory = "https://orcid.org", userId = the_doi)
   }
   
-  #short name
-  dataset$shortName <- entity$title
-  
-  #title
-  dataset$title <- entity$title
+  #titles
+  dataset$title = entity$titles[["title"]]
+  if("alternative" %in% names(entity$titles)){
+    dataset$shortName = entity$titles[["alternative"]]
+  }
   
   #contact IDs already added
   contact_ids <- list()

@@ -55,7 +55,7 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
     dcentry$addDCDate(creationDate[[1]]$value)
   }
   ##title
-  dcentry$addDCTitle(entity$title)
+  dcentry$addDCTitle(entity$titles[["title"]])
   ##type
   dctype <- entity$types[["generic"]]
   dctype_allowed <- getDCMIVocabulary(id = "http://purl.org/dc/dcmitype/")$get()$label

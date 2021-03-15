@@ -102,7 +102,7 @@ zen4R_deposit_record <- function(entity, config, options){
       config$logger.info("Setting Zenodo record metadata properties")
     }
     #basic record description
-    zenodo_metadata$setTitle(entity$title)
+    zenodo_metadata$setTitle(entity$titles[["title"]])
     zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
     
     #keywords (free text) & subjects

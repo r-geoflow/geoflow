@@ -85,7 +85,10 @@ geometa_create_iso_19110 <- function(entity, config, options){
   #citation
   #--------------------------------------------------------------------------
   ct <- ISOCitation$new()
-  ct$setTitle(entity$title)
+  ct$setTitle(entity$titles[["title"]])
+  if("alternative" %in% names(entity$titles)){
+    ct$setAlternateTitle(entity$titles[["alternative"]])
+  }
   d <- ISODate$new()
   d$setDate(Sys.Date())
   d$setDateType("publication")

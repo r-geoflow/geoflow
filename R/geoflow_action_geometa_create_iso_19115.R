@@ -173,7 +173,10 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #citation
   now <- Sys.time()
   ct <- ISOCitation$new()
-  ct$setTitle(entity$title)
+  ct$setTitle(entity$titles[["title"]])
+  if("alternative" %in% names(entity$titles)){
+    ct$setAlternateTitle(entity$titles[["alternative"]])
+  }
   for(date in entity$dates){
     if(date$key != "edition"){
       d <- ISODate$new()

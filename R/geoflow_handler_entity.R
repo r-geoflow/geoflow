@@ -82,7 +82,22 @@ handle_entities_df <- function(config, source){
     }
     
     #title
-    entity$setTitle(source_entity[,"Title"])
+    src_title <- sanitize_str(source_entity[,"Title"])
+    allowedTitleKeys <- entity$getAllowedKeyValuesFor("titles")
+    hasTitleKey <- any(sapply(allowedTitleKeys, function(x){startsWith(src_title, x)}))
+    if(!hasTitleKey) src_title <- paste0("title:", src_title)
+    titles <- if(!is.na(src_title)) extract_cell_components(src_title) else list()
+    if(length(titles)>0){
+      if(length(titles)==1){
+        kvp <- extract_kvp(titles)
+        entity$setTitle("title", paste(kvp$values, collapse=",")) 
+      }else{
+        for(title in titles){
+          kvp <- extract_kvp(title)
+          entity$setTitle(kvp$key, paste(kvp$values, collapse=","))
+        }
+      }
+    }
 
     #description
     src_description <- sanitize_str(source_entity[,"Description"])

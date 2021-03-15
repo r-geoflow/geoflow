@@ -105,7 +105,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   if(entity$data$uploadType == "dbquery") nativename <- layername
   featureType$setNativeName(nativename)
   featureType$setAbstract(entity$descriptions$abstract)
-  featureType$setTitle(entity$title)
+  featureType$setTitle(entity$titles[["title"]])
   featureType$setSrs(epsgCode)
   featureType$setNativeCRS(epsgCode)
   featureType$setEnabled(TRUE)
