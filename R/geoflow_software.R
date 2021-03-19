@@ -336,7 +336,7 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "googledrive",
       definition = "Google Drive access powered by 'googledrive' package",
-      packages = list("gsheet"),
+      packages = list("googledrive"),
       handler = try(googledrive::drive_auth, silent = TRUE),
       arguments = list(
         email = list(def = "User email to authenticate in Google Drive"),
