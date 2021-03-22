@@ -110,20 +110,24 @@ geoflow_action <- R6Class("geoflow_action",
       readr::write_csv(out_pids, file.path(getwd(),"metadata", paste0(self$pid_generator, "_pids.csv")))
       
       config$logger.info(sprintf("Exporting source entities table enriched with '%s' DOIs", self$pid_generator))
-      src_entities <- config$src_entities
-      src_entities$Identifier <- sapply(1:nrow(src_entities), function(i){
-        identifier <- src_entities[i, "Identifier"]
-        if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
-        if(regexpr(.geoflow$LINE_SEPARATOR, identifier)>0) return(identifier)
-        if(out_pids[i,"Status"] == "published") return(identifier)
-        for(pid_type in names(self$pid_types)){
-          if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
-          identifier <- paste0(identifier, pid_type, ":", out_pids[i,self$pid_types[[pid_type]]]) 
-        }
-        return(identifier)
-      })
-      readr::write_csv(src_entities, file.path(getwd(),"metadata",paste0(self$pid_generator, "_entities_with_pids_for_publication.csv")))
       
+      src_entities <- config$src_entities
+      for(i in 1:length(config$src_entities)){
+        src_entities = config$src_entities[[i]]
+        src_entities$Identifier <- sapply(1:nrow(src_entities), function(i){
+          identifier <- src_entities[i, "Identifier"]
+          if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
+          if(regexpr(.geoflow$LINE_SEPARATOR, identifier)>0) return(identifier)
+          if(out_pids[i,"Status"] == "published") return(identifier)
+          for(pid_type in names(self$pid_types)){
+            if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
+            identifier <- paste0(identifier, pid_type, ":", out_pids[i,self$pid_types[[pid_type]]]) 
+          }
+          return(identifier)
+        })
+        readr::write_csv(src_entities, file.path(getwd(),"metadata",paste0(self$pid_generator, "_entities_",i,"_with_pids_for_publication.csv")))
+      }
+        
       config$logger.info(sprintf("Exporting workflow configuration for '%s' DOI publication", self$pid_generator))
       src_config <- config$src_config
       

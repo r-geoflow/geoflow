@@ -112,16 +112,19 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           #enrich metadata with dynamic properties
           if(!is.null(entity$data)){
             #data features
-            if(is.null(entity$data$features) & !skipFileDownload) entity$enrichWithFeatures(config)
+            if(!skipFileDownload){
+              #we copy data to job data dir
+              entity$copyDataToJobDir(config, jobdir)
+              #we enrich entity with features
+              #control is added in case of entity already enriched with features (when loaded from custom R entity handlers)
+              if(is.null(entity$data$features)) entity$enrichWithFeatures(config)
+            }
             #data relations (eg. geosapi & OGC data protocol online resources)
             entity$enrichWithRelations(config)
           }
           
           #enrich entities with metadata (other properties)
           entity$enrichWithMetadata(config)
-          
-          #if entity has data we copy data to job data dir
-          if(!is.null(entity$data) & !skipFileDownload) entity$copyDataToJobDir(config, jobdir)
           
           #run sequence of entity data actions (if any)
           if(!is.null(entity$data)) {

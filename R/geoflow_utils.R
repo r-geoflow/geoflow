@@ -248,40 +248,6 @@ get_line_separator <- function(){
   return(.geoflow$LINE_SEPARATOR)
 }
 
-#' @name set_temp_directory
-#' @aliases set_temp_directory
-#' @title set_temp_directory
-#' @description \code{set_temp_directory} set the temp directory name to be used by geoflow
-#' to download data and store temporary files.
-#'
-#' @usage set_temp_directory(x)
-#'                 
-#' @param x a string as object of class \code{character} representing the  temp directory.
-#  Default is set to "geoflow_temp_data".
-#' 
-#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
-#' @export
-#'
-set_temp_directory <- function(x = "geoflow_temp_data"){
-  if(!is(x,"character")) stop("The dir name should be an object of class 'character'")
-  .geoflow$TEMP_DATA_DIR <- x
-}
-
-#' @name get_temp_directory
-#' @aliases get_temp_directory
-#' @title get_temp_directory
-#' @description \code{set_temp_directory} get the temp directory name used by geoflow
-#' to download data and store temporary files. Default is set to "geoflow_temp_data".
-#'
-#' @usage get_temp_directory()
-#' 
-#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
-#' @export
-#'
-get_temp_directory <- function(){
-  return(.geoflow$TEMP_DATA_DIR)
-}
-
 #' @name enrich_text_from_entity
 #' @aliases enrich_text_from_entity
 #' @title enrich_text_from_entity
@@ -369,6 +335,10 @@ download_file <- function(url, filename){
   }else{
     #classic download
     download.file(url, destfile = filename, mode = "wb")
+  }
+  
+  if(endsWith(filename, "zip")){
+    utils::unzip(zipfile = filename, exdir = getwd(), unzip = getOption("unzip"))
   }
 }
 
