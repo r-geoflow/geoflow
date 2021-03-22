@@ -30,13 +30,14 @@ zen4R_deposit_record <- function(entity, config, options){
   #e.g. urn:my-metadata-identifier
   deposits <- NULL
   if(!is.null(entity$identifiers[["doi"]])){
-    deposit <- ZENODO$getDepositionByConceptDOI(entity$identifiers[["doi"]]) #try to get latest record with concept DOI
+    deposit <- try(ZENODO$getDepositionByConceptDOI(entity$identifiers[["doi"]]), silent = TRUE) #try to get latest record with concept DOI
+    if(is(deposit, "try-error")) deposit = NULL
     if(is.null(deposit)) deposit <- ZENODO$getDepositionByDOI(entity$identifiers[["doi"]]) #try to get record with specific DOI
     if(!is.null(deposit)) deposits <- list(deposit)
   }
   
   if(is.null(deposits)){
-    deposits <- ZENODO$getDepositions(q = entity$identifiers[["id"]])
+    deposits <- ZENODO$getDepositions(q = entity$identifiers[["id"]], size = 1000L)
   }
   #check related identifier
   if(length(deposits)>0){
@@ -125,7 +126,7 @@ zen4R_deposit_record <- function(entity, config, options){
     zenodo_metadata$setPublicationDate(date)
     #upload type
     #TODO think on how to map upload types between Dublin core, ISO/OGC metadata, Zenodo  
-    if(!is.null(entity$types[["generic"]])) zenodo_metadata$setUploadType(entity$types[["generic"]])
+    if(!is.null(entity$types[["generic"]])) zenodo_metadata$setUploadType(tolower(entity$types[["generic"]]))
     if(!is.null(entity$types[["zenodoUploadType"]])) zenodo_metadata$setUploadType(entity$types[["zenodoUploadType"]])
     
     #publication type
@@ -148,19 +149,19 @@ zen4R_deposit_record <- function(entity, config, options){
       #manage orcid?
       orcid <- NULL
       contact_ids <- contact$identifiers
-      if(any(sapply(contact_ids, function(x){x$key=="orcid"}))){
-        contact_ids <- contact_ids[sapply(contact_ids, function(x){x$key=="orcid"})]
-        if(length(contact_ids)>0) orcid <- contact_ids[[1]]$value
+      if(any(names(contact_ids)=="orcid")){
+        contact_ids <- contact_ids[names(contact_ids)=="orcid"]
+        if(length(contact_ids)>0) orcid <- contact_ids[[1]]
       }
       #add/update creators
-      if(!(contact$id %in% contact_added)){
+      if(!(contact$identifiers[["id"]] %in% contact_added)){
         zenodo_metadata$addCreator(
           firstname = contact$firstName, 
           lastname = contact$lastName, 
           affiliation = contact$organizationName,
           orcid = orcid
         )
-        contact_added <- c(contact_added, contact$id)
+        contact_added <- c(contact_added, contact$identifiers[["id"]])
       }
     }
     
@@ -177,7 +178,6 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   #file uploads
-  print(entity$data$upload)
   if(depositWithFiles & (!update | (update & update_files))){
     if(deleteOldFiles & !skipFileDownload){
       config$logger.info("Zenodo: deleting old files...")
@@ -248,6 +248,8 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   #we set the (prereserved) doi to the entity in question
+  doi_to_save <- try(zenodo_metadata$metadata$prereserve_doi$doi, silent = TRUE)
+  if(is(doi_to_save, "try-error")) doi_to_save <- entity$identifiers[["doi"]]
   config$logger.info(sprintf("Setting DOI '%s' to save and export for record",zenodo_metadata$metadata$prereserve_doi$doi))
   for(i in 1:length(config$metadata$content$entities)){
     ent <- config$metadata$content$entities[[i]]
@@ -260,7 +262,6 @@ zen4R_deposit_record <- function(entity, config, options){
       break;
     }
   }
-  entity$identifiers[["doi"]] <- zenodo_metadata$getConceptDOI()
   entity$identifiers[["zenodo_doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
   entity$identifiers[["zenodo_conceptdoi_to_save"]] <- zenodo_metadata$getConceptDOI()
   entity$setStatus("zenodo", ifelse(publish, "published", "draft"))
