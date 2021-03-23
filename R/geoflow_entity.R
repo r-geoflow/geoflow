@@ -851,7 +851,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         new_thumbnail <- geoflow_relation$new()
         new_thumbnail$setKey("thumbnail")
         new_thumbnail$setName(layername)
-        new_thumbnail$setDescription(paste0(self$title, " - Layer Overview"))
+        new_thumbnail$setDescription(paste0(self$titles[["title"]], " - Layer Overview"))
         new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
                                       config$software$output$geoserver_config$parameters$url, 
                                       config$software$output$geoserver_config$properties$workspace,
@@ -861,7 +861,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         new_wms <- geoflow_relation$new()
         new_wms$setKey("wms")
         new_wms$setName(layername)
-        new_wms$setDescription(self$title)
+        new_wms$setDescription(self$titles[["title"]])
         new_wms$setLink(sprintf("%s/%s/ows?service=WMS", 
                                 config$software$output$geoserver_config$parameters$url, 
                                 config$software$output$geoserver_config$properties$workspace))
@@ -870,7 +870,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         new_wfs_gml <- geoflow_relation$new()
         new_wfs_gml$setKey("wfs")
         new_wfs_gml$setName(layername)
-        new_wfs_gml$setDescription(paste0(self$title, " - GIS Data Download (GML)"))
+        new_wfs_gml$setDescription(paste0(self$titles[["title"]], " - GIS Data Download (GML)"))
         new_wfs_gml$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s", 
                                     config$software$output$geoserver_config$parameters$url, 
                                     config$software$output$geoserver_config$properties$workspace,
@@ -880,7 +880,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         new_wfs_geojson <- geoflow_relation$new()
         new_wfs_geojson$setKey("wfs")
         new_wfs_geojson$setName(layername)
-        new_wfs_geojson$setDescription(paste0(self$title, " - GIS Data Download (GeoJSON)"))
+        new_wfs_geojson$setDescription(paste0(self$titles[["title"]], " - GIS Data Download (GeoJSON)"))
         new_wfs_geojson$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=json", 
                                         config$software$output$geoserver_config$parameters$url, 
                                         config$software$output$geoserver_config$properties$workspace,
@@ -890,7 +890,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         new_wfs_shp <- geoflow_relation$new()
         new_wfs_shp$setKey("wfs")
         new_wfs_shp$setName(layername)
-        new_wfs_shp$setDescription(paste0(self$title, " - GIS Data Download (ESRI Shapefile)"))
+        new_wfs_shp$setDescription(paste0(self$titles[["title"]], " - GIS Data Download (ESRI Shapefile)"))
         new_wfs_shp$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=SHAPE-ZIP", 
                                     config$software$output$geoserver_config$parameters$url, 
                                     config$software$output$geoserver_config$properties$workspace,
@@ -900,7 +900,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         new_wfs_csv <- geoflow_relation$new()
         new_wfs_csv$setKey("wfs")
         new_wfs_csv$setName(layername)
-        new_wfs_csv$setDescription(paste0(self$title, " - GIS Data Download (CSV)"))
+        new_wfs_csv$setDescription(paste0(self$titles[["title"]], " - GIS Data Download (CSV)"))
         new_wfs_csv$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=CSV", 
                                     config$software$output$geoserver_config$parameters$url, 
                                     config$software$output$geoserver_config$properties$workspace,
@@ -1056,7 +1056,10 @@ geoflow_entity <- R6Class("geoflow_entity",
           return(outid)
         }),collapse=line_separator),
         #Title
-        Title = self$title,
+        Title = paste0(sapply(names(self$titles), function(name){
+          outtitle <- paste(name, self$titles[[name]],sep=":")
+          return(outtitle)
+        }),collapse=line_separator),
         #Description
         Description = paste0(sapply(names(self$descriptions), function(name){
           outdesc <- paste(name, self$descriptions[[name]],sep=":")
