@@ -150,7 +150,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ident$setAbstract(entity$descriptions[["abstract"]])
   ident$setPurpose(entity$descriptions[["purpose"]])
   ident$addCredit(entity$descriptions[["credit"]])
-  #TODO status (N)
+  ident$addStatus(entity$descriptions[["status"]])
   ident$setLanguage(entity$language)
   ident$setCharacterSet("utf8")
   #topic categories

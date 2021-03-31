@@ -119,7 +119,7 @@ geoflow_entity <- R6Class("geoflow_entity",
   private = list(
     allowedKeyValuesFor = list(
       titles = c("title", "alternative"),
-      descriptions = c("abstract", "purpose", "info", "edition")
+      descriptions = c("abstract", "purpose", "credit", "info", "edition", "status")
     ) 
   ),
   public = list(
