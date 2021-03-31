@@ -94,6 +94,10 @@
 #'    This function is expected to enrich entities with subjects. Related to data vocabularies / thesauri / ontologies.
 #'    NOT YET IMPLEMENTED
 #'  }
+#'  \item{\code{enrichWithFormats(config)}}{
+#'    This function is expected to enrich entities with formats. Related to data vocabularies / thesauri / ontologies.
+#'    NOT YET IMPLEMENTED
+#'  }
 #'  \item{\code{getContacts(pretty)}}{
 #'    Get the list of entity contacts. By default, a list of \code{geoflow_contact} will be returned. To
 #'    return the list of entity contacts as \code{data.frame}, set \code{pretty = TRUE}.
@@ -911,6 +915,11 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #enrichWithSubjects
     enrichWithSubjects = function(config){
+      stop("Not yet implemented")
+    },
+    
+    #enrichWithFormats
+    enrichWithFormats = function(config){
       stop("Not yet implemented")
     },
     
