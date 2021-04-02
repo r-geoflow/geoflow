@@ -77,16 +77,22 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   owners <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
   if(length(owners)==0) owners <- list(entity$contacts[[1]])
   for(owner_entity in owners){
-    creator <- DCCreator$new(value = sprintf("%s, %s", owner_entity$lastName, owner_entity$firstName))
-    creator$attrs[["affiliation"]] <- owner_entity$organizationName
-    dcentry$addDCCreator(creator)
+    creator <- NULL
+    if(!is.na(owner_entity$lastName) && !is.na(owner_entity$firstName)){
+      creator <-  sprintf("%s, %s", owner_entity$lastName, owner_entity$firstName)
+    }else{
+      creator <- owner_entity$organizationName
+    }
+    dc_creator <- DCCreator$new(value = creator)
+    dc_creator$attrs[["affiliation"]] <- owner_entity$organizationName
+    dcentry$addDCCreator(dc_creator)
   }
   ##publisher
   publishers <- entity$contacts[sapply(entity$contacts, function(x){x$role == "publisher"})]
   if(length(publishers)==0) publishers <- list(entity$contacts[[1]])
   for(publisher_entity in publishers){
     dc_publisher <- NULL
-    if(!is.null(publisher_entity$lastName) && !is.null(publisher_entity$firstName)){
+    if(!is.na(publisher_entity$lastName) && !is.na(publisher_entity$firstName)){
       dc_publisher <- sprintf("%s, %s", publisher_entity$lastName, publisher_entity$firstName)
     }else{
       dc_publisher <- publisher_entity$organizationName
@@ -98,7 +104,7 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   if(length(contribs)>0){
     for(contrib_entity in contribs){
       contrib <- NULL
-      if(!is.null(contrib_entity$lastName) && !is.null(contrib_entity$firstName)){
+      if(!is.na(contrib_entity$lastName) && !is.na(contrib_entity$firstName)){
         contrib <- sprintf("%s, %s", contrib_entity$lastName, contrib_entity$firstName)
       }else{
         contrib <- contrib_entity$organizationName
