@@ -121,6 +121,7 @@
 #'
 geoflow_entity <- R6Class("geoflow_entity",
   private = list(
+    #TODO manage these allowed key values in class definitions (eg. geoflow_format)
     allowedKeyValuesFor = list(
       titles = c("title", "alternative"),
       descriptions = c("abstract", "purpose", "credit", "info", "edition", "status")
@@ -195,6 +196,10 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #setTitle
     setTitle = function(key = "title", title){
+      if(!key %in% private$allowedKeyValuesFor$titles){
+        stop(sprintf("Title Key should be among the following allowed keys",
+                     paste0(private$allowedKeyValuesFor$titles, collapse=",")))
+      }
       self$titles[[key]] <- title
     },
     
