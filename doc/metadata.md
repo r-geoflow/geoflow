@@ -47,7 +47,7 @@ Examples cover both:
 | **Definition**               | Provides the unique unambigous identifier for the dataset metadata, and eventual additional identifiers associated with the *entity* (e.g. DOI). Identifiers are expected to be used by information systems / software tools, etc hence it is recommended to use string concatenation (with no space). The user is free to define how the main identifier is compound to guarantee unicity for datasets, and to define it with semantics to make it self-explaining. |
 | **Need**                     | Mandatory                                                    |
 | **Default key (if omitted)** | ``id`` (unique identifier)                                   |
-| **other keys available**     | ``doi``(digital object identifier_geometa_iso19115)<br />``conceptdoi_to_save`` (geometa_iso19115) <br />``doi_to_save`` (geometa_iso19115) |
+| **other keys available**     | ``doi``(digital object identifier_geometa_iso19115) |
 | **Examples**                 |                                                              |
 | Simple usage                 | A simple string representing a unique *entity* identifier (``id``). ``my-metadata-identifier`` , equivalent to ``id:my-metadata-identifier``. |
 | Advanced usage               | Main identifier + DOI: <br />``id:my-metadata-identifier_``<br />``doi:10.5281/zenodo.3138920`` |
@@ -58,8 +58,8 @@ Examples cover both:
 | ---------------------------- | ---------------------------- |
 | **Definition**               | A name given to the dataset. |
 | **Need**                     | Mandatory                    |
-| **Default key (if omitted)** | *Not applicable*             |
-| **other keys available**     | *Not applicable*             |
+| **Default key (if omitted)** | ``title`` (main title)             |
+| **other keys available**     | ``alternative`` (short title, subtitle or alternative title)              |
 | **Examples**                 |                              |
 | Simple usage                 | ``This is my dataset title`` |
 | Advanced usage               | *Not applicable*             |
@@ -185,6 +185,18 @@ each key can be used multiple times to indicate multiple links
 | **Examples**                 |               |
 | Simple usage                 |rule:key       |
 | Advanced usage               |               |
+
+#### Format
+
+| **Column name**              | <u>Format</u> |
+| ---------------------------- | ------------- |
+| **Definition**               | Indicate information about the data format |
+| **Need**                     |Optional               |
+| **Default key (if omitted)** |``resource``(format to source data)|
+| **other keys available**     |``distribution`` (format to upload data)|
+| **Examples**                 |               |
+| Simple usage                 |the mormat declaration must be a mimetype``resource:text/csv``  |
+| Advanced usage               |a description part can be add to format ``distribution:image/tiff[GeoTIFF]``               |
 
 #### Provenance
 
