@@ -155,12 +155,20 @@ zen4R_deposit_record <- function(entity, config, options){
       }
       #add/update creators
       if(!(contact$identifiers[["id"]] %in% contact_added)){
-        zenodo_metadata$addCreator(
-          firstname = contact$firstName, 
-          lastname = contact$lastName, 
-          affiliation = contact$organizationName,
-          orcid = orcid
-        )
+        if(is.na(contact$firstName) && is.na(contact$lastName)){
+          zenodo_metadata$addCreator(
+            name = contact$organizationName,
+            affiliation = contact$organizationName,
+            orcid = orcid
+          )
+        }else{
+          zenodo_metadata$addCreator(
+            firstname = contact$firstName, 
+            lastname = contact$lastName, 
+            affiliation = contact$organizationName,
+            orcid = orcid
+          )
+        }
         contact_added <- c(contact_added, contact$identifiers[["id"]])
       }
     }
