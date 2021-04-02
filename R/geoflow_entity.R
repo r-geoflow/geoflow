@@ -303,7 +303,12 @@ geoflow_entity <- R6Class("geoflow_entity",
         if(is(str,"character")){
           str <- unlist(strsplit(str,"/"))
           if(length(str)==1) isInstant <- TRUE
-        }else if(is(str,"Date")||is(str,"POSIXct")) isInstant <- TRUE
+        }else if(is(str,"Date")||is(str,"POSIXct")){
+          isInstant <- TRUE
+        }else{
+          isInstant <- TRUE
+          class(str) <- "character"
+        }
         if(isInstant){
           self$temporal_extent <- list(instant = str_to_posix(str))
         }else{
