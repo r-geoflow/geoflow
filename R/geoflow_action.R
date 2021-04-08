@@ -15,20 +15,20 @@
 #' \dontrun{
 #'   action <- geoflow_action$new(
 #'    id = "some-id",
-#'    type = "some purpose",
+#'    types = list("some purpose1", "some purpose2"),
 #'    def = "some definition",
 #'    packages = list(),
 #'    pid_generator = NULL,
 #'    fun = function(config, entity){},
 #'    options = list(
-#'      option_name = list(desc = "option description", default = FALSE)
+#'      option_name = list(def = "option description", default = FALSE)
 #'    )
 #'  )
 #' }
 #' 
 #' @section Methods:
 #' \describe{
-#'  \item{\code{new(id, type, def, fun, script, options)}}{
+#'  \item{\code{new(id, types, def, fun, script, options)}}{
 #'    This method is used to instantiate a geoflow_action object
 #'  }
 #'  \item{\code{checkPackages()}}{
@@ -45,7 +45,7 @@ geoflow_action <- R6Class("geoflow_action",
   inherit = geoflowLogger,
   public = list(
     id = NA,
-    type = NA,
+    types = list(),
     def = NA,
     packages = list(),
     pid_generator = NULL,
@@ -53,12 +53,12 @@ geoflow_action <- R6Class("geoflow_action",
     fun = NA,
     script = NA,
     options = list(),
-    initialize = function(id, type = "", def = "",  
+    initialize = function(id, types = list(), def = "",  
                           packages = list(), 
                           pid_generator = NULL, pid_types = list(),
                           fun = NULL, script = NULL, options = list()){
       self$id <- id
-      self$type <- type
+      self$types <- types
       self$def <- def
       self$packages <- packages
       self$pid_generator <- pid_generator
@@ -176,69 +176,69 @@ register_actions <- function(){
   objs <- list(
     geoflow_action$new(
       id = "geometa-create-iso-19115",
-      type = "Metadata production",
+      types = list("Metadata production"),
       def = "Produce an ISO/OGC 19115/19139 metadata object",
       packages = list("geometa"),
       fun = geometa_create_iso_19115,
       options = list(
-        doi = list(desc = "Add entity DOI - if defined - as metadata identifier and online resource", default = FALSE),
-        doi_thumbnail = list(desc = "if option 'doi' is true and this option enabled, a DOI thumbnail will be added", default = FALSE),
-        inspire = list(desc = "Validates ISO 19139 metadata with INSPIRE reference validator", default = FALSE),
-        logo = list(desc = "Add configure profile logo(s) - if defined - as metadata thumbnail(s)", default = FALSE),
-        addfeatures = list(desc = "Add entity data features - if defined - as metadata bounding polygon(s)", default = FALSE),
-        featureId = list(desc = "ID of entity data features used to identify bounding polygon(s) with option 'addfeatures'", default = NA),
-        subject_geography = list(desc = "Identifier of the subject handling a Geographic coverage.", default = "geography")
+        doi = list(def = "Add entity DOI - if defined - as metadata identifier and online resource", class = "logical", default = FALSE),
+        doi_thumbnail = list(def = "if option 'doi' is true and this option enabled, a DOI thumbnail will be added", class = "logical", default = FALSE),
+        inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator", class = "logical", default = FALSE),
+        logo = list(def = "Add configure profile logo(s) - if defined - as metadata thumbnail(s)", class = "logical", default = FALSE),
+        addfeatures = list(def = "Add entity data features - if defined - as metadata bounding polygon(s)", class = "logical", default = FALSE),
+        featureId = list(def = "ID of entity data features used to identify bounding polygon(s) with option 'addfeatures'", class = "character", default = NA),
+        subject_geography = list(def = "Identifier of the subject handling a Geographic coverage.", class = "character", default = "geography")
       )
     ),
     geoflow_action$new(
       id = "geometa-create-iso-19110",
-      type = "Metadata production",
+      types = list("Metadata production"),
       def = "Produce an ISO 19110/19139 metadata object",
       packages = list("geometa"),
       fun = geometa_create_iso_19110,
       options = list(
-        doi = list(desc = "Add entity DOI - if defined - as metadata identifier and online resource", default = FALSE),
-        exclude_attributes = list(desc = "Attributes that should be excluded from the ISO 19110 production", default = NA),
-        exclude_attributes_not_in_dictionary = list(desc = "Enable to exclude all attributes/variables not referenced as dictionary/featuretype", default = FALSE),
-        exclude_values_for_attributes = list(desc = "Attribute names for which listed values should not be produced", default = NA),
-        extra_attributes = list(desc = "Extra attributes to add as feature catalog attributes although not in data", default = NA),
-        default_min_occurs = list(desc = "The default min occurs value for feature attributes cardinality", default = 1L),
-        default_max_occurs = list(desc = "The default max occurs value for feature attribute cardinality", default = Inf)
+        doi = list(def = "Add entity DOI - if defined - as metadata identifier and online resource", class = "logical", default = FALSE),
+        exclude_attributes = list(def = "Attributes that should be excluded from the ISO 19110 production", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
+        exclude_attributes_not_in_dictionary = list(def = "Enable to exclude all attributes/variables not referenced as dictionary/featuretype", class="logical", default = FALSE),
+        exclude_values_for_attributes = list(def = "Attribute names for which listed values should not be produced", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
+        extra_attributes = list(def = "Extra attributes to add as feature catalog attributes although not in data", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
+        default_min_occurs = list(def = "The default min occurs value for feature attributes cardinality", class = "integer", default = 1L),
+        default_max_occurs = list(def = "The default max occurs value for feature attribute cardinality", class = "numeric", default = Inf)
       )
     ),
     geoflow_action$new(
       id="ows4R-publish-iso-19139",
-      type = "Metadata publication",
+      types = list("Metadata publication"),
       def = "Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol",
       packages = list("ows4R"),
       fun = ows4R_publish_iso_19139,
       options = list(
-        geometa_inspire = list(desc = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", default = FALSE)
+        geometa_inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", class = "logical", default = FALSE)
       )
     ),
     geoflow_action$new(
       id = "geonapi-publish-iso-19139",
-      type = "Metadata publication",
+      types = list("Metadata publication"),
       def = "Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API",
       packages = list("geonapi"),
       fun = geonapi_publish_iso_19139,
       options = list(
-        geometa_inspire = list(desc = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", default = FALSE),
-        privileges = list(desc = "Geonetwork privileges to set for the metadata to be published", default = c("view","dynamic","featured")),
-        group = list(desc = "Geonetwork user group to which the metadata should be associated", default = "1"),
-        category = list(desc = "Category of metadata resources to which the metadata record should be associated", default = "datasets")
+        geometa_inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", class = "logical", default = FALSE),
+        privileges = list(def = "Geonetwork privileges to set for the metadata to be published", class = "character", choices = c("view","dynamic","featured"), default = c("view","dynamic","featured"), multiple = TRUE),
+        group = list(def = "Geonetwork user group to which the metadata should be associated", class = "character", default = "1"),
+        category = list(def = "Category of metadata resources to which the metadata record should be associated", class = "character", default = "datasets")
       )
     ),
     geoflow_action$new(
       id = "geosapi-publish-ogc-services",
-      type = "Data publication",
+      types = list("Data upload", "Data publication", "Metadata publication"),
       def = "Publish vector data to GeoServer OGC web-services (WMS/WFS)",
       packages = list("geosapi"),
       fun = geosapi_publish_ogc_services
     ),
     geoflow_action$new(
       id = "zen4R-deposit-record",
-      type = "Data publication",
+      types = list("Data upload", "Data publication", "Metadata publication", "DOI assignment"),
       def = "Deposits/Publish data and/or metadata in the Zenodo infrastructure",
       pid_generator = "zenodo",
       pid_types = list(
@@ -248,17 +248,17 @@ register_actions <- function(){
       packages = list("zen4R"),
       fun = zen4R_deposit_record,
       options = list(
-        depositWithFiles = list(desc = "Indicates if the action is uploading files", default = FALSE),
-        publish = list(desc = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", default = FALSE),
-        deleteOldFiles = list(desc = "Indicates if the action should delete old files prior upload new files", default = TRUE),
-        update_metadata = list(desc = "For an existing deposit, indicates if metadata elements should be updated", default = TRUE),
-        update_files = list(desc = "For an existing deposit, indicates if files should be updated", default = TRUE),
-        communities = list(desc = "One or more communities to which the deposit should be associated", default = NA)
+        depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
+        publish = list(def = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", class = "logical", default = FALSE),
+        deleteOldFiles = list(def = "Indicates if the action should delete old files prior upload new files", class = "logical", default = TRUE),
+        update_metadata = list(def = "For an existing deposit, indicates if metadata elements should be updated", class = "logical", default = TRUE),
+        update_files = list(def = "For an existing deposit, indicates if files should be updated", class = "logical", default = TRUE),
+        communities = list(def = "One or more communities to which the deposit should be associated", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA)
       )
     ),
     geoflow_action$new(
       id = "atom4R-dataverse-deposit-record",
-      type = "Data publication",
+      types = list("Data upload", "Data publication", "Metadata publication", "DOI assignment"),
       def = "Deposits/Publish data and/or metetadata on a Dataverse using the Sword API",
       pid_generator = "dataverse",
       pid_types = list(
@@ -267,16 +267,16 @@ register_actions <- function(){
       packages = list("atom4R"),
       fun = atom4R_dataverse_deposit_record,
       options = list(
-        depositWithFiles = list(desc = "Indicates if the action is uploading files", default = FALSE),
-        publish = list(desc = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", default = FALSE),
-        deleteOldFiles = list(desc = "Indicates if the action should delete old files prior upload new files", default = TRUE),
-        update_metadata = list(desc = "For an existing deposit, indicates if metadata elements should be updated", default = TRUE),
-        update_files = list(desc = "For an existing deposit, indicates if files should be updated", default = TRUE)
+        depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
+        publish = list(def = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", class = "logical", default = FALSE),
+        deleteOldFiles = list(def = "Indicates if the action should delete old files prior upload new files", class = "logical", default = TRUE),
+        update_metadata = list(def = "For an existing deposit, indicates if metadata elements should be updated", class = "logical", default = TRUE),
+        update_files = list(def = "For an existing deposit, indicates if files should be updated", class = "logical", default = TRUE)
       )
     ),
     geoflow_action$new(
       id = "dataone-upload-datapackage",
-      type = "Data publication",
+      types =  list("Data upload", "Data publication", "Metadata publication", "DOI assignment"),
       def = "Uploads a data package to a DataOne metacat node",
       pid_generator = "dataone",
       pid_types = list(
@@ -288,46 +288,46 @@ register_actions <- function(){
     ),
     geoflow_action$new(
       id = "sf-write-generic",
-      type = "Data writing",
+      types = list("Data writing", "Data upload"),
       def = "Import features data into several formats",
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
       fun = sf_write_generic,
       options = list(
-        type=list(desc = "format to convert", default = NA),
-        createIndexes=list(desc = "create indexes for columns", default = FALSE),
-        overwrite=list(desc = "Overwrite policy", default = TRUE),
-        append=list(desc = "Append policy", default = FALSE),
-        chunk.size=list(desc = "Size of DB upload data chunk. Default is 0L, meaning no chunking is operated.", default = 0L)
+        type=list(def = "format to convert", class = "character", choices = c("shp", "dbtable"), default = NA),
+        createIndexes=list(def = "create indexes for columns", class = "logical", default = FALSE),
+        overwrite=list(def = "Overwrite policy", class = "logical", default = TRUE),
+        append=list(def = "Append policy", class = "logical", default = FALSE),
+        chunk.size=list(def = "Size of DB upload data chunk. Default is 0L, meaning no chunking is operated.", class = "integer", default = 0L)
       )
     ),
     geoflow_action$new(
       id = "sf-write-dbi",
-      type = "Data writing",
+      types = list("Data writing", "Data upload"),
       def = "Import features data into Postgres/Postgis",
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
       fun = sf_write_dbi,
       options = list(
-        createIndexes=list(desc = "create indexes for columns", default = FALSE),
-        overwrite=list(desc = "Overwrite policy", default = TRUE),
-        append=list(desc = "Append policy", default = FALSE),
-        chunk.size=list(desc = "Size of DB upload data chunk. Default is 0L, meaning no chunking is operated.", default = 0L)
+        createIndexes=list(def = "create indexes for columns", class = "logical",  default = FALSE),
+        overwrite=list(def = "Overwrite policy", class = "logical",  default = TRUE),
+        append=list(def = "Append policy", class = "logical", default = FALSE),
+        chunk.size=list(def = "Size of DB upload data chunk. Default is 0L, meaning no chunking is operated.", class = "integer", default = 0L)
       )
     ),
     geoflow_action$new(
       id = "sf-write-shp",
-      type = "Data writing",
+      types = list("Data writing"),
       def = "Import features data and zip files",
       packages = list("sf"),
       fun = sf_write_shp
     ),
     geoflow_action$new(
       id = "eml-create-eml",
-      type = "Metadata production",
+      types = list("Metadata production"),
       def = "Produce an EML metadata object",
       packages = list("EML", "emld"),
       fun = eml_create_eml,
       options = list(
-        subject_taxonomy = list(desc = "Identifier of the subject handling the Taxonomic coverage.", default = "taxonomy")
+        subject_taxonomy = list(def = "Identifier of the subject handling the Taxonomic coverage.", class = "character", default = "taxonomy")
       )
     )
   )
@@ -358,7 +358,7 @@ list_actions <- function(raw = FALSE){
     actions <- do.call("rbind", lapply(actions, function(action){
       return(data.frame(
         id = action$id,
-        type = action$type,
+        types = paste(action$types, collapse=","),
         definition = action$def,
         pid_generator = action$isPIDGenerator(),
         packages = paste(action$packages, collapse=","),
@@ -374,21 +374,23 @@ list_actions <- function(raw = FALSE){
 #' @title list_action_options
 #' @description \code{list_action_options} lists the options of a given action supported by geoflow.
 #'
-#' @usage list_action_options(id)
+#' @usage list_action_options(id, raw)
 #' 
 #' @param id An action identifier
+#' @param raw if raw list should be returned
 #' 
-#' @return an object of class \code{data.frame} listing the action options.
+#' @return an object of class \code{data.frame} (or \code{list} if raw is TRUE) listing the action options.
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'
-list_action_options <- function(id){
+list_action_options <- function(id, raw = FALSE){
   out <- NULL
   actions <- list_actions(raw = TRUE)
   action <- actions[sapply(actions, function(x){x$id == id})]
   if(length(action)==0) stop(sprintf("No action with id '%s'!", id))
   action <- action[[1]]
+  if(raw) return(action$options)
   if(length(action$options)>0){
     out <- data.frame(
       name = names(action$options),
