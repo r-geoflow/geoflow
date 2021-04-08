@@ -252,15 +252,15 @@ register_software <- function(){
       packages = list("DBI", "RSQLite", "RPostgres"),
       handler = try(DBI::dbConnect, silent = TRUE),
       arguments = list(
-        drv = list(def = "DBI driver name", handler = try(DBI::dbDriver, silent = TRUE)),
-        user = list(def = "Username"),
-        password = list(def = "Password"),
-        host = list(def = "Hostname"),
-        port = list(def = "Port number"),
-        dbname = list(def = "Database name")
+        drv = list(def = "DBI driver name", class = "character", handler = try(DBI::dbDriver, silent = TRUE)),
+        user = list(def = "Username", class = "character"),
+        password = list(def = "Password", class = "character"),
+        host = list(def = "Hostname", class = "character"),
+        port = list(def = "Port number", class = "integer"),
+        dbname = list(def = "Database name", class = "character")
       ),
       attributes = list(
-        onstart_sql = list(def = "An SQL script to be run on workflow start"),
+        onstart_sql = list(def = "An SQL script to be run on workflow start", class = "character"),
         onstart_r = list(def = "R instructions to generate a SQL. It should be made of 2 properties 'script' (name
                          of the R script) that should include a function standardized with parameter config (being the
                          DBI software config) and will outpout a character representing the SQL. The name of the function 
@@ -339,9 +339,9 @@ register_software <- function(){
       packages = list("googledrive"),
       handler = try(googledrive::drive_auth, silent = TRUE),
       arguments = list(
-        email = list(def = "User email to authenticate in Google Drive"),
-        path = list(def = "An optional path within the Google drive repository. Default will be the root"),
-        token = list(def = "The user authentication token. To get your token in R: gargle::token_fetch()$credentials$access_token")
+        email = list(def = "User email to authenticate in Google Drive", class = "character"),
+        path = list(def = "An optional path within the Google drive repository. Default will be the root", class = "character"),
+        token = list(def = "The user authentication token. To get your token in R: gargle::token_fetch()$credentials$access_token", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -353,11 +353,11 @@ register_software <- function(){
       packages = list("ows4R"),
       handler = try(ows4R::CSWClient$new, silent = TRUE),
       arguments = list(
-        url = list(def = "CSW service endpoint URL"),
-        serviceVersion = list(def = "CSW service version ('2.0.2' or '3.0')"),
-        user = list(def = "Username for CSW authentication"),
-        pwd = list(def = "Password for CSW authentication"),
-        logger = list(def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)")
+        url = list(def = "CSW service endpoint URL", class = "character"),
+        serviceVersion = list(def = "CSW service version ('2.0.2' or '3.0')", class = "character"),
+        user = list(def = "Username for CSW authentication", class = "character"),
+        pwd = list(def = "Password for CSW authentication", class = "character"),
+        logger = list(def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)", class = "character", choices = c("INFO", "DEBUG"))
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -369,11 +369,11 @@ register_software <- function(){
       packages = list("ows4R"),
       handler = try(ows4R::WFSClient$new, silent = TRUE),
       arguments = list(
-        url = list(def = "WFS service endpoint URL"),
-        serviceVersion = list(def = "WFS service version ('1.0.0', '1.1.1', '2.0')"),
-        user = list(def = "Username for WFS authentication"),
-        pwd = list(def = "Password for WFS authentication"),
-        logger = list(def = "Level for 'ows4R' logger messages (NULL, 'INFO' or 'DEBUG')")
+        url = list(def = "WFS service endpoint URL", class = "character"),
+        serviceVersion = list(def = "WFS service version ('1.0.0', '1.1.1', '2.0')", class = "character"),
+        user = list(def = "Username for WFS authentication", class = "character"),
+        pwd = list(def = "Password for WFS authentication", class = "character"),
+        logger = list(def = "Level for 'ows4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -386,10 +386,10 @@ register_software <- function(){
       handler = try(geonapi::GNManager$new, silent = TRUE),
       arguments = list(
         url = list(def = "GeoNetwork catalogue URL"),
-        version = list(def = "Geonetwork catalogue version"),
-        user = list(def = "Username for GeoNetwork authentication"),
-        pwd = list(def = "Password for GeoNetwork authentication"),
-        logger = list(def = "Level for 'geonapi' logger messages (NULL, 'INFO' or 'DEBUG')")
+        version = list(def = "Geonetwork catalogue version", class = "character"),
+        user = list(def = "Username for GeoNetwork authentication", class = "character"),
+        pwd = list(def = "Password for GeoNetwork authentication", class = "character"),
+        logger = list(def = "Level for 'geonapi' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -401,14 +401,14 @@ register_software <- function(){
       packages = list("geosapi"),
       handler = try(geosapi::GSManager$new, silent = TRUE),
       arguments = list(
-        url = list(def = "GeoServer application URL"),
-        user = list(def = "Username for GeoServer authentication"),
-        pwd = list(def = "Password for GeoServer authentication"),
-        logger = list(def = "Level for 'geosapi' logger messages (NULL, 'INFO' or 'DEBUG')")    
+        url = list(def = "GeoServer application URL", class = "character"),
+        user = list(def = "Username for GeoServer authentication", class = "character"),
+        pwd = list(def = "Password for GeoServer authentication", class = "character"),
+        logger = list(def = "Level for 'geosapi' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))    
       ),
       attributes = list(
-        workspace = list(def = "GeoServer workspace name"),
-        datastore = list(def = "GeoServer datastore name")
+        workspace = list(def = "GeoServer workspace name", class = "character"),
+        datastore = list(def = "GeoServer datastore name", class = "character")
       ),
       actions = list(
         onstart = function(config, software, software_config){
@@ -436,9 +436,9 @@ register_software <- function(){
       packages = list("zen4R"),
       handler = try(zen4R::ZenodoManager$new, silent = TRUE),
       arguments = list(
-        url = list(def = "Zenodo API URL. For sandbox tests, use 'https://sandbox.zenodo.org/api', otherwise provided by zen4R by default"),
-        token = list(def = "Zenodo user authentication token."),
-        logger = list(def = "Level for 'zen4R' logger messages (NULL, 'INFO' or 'DEBUG')")
+        url = list(def = "Zenodo API URL. For sandbox tests, use 'https://sandbox.zenodo.org/api'", class = "character", choices = c("https://zenodo.org/api","https://sandbox.zenodo.org/api")),
+        token = list(def = "Zenodo user authentication token.", class = "character"),
+        logger = list(def = "Level for 'zen4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO","DEBUG"))
       ),
       attributes = list(
         clean = list(def = "An option, to clean draft Zenodo deposits prior to any new deposit. To clean deposits, enable 'run', 
@@ -455,12 +455,12 @@ register_software <- function(){
       packages = list("atom4R"),
       handler = try(atom4R::SwordDataverseClient$new, silent = TRUE),
       arguments = list(
-        hostname = list(def = "Dataverse base URL"),
-        token = list(def = "Dataverse user authentication token"),
-        logger = list(def = "Level for 'atom4R' logger messages (NULL, 'INFO' or 'DEBUG')")
+        hostname = list(def = "Dataverse base URL", class = "character"),
+        token = list(def = "Dataverse user authentication token", class = "character"),
+        logger = list(def = "Level for 'atom4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = list(NULL,"INFO","DEBUG"))
       ),
       attributes = list(
-        dataverse = list(def = "Dataverse id where to deposit/publish records")
+        dataverse = list(def = "Dataverse id where to deposit/publish records", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -472,8 +472,8 @@ register_software <- function(){
       packages = list("dataone"),
       handler = try(dataone::D1Client, silent = TRUE),
       arguments = list(
-        x = list(def = "Contributing Node URL", handler = try(dataone::CNode, silent = TRUE)),
-        y = list(def = "Member Node URL", handler = try(dataone::MNode, silent = TRUE)),
+        x = list(def = "Contributing Node URL", handler = try(dataone::CNode, silent = TRUE), class = "character"),
+        y = list(def = "Member Node URL", handler = try(dataone::MNode, silent = TRUE), class = "character"),
         token = list(def = "Authorization token")
       ),
       attributes = list(),
@@ -534,20 +534,22 @@ list_software <- function(raw = FALSE){
 #' @title list_software_parameters
 #' @description \code{list_software_parameters} lists the parameters of a given software supported by geoflow.
 #'
-#' @usage list_software_parameters(software_type)
+#' @usage list_software_parameters(software_type, raw)
 #' 
 #' @param software_type A software type
+#' @param raw if raw list should be returned
 #' 
-#' @return an object of class \code{data.frame} listing the software parameters
+#' @return an object of class \code{data.frame} (or \code{list} if raw is TRUE) listing the software parameters
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'
-list_software_parameters <- function(software_type){
+list_software_parameters <- function(software_type, raw = FALSE){
   out <- NULL
   software <- .geoflow$software[sapply(.geoflow$software, function(x){x$software_type == software_type})]
   if(length(software)==0) stop(sprintf("No software '%s'!", software_type))
   software <- software[[1]]
+  if(raw) return(software$arguments)
   if(length(software$arguments)>0){
     out <- data.frame(
       name = names(software$arguments),
@@ -566,20 +568,22 @@ list_software_parameters <- function(software_type){
 #' @title list_software_properties
 #' @description \code{list_software_properties} lists the properties of a given software supported by geoflow.
 #'
-#' @usage list_software_properties(software_type)
+#' @usage list_software_properties(software_type, raw)
 #' 
 #' @param software_type A software type
+#' @param raw if raw list should be returned
 #' 
 #' @return an object of class \code{data.frame} listing the software properties
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'
-list_software_properties <- function(software_type){
+list_software_properties <- function(software_type, raw = FALSE){
   out <- NULL
   software <- .geoflow$software[sapply(.geoflow$software, function(x){x$software_type == software_type})]
   if(length(software)==0) stop(sprintf("No software '%s'!", software_type))
   software <- software[[1]]
+  if(raw) return(software$attributes)
   if(length(software$attributes)>0){
     out <- data.frame(
       name = names(software$attributes),
