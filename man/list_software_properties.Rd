@@ -4,10 +4,12 @@
 \alias{list_software_properties}
 \title{list_software_properties}
 \usage{
-list_software_properties(software_type)
+list_software_properties(software_type, raw)
 }
 \arguments{
 \item{software_type}{A software type}
+
+\item{raw}{if raw list should be returned}
 }
 \value{
 an object of class \code{data.frame} listing the software properties

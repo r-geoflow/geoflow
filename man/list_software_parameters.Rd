@@ -4,13 +4,15 @@
 \alias{list_software_parameters}
 \title{list_software_parameters}
 \usage{
-list_software_parameters(software_type)
+list_software_parameters(software_type, raw)
 }
 \arguments{
 \item{software_type}{A software type}
+
+\item{raw}{if raw list should be returned}
 }
 \value{
-an object of class \code{data.frame} listing the software parameters
+an object of class \code{data.frame} (or \code{list} if raw is TRUE) listing the software parameters
 }
 \description{
 \code{list_software_parameters} lists the parameters of a given software supported by geoflow.
