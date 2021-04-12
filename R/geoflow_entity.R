@@ -344,7 +344,6 @@ geoflow_entity <- R6Class("geoflow_entity",
     #copyDataToJobDir
     copyDataToJobDir = function(config, jobdir = NULL){
       
-      wd <- getwd()
       if(is.null(jobdir)) jobdir <- config$job
       setwd(file.path(jobdir,"data"))
       
@@ -426,8 +425,10 @@ geoflow_entity <- R6Class("geoflow_entity",
         
         #rename unzipped files (generic behavior)
         data.files <- list.files(path = getwd(), pattern = datasource_name)
+        data.files <- data.files[!endsWith(data.files, ".zip")]
         if(length(data.files)>0){
           for(data.file in data.files){
+            if(data.file %in% list.dirs(getwd(), recursive = F, full.names = F)) next
             fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
             fileext <- fileparts[length(fileparts)]
             file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
@@ -468,14 +469,13 @@ geoflow_entity <- R6Class("geoflow_entity",
         config$logger.info("sourceZip = FALSE: source files will be uploaded")
       }
       
-      setwd(wd)
+      setwd(jobdir)
       
     },
     
     #enrichWithFeatures
     enrichWithFeatures = function(config, jobdir = NULL){
       
-      wd <- getwd()
       if(is.null(jobdir)) jobdir <- config$job
       setwd(file.path(jobdir,"data"))
       
@@ -840,7 +840,8 @@ geoflow_entity <- R6Class("geoflow_entity",
             }
       )
       
-      setwd(wd)
+      setwd(jobdir)
+      
     },
     
     #enrichWithRelations

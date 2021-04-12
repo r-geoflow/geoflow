@@ -118,6 +118,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
               #we enrich entity with features
               #control is added in case of entity already enriched with features (when loaded from custom R entity handlers)
               if(is.null(entity$data$features)) entity$enrichWithFeatures(config)
+              setwd(jobdir) #make sure we are in jobdir
             }
             #data relations (eg. geosapi & OGC data protocol online resources)
             entity$enrichWithRelations(config)

@@ -176,7 +176,11 @@ register_data_accessors <- function(){
       packages = list("zen4R"),
       download = function(resource, file, path){
         cat(sprintf("[geoflow] Zenodo data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
-        zen4R::download_zenodo(doi = resource, files = file, path = path)
+        zen4R::download_zenodo(doi = resource, files = file, path = dirname(path))
+        file.rename(from = file.path(getwd(), file), to = path)
+        if(endsWith(path, "zip")){
+          utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
+        }
       }
     )
   )
