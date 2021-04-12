@@ -1,0 +1,72 @@
+---
+title: "geoflow – R engine to orchestrate and run geospatial (meta)data workflows - List of actions and softwares"
+output: 
+  github_document:
+    number_sections: true
+    
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(geoflow)
+```
+
+# Actions
+
+## List of actions supported by geoflow
+```{r, echo = FALSE, message = FALSE, results = 'asis'}
+
+tab<-geoflow::list_actions() 
+actions<-as.character(list_actions()[,1])
+tab[,1]<-paste0("[**",tab[,1],"**](#",tab[,1],")<br>")
+kable(tab)
+
+```
+
+
+```{r, echo = FALSE, message = FALSE, results='asis'}
+for (action in actions){
+   cat('\n') 
+  cat('### ','List of ',action, ' options')
+  cat('<a name=',action,'/>\n')
+  if(nrow(list_action_options(action))>0){
+  print(kable(list_action_options(action)))
+  }else{
+    cat('*No options available for this action*\n') 
+  }
+   cat('\n') 
+}
+```
+
+# Software
+## List of software supported by geoflow
+
+```{r, echo = FALSE, message = FALSE, results = 'asis'}
+tab<-geoflow::list_software() 
+softwares<-as.character(list_software()[,1])
+tab[,1]<-paste0("[**",tab[,1],"**](#",tab[,1],")<br>")
+kable(tab)
+
+```
+
+
+```{r, echo = FALSE, message = FALSE, results='asis'}
+for (software in softwares){
+   cat('\n') 
+  cat('### ','List of ',software, ' parameters')
+   cat('<a name=',software,'/>\n')
+if(nrow(list_software_parameters(software))>0){
+  print(kable(list_software_parameters(software)))
+}else{
+    cat('*No parameters available for this software*\n') 
+  }
+   cat('\n')
+   cat('### ','List of ',software, ' properties','\n')
+if(nrow(list_software_properties(software))>0){
+  print(kable(list_software_properties(software)))
+}else{
+    cat('*No properties available for this software*\n') 
+  }
+   cat('\n') 
+}
+```
