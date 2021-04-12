@@ -1,9 +1,9 @@
 ## **How to create a geoflow dictionary**
-### from a spreadsheet (for basic users)
-**dictionary** allows to describe the structure of datasets. This is required for advanced [geoflow](https://github.com/eblondel) use cases where one wants to produce finer dataset description (dataset structural metadata). 
+### From a spreadsheet (for basic users)
+**Dictionary** allows to describe the structure of datasets. This is required for advanced [geoflow](https://github.com/eblondel) use cases where one wants to produce finer dataset description (dataset structural metadata). 
 #### General recommendation
-A same dictionary file can be use to refer multiple dictionnary. Each dictionnary set is identify by a unique FeatureType. This FeatureType is the name  to refer in **featureType** key of **Data** column of the **entity** file  to link this dictionnary with dataset. 
-Each row of the file refer to a unique column of the dataset. A same column name (MemberCode) can't be use twice for a same Feature Type. 
+A same dictionary file can be use to refer multiple dictionnaries/data structure definition(dsd). Each dictionnary set is identify by a unique `FeatureType`. This `FeatureType` is the name  to refer in **featureType** key of **Data** column of the **entity** file  to link this dictionnary with dataset. 
+Each row of the file refer to a unique column of the dataset. A same column name (MemberCode) can't be use twice for a same `FeatureType`. 
 
 #### Columns description
 
@@ -14,29 +14,29 @@ Each row of the file refer to a unique column of the dataset. A same column name
 | **Definition**               | Unique unambigous identifier to identify a set of dictionary item to use in *Data* column of entity sheet.|
 | **Need**                     |Mandatory                |
 | **Type of content** 		   |a single expression composed of text,symbol and numeric   |
-| **Example**                 |`my_dictionary1`        |
+| **Example**                 |`my_dictionary1_`<br/>`dsd1`       |
 
 ##### MemberCode
 
 | **Column name**              | <u>MemberCode</u> |
 | ---------------------------- | ----------------------- |
-| **Definition**               | exact column name of the dataset in DataSource.  |
+| **Definition**               | exact column name within the target data set|
 | **Need**                     |Mandatory                |
-| **Type of content** 		   |a single expression composed of text,symbol and numeric   |
-| **Example**                 |`flag`        |
+| **Type of content** 		   |a single expression composed of text,symbol and numeric without space   |
+| **Example**                 |`flag`,`species`        |
 
 ##### MemberName
 | **Column name**              | <u>MemberName</u> |
 | ---------------------------- | ----------------------- |
-| **Definition**               |add a enrish name to Member Code  |
+| **Definition**               |add a human readible name to Member Code (label)  |
 | **Need**                     |Optional                |
 | **Type of content** 		   | accepted space, text, symbol and numeric |
-| **Example**                 |`country flag`        |
+| **Example**                 |`country flag`,`species name`        |
 
 ##### MemberType
 | **Column name**              | <u>MemberType</u> |
 | ---------------------------- | ----------------------- |
-| **Definition**               |indicate the category of each column  |
+| **Definition**               |indicate the category of each column it is a attribute or a variable  |
 | **Need**                     |Optional                |
 | **Type of content** 		   | `attribute`or`variable` |
 | **Example**                 |`variable`        |
@@ -44,25 +44,29 @@ Each row of the file refer to a unique column of the dataset. A same column name
 ##### MinOccurs
 | **Column name**              | <u>MinOccurs</u> |
 | ---------------------------- | ----------------------- |
-| **Definition**               |manage the minimal number of selectable items of the MemberCode.|
+| **Definition**               |manage the minimal number of items of the MemberCode.|
 | **Need**                     |Mandatory                |
 | **Type of content** 		   | numeric  |
-| **Example**                 |`O` to allow the possibility to not select item; `1` to contrain to select item        |
+| **Example**                 |`O`, `1`         |
+
+For geoflow usecase related to openfair viewer use min occurs `O` to indicate that selection of item is optional, reversely  with `1` it is mandatory.
 ##### MaxOccurs
 | **Column name**              | <u>MaxOccurs</u> |
 | ---------------------------- | ----------------------- |
-| **Definition**               |add a enrish name to Member Code |
+| **Definition**               |manage the maximal number of items of the MemberCode. |
 | **Need**                     |Mandatory                |
-| **Type of content** 		   | numeric or `Inf`  |
-| **Example**                 |`1` to contrain to not use more of one item; `Inf` to allow the possibility to select all items        |
+| **Type of content** 		   | numeric,' or `Inf`  |
+| **Example**                 |`1` ,`Inf`  |
+For geoflow usecase is related to openfair viewer use max occurs `1` for enable multiple selection or use `Inf` for no limitation of selection.
+
 
 ##### Definition
 | **Column name**              | <u>Definition</u> |
 | ---------------------------- | ----------------------- |
-| **Definition**               |add a explication text about the column|
+| **Definition**               |add a explaination text about the column or a definition of dimension|
 | **Need**                     |Optional                |
 | **Type of content** 		   | text  |
-| **Example**                 |        |
+| **Example**                 |`Definitiion of this variable`        |
 
 ##### DefinitionSource
 | **Column name**              | <u>DefinitionSource</u> |
@@ -75,25 +79,25 @@ Each row of the file refer to a unique column of the dataset. A same column name
 ##### MeasurementUnit
 | **Column name**              | <u>MeasurementUnit</u> |
 | ---------------------------- | ----------------------- |
-| **Definition**               |add an information about unit |
+| **Definition**               |add an information about unit of measure in case of memberType is a variable |
 | **Need**                     |Optional                |
-| **Type of content** 		   |unit symbol and abbreviation  |
-| **Example**                 |`$` |
+| **Type of content** 		   |unit symbol and abbreviation. The best practice is to use the official unit symbol from [udunits](https://www.unidata.ucar.edu/software/udunits). For a complete list of unite see `units::valid_udunits()`|
+| **Example**                 |`$`,`kg` |
 
 ##### RegisterId
 | **Column name**              | <u>RegisterId</u> |
 | ---------------------------- | ----------------------- |
-| **Definition**               |name of R object of table or dataframe type including register information about each item of the colum.|
+| **Definition**               |identifier or a register(reference dataset, code list) giving information about name of R object of table or dataframe type including register information about each item of the colum. In the case of `RegisterScript` is use, `RegisterId` is the name of R function.|
 | **Need**                     |Optional                |
-| **Type of content** 		   |unit symbol and abbreviation  |
-| **Example**                 |`$` |
+| **Type of content** 		   | *please see the register documentation*|
+| **Example**                 |`register_month` |
 
 ##### RegisterScript
 | **Column name**              | <u>RegisterScript</u> |
 | ---------------------------- | ----------------------- |
-| **Definition**               |a local R script with entire link directory containing the registerId object. This object must contain 4 codify columns and each row corresponding to an item :<br/>- **code** : exact name of item as write inside the dataframe (mandatory)<br/>- **uri**: a link about item information (optional)<br/>- **label**:label of corresponding item (mandatory) <br/>- **definition**: a definition of each item (optional)<br> |
+| **Definition**               |a local or remote R script containing the register id objects. Each object should be a function returning a dataframe with 4 columns:<br/>- **code** : exact name of item as write inside the dataframe (mandatory)<br/>- **uri**: a link about item information (optional)<br/>- **label**:label of corresponding item (mandatory) <br/>- **definition**: a definition of each item (optional)<br>see below example |
 | **Need**                     |Mandatory if RegisterId declared                |
-| **Type of content** 		   |R script directory  |
+| **Type of content** 		   |R script path |
 | **Example**                 |`C://Mydirectory/Myscript.R` |
 ```{r} 
 # Myscript.R
