@@ -361,15 +361,15 @@ geoflow_entity <- R6Class("geoflow_entity",
         if(length(datasource_parts)<2) stop("Source data file should include a file extension")
         datasource_name <- datasource_parts[1]
         datasource_ext <- datasource_parts[2]
-        datasource_file <- attr(datasource, "uri")
+        datasource_uri <- attr(datasource, "uri")
         attributes(datasource) <- NULL
-        if(is.null(datasource_file)) datasource_file <- datasource
+        if(is.null(datasource_uri)) datasource_uri <- datasource
         
         #in case of a datasource type requiring a file we check its presence
         #if absent we abort the function enrich With features
         types_without_file <- c("dbtable","dbview","dbquery")
         datasource_file_needed <- !(self$data$sourceType %in% types_without_file)
-        if(datasource_file_needed && is.null(datasource_file)){
+        if(datasource_file_needed && is.null(datasource_uri)){
           warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
           config$logger.warn(warnMsg)
           setwd(wd)
@@ -377,7 +377,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         }
         
         config$logger.info(sprintf("Copying data source %s '%s' (%s) to job directory '%s'",
-                                   i, datasource, datasource_file, jobdir))
+                                   i, datasource, datasource_uri, jobdir))
         
         basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
       
@@ -387,30 +387,34 @@ geoflow_entity <- R6Class("geoflow_entity",
         #instead of the complete dataset
       
         #copy data
-        isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
+        isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_uri) > 0
         if(isSourceUrl || accessor$id != "default"){
           #case where data is remote and there was no data enrichment in initWorkflow
           config$logger.info(sprintf("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id))
-          accessor$download(datasource_file, file.path(getwd(), paste(basefilename, datasource_ext, sep=".")))
+          accessor$download(
+            resource = datasource_uri,
+            file = datasource, 
+            path = file.path(getwd(), paste(basefilename, datasource_ext, sep="."))
+          )
         }else{
           #if(is.null(self$data$features)){
           config$logger.info("Copying data to Job data directory from local file(s)")
-          data.files <- list.files(path = dirname(datasource_file), pattern = datasource_name)
+          data.files <- list.files(path = dirname(datasource_uri), pattern = datasource_name)
           if(length(data.files)>0){
             isZipped <- any(sapply(data.files, endsWith, ".zip"))
             if(!isZipped){
               config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
               for(data.file in data.files){
-                file.copy(from = file.path(dirname(datasource_file), data.file), to = getwd())
+                file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
               }
               config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
               data.files <- list.files(pattern = basefilename)
               if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
             }else{
               config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
-              data.files <- utils::unzip(zipfile = datasource_file, unzip = getOption("unzip"))
+              data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
               if(length(data.files)>0) for(data.file in data.files){
-                file.copy(from = file.path(dirname(datasource_file), data.file), to = getwd())
+                file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
               }
             }
           }else{

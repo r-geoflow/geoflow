@@ -136,9 +136,9 @@ register_data_accessors <- function(){
     geoflow_data_accessor$new(
       id = "default",
       definition = "A default HTTP(S) data accessor",
-      download = function(file, path){
-        cat(sprintf("[geoflow][INFO] Default HTTP(S) data accessor: Download data from '%s' to '%s'\n", file, path))
-        download.file(file, destfile = path, mode = "wb")
+      download = function(resource, file, path){
+        cat(sprintf("[geoflow][INFO] Default HTTP(S) data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
+        download.file(resource, destfile = path, mode = "wb")
         if(endsWith(path, "zip")){
           utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
         }
@@ -152,18 +152,31 @@ register_data_accessors <- function(){
       software_type = "googledrive",
       definition = "A Google Drive data accessor",
       packages = list("googledrive"),
-      download = function(file, path){
-        cat(sprintf("[geoflow] Google Drive data accessor: Download data from '%s' to '%s'\n", file, path))
-        gdr <- googledrive::drive_get(file)
+      download = function(resource, file, path){
+        cat(sprintf("[geoflow] Google Drive data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
+        gdr <- googledrive::drive_get(resource)
         if(!is.null(gdr)){
           cat(sprintf("[geoflow][INFO] Google Drive resource ID: %s\n", gdr$id[1]))
           googledrive::drive_download(file = gdr, path = path)
         }else{
-          cat(sprintf("No Google Drive resource ID for file '%s'\n", file))
+          cat(sprintf("No Google Drive resource ID for resource/file '%s'\n", resource))
         }
         if(endsWith(path, "zip")){
           utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
         }
+      }
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #ZENODO
+    #------------------------------------------------------------------------------------------------------- 
+    geoflow_data_accessor$new(
+      id = "zenodo",
+      software_type = "zenodo",
+      definition = "A Zenodo data accessor",
+      packages = list("zen4R"),
+      download = function(resource, file, path){
+        cat(sprintf("[geoflow] Zenodo data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
+        zen4R::download_zenodo(doi = resource, files = file, path = path)
       }
     )
   )
