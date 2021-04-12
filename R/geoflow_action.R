@@ -394,7 +394,7 @@ list_action_options <- function(id, raw = FALSE){
   if(length(action$options)>0){
     out <- data.frame(
       name = names(action$options),
-      definition = sapply(action$options, function(x){x$desc}),
+      definition = sapply(action$options, function(x){x$def}),
       default = sapply(action$options, function(x){paste0(x$default, collapse=",")}),
       stringsAsFactors = FALSE
     )
