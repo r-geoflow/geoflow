@@ -175,6 +175,7 @@ register_data_accessors <- function(){
       definition = "A Zenodo data accessor",
       packages = list("zen4R"),
       download = function(resource, file, path){
+        if(startsWith(resource, "https://dx.doi.org/")) resource <- unlist(strsplit(resource, "https://dx.doi.org/"))[2]
         cat(sprintf("[geoflow] Zenodo data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
         zen4R::download_zenodo(doi = resource, files = file, path = dirname(path))
         file.rename(from = file.path(getwd(), file), to = path)
