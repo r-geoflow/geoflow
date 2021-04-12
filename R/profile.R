@@ -13,6 +13,9 @@
   #software
   register_software()
   
+  #access endpoints
+  register_data_accessors()
+  
   #registers
   register_registers()
   

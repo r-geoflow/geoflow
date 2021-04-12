@@ -348,6 +348,10 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(is.null(jobdir)) jobdir <- config$job
       setwd(file.path(jobdir,"data"))
       
+      #get accessors
+      accessors <- list_data_accessors(raw = TRUE)
+      accessor <- accessors[sapply(accessors, function(x){x$id == self$data$access})][[1]]
+      
       config$logger.info(sprintf("Copying data to job directory '%s'", jobdir))
       
       if(!startsWith(self$data$sourceType, "db")) for(i in 1:length(self$data$source)){
@@ -358,15 +362,8 @@ geoflow_entity <- R6Class("geoflow_entity",
         datasource_name <- datasource_parts[1]
         datasource_ext <- datasource_parts[2]
         datasource_file <- attr(datasource, "uri")
-        if(is.null(datasource_file) && self$data$access == "googledrive"){
-          config$logger.info(sprintf("Google Drive access - resolve dataset ID for '%s'", datasource))
-          gdr <- googledrive::drive_get(datasource)
-          if(!is.null(gdr)){
-            config$logger.info(sprintf("Resolved ID: %s", gdr$id[1]))
-            datasource_file <- paste0("https://drive.google.com/open?id=", gdr$id[1])
-          }
-        }
         attributes(datasource) <- NULL
+        if(is.null(datasource_file)) datasource_file <- datasource
         
         #in case of a datasource type requiring a file we check its presence
         #if absent we abort the function enrich With features
@@ -382,7 +379,6 @@ geoflow_entity <- R6Class("geoflow_entity",
         config$logger.info(sprintf("Copying data source %s '%s' (%s) to job directory '%s'",
                                    i, datasource, datasource_file, jobdir))
         
-        
         basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
       
         #here either we only pickup zipped files and re-distribute them in job data directory
@@ -392,13 +388,13 @@ geoflow_entity <- R6Class("geoflow_entity",
       
         #copy data
         isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
-        if(isSourceUrl){
+        if(isSourceUrl || accessor$id != "default"){
           #case where data is remote and there was no data enrichment in initWorkflow
-          warnMsg <- "Copying data from URL to Job data directory!"
-          download_file(datasource_file, paste(basefilename, datasource_ext, sep="."))
+          config$logger.info(sprintf("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id))
+          accessor$download(datasource_file, file.path(getwd(), paste(basefilename, datasource_ext, sep=".")))
         }else{
           #if(is.null(self$data$features)){
-          config$logger.info("Copying data from local file(s) to Job data directory!")
+          config$logger.info("Copying data to Job data directory from local file(s)")
           data.files <- list.files(path = dirname(datasource_file), pattern = datasource_name)
           if(length(data.files)>0){
             isZipped <- any(sapply(data.files, endsWith, ".zip"))
@@ -492,15 +488,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       datasource <- self$data$source[[1]]
       datasource_name <- unlist(strsplit(datasource, "\\."))[1]
       datasource_file <- attr(datasource, "uri")
-      if(is.null(datasource_file) && self$data$access == "googledrive"){
-        config$logger.info(sprintf("Google Drive access - resolve dataset ID for '%s'", datasource))
-        gdr <- googledrive::drive_get(datasource)
-        if(!is.null(gdr)){
-          config$logger.info(sprintf("Resolved ID: %s", gdr$id[1]))
-          datasource_file <- paste0("https://drive.google.com/open?id=", gdr$id[1])
-        }
-      }
       attributes(datasource) <- NULL
+      if(is.null(datasource_file)) datasource_file <- datasource
       
       #in case of a datasource type requiring a file we check its presence
       #if absent we abort the function enrich With features
@@ -749,7 +738,7 @@ geoflow_entity <- R6Class("geoflow_entity",
            #---------------------------------------------------------------------------------
            "dbquery" = {
              
-              trgFilename <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".sql"))
+              trgFilename <- file.path(getwd(), paste0(datasource_name,".sql"))
              
               sqlFileExists <- FALSE
               if(!is.null(datasource_file)){
@@ -757,20 +746,20 @@ geoflow_entity <- R6Class("geoflow_entity",
                 if(isSourceUrl){
                   warnMsg <- "Downloading remote SQL file from URL to temporary geoflow temporary data directory!"
                   config$logger.warn(warnMsg)
-                  download_file(datasource_file, trgFilename)
+                  accessor$download(datasource_file, trgFilename)
                   sqlFileExists <- TRUE
                 }else{
                   data.files <- list.files(path = dirname(datasource_file), pattern = datasource_name)
                   if(length(data.files)>0){
                     sqlFileExists <- TRUE
                     config$logger.info("Copying local SQL scrit to temporary geoflow temporary data directory")
-                    file.copy(from = data.files[1], to = TEMP_DATA_DIR)
+                    file.copy(from = data.files[1], to = getwd())
                   }
                 }
               }
              
               if(sqlFileExists){
-                sqlfile <- file.path(TEMP_DATA_DIR, paste0(datasource_name,".sql"))
+                sqlfile <- file.path(getwd(), paste0(datasource_name,".sql"))
                 config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
                 sql <- paste(readLines(sqlfile), collapse="")
                 config$logger.info(sql)

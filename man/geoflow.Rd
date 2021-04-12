@@ -12,8 +12,8 @@ R engine to orchestrate and run geospatial (meta)data workflows
 \tabular{ll}{
    Package: \tab geoflow\cr
    Type: \tab Package\cr
-   Version: \tab 0.0.20210331\cr
-   Date: \tab 2021-03-31\cr
+   Version: \tab 0.0.20210411\cr
+   Date: \tab 2021-04-11\cr
    License: \tab MIT\cr
    LazyLoad: \tab yes\cr
  }
