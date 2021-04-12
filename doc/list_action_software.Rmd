@@ -63,7 +63,9 @@ if(nrow(list_software_parameters(software))>0){
    cat('\n')
    cat('### ','List of ',software, ' properties','\n')
 if(nrow(list_software_properties(software))>0){
-  print(kable(list_software_properties(software)))
+  temp<-list_software_properties(software)
+  temp$definition<-gsub('\n +',"",temp$definition)
+  print(kable(temp))
 }else{
     cat('*No properties available for this software*\n') 
   }
