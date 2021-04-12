@@ -1,0 +1,48 @@
+Questions pour la documentation de entity_Geoflow
+#script 
+##geoflow_entity :
+-rajouter (comme pour description) un controleur pour chaque items verifiant la viabilité des cles utilisés.
+##geoflow_handler_entity : 
+-comprend pas ligne 62 reference à setDescription("generic",type)
+##geoflow action 19115 'adding contact[l. 140-167] doublon de [l. 50-77]
+Identifier
+- difference entre doi;conceptdoi_to_save;doi_to_save
+Titre
+Pour le moment qu'une valeur possible renvoyant au 'Titre' du DC, possibilité de decliner en 2 clés 
+--a Main Title(long title) [DC 'Title'] (defaut)
+--a Short Title [DC 'Alternative']
+Description
+--explication de purpose, project, info
+--TableofContent ?
+Creator
+--replace by contact ?
+--complete list of item ?
+--quel referentiel?
+Date
+-- format tjr : yyyy-mm-dd ?
+-- creation et publication pucé dans les script mais possibilité d'ajouter ce qu'on veux ?
+Type
+"Type of description or product ?
+
+
+Language ISO 639-2;ISO 639-3
+
+Status (draft/publshed) pas de colonne assocée
+
+Relation
+Possibilité d'ajouter de nouveaux label ?
+Right
+Possibilité d'akouter de nouveaux label?
+
+Data
+sqlfilter->cqlFilter
+#geoflow_data.R
+L22:setSourceType --> add "csv"
+L51:setUploadType --> add "csv"
+
+-list of access accepted ? 
+- source;sourceZip;sourceZipOnly sont des alternatives ?
+- run : paramètre interne ou utilisable dans data?
+- geometry parameter absent ?
+- upload ?
+- features ?

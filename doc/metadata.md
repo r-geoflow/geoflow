@@ -8,8 +8,6 @@ The _metadata_ configuration can be constituted of three different inputs:
 
 In [geoflow](https://github.com/eblondel), Each type of metadata input can be structured through different input formats, called *handlers*. 
 
-
-
 ## **How to create a geoflow entity**
 
 ### from a spreadsheet (for basic users)
@@ -28,7 +26,6 @@ Handling such complexity of content within a same cell requires a way to disting
 For example, a user wants to fill in 2 types of dates (creation and publication) associated with an *entity*, the following will be used:
 
 ``creation:2020-01-01_`` 
-
 ``publication:2020-02-01``
 
 This syntax is later described in depth  for each of the columns required for describing a dataset, and illustrated with concrete examples.
@@ -42,163 +39,174 @@ Examples cover both:
 
 #### Identifier
 
-| **Column name**              | <u>**Identifier**</u>                                        |
+| **Column name**              | <u>Identifier</u>                                        |
 | ---------------------------- | ------------------------------------------------------------ |
-| **Definition**               | Provides the unique identifier for the dataset metadata, and eventual additional identifiers associated with the *entity* (e.g. DOI). Identifiers are expected to be used by information systems / software tools, etc hence it is recommended to use string concatenation (with no space). The user is free to define how the main identifier is compound to guarantee unicity for datasets, and to define it with semantics to make it self-explaining. |
+| **Definition**               | Provides the unique unambigous identifier for the dataset metadata, and eventual additional identifiers associated with the *entity* (e.g. DOI). Identifiers are expected to be used by information systems / software tools, etc hence it is recommended to use string concatenation (with no space). The user is free to define how the main identifier is compound to guarantee unicity for datasets, and to define it with semantics to make it self-explaining. A good practice could be to use a doi if existing|
 | **Need**                     | Mandatory                                                    |
-| **Default key (if omitted)** | ``id`` (unique identifier)                                   |
+| **Default key (if omitted)** | `id` (unique identifier)                                   |
+| **other keys available**     | `doi`(digital object identifier_geometa_iso19115) <br/> `packageId` (use for publication of eml package) |
 | **Examples**                 |                                                              |
-| Simple usage                 | A simple string representing a unique *entity* identifier (``id``). ``my-metadata-identifier`` , equivalent to ``id:my-metadata-identifier``. |
-| Advanced usage               | Main identifier + DOI: <br />``id:my-metadata-identifier_``<br />``doi:10.5281/zenodo.3138920`` |
+| Simple usage                 | A simple string representing a unique *entity* identifier (`id`). `my-metadata-identifier` , equivalent to `id:my-metadata-identifier`. |
+| Advanced usage               | Main identifier + DOI: <br/>`id:my-metadata-identifier_`<br />`doi:10.5281/zenodo.3138920` |
 
-#### **Title**
+#### Title
 
 | **Column name**              | <u>Title</u>                 |
 | ---------------------------- | ---------------------------- |
-| **Definition**               | Dataset title.               |
+| **Definition**               | A name given to the dataset. |
 | **Need**                     | Mandatory                    |
-| **Default key (if omitted)** | *Not applicable*             |
+| **Default key (if omitted)** | ``title`` (main title)             |
+| **other keys available**     | ``alternative`` (short title, subtitle or alternative title)              |
 | **Examples**                 |                              |
 | Simple usage                 | ``This is my dataset title`` |
-| Advanced usage               | *Not applicable*             |
+| Advanced usage               | ``title:This is my dataset title_``<br/>``alternatve:This is an alternative title``           |
 
-#### **Description**
+#### Description
 
 | **Column name**              | <u>Description</u>                                           |
 | ---------------------------- | ------------------------------------------------------------ |
 | **Definition**               | Dataset summary description.                                 |
 | **Need**                     | Mandatory                                                    |
 | **Default key (if omitted)** | ``abstract`` (basic abstract of the dataset)                 |
+| **other keys available**     | ``purpose`` <br />``credit`` <br />``info`` <br />``edition``  <br />``statut``  |
 | **Examples**                 |                                                              |
-| Simple usage                 | *This is my abstract* , equivalent to **abstract**:*This is my abstract*. |
-| Advanced usages              | Abstract extended with supplemental information:  <br />`abstract:This is my abstract_` <br />`info:some more information about this dataset` |
+| Simple usage                 | *This is my abstract* , equivalent to ``abstract:This is my abstract.`` |
+| Advanced usages              | Abstract extended with supplemental information and statut:  <br />`abstract:This is my abstract_` <br />`info:some more information about this dataset_`<br/>`statut:completed` |
 
-#### **Subject**
+#### Subject
 
 | **Column name**              | <u>Subject</u>                                               |
 | ---------------------------- | ------------------------------------------------------------ |
-| **Definition**               | Subjects(s) associated to the dataset. A subject can be summarized as thesaurus to which will be associated a set of keywords that describe the dataset. Multiple thesauri and keyword sets can be added to a dataset. Each thesaurus (key) should be set with a comma-separated list of keywords |
+| **Definition**               | Subjects(s) associated to the dataset. A subject can be summarized as a set of keworld that describe the dataset for a given type of kews worlds. In addition the keworld set can be associated to a thesorus. The thesorus name can be added with in bracket associated to a key. Hyperlink can be added with @. Each keyword can be enrish with hyperlink with @ Multiple keyword sets can be added to a dataset. Keyword should be added with a coma separted list. If default key is omited .  |
 | **Need**                     | Recommended                                                  |
-| **Default key (if omitted)** | *Not applicable* : <br />Note: To add one subject, the subject name should be the key to use. |
+| **Default key (if omitted)** | *Not applicable* : <br />Note: To add one subject, the key use will be the type of key word. The subjet name ca be added as bracket |
 | **Examples**                 |                                                              |
-| Simple usage                 | **INSPIRE**:*Atmospheric conditions*,*Environmental monitoring facilities*,*Geology*,*Meteorological geographical features* (a "INSPIRE" "thesaurus" with 4 keywords) |
-| Advanced usages              | Adding a hyperlinks to thesaurus and keywords (using @ symbol):<br /><br />**INSPIRE**@[http://www.eionet.europa.eu/gemet/inspire_themes](http://www.eionet.europa.eu/gemet/inspire_themes):*Atmospheric conditions*@[http://inspire.ec.europa.eu/theme/ac](http://inspire.ec.europa.eu/theme/ac),*Environmental monitoring facilities*@[http://inspire.ec.europa.eu/theme/ef](http://inspire.ec.europa.eu/theme/ef),*Geology*@[http://inspire.ec.europa.eu/theme/ge](http://inspire.ec.europa.eu/theme/ge),*Meteorological geographical features*@[http://inspire.ec.europa.eu/theme/mf](http://inspire.ec.europa.eu/theme/mf) |
-|                              | Adding 2 thesauri:<br /><br />**General**:*keyword1,keyword2,keyword3*_<br />**INSPIRE**@[http://www.eionet.europa.eu/gemet/inspire_themes](http://www.eionet.europa.eu/gemet/inspire_themes):*Atmospheric conditions*@[http://inspire.ec.europa.eu/theme/ac](http://inspire.ec.europa.eu/theme/ac),*Environmental monitoring facilities*@[http://inspire.ec.europa.eu/theme/ef](http://inspire.ec.europa.eu/theme/ef),*Geology*@[http://inspire.ec.europa.eu/theme/ge](http://inspire.ec.europa.eu/theme/ge),*Meteorological geographical features*@[http://inspire.ec.europa.eu/theme/mf](http://inspire.ec.europa.eu/theme/mf) |
-
-
+| Simple usage                 | theme[general]:@) |
+| Advanced usages              | |
+|                              |  |
 
 #### Creator
 
-| **Column name**              | <u>Creator</u> |
-| ---------------------------- | -------------- |
-| **Definition**               |                |
-| **Need**                     |                |
-| **Default key (if omitted)** |                |
-| **Examples**                 |                |
-| Simple usage                 |                |
-| Advanced usage               |                |
+| **Column name**              | <u>Creator</u>    |
+| ---------------------------- | ----------------- |
+| **Definition**               | Parties having a role in the managment of the dataset. Each party should be identify with one identifier in a contact table. For keys specific to a geoflow action please see the table(link to add)|
+| **Need**                     | Recommended       |
+| **Default key (if omitted)** | *Not applicable*  |
+| **other keys available**     | ``owner``<br />``publisher`` <br />``metadata``  <br />``pointOfContact`` (other contributors) | 
+| **Examples**                 |                   |
+| Simple usage                 |*role:email*  e.g. owner:xxx@mail.com                 |
+| Advanced usage               |on owner with multiples contributors:  <br />`owner:owner@mail.com_` <br />`pointOfcontact:contact1@mail.com,contact2@mail.com`                   | 
 
 #### Date
 
 | **Column name**              | <u>Date</u> |
 | ---------------------------- | ----------- |
-| **Definition**               |             |
-| **Need**                     |             |
-| **Default key (if omitted)** |             |
+| **Definition**               | Dates associated with events in the lifecycle of dataset . For keys specific to a geoflow action please see the table(link to add)|
+| **Need**                     |Recommended, if no indicate a creation date is automatically create at the date of the computation|
+| **Default key (if omitted)** |``creation``()     |
+| **other keys available**     |``publication`` ()<br/> ``edition``() |
 | **Examples**                 |             |
-| Simple usage                 |             |
-| Advanced usage               |             |
+| Simple usage                 |*YYYY-MM-DD*, equivalent to **creation**:*YYYY-MM-DD*. |
+| Advanced usage               |`creation:YYYY-MM-DD_` <br />`publication:YYYY-MM-DD`             |
 
 #### Type
 
 | **Column name**              | <u>Type</u> |
 | ---------------------------- | ----------- |
-| **Definition**               |             |
-| **Need**                     |             |
-| **Default key (if omitted)** |             |
+| **Definition**               |Type of production |
+| **Need**                     |Recommended, if no indicated, *dataset* choose by default |
+| **Default key (if omitted)** |``generic``  |
+| **other keys available**     |*Not applicable*|
 | **Examples**                 |             |
-| Simple usage                 |             |
-| Advanced usage               |             |
+| Simple usage                 |*dataset*, equivalent to ``generic:dataset``.|
+| Advanced usage               |*Not applicable*|
 
 #### Language
 
 | **Column name**              | <u>Language</u> |
 | ---------------------------- | --------------- |
-| **Definition**               |                 |
-| **Need**                     |                 |
-| **Default key (if omitted)** |                 |
+| **Definition**               | Language use in the dataset, indicate as abbreviation. Best practice is to use ISO3 |
+| **Need**                     |Recommended, If no indicated, *eng* is choose by default |
+| **Default key (if omitted)** |*Not applicable* |
+| **other keys available**     |*Not applicable* |
 | **Examples**                 |                 |
-| Simple usage                 |                 |
-| Advanced usage               |                 |
+| Simple usage                 | `eng`           |
+| Advanced usage               |*Not applicable* |
 
 #### SpatialCoverage
 
 | **Column name**              | <u>SpatialCoverage</u> |
 | ---------------------------- | ---------------------- |
-| **Definition**               |                        |
-| **Need**                     |                        |
-| **Default key (if omitted)** |                        |
+| **Definition**               |Spatial Coverage and SRID of the dataset |                      |
+| **Need**                     |Optional, automatically enriched if no indicate in case of temporal dataset |
+| **Default key (if omitted)** |*Not applicable*                         |
+| **other keys available**     |*Not applicable* 		|
 | **Examples**                 |                        |
-| Simple usage                 |                        |
-| Advanced usage               |                        |
+| Simple usage                 |must be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry ``SRID=4326;POLYGON((-71 -21,-71 28,14 28,14 -21,-71 -21)``)                        |
+| Advanced usage               |*Not applicable*                        |
 
 #### TemporalCoverage
 
 | **Column name**              | <u>TemporalCoverage</u> |
 | ---------------------------- | ----------------------- |
-| **Definition**               |                         |
-| **Need**                     |                         |
-| **Default key (if omitted)** |                         |
+| **Definition**               |Temporal extend of the data set, can be a instant or a period |
+| **Need**                     |Optional                 |
+| **Default key (if omitted)** |*Not applicable*         |
+| **other keys available**     |*Not applicable* 		 |
 | **Examples**                 |                         |
-| Simple usage                 |                         |
-| Advanced usage               |                         |
+| Simple usage                 |must be two dates or date and hours in ISO format separated by a forward slash **/**, **e.g.** ``2007-03-01T13:00:00Z/2008-05-11T15:30:00Z ``<br/>``2007-03-01``<br/>``2007/2010``|
+| Advanced usage               |*Not applicable*                          |
 
 #### Relation
 
 | **Column name**              | <u>Relation</u> |
 | ---------------------------- | --------------- |
-| **Definition**               |                 |
-| **Need**                     |                 |
-| **Default key (if omitted)** |                 |
+| **Definition**               | Refer  to some external links. Each key can be used multiple times to indicate multiple links |
+| **Need**                     |Optional                 |
+| **Default key (if omitted)** |*Not applicable*           |
+| **other keys available**     |``thumbnail``(link to image for graphic overview) <br /> ``parent``(link to parent metadata) <br /> ``http``(link to web site) <br /> ``wms``(link to OGC WMS  ) <br /> ``wfs``(automatically added in case of action is connect)  |
 | **Examples**                 |                 |
-| Simple usage                 |                 |
-| Advanced usage               |                 |
+| Simple usage                 | ``http:name[description]@linkage_``                |
+| Advanced usage               |``thumbnail:fileDescription@fileName_`` <br /> ``parent:parentMetadataIdentifier@linkage_`` <br /> ``http:name[description]@linkage_`` <br /> ``wms:layerName[description]@wmsBaseUrl_`` <br /> ``wfs:layerName[description]@wfsUrl_`` |
+
+
 
 #### Rights
 
 | **Column name**              | <u>Rights</u> |
 | ---------------------------- | ------------- |
-| **Definition**               |               |
-| **Need**                     |               |
-| **Default key (if omitted)** |               |
+| **Definition**               | Describe of the access and/or use constrinct. Restriction code are map ISO 19115, the 2 conscrinct are related to code list . Control to term , use limitation can be use for any term of use (license, prefered citatation, disclaimer). other conscrinct free text can be use for any other constrinct want to use |
+| **Need**                     |Optional               |
+| **Default key (if omitted)** |*Not applicable*|
+| **other keys available**     |``license``  <br /> ``use``  <br /> ``uselimitation``  <br /> ``useConstraint`` <br /> ``accessConstraint`` <br />  ``otherConstraint``|
 | **Examples**                 |               |
-| Simple usage                 |               |
-| Advanced usage               |               |
+| Simple usage                 |rule:key       |
+| Advanced usage               |`useLimitation:Free usage_` <br/> `accessConstraint:otherRestrictions_` <br/> `useConstraint:intellectualPropertyRights_` <br/> `otherConstraint:The supplier is unable to guarantee the accuracy, updating, integrity, completeness of the data`               |
+
+#### Format
+
+| **Column name**              | <u>Format</u> |
+| ---------------------------- | ------------- |
+| **Definition**               | Indicate information about the data format . A best practise is to use official mine type [https://www.iana.org/assignments/media-types/media-types.xhtml]|
+| **Need**                     |Optional               |
+| **Default key (if omitted)** |``resource``(format of original data set)|
+| **other keys available**     |``distribution`` (fdata format is with data is distributage)|
+| **Examples**                 |               |
+| Simple usage                 |the format declaration must be a mimetype``resource:text/csv``  |
+| Advanced usage               |a description part can be add to format ``distribution:image/tiff[GeoTIFF]``               |
 
 #### Provenance
 
 | **Column name**              | <u>Provenance</u> |
 | ---------------------------- | ----------------- |
-| **Definition**               |                   |
-| **Need**                     |                   |
-| **Default key (if omitted)** |                   |
+| **Definition**               |Add some provenance information and processes to format the dataset                  |
+| **Need**                     |Optional                   |
+| **Default key (if omitted)** |*Not applicable*                   |
+| **other keys available**     |``statement`` (name or general description to the provenace or process, mandatory if process and processor are declared)<br /> ``process`` (name and description on each process) <br /> ``processor``(mail of processor relate to the process in the same order of delaration, number of processor must be the same of the number of process. <br /> If the same processor is at the origin of several processes, declare it several times|
 | **Examples**                 |                   |
 | Simple usage                 |                   |
-| Advanced usage               |                   |
+| Advanced usage               |``statement:My data management workflow_``<br /> ``process:rationale1[description1],rationale2[description2],rationale3[description3]_``<br /> ``processor:processor1@mail.com,processor2@mail.com,processor3@mail.com``|
 
 #### Data
 
-| **Column name**              | <u>Data</u> |
-| ---------------------------- | ----------- |
-| **Definition**               |             |
-| **Need**                     |             |
-| **Default key (if omitted)** |             |
-| **Examples**                 |             |
-| Simple usage                 |             |
-| Advanced usage               |             |
-
-
-
-**using R geoflow data model (for advanced R users)**
-
-FOR LATER --> DEVELOPER ORIENTED
+*Please see metadata_data documentation* 
