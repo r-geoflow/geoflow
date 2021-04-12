@@ -103,7 +103,6 @@
 #'
 geoflow_data <- R6Class("geoflow_data",
   private = list(
-    supportedAccessValues = c("default", "googledrive"),
     supportedSourceTypes = c("dbtable", "dbview", "dbquery","shp", "csv", "gpkg", "other"),
     supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "gpkg", "other"),
     supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb")
@@ -364,10 +363,6 @@ geoflow_data <- R6Class("geoflow_data",
     
     #setAccess
     setAccess = function(access){
-      if(!(access %in% private$supportedAccessValues)){
-        errMsg <- sprintf("Access should be among values [%s]", paste0(private$supportedAccessValues, collapse=","))
-        stop(errMsg)
-      }
       self$access <- access
     },
     
