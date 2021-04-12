@@ -6,20 +6,20 @@ workflows - List of actions and softwares
 
 ## 1.1 List of actions supported by geoflow
 
-| id                                                                          | type                 | definition                                                                 | pid\_generator | packages                 |
-| :-------------------------------------------------------------------------- | :------------------- | :------------------------------------------------------------------------- | :------------- | :----------------------- |
-| [**geometa-create-iso-19115**](#geometa-create-iso-19115)<br>               | Metadata production  | Produce an ISO/OGC 19115/19139 metadata object                             | FALSE          | geometa                  |
-| [**geometa-create-iso-19110**](#geometa-create-iso-19110)<br>               | Metadata production  | Produce an ISO 19110/19139 metadata object                                 | FALSE          | geometa                  |
-| [**ows4R-publish-iso-19139**](#ows4R-publish-iso-19139)<br>                 | Metadata publication | Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol     | FALSE          | ows4R                    |
-| [**geonapi-publish-iso-19139**](#geonapi-publish-iso-19139)<br>             | Metadata publication | Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API        | FALSE          | geonapi                  |
-| [**geosapi-publish-ogc-services**](#geosapi-publish-ogc-services)<br>       | Data publication     | Publish vector data to GeoServer OGC web-services (WMS/WFS)                | FALSE          | geosapi                  |
-| [**zen4R-deposit-record**](#zen4R-deposit-record)<br>                       | Data publication     | Deposits/Publish data and/or metadata in the Zenodo infrastructure         | TRUE           | zen4R                    |
-| [**atom4R-dataverse-deposit-record**](#atom4R-dataverse-deposit-record)<br> | Data publication     | Deposits/Publish data and/or metetadata on a Dataverse using the Sword API | TRUE           | atom4R                   |
-| [**dataone-upload-datapackage**](#dataone-upload-datapackage)<br>           | Data publication     | Uploads a data package to a DataOne metacat node                           | TRUE           | mime,datapack,dataone    |
-| [**sf-write-generic**](#sf-write-generic)<br>                               | Data writing         | Import features data into several formats                                  | FALSE          | sf,DBI,RSQLite,RPostgres |
-| [**sf-write-dbi**](#sf-write-dbi)<br>                                       | Data writing         | Import features data into Postgres/Postgis                                 | FALSE          | sf,DBI,RSQLite,RPostgres |
-| [**sf-write-shp**](#sf-write-shp)<br>                                       | Data writing         | Import features data and zip files                                         | FALSE          | sf                       |
-| [**eml-create-eml**](#eml-create-eml)<br>                                   | Metadata production  | Produce an EML metadata object                                             | FALSE          | EML,emld                 |
+| id                                                                          | types                                                            | definition                                                                 | pid\_generator | packages                 |
+| :-------------------------------------------------------------------------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------- | :------------- | :----------------------- |
+| [**geometa-create-iso-19115**](#geometa-create-iso-19115)<br>               | Metadata production                                              | Produce an ISO/OGC 19115/19139 metadata object                             | FALSE          | geometa                  |
+| [**geometa-create-iso-19110**](#geometa-create-iso-19110)<br>               | Metadata production                                              | Produce an ISO 19110/19139 metadata object                                 | FALSE          | geometa                  |
+| [**ows4R-publish-iso-19139**](#ows4R-publish-iso-19139)<br>                 | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol     | FALSE          | ows4R                    |
+| [**geonapi-publish-iso-19139**](#geonapi-publish-iso-19139)<br>             | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API        | FALSE          | geonapi                  |
+| [**geosapi-publish-ogc-services**](#geosapi-publish-ogc-services)<br>       | Data upload,Data publication,Metadata publication                | Publish vector data to GeoServer OGC web-services (WMS/WFS)                | FALSE          | geosapi                  |
+| [**zen4R-deposit-record**](#zen4R-deposit-record)<br>                       | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metadata in the Zenodo infrastructure         | TRUE           | zen4R                    |
+| [**atom4R-dataverse-deposit-record**](#atom4R-dataverse-deposit-record)<br> | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metetadata on a Dataverse using the Sword API | TRUE           | atom4R                   |
+| [**dataone-upload-datapackage**](#dataone-upload-datapackage)<br>           | Data upload,Data publication,Metadata publication,DOI assignment | Uploads a data package to a DataOne metacat node                           | TRUE           | mime,datapack,dataone    |
+| [**sf-write-generic**](#sf-write-generic)<br>                               | Data writing,Data upload                                         | Import features data into several formats                                  | FALSE          | sf,DBI,RSQLite,RPostgres |
+| [**sf-write-dbi**](#sf-write-dbi)<br>                                       | Data writing,Data upload                                         | Import features data into Postgres/Postgis                                 | FALSE          | sf,DBI,RSQLite,RPostgres |
+| [**sf-write-shp**](#sf-write-shp)<br>                                       | Data writing                                                     | Import features data and zip files                                         | FALSE          | sf                       |
+| [**eml-create-eml**](#eml-create-eml)<br>                                   | Metadata production                                              | Produce an EML metadata object                                             | FALSE          | EML,emld                 |
 
 ### 1.1.1 List of geometa-create-iso-19115 options<a name= geometa-create-iso-19115 />
 
@@ -125,7 +125,7 @@ workflows - List of actions and softwares
 | software\_type                                        | definition                                                                | packages              |
 | :---------------------------------------------------- | :------------------------------------------------------------------------ | :-------------------- |
 | [**dbi**](#dbi)<br>                                   | Data Base Interface powered by ‘DBI’ package                              | DBI,RSQLite,RPostgres |
-| [**googledrive**](#googledrive)<br>                   | Google Drive access powered by ‘googledrive’ package                      | gsheet                |
+| [**googledrive**](#googledrive)<br>                   | Google Drive access powered by ‘googledrive’ package                      | googledrive           |
 | [**csw**](#csw)<br>                                   | OGC Catalogue Service for the Web (CSW) client powered by ‘ows4R’ package | ows4R                 |
 | [**wfs**](#wfs)<br>                                   | OGC Web Feature Service (WFS) client powered by ‘ows4R’ package           | ows4R                 |
 | [**geonetwork**](#geonetwork)<br>                     | GeoNetwork API Client, powered by ‘geonapi’ package                       | geonapi               |
@@ -147,16 +147,10 @@ workflows - List of actions and softwares
 
 ### 2.1.2 List of dbi properties
 
-| name         | definition                                                                         |
-| :----------- | :--------------------------------------------------------------------------------- |
-| onstart\_sql | An SQL script to be run on workflow start                                          |
-| onstart\_r   | R instructions to generate a SQL. It should be made of 2 properties ‘script’ (name |
-
-``` 
-                     of the R script) that should include a function standardized with parameter config (being the
-                     DBI software config) and will outpout a character representing the SQL. The name of the function 
-                     is to specify in 'fun' property |
-```
+| name         | definition                                                                                                                                                                                                                                                                                                      |
+| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| onstart\_sql | An SQL script to be run on workflow start                                                                                                                                                                                                                                                                       |
+| onstart\_r   | R instructions to generate a SQL. It should be made of 2 properties ‘script’ (nameof the R script) that should include a function standardized with parameter config (being theDBI software config) and will outpout a character representing the SQL. The name of the function is to specify in ‘fun’ property |
 
 ### 2.1.3 List of googledrive parameters<a name= googledrive />
 
@@ -230,22 +224,17 @@ workflows - List of actions and softwares
 
 ### 2.1.13 List of zenodo parameters<a name= zenodo />
 
-| name   | definition                                                                                                        |
-| :----- | :---------------------------------------------------------------------------------------------------------------- |
-| url    | Zenodo API URL. For sandbox tests, use ‘<https://sandbox.zenodo.org/api>’, otherwise provided by zen4R by default |
-| token  | Zenodo user authentication token.                                                                                 |
-| logger | Level for ‘zen4R’ logger messages (NULL, ‘INFO’ or ‘DEBUG’)                                                       |
+| name   | definition                                                                |
+| :----- | :------------------------------------------------------------------------ |
+| url    | Zenodo API URL. For sandbox tests, use ‘<https://sandbox.zenodo.org/api>’ |
+| token  | Zenodo user authentication token.                                         |
+| logger | Level for ‘zen4R’ logger messages (NULL, ‘INFO’ or ‘DEBUG’)               |
 
 ### 2.1.14 List of zenodo properties
 
-| name  | definition                                                                                           |
-| :---- | :--------------------------------------------------------------------------------------------------- |
-| clean | An option, to clean draft Zenodo deposits prior to any new deposit. To clean deposits, enable ‘run’, |
-
-``` 
-                 and optionally specify either a 'query' (ElasticSearch Zenodo query), a list of 'doi', or 'community' for which
-                 you want to restrain the cleaning operation. |
-```
+| name  | definition                                                                                                                                                                                                                                                       |
+| :---- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| clean | An option, to clean draft Zenodo deposits prior to any new deposit. To clean deposits, enable ‘run’, and optionally specify either a ‘query’ (ElasticSearch Zenodo query), a list of ‘doi’, or ‘community’ for whichyou want to restrain the cleaning operation. |
 
 ### 2.1.15 List of sword\_for\_dataverse parameters<a name= sword_for_dataverse />
 
