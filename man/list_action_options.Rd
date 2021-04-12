@@ -4,13 +4,15 @@
 \alias{list_action_options}
 \title{list_action_options}
 \usage{
-list_action_options(id)
+list_action_options(id, raw)
 }
 \arguments{
 \item{id}{An action identifier}
+
+\item{raw}{if raw list should be returned}
 }
 \value{
-an object of class \code{data.frame} listing the action options.
+an object of class \code{data.frame} (or \code{list} if raw is TRUE) listing the action options.
 }
 \description{
 \code{list_action_options} lists the options of a given action supported by geoflow.
