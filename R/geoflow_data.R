@@ -145,9 +145,9 @@ geoflow_data <- R6Class("geoflow_data",
         #access to use for reaching sources
         if(!is.null(data_props$access)){
           access <- data_props$access$values[[1]]
-          if(!access %in% list_access_endpoints()$id){
-            stop(sprintf("Value '%s' does not match any valid data access endpoint id. 
-                         See valid values with geoflow::list_access_endpoints()", access))
+          if(!access %in% list_data_accessors()$id){
+            stop(sprintf("Value '%s' does not match any valid data accessor id. 
+                         See valid values with geoflow::list_data_accessors()", access))
           }
           self$setAccess(access) 
         }
