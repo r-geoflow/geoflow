@@ -177,7 +177,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #TODO to review in line with 'writeWorkflowJobDataResource'
     writeDataResource = function(obj=NULL, resourcename, type="shp"){
       if(is.null(obj)) obj=self$data$features
-      resourcename_parts <- unlist(strsplit(resourcename, "\\."))
+      resourcename_parts <- unlist(strsplit(resourcename, "\\.(?=[^\\.]+$)", perl=TRUE))
       if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
       switch(type,
         "shp"={
@@ -357,7 +357,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(!startsWith(self$data$sourceType, "db")) for(i in 1:length(self$data$source)){
       
         datasource <- self$data$source[[i]]
-        datasource_parts <- unlist(strsplit(datasource, "\\."))
+        datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
         if(length(datasource_parts)<2) stop("Source data file should include a file extension")
         datasource_name <- datasource_parts[1]
         datasource_ext <- datasource_parts[2]
@@ -428,7 +428,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         data.files <- list.files(path = getwd(), pattern = datasource_name)
         if(length(data.files)>0){
           for(data.file in data.files){
-            fileparts <- unlist(strsplit(data.file,"\\."))
+            fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
             fileext <- fileparts[length(fileparts)]
             file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
           }
@@ -441,7 +441,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           data.files <- list.files(path = getwd(), pattern = datasource_name)
           data.files <- data.files[!endsWith(data.files, "zip")]
           if(length(data.files)>0) for(data.file in data.files){
-            fileparts <- unlist(strsplit(data.file,"\\."))
+            fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
             fileext <- fileparts[length(fileparts)]
             file.copy(from = file.path(dirname(data.file), data.file), to = file.path(getwd(), paste0(datasource_name, ".", fileext)))
           }
@@ -490,7 +490,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
       
       datasource <- self$data$source[[1]]
-      datasource_name <- unlist(strsplit(datasource, "\\."))[1]
+      datasource_name <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))[1]
       datasource_file <- attr(datasource, "uri")
       attributes(datasource) <- NULL
       if(is.null(datasource_file)) datasource_file <- datasource
