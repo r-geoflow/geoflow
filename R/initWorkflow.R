@@ -155,7 +155,7 @@ initWorkflow <- function(file){
   
   config_registers <- config$registers #store eventual config$registers
   
-  #loading dictionnary
+  #loading dictionary
   #metadata elements
   if(!is.null(config$metadata)){
     if(is.null(config$metadata$content)) config$metadata$content <- list()
@@ -163,19 +163,49 @@ initWorkflow <- function(file){
     #metadata dictionary
     cfg_md_dictionary <- config$metadata$dictionary
     if(!is.null(cfg_md_dictionary)){
-      config$logger.info("Loading data dictionary...")
-      md_dict_handler <- loadHandler(config, config$metadata$dictionary, type = "dictionary")
-      config$logger.info("Execute handler to load dictionary...")
-      dictionary <- md_dict_handler(config, source = cfg_md_dictionary$source)
+      #manage dictionary handlers as array/object as backward compatibility for object
+      isarray_dictionary <- length(names(cfg_md_dictionary))==0
+      if(!isarray_dictionary){
+        config$metadata$dictionary <- list(config$metadata$dictionary)
+        cfg_md_dictionary <- config$metadata$dictionary
+      }
       
+      #collating data structures (feature types) from handlers
+      config$logger.info("Loading dictionary data structures...")
+      config$src_dictionary <- list()
+      dicts <- lapply(cfg_md_dictionary, function(x){
+        config$logger.info(sprintf("Loading data structure definitions from '%s' [with '%s' handler]...", 
+                                   x$source, x$handler))
+        
+        md_dict_handler <- loadHandler(config, x, type = "dictionary")
+        config$logger.info("Execute handler to load dictionary data structures...")
+        dict <- md_dict_handler(config, source = x$source)
+        
+        if(!is(dict, "geoflow_dictionary")){
+          errMsg <- "The output of the dictionary handler should return an object of class 'geoflow_dictionary'"
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
+        
+        #keep source dictionary part of the config
+        config$src_dictionary[[length(config$src_dictionary)+1]] <<- attr(dict, "source")
+        return(dict)
+      })
+      #build single top-level dictionary
+      dictionary <- geoflow_dictionary$new()
+      for(dict in dicts){
+        for(ft in dict$featuretypes){
+          if(!ft$id %in% sapply(dictionary$featuretypes,function(x){x$id})) dictionary$addFeatureType(ft)
+        }
+        for(reg in dict$registers){
+          if(!reg$id %in% sapply(dictionary$registers,function(x){x$id})) dictionary$addRegister(reg)
+        }
+      }
       if(!is(dictionary, "geoflow_dictionary")){
         errMsg <- "The output of the dictionary handler should return an object of class 'geoflow_dictionary'"
         config$logger.error(errMsg)
         stop(errMsg)
       }
-      
-      #keep source dictionary part of the config
-      config$src_dictionary <- dictionary$source
       
       config$logger.info("Successfuly fetched dictionary !")
       config$metadata$content$dictionary <- dictionary
