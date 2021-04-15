@@ -136,20 +136,19 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   #TODO any sources?
   #rights (license/right)
   if(length(entity$rights)>0){
-    #use constraints
-    useConstraints <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "useconstraint"})]
-    if(length(useConstraints)>0){
-      useConstraint <- useConstraints[[1]]
+    #licenses
+    licenses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "license"})]
+    if(length(licenses)>0){
       #check if CCO is the license then we add it as DC License
       hasCCOLicense <- FALSE
-      constraint <- useConstraint$value
-      if(constraint == "CCO"){
+      license <- licenses[[1]]$value
+      if(license == "CCO"){
         hasCCOLicense <- TRUE
-        dcentry$addDCLicense(constraint)
+        dcentry$addDCLicense(license)
       }
       #if no CCO license we add DC rights
       if(!hasCCOLicense) {
-        dcentry$addDCRights(constraint)
+        dcentry$addDCRights(license)
       }
     }
   }
