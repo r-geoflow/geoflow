@@ -173,7 +173,18 @@ zen4R_deposit_record <- function(entity, config, options){
       }
     }
     
-    #TODO myrec$setLicense
+    #Licenses
+    licences <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "licence"})]
+    if(length(licences)>0){
+      accepted_licenses <- ZENODO$getLicenses()$id
+      if(licences[1]%in%accepted_licenses){
+      zenodo_metadata$setLicense(licences[1])
+      }else{
+      config$logger.warn(sprintf("Zenodo :licence specified (%s) in entity doesn't match Zenodo accepted list of licences. licence %s ignored!", 
+                                 licences[1],licences[1]))
+      }  
+    }
+    
     #TODO myrec$setAccessRight
     
     #communities
