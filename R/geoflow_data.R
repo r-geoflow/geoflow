@@ -105,7 +105,10 @@ geoflow_data <- R6Class("geoflow_data",
   private = list(
     supportedSourceTypes = c("dbtable", "dbview", "dbquery","shp", "csv", "gpkg", "other"),
     supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "gpkg", "other"),
-    supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb")
+    supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"),
+    supportedXPossibleNames = c("x","lon","long","longitude"),
+    supportedYPossibleNames = c("y","lat","lati","latitude")
+
   ),
   public = list(
     access = "default",
@@ -383,6 +386,15 @@ geoflow_data <- R6Class("geoflow_data",
     #getAllowedGeomPossibleNames
     getAllowedGeomPossibleNames = function(){
       return(private$supportedGeomPossibleNames)
+    },
+    
+    #getAllowedXPossibleNames
+    getAllowedXPossibleNames = function(){
+      return(private$supportedXPossibleNames)
+    },
+    #getAllowedYPossibleNames
+    getAllowedYPossibleNames = function(){
+      return(private$supportedYPossibleNames)
     },
     
     #setSource
