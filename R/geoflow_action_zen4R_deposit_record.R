@@ -175,8 +175,8 @@ zen4R_deposit_record <- function(entity, config, options){
     
     #Licenses
     licenses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "license"})]
-    license <- licenses[[1]]$value
-    if(length(license)>0){
+    if(length(licenses)>0){
+      license <- licenses[[1]]$value
       accepted_licenses <- ZENODO$getLicenses()$id
       if(license%in%accepted_licenses){
       zenodo_metadata$setLicense(license)
