@@ -70,6 +70,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
       uploaded <- FALSE
       config$logger.info("Upload from local file(s)")
       filepath <- file.path(getwd(), "data", datasource)
+      config$logger.info(sprintf("File to upload to Geoserver: %s", filepath))
       if(file.exists(filepath)){
         config$logger.info(sprintf("Upload file '%s' [%s] to GeoServer...", filepath, entity$data$uploadType))
         uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",

@@ -193,7 +193,7 @@ geoflow_data <- R6Class("geoflow_data",
         }
         
         #uploadSource
-        if(any(sapply(data_props, function(x){x$key=="uploadSource"}))){
+        if(!any(sapply(data_props, function(x){x$key=="uploadSource"}))){
           self$setUploadSource(data_props$uploadSource$values)
         }
         

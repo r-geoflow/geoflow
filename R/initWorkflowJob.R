@@ -41,14 +41,18 @@ initWorkflowJob <- function(config){
   file.rename(from = config_file, to = "job.json")
   
   #create sub directories as listed in the configuration file
-  directories <- c("data", "metadata")
+  job_targets <- sapply(config$actions, function(x){if(!is.na(x$target)) if(x$target=="job") return(x$target_dir)})
+  job_targets <- job_targets[!sapply(job_targets,is.null)]
+  directories <- unique(job_targets)
+  directories <- directories[!is.na(directories)]
   for(directory in directories){
     if (!file.exists(directory)){
-      config$logger.info(sprintf("Creating '%s' directory: %s",directory, 
-                                 file.path(getwd(), directory)))
-      dir.create(file.path(getwd(), directory))
+      dir_name <- file.path(jobDirPath, directory)
+      config$logger.info(sprintf("Creating '%s' job directory: %s",directory, dir_name))
+      dir.create(dir_name)
     }
   }
+  
   if(config$mode == "raw"){
     config$logger.info("Copying raw action scripts to job directory")
     for(action in config$actions){

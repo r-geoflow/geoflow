@@ -342,17 +342,53 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$data <- data
     },
     
+    #getEntityJobDirname
+    getEntityJobDirname = function(){
+      id <- self$identifiers[["id"]]
+      id <- gsub("/","_", id)
+      return(id)
+    },
+    
+    #getEntityJobDirPath
+    getEntityJobDirPath = function(config, jobdir = NULL){
+      if(is.null(jobdir)) jobdir <- config$job
+      path <- file.path(jobdir, self$getEntityJobDirname())
+      return(path)
+    },
+    
+    #prepareEntityJobDir
+    prepareEntityJobDir = function(config, jobdir = NULL){
+      if(is.null(jobdir)) jobdir <- config$job
+      #create entity jobdir
+      config$logger.info(sprintf("Create entity job dir at '%s'", self$getEntityJobDirPath(config, jobdir)))
+      dir.create(self$getEntityJobDirPath(config, jobdir))
+      
+      #create sub directories as listed in the configuration file
+      entity_targets <- sapply(config$actions, function(x){if(!is.na(x$target)) if(x$target=="entity") return(x$target_dir)})
+      entity_targets <- entity_targets[!sapply(entity_targets,is.null)]
+      directories <- unique(c("data","metadata", unlist(entity_targets)))
+      directories <- directories[!is.na(directories)]
+      for(directory in directories){
+        if (!file.exists(directory)){
+          dir_name <- file.path(self$getEntityJobDirPath(config, jobdir), directory)
+          config$logger.info(sprintf("Creating '%s' directory: %s",directory, dir_name))
+          dir.create(dir_name)
+        }
+      }
+    },
+    
     #copyDataToJobDir
     copyDataToJobDir = function(config, jobdir = NULL){
       
       if(is.null(jobdir)) jobdir <- config$job
-      setwd(file.path(jobdir,"data"))
+      wd <- getwd()
+      setwd("./data")
       
       #get accessors
       accessors <- list_data_accessors(raw = TRUE)
       accessor <- accessors[sapply(accessors, function(x){x$id == self$data$access})][[1]]
       
-      config$logger.info(sprintf("Copying data to job directory '%s'", jobdir))
+      config$logger.info(sprintf("Copying data to entity job data directory '%s'", getwd()))
       
       if(!startsWith(self$data$sourceType, "db")) for(i in 1:length(self$data$source)){
       
@@ -376,11 +412,12 @@ geoflow_entity <- R6Class("geoflow_entity",
           return(FALSE)
         }
         
-        config$logger.info(sprintf("Copying data source %s '%s' (%s) to job directory '%s'",
-                                   i, datasource, datasource_uri, jobdir))
+        config$logger.info(sprintf("Copying data source %s '%s' (%s) to entity job data directory '%s'",
+                                   i, datasource, datasource_uri, getwd()))
         
-        basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
-      
+        #basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
+        basefilename <- datasource_name
+        
         #here either we only pickup zipped files and re-distribute them in job data directory
         #or we write it from entity$data$features if the latter is not NULL and if writer available (for now only shp)
         #The latter allows to push features filtered by cqlfilter (matching an eventual geoserver layer) to Zenodo
@@ -397,7 +434,6 @@ geoflow_entity <- R6Class("geoflow_entity",
             path = file.path(getwd(), paste(basefilename, datasource_ext, sep="."))
           )
         }else{
-          #if(is.null(self$data$features)){
           config$logger.info("Copying data to Job data directory from local file(s)")
           data.files <- list.files(path = dirname(datasource_uri), pattern = datasource_name)
           if(length(data.files)>0){
@@ -425,31 +461,31 @@ geoflow_entity <- R6Class("geoflow_entity",
         }
         
         #rename unzipped files (generic behavior)
-        data.files <- list.files(path = getwd(), pattern = datasource_name)
-        data.files <- data.files[!endsWith(data.files, ".zip")]
-        if(length(data.files)>0){
-          for(data.file in data.files){
-            if(data.file %in% list.dirs(getwd(), recursive = F, full.names = F)) next
-            fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
-            fileext <- fileparts[length(fileparts)]
-            file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
-          }
-          unlink(paste0(basefilename, ".zip"))
-          data.files <- list.files(pattern = basefilename)
-          if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
-        }
+        #data.files <- list.files(path = getwd(), pattern = datasource_name)
+        #data.files <- data.files[!endsWith(data.files, ".zip")]
+        #if(length(data.files)>0){
+        #  for(data.file in data.files){
+        #    if(data.file %in% list.dirs(getwd(), recursive = F, full.names = F)) next
+        #    fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
+        #    fileext <- fileparts[length(fileparts)]
+        #    file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
+        #  }
+        #  unlink(paste0(basefilename, ".zip"))
+        #  data.files <- list.files(pattern = basefilename)
+        #  if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
+        #}
         #special case of shapefile (we keep the source naming)
-        if(self$data$sourceType == "shp"){
-          data.files <- list.files(path = getwd(), pattern = datasource_name)
-          data.files <- data.files[!endsWith(data.files, "zip")]
-          if(length(data.files)>0) for(data.file in data.files){
-            fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
-            fileext <- fileparts[length(fileparts)]
-            file.copy(from = file.path(dirname(data.file), data.file), to = file.path(getwd(), paste0(datasource_name, ".", fileext)))
-          }
-          data.files <- list.files(path = getwd(), pattern = paste0("^",datasource_name))
-          if(length(data.files)>0) zip::zipr(zipfile = paste0(datasource_name,".zip"), files = data.files)
-        }
+        #if(self$data$sourceType == "shp"){
+        #  data.files <- list.files(path = getwd(), pattern = datasource_name)
+        #  data.files <- data.files[!endsWith(data.files, "zip")]
+        #  if(length(data.files)>0) for(data.file in data.files){
+        #    fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
+        #    fileext <- fileparts[length(fileparts)]
+        #    file.copy(from = file.path(dirname(data.file), data.file), to = file.path(getwd(), paste0(datasource_name, ".", fileext)))
+        #  }
+        #  data.files <- list.files(path = getwd(), pattern = paste0("^",datasource_name))
+        #  if(length(data.files)>0) zip::zipr(zipfile = paste0(datasource_name,".zip"), files = data.files)
+        #}
       }
       
       #special case of other types to zip all into a single file
@@ -470,7 +506,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         config$logger.info("sourceZip = FALSE: source files will be uploaded")
       }
       
-      setwd(jobdir)
+      setwd("..")
       
     },
     
@@ -478,7 +514,8 @@ geoflow_entity <- R6Class("geoflow_entity",
     enrichWithFeatures = function(config, jobdir = NULL){
       
       if(is.null(jobdir)) jobdir <- config$job
-      setwd(file.path(jobdir,"data"))
+      wd <- getwd()
+      setwd("./data")
       
       skipDynamicBbox <- if(!is.null(config$options$skipDynamicBbox)) config$options$skipDynamicBbox else FALSE
       
@@ -511,7 +548,8 @@ geoflow_entity <- R6Class("geoflow_entity",
                                  datasource, datasource_file, self$identifiers$id))
       
       #basefilename for the main source
-      basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
+      #basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
+      basefilename <- datasource_name
       
       #encoding mappings
       st_encoding <- switch(options("encoding")[[1]],
@@ -533,6 +571,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                sf.data <- sf::st_read(trgShp, options = sprintf("ENCODING=%s",st_encoding))
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
+                 #TODO cqlfilter to dismiss in favour of a sourceFilter property
                  if(!is.null(self$data$cqlfilter)){
                    sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
                  }
@@ -589,6 +628,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                  }
                  
                  #we try to apply the cql filter specified as data property
+                 #TODO cqlfilter to dismiss in favour of a sourceFilter property
                  if(!is.null(self$data$cqlfilter)){
                    sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
                  }
@@ -638,6 +678,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                if(!is.null(sf.data)){
                  
                  #we try to apply the cql filter specified as data property
+                 #TODO cqlfilter to dismiss in favour of a sourceFilter property
                  if(!is.null(self$data$cqlfilter)){
                    sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
                  }
@@ -673,6 +714,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                sf.data <- sf::st_read(DBI, datasource_name)
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
+                 #TODO cqlfilter to dismiss in favour of a sourceFilter property
                  if(!is.null(self$data$cqlfilter)){
                    sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
                  }
@@ -713,6 +755,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                sf.data <- sf::st_read(DBI, datasource_name)
                if(!is.null(sf.data)){
                  #we try to apply the cql filter specified as data property
+                 #TODO cqlfilter to dismiss in favour of a sourceFilter property
                  if(!is.null(self$data$cqlfilter)){
                    sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
                  }
@@ -794,6 +837,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                     return(FALSE)
                   }
                   #we try to apply the cql filter specified as data property
+                  #TODO cqlfilter to dismiss in favour of a sourceFilter property
                   if(!is.null(self$data$cqlfilter)){
                     sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
                   }
@@ -847,7 +891,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             }
       )
       
-      setwd(jobdir)
+      setwd("..")
       
     },
     
@@ -1048,7 +1092,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #getJobResource
     getJobResource = function(config, resourceType, filename){
-      return(file.path(config$job, resourceType, paste(self$identifiers[["id"]], self$data$sourceType, filename, sep="_")))
+      return(file.path(config$job, self$getEntityJobDirname(), resourceType, file))
     },
     
     #getJobDataResource

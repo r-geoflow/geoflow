@@ -546,6 +546,6 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   #we save the metadata
   #saveRDS(md, file.path(getwd(), "metadata", paste0(entity$identifiers[["id"]], ".rds")))
-  md$save(file.path(getwd(), "metadata", paste0(entity$identifiers[["id"]], "_ISO-19115.xml")), inspire = inspire)
+  md$save(file.path(getwd(), "metadata", paste0(entity$getEntityJobDirname(), "_ISO-19115.xml")), inspire = inspire)
   rm(md)
 }

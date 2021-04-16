@@ -66,17 +66,23 @@ debugWorkflow <- function(file, entityIndex = 1,
     runSoftwareActions(config, "output", "onstart")
   }
   
+  #create entity jobdir
+  entity$prepareEntityJobDir(config, jobdir)
+  #let's work in entity jobdir
+  setwd(entity$getEntityJobDirPath(config, jobdir))
+  config$logger.info(sprintf("Entity working directory: %s", getwd()))
+  
   #copy data?
   if(skipFileDownload){
     config$logger.warn("'skipFileDownload' is enabled in the config, copyData set to FALSE!")
     copyData <- !skipFileDownload
   }
-  if(copyData && !is.null(entity$data)) entity$copyDataToJobDir(config)
+  if(copyData && !is.null(entity$data)) entity$copyDataToJobDir(config, jobdir)
 
   #enrich metadata with dynamic properties
   if(!is.null(entity$data)){
     #data features
-    if(is.null(entity$data$features) & !skipFileDownload) entity$enrichWithFeatures(config)
+    if(is.null(entity$data$features) & !skipFileDownload) entity$enrichWithFeatures(config, jobdir)
     #data relations (eg. geosapi & OGC data protocol online resources)
     entity$enrichWithRelations(config)
   }

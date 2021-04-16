@@ -468,6 +468,6 @@ eml_create_eml <- function(entity, config, options){
   }
   
   #eml writing
-  EML::write_eml(eml_md, file.path(getwd(), "metadata", paste0(entity$identifiers[["id"]], "_EML.xml")))
+  EML::write_eml(eml_md, file.path(getwd(), "metadata", paste0(entity$getEntityJobDirname(), "_EML.xml")))
   
 }

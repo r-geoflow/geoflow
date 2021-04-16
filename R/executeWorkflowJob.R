@@ -109,6 +109,12 @@ executeWorkflowJob <- function(config, jobdir = NULL){
         
         for(entity in entities){
           
+          #create entity jobdir
+          entity$prepareEntityJobDir(config, jobdir)
+          #let's work in entity jobdir
+          setwd(entity$getEntityJobDirPath(config, jobdir))
+          config$logger.info(sprintf("Entity working directory: %s", getwd()))
+          
           #enrich metadata with dynamic properties
           if(!is.null(entity$data)){
             #data features
@@ -117,8 +123,8 @@ executeWorkflowJob <- function(config, jobdir = NULL){
               entity$copyDataToJobDir(config, jobdir)
               #we enrich entity with features
               #control is added in case of entity already enriched with features (when loaded from custom R entity handlers)
-              if(is.null(entity$data$features)) entity$enrichWithFeatures(config)
-              setwd(jobdir) #make sure we are in jobdir
+              if(is.null(entity$data$features)) entity$enrichWithFeatures(config, jobdir)
+              setwd(entity$getEntityJobDirPath(config, jobdir)) #make sure we are in entity jobdir
             }
             #data relations (eg. geosapi & OGC data protocol online resources)
             entity$enrichWithRelations(config)
@@ -174,6 +180,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           }
           
           entity$data$features <- NULL
+          setwd(jobdir)
         }
         
         #special business logics in case of PID generators (eg. DOIs)
@@ -189,12 +196,12 @@ executeWorkflowJob <- function(config, jobdir = NULL){
         #save entities & contacts used
         if(!is.null(config$src_entities)){
           for(i in 1:length(config$src_entities)){
-            readr::write_csv(config$src_entities[[i]], file.path(getwd(), "metadata", sprintf("config_copyof_entities_%s.csv", i)))
+            readr::write_csv(config$src_entities[[i]], file.path(getwd(), sprintf("config_copyof_entities_%s.csv", i)))
           }
         }
         if(!is.null(config$src_contacts)){
           for(i in 1:length(config$src_contacts)){
-            readr::write_csv(config$src_contacts[[i]], file.path(getwd(), "metadata", sprintf("config_copyof_contacts_%s.csv", i)))
+            readr::write_csv(config$src_contacts[[i]], file.path(getwd(), sprintf("config_copyof_contacts_%s.csv", i)))
           }
         }
       }

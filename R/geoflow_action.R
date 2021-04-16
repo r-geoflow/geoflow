@@ -16,6 +16,8 @@
 #'   action <- geoflow_action$new(
 #'    id = "some-id",
 #'    types = list("some purpose1", "some purpose2"),
+#'    target = "entity",
+#'    target_dir = "data",
 #'    def = "some definition",
 #'    packages = list(),
 #'    pid_generator = NULL,
@@ -28,7 +30,7 @@
 #' 
 #' @section Methods:
 #' \describe{
-#'  \item{\code{new(id, types, def, fun, script, options)}}{
+#'  \item{\code{new(id, types, target, target_dir, def, fun, script, options)}}{
 #'    This method is used to instantiate a geoflow_action object
 #'  }
 #'  \item{\code{checkPackages()}}{
@@ -47,19 +49,25 @@ geoflow_action <- R6Class("geoflow_action",
     id = NA,
     types = list(),
     def = NA,
+    target = NA,
+    target_dir = NA,
     packages = list(),
     pid_generator = NULL,
     pid_types = list(),
     fun = NA,
     script = NA,
     options = list(),
-    initialize = function(id, types = list(), def = "",  
+    initialize = function(id, types = list(), def = "", 
+                          target = NA, target_dir = NA,
                           packages = list(), 
                           pid_generator = NULL, pid_types = list(),
                           fun = NULL, script = NULL, options = list()){
       self$id <- id
       self$types <- types
       self$def <- def
+      if(!is.na(target)) if(!target %in% c("entity","job")) stop("Action target should be either 'entity' or 'job'")
+      self$target <- target
+      self$target_dir <- target_dir
       self$packages <- packages
       self$pid_generator <- pid_generator
       self$pid_types <- pid_types
@@ -107,7 +115,7 @@ geoflow_action <- R6Class("geoflow_action",
         }
         return(out_entity)
       }))
-      readr::write_csv(out_pids, file.path(getwd(),"metadata", paste0(self$pid_generator, "_pids.csv")))
+      readr::write_csv(out_pids, file.path(getwd(),self$target_dir, paste0(self$pid_generator, "_pids.csv")))
       
       config$logger.info(sprintf("Exporting source entities table enriched with '%s' DOIs", self$pid_generator))
       
@@ -125,7 +133,7 @@ geoflow_action <- R6Class("geoflow_action",
           }
           return(identifier)
         })
-        readr::write_csv(src_entities, file.path(getwd(),"metadata",paste0(self$pid_generator, "_entities_",i,"_with_pids_for_publication.csv")))
+        readr::write_csv(src_entities, file.path(getwd(),self$target_dir,paste0(self$pid_generator, "_entities_",i,"_with_pids_for_publication.csv")))
       }
         
       config$logger.info(sprintf("Exporting workflow configuration for '%s' DOI publication", self$pid_generator))
@@ -151,7 +159,7 @@ geoflow_action <- R6Class("geoflow_action",
       
       #export modified config
       jsonlite::write_json(
-        src_config, file.path(getwd(),"metadata",paste0(self$pid_generator, "_geoflow_config_for_publication.json")),
+        src_config, file.path(getwd(),self$target_dir,paste0(self$pid_generator, "_geoflow_config_for_publication.json")),
         auto_unbox = TRUE, pretty = TRUE
       )
     }
@@ -178,6 +186,8 @@ register_actions <- function(){
       id = "geometa-create-iso-19115",
       types = list("Metadata production"),
       def = "Produce an ISO/OGC 19115/19139 metadata object",
+      target = "entity",
+      target_dir = "metadata",
       packages = list("geometa"),
       fun = geometa_create_iso_19115,
       options = list(
@@ -194,6 +204,8 @@ register_actions <- function(){
       id = "geometa-create-iso-19110",
       types = list("Metadata production"),
       def = "Produce an ISO 19110/19139 metadata object",
+      target = "entity",
+      target_dir = "metadata",
       packages = list("geometa"),
       fun = geometa_create_iso_19110,
       options = list(
@@ -210,6 +222,8 @@ register_actions <- function(){
       id="ows4R-publish-iso-19139",
       types = list("Metadata publication"),
       def = "Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol",
+      target = NA,
+      target_dir = NA,
       packages = list("ows4R"),
       fun = ows4R_publish_iso_19139,
       options = list(
@@ -220,6 +234,8 @@ register_actions <- function(){
       id = "geonapi-publish-iso-19139",
       types = list("Metadata publication"),
       def = "Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API",
+      target = NA,
+      target_dir = NA,
       packages = list("geonapi"),
       fun = geonapi_publish_iso_19139,
       options = list(
@@ -233,6 +249,8 @@ register_actions <- function(){
       id = "geosapi-publish-ogc-services",
       types = list("Data upload", "Data publication", "Metadata publication"),
       def = "Publish vector data to GeoServer OGC web-services (WMS/WFS)",
+      target = NA,
+      target_dir = NA,
       packages = list("geosapi"),
       fun = geosapi_publish_ogc_services
     ),
@@ -240,6 +258,8 @@ register_actions <- function(){
       id = "zen4R-deposit-record",
       types = list("Data upload", "Data publication", "Metadata publication", "DOI assignment"),
       def = "Deposits/Publish data and/or metadata in the Zenodo infrastructure",
+      target = "job",
+      target_dir = "zenodo",
       pid_generator = "zenodo",
       pid_types = list(
         doi = "DOI_for_version",
@@ -260,6 +280,8 @@ register_actions <- function(){
       id = "atom4R-dataverse-deposit-record",
       types = list("Data upload", "Data publication", "Metadata publication", "DOI assignment"),
       def = "Deposits/Publish data and/or metetadata on a Dataverse using the Sword API",
+      target = "job",
+      target_dir = "dataverse",
       pid_generator = "dataverse",
       pid_types = list(
         doi = "DOI_for_version"
@@ -278,6 +300,8 @@ register_actions <- function(){
       id = "dataone-upload-datapackage",
       types =  list("Data upload", "Data publication", "Metadata publication", "DOI assignment"),
       def = "Uploads a data package to a DataOne metacat node",
+      target = "job",
+      target_dir = "dataone",
       pid_generator = "dataone",
       pid_types = list(
         packageId = "PackageId"
@@ -290,6 +314,8 @@ register_actions <- function(){
       id = "sf-write-generic",
       types = list("Data writing", "Data upload"),
       def = "Import features data into several formats",
+      target = "entity",
+      target_dir = "data",
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
       fun = sf_write_generic,
       options = list(
@@ -304,6 +330,8 @@ register_actions <- function(){
       id = "sf-write-dbi",
       types = list("Data writing", "Data upload"),
       def = "Import features data into Postgres/Postgis",
+      target = NA,
+      target_dir = NA,
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
       fun = sf_write_dbi,
       options = list(
@@ -317,6 +345,8 @@ register_actions <- function(){
       id = "sf-write-shp",
       types = list("Data writing"),
       def = "Import features data and zip files",
+      target = "entity",
+      target_dir = "data",
       packages = list("sf"),
       fun = sf_write_shp
     ),
@@ -324,6 +354,8 @@ register_actions <- function(){
       id = "eml-create-eml",
       types = list("Metadata production"),
       def = "Produce an EML metadata object",
+      target = "entity",
+      target_dir = "metadata",
       packages = list("EML", "emld"),
       fun = eml_create_eml,
       options = list(
@@ -360,6 +392,8 @@ list_actions <- function(raw = FALSE){
         id = action$id,
         types = paste(action$types, collapse=","),
         definition = action$def,
+        target = action$target,
+        target_dir = action$target_dir,
         pid_generator = action$isPIDGenerator(),
         packages = paste(action$packages, collapse=","),
         stringsAsFactors = FALSE
