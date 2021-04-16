@@ -198,9 +198,7 @@ geoflow_data <- R6Class("geoflow_data",
         
         #uploadType
         names(data_props) <- sapply(data_props, function(x){x$key})
-        if(!any(sapply(data_props, function(x){x$key=="uploadType"}))){
-          self$setUploadType(self$sourceType)
-        }else{
+        if(any(sapply(data_props, function(x){x$key=="uploadType"}))){
           self$setUploadType(data_props$uploadType$values[[1]])
         }
         
