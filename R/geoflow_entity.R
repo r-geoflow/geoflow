@@ -124,7 +124,8 @@ geoflow_entity <- R6Class("geoflow_entity",
     #TODO manage these allowed key values in class definitions (eg. geoflow_format)
     allowedKeyValuesFor = list(
       titles = c("title", "alternative"),
-      descriptions = c("abstract", "purpose", "credit", "info", "edition", "status")
+      descriptions = c("abstract", "purpose", "credit", "info", "edition", "status"),
+      spatialCoverage = c("ewkt", "wkt", "srid")
     ) 
   ),
   public = list(
@@ -1115,6 +1116,8 @@ geoflow_entity <- R6Class("geoflow_entity",
           outsp <- ""
           if(!is.null(self$spatial_extent)){
             outsp <- paste(sprintf("SRID=%s",self$srid),st_as_text(self$spatial_extent),sep=";")
+          }else{
+            if(!is.null(self$srid)) outsp <- paste0("srid:", self$srid)
           }
           outsp
         },
