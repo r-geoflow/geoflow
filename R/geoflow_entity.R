@@ -597,11 +597,15 @@ geoflow_entity <- R6Class("geoflow_entity",
                  #dynamic srid
                  sf.crs <- sf::st_crs(sf.data)
                  if(!is.na(sf.crs)){
+                   #in case data features are geo-referenced we check srid consistency and eventually update self$srid
                    srid <- if(!is.null(self$srid)) self$srid else ""
                    if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
                      config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, sf.crs$epsg)) 
                      self$setSrid(sf.crs$epsg)
                    }
+                 }else{
+                   #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
+                   if(!is.null(self$srid)) sf::st_crs(entity$data$features) <- self$srid 
                  }
                  #dynamic spatial extent
                  config$logger.info("Overwriting entity bounding box with shapefile bounding box")
