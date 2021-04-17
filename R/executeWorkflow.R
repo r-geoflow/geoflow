@@ -3,14 +3,17 @@
 #' @title executeWorkflow
 #' @description \code{executeWorkflow} allows to execute a workflow
 #'
-#' @usage executeWorkflow(file)
+#' @usage executeWorkflow(file, dir)
 #'                 
 #' @param file a JSON geoflow configuration file
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
-executeWorkflow <- function(file){
+executeWorkflow <- function(file, dir = NULL){
+  
+  wd <- getwd()
+  if(!is.null(dir)) setwd(dir)
   
   #options
   .defaultOptions <- options()
@@ -38,5 +41,7 @@ executeWorkflow <- function(file){
   
   #reset options
   options(.defaultOptions)
+  
+  setwd(wd)
 
 }
