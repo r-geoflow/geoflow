@@ -16,6 +16,9 @@
 #'  \item{\code{new()}}{
 #'    This method is used to instantiate a geoflow_entity object
 #'  }
+#'  \item{\code{getAllowedKeyValuesFor(field)}}{
+#'    Utility used internally by \pkg{geoflow} to check eligible key values for a given field.
+#'  }
 #'  \item{\code{setIdentifier(key, id)}}{
 #'    Set an identifier given a key. Default key is "id", but others can be specified, eg "doi".
 #'  }
@@ -73,6 +76,20 @@
 #'  }
 #'  \item{\code{setData(data)}}{
 #'    Set the related data object of class \code{geoflow_data}
+#'  }
+#'  \item{\code{getEntityJobDirname()}}{
+#'    Get the directory name that will be created for this entity. The name will generally be the same as the
+#'    entity identifier. In case entity is identified with a DOI, '/' (slash) will be replaced by '_' (underscore) to 
+#'    make sure directory is created.
+#'  }
+#'  \item{\code{getEntityJobDirPath(config, jobdir)}}{
+#'    Returns the full path of the entity job directory. In the job directory, all entities subdirs will be created 
+#'    within a 'entities' directory.
+#'  }
+#'  \item{\code{prepareEntityJobDir(config, jobdir)}}{
+#'    Function called internally by \pkg{geoflow} that creates the entity directory and relevant sub-directories.
+#'    The default sub-directories will include 'data' and 'metadata'. Other sub-directories may be created depnding 
+#'    on the actions enabled in the workflow (and if their target directory is different from 'data'/'metadata').
 #'  }
 #'  \item{\code{copyDataToJobDir(config, jobdir)}}{
 #'    This function will look at data object associated to the entity (previously set with \code{setData}),
@@ -1092,7 +1109,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #getJobResource
     getJobResource = function(config, resourceType, filename){
-      return(file.path(config$job, self$getEntityJobDirname(), resourceType, file))
+      return(file.path(config$job, "entities", self$getEntityJobDirname(), resourceType, file))
     },
     
     #getJobDataResource
