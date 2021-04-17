@@ -352,7 +352,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #getEntityJobDirPath
     getEntityJobDirPath = function(config, jobdir = NULL){
       if(is.null(jobdir)) jobdir <- config$job
-      path <- file.path(jobdir, self$getEntityJobDirname())
+      path <- file.path(jobdir, "entities", self$getEntityJobDirname())
       return(path)
     },
     
@@ -361,7 +361,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(is.null(jobdir)) jobdir <- config$job
       #create entity jobdir
       config$logger.info(sprintf("Create entity job dir at '%s'", self$getEntityJobDirPath(config, jobdir)))
-      dir.create(self$getEntityJobDirPath(config, jobdir))
+      dir.create(self$getEntityJobDirPath(config, jobdir), recursive = TRUE)
       
       #create sub directories as listed in the configuration file
       entity_targets <- sapply(config$actions, function(x){if(!is.na(x$target)) if(x$target=="entity") return(x$target_dir)})
