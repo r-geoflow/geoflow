@@ -14,6 +14,8 @@
 #' @examples
 #' \dontrun{
 #'   profile <- geoflow_profile$new()
+#'   profile$setId("workflow1")
+#'   profile$setName("Workflow 1")
 #'   profile$setProject("My project")
 #'   profile$setOrganization("My organization")
 #'   provfile$addLogo("https://via.placeholder.com/300x150.png/09f/fff?text=geoflow")
@@ -23,6 +25,12 @@
 #' \describe{
 #'  \item{\code{new()}}{
 #'    This method is used to instantiate a geoflow_profile object
+#'  }
+#'  \item{\code{setId(id)}}{
+#'    Set identifier
+#'  }
+#'  \item{\code{setName(name)}}{
+#'    Set name
 #'  }
 #'  \item{\code{setProject(project)}}{
 #'    Set project
@@ -39,10 +47,22 @@
 #'
 geoflow_profile <- R6Class("geoflow_profile",
  public = list(
+   id = NULL,
+   name = NULL,
    project = NULL,
    organization = NULL,
    logos = list(),
    initialize = function(){},
+   
+   #setId
+   setId = function(id){
+      self$id <- id
+   },
+   
+   #setName
+   setName = function(name){
+      self$name <- name
+   },
    
    #setProject
    setProject = function(project){
