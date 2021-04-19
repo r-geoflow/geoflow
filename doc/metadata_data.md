@@ -1,7 +1,7 @@
 #### Data
 
 <u>Access to storage of data source </u>
-* **access** : name of access resource to use for reaching sources. This parameter must be relate with a, access endpoint to a software in the configuration file. For the default access endpoint (http, https), there is no need to attach a software, although for other protocols, this is the pattern that we can assume.
+* **access** : name of access resource to use for reaching sources. This parameter should be a valid accessor id as defined in `geoflow::list_data_accessors()`. For the default access endpoint (http, https), there is no need to attach a software, although for other protocols, this is the pattern that we can assume.
 As now, two software access are available, a downloadHandler function associated to the access endpoint / software that would be specific to each software (and might include a checker if the resource exists on the remote access endpoint). As starting point, this function will include arguments file (resource to find/download), path (target path include filename). 
 	 - *default* a file local or remote source (not need to specify this key for this usage) and in case of dbtable or dbquery with a software declared in input
 	 - *googledrive* for access to google drive, must be declared under the same name (id) as a access listed in **software** section of json configuration file.
@@ -36,7 +36,7 @@ If sourced files are in local repertory the complete path of file must be declar
 
 <u>Access to storage and upload data</u>
 If data must be upload, declare server in **software** section of json configuration file.
-* **upload**: a boolean argument whether the source data should be uploaded to the software output declared in the geoflow. By default is `true` to perform upload. If upload `false` `uploadType` must be declared `other`
+* **upload**: a boolean argument whether the source data should be uploaded to the software output declared in the geoflow. By default is `true` to perform upload.
 * **uploadSource**: name to give to upload file. Caution, is a name without extension for a db object but must be a `.zip` file for shp object.Must include extention for file upload (zip,shp, gpkg)
 * **uploadType** extension of the file to upload, must be in list :
 	* *`dbtable`* for Database object
