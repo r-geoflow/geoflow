@@ -139,11 +139,11 @@ Examples cover both:
 | ---------------------------- | ---------------------- |
 | **Definition**               |Spatial Coverage and SRID of the dataset |                      |
 | **Need**                     |Optional, automatically enriched if no indicate in case of temporal dataset |
-| **Default key (if omitted)** |*Not applicable*                         |
-| **other keys available**     |*Not applicable* 		|
+| **Default key (if omitted)** |`ewkt`(must be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry)                        |
+| **other keys available**     |`srid`(SRID definition, can be use with or without the  `wkt` argument)	<br/> `wkt`(the WKT geometry, can be use with or without the  `srid` argument)	|
 | **Examples**                 |                        |
-| Simple usage                 |must be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry ``SRID=4326;POLYGON((-71 -21,-71 28,14 28,14 -21,-71 -21)``)                        |
-| Advanced usage               |*Not applicable*                        |
+| Simple usage                 |`SRID=4326;POLYGON((-71 -21,-71 28,14 28,14 -21,-71 -21)`)                        |
+| Advanced usage               |`srid:4326_`<br/>`wkt:POLYGON((-71 -21,-71 28,14 28,14 -21,-71 -21)`                     |
 
 #### TemporalCoverage
 
