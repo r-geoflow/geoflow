@@ -18,7 +18,7 @@ initWorkflowJob <- function(config){
   config_file <- config$src
   mainDir <- config$wd
   subDir <- "jobs"
-  if (!file.exists(subDir)){
+  if (!dir.exists(file.path(mainDir, subDir))){
     dir.create(file.path(mainDir, subDir))
   }
   setwd(file.path(mainDir, subDir))
@@ -36,9 +36,9 @@ initWorkflowJob <- function(config){
   config$logger.info(sprintf("Workflow job directory:", jobDirPath))
   
   #copy configuration file
-  file.copy(from = file.path(mainDir, config_file), to = getwd())
+  file.copy(from = config_file, to = getwd())
   #rename copied file
-  file.rename(from = config_file, to = "job.json")
+  file.rename(from = file.path(getwd(), basename(config_file)), to = "job.json")
   
   #create sub directories as listed in the configuration file
   job_targets <- sapply(config$actions, function(x){if(!is.na(x$target)) if(x$target=="job") return(x$target_dir)})

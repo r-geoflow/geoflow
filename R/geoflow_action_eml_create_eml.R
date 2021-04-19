@@ -254,7 +254,7 @@ eml_create_eml <- function(entity, config, options){
         registerId <- fat_attr$registerId
         if(!is.null(registerId)) if(!is.na(registerId)){
           registers <- config$registers
-          registers <- registers[sapply(registers, function(x){x$id == registerId})]
+          if(length(registers)>0) registers <- registers[sapply(registers, function(x){x$id == registerId})]
           if(length(registers)==0){
             warnMsg <- sprintf("Unknown register '%s'. Ignored for creating EML attributeList", registerId)
             config$logger.warn(warnMsg)

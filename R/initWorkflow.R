@@ -11,7 +11,8 @@
 #' @export
 #'
 initWorkflow <- function(file){
-  
+
+  file <- tools::file_path_as_absolute(file)
   config <- jsonlite::read_json(file)
   config$src <- file
   config$src_config <- config
@@ -86,7 +87,7 @@ initWorkflow <- function(file){
   }
   
   #working dir
-  if(is.null(config$wd)) config$wd <- getwd()
+  if(is.null(config$wd)) config$wd <- dirname(file)
 
   #load source scripts
   #--------------------
@@ -175,6 +176,7 @@ initWorkflow <- function(file){
     }
   }
   
+  if(length(config$registers)==0) config$registers <- list()
   config_registers <- config$registers #store eventual config$registers
   
   #loading dictionary
@@ -232,7 +234,7 @@ initWorkflow <- function(file){
       config$logger.info("Successfuly fetched dictionary !")
       config$metadata$content$dictionary <- dictionary
       config$registers <- dictionary$getRegisters()
-      
+      if(length(config$registers)==0) config$registers <- list()
     }
   }
   
@@ -240,55 +242,57 @@ initWorkflow <- function(file){
   #registers can be configured either through config or through dictionnary
   if(!is.null(config_registers)){
     fetched_registers <- list()
-    for(reg in config_registers){
-      register_to_fetch <- NULL
-      isCustom <- FALSE
-      if(!is.null(reg$script)){
-        isCustom <- TRUE
+    if(length(config_registers)>0){
+      for(reg in config_registers){
+        register_to_fetch <- NULL
+        isCustom <- FALSE
+        if(!is.null(reg$script)){
+          isCustom <- TRUE
+        }
+        
+        if(!isCustom){
+          if(is.null(reg$id)){
+            errMsg <- "An 'register' should have an id. Please check your configuration file. In case of a custom register, the id should be the function name."
+            config$logger.error(errMsg)
+            stop(errMsg)
+          }
+          available_registers <- list_registers(raw=TRUE)
+          available_register_ids <- sapply(available_registers, function(x){x$id})
+          if(!(reg$id %in% available_register_ids)){
+            stop(sprintf("The register '%s' is not among available geoflow registers", reg$id))
+          }
+          register_to_fetch <- available_registers[[1]]
+        }else{
+          source(reg$script)
+          customfun <- eval(parse(text = reg$id))
+          if(class(customfun)=="try-error"){
+            errMsg <- sprintf("Error while trying to evaluate custom function '%s", reg$id)
+            config$logger.error(errMsg)
+            stop(errMsg)
+          }
+          if(class(customfun)!="function"){
+            errMsg <- sprintf("'%s' is not a function!", reg$id)
+            config$logger.error(errMsg)
+            stop(errMsg)
+          }
+          register_to_fetch <- geoflow_register$new(
+            id = reg$id, 
+            def = reg$def, 
+            fun = customfun
+          )
+        }
+        if(!is.null(register_to_fetch)) register_to_fetch$fetch(config)
+        
+        if(!(reg$id %in% sapply(fetched_registers, function(x){x$id}))){
+          fetched_registers <- c(fetched_registers, register_to_fetch)
+        }
+        
       }
-      
-      if(!isCustom){
-        if(is.null(reg$id)){
-          errMsg <- "An 'register' should have an id. Please check your configuration file. In case of a custom register, the id should be the function name."
-          config$logger.error(errMsg)
-          stop(errMsg)
-        }
-        available_registers <- list_registers(raw=TRUE)
-        available_register_ids <- sapply(available_registers, function(x){x$id})
-        if(!(reg$id %in% available_register_ids)){
-          stop(sprintf("The register '%s' is not among available geoflow registers", reg$id))
-        }
-        register_to_fetch <- available_registers[[1]]
+      if(all(sapply(config$registers, function(x){class(x)[1] == "geoflow_register"}))){
+        config$registers <- c(config$registers, fetched_registers)
       }else{
-        source(reg$script)
-        customfun <- eval(parse(text = reg$id))
-        if(class(customfun)=="try-error"){
-          errMsg <- sprintf("Error while trying to evaluate custom function '%s", reg$id)
-          config$logger.error(errMsg)
-          stop(errMsg)
-        }
-        if(class(customfun)!="function"){
-          errMsg <- sprintf("'%s' is not a function!", reg$id)
-          config$logger.error(errMsg)
-          stop(errMsg)
-        }
-        register_to_fetch <- geoflow_register$new(
-          id = reg$id, 
-          def = reg$def, 
-          fun = customfun
-        )
+        config$registers <- fetched_registers
       }
-      if(!is.null(register_to_fetch)) register_to_fetch$fetch(config)
-      
-      if(!(reg$id %in% sapply(fetched_registers, function(x){x$id}))){
-        fetched_registers <- c(fetched_registers, register_to_fetch)
-      }
-      
-    }
-    if(all(sapply(config$registers, function(x){class(x)[1] == "geoflow_register"}))){
-      config$registers <- c(config$registers, fetched_registers)
-    }else{
-      config$registers <- fetched_registers
     }
   }
   

@@ -32,8 +32,9 @@ executeWorkflow <- function(file, dir = NULL){
   capture.output({
     exec <- try(executeWorkflowJob(config))
     if(class(exec)=="try-error"){
-      setwd(config$wd)
+      setwd(wd)
       closeWorkflow(config)
+      stop(sprintf("Workflow '%s' failed, check logs at: %s", config$profile$id, file.path(jobdir, "job-logs.txt")))
     }
   }, file = file.path(jobdir, "job-logs.txt"))
   
