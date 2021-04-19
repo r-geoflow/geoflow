@@ -214,10 +214,10 @@ can/should be defined:
 The `options` are by definition optional. The table below defines the
 possible geoflow global options:
 
-| Name                       | Definition                                                                                                                               | Default value |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| `line_separator`           | Defines the suite of characters used for splitting metadata components with a single tabular cell of an *entity* (eg. Description field) | \*\*;\*       |
-| \`\`skipFileDownload\`\`\` | Indicates whether data associated to an entity should be download                                                                        | **false**     |
+| Name               | Definition                                                                                                                               | Default value |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `line_separator`   | Defines the suite of characters used for splitting metadata components with a single tabular cell of an *entity* (eg. Description field) | \*\*\_\*      |
+| `skipFileDownload` | Indicates whether data associated to an entity should be download                                                                        | **false**     |
 
 Note on the **mode**:
 

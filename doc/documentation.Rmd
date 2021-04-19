@@ -175,8 +175,8 @@ The ``options`` are by definition optional. The table below defines the possible
 
 Name|Definition|Default value
 ----|----------|-------------
-``line_separator``|Defines the suite of characters used for splitting metadata components with a single tabular cell of an _entity_ (eg. Description field)|**;\n**
-``skipFileDownload```|Indicates whether data associated to an entity should be download|**false**
+``line_separator``|Defines the suite of characters used for splitting metadata components with a single tabular cell of an _entity_ (eg. Description field)|**_\n**
+``skipFileDownload``|Indicates whether data associated to an entity should be download|**false**
 
 
 Note on the **mode**:
