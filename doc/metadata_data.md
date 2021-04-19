@@ -1,9 +1,11 @@
 #### Data
 
 <u>Access to storage of data source </u>
-* **access** : name of access resource to use for reaching sources. For the moment two format are supported : 
+* **access** : name of access resource to use for reaching sources. This parameter must be relate with a, access endpoint to a software in the configuration file. For the default access endpoint (http, https), there is no need to attach a software, although for other protocols, this is the pattern that we can assume.
+As now, two software access are available, a downloadHandler function associated to the access endpoint / software that would be specific to each software (and might include a checker if the resource exists on the remote access endpoint). As starting point, this function will include arguments file (resource to find/download), path (target path include filename). 
 	 - *default* a file local or remote source (not need to specify this key for this usage) and in case of dbtable or dbquery with a software declared in input
 	 - *googledrive* for access to google drive, must be declared under the same name (id) as a access listed in **software** section of json configuration file.
+	 - *zenodo*  for access to zenodo software and download data resources associated to the Zenodo record based on DOI. e.g. `access:zenodo`
 ```{json}
 	{
 		"id": "googledrive",
@@ -16,7 +18,7 @@
 		"properties" : {}
 	}
 ```
-	- *otherAccess*(in dev)* other application with api (zenodo, owncloud, etc)
+	- *otherAccess*(in dev)* other application with api (owncloud, etc)
 
 * **source** : name with extension of files to source. For spatial source, a single source can be used, for other type several files can be declare for a same workflow, they must be on the same extension and separated by a comma (,). 
 If sourced files are in local repertory the complete path of file must be declared too. Also a alias must be declared for your file, for this use the typology `alias@file.ext` 
@@ -34,7 +36,7 @@ If sourced files are in local repertory the complete path of file must be declar
 
 <u>Access to storage and upload data</u>
 If data must be upload, declare server in **software** section of json configuration file.
-* **upload**: a boolean argument whether the source data should be uploaded to the software output declared in the geoflow. By default is `TRUE` to perform upload.
+* **upload**: a boolean argument whether the source data should be uploaded to the software output declared in the geoflow. By default is `true` to perform upload. If upload `false` `uploadType` must be declared `other`
 * **uploadSource**: name to give to upload file. Caution, is a name without extension for a db object but must be a `.zip` file for shp object.Must include extention for file upload (zip,shp, gpkg)
 * **uploadType** extension of the file to upload, must be in list :
 	* *`dbtable`* for Database object
