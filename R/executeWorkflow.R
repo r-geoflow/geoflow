@@ -6,14 +6,13 @@
 #' @usage executeWorkflow(file, dir)
 #'                 
 #' @param file a JSON geoflow configuration file
+#' @param dir a directory where to execute the workflow
+#' @return the path of the job directory
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
 executeWorkflow <- function(file, dir = NULL){
-  
-  wd <- getwd()
-  if(!is.null(dir)) setwd(dir)
   
   #options
   .defaultOptions <- options()
@@ -24,6 +23,8 @@ executeWorkflow <- function(file, dir = NULL){
   config <- initWorkflow(file)
   
   #2. Inits workflow job (create directories)
+  wd <- getwd()
+  if(!is.null(dir)) setwd(dir)
   jobdir <- initWorkflowJob(config)
   config$job <- jobdir
   
@@ -43,5 +44,5 @@ executeWorkflow <- function(file, dir = NULL){
   options(.defaultOptions)
   
   setwd(wd)
-
+  return(jobdir)
 }
