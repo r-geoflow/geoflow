@@ -193,7 +193,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           }
         }
         
-        #save entities & contacts used
+        #save entities,contacts and dictionaries used
         if(!is.null(config$src_entities)){
           for(i in 1:length(config$src_entities)){
             readr::write_csv(config$src_entities[[i]], file.path(getwd(), sprintf("config_copyof_entities_%s.csv", i)))
@@ -202,6 +202,11 @@ executeWorkflowJob <- function(config, jobdir = NULL){
         if(!is.null(config$src_contacts)){
           for(i in 1:length(config$src_contacts)){
             readr::write_csv(config$src_contacts[[i]], file.path(getwd(), sprintf("config_copyof_contacts_%s.csv", i)))
+          }
+        }
+        if(!is.null(config$src_dictionary)){
+          for(i in 1:length(config$src_dictionary)){
+            readr::write_csv(config$src_dictionary[[i]], file.path(getwd(), sprintf("config_copyof_dictionary_%s.csv", i)))
           }
         }
       }
