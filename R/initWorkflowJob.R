@@ -53,7 +53,7 @@ initWorkflowJob <- function(config){
     }
   }
   
-  if(config$mode == "raw"){
+  if(config$profile$mode == "raw"){
     config$logger.info("Copying raw action scripts to job directory")
     for(action in config$actions){
       config$logger.info(sprintf("Copying %s ...", action$script))
