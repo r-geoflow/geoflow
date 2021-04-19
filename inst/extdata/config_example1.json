@@ -1,18 +1,8 @@
 {
-  
-  "id": "my-workflow",
-  "mode" : "entity",
-  "dependencies": {
-    "packages": {
-      "cran": [
-        "sp","raster", "maptools", "rgdal", "rgeos", "geosphere",
-        "cleangeo", "geometa", "geosapi", "geonapi", "ows4R"
-      ],
-      "cran_force_install" : false,
-      "github": ["openfigis/RFigisGeo"],
-      "github_force_install": false
-    },
-    "scripts": []
+  "profile": {
+    "id": "my-workflow",
+    "mode" : "entity",
+    "name" : "My workflow"
   },
   "metadata": {
     "entities": [

@@ -1,10 +1,11 @@
 {
-  "id": "Zenodo_publish_workflow",
   "profile": {
+    "id": "Zenodo_publish_workflow",
+    "name": "My workflow for Zenodo deposition",
     "project": "Test geoflow project",
-    "organization": "My organization"
+    "organization": "My organization",
+    "mode": "entity"
   },
-  "mode": "entity",
   "metadata": {
     "entities": [
       {

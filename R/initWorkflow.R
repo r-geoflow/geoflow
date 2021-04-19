@@ -17,7 +17,8 @@ initWorkflow <- function(file){
   config$src_config <- config
   
   #worfklow config$loggers
-  config$logger <- function(type, text){cat(sprintf("[geoflow][%s][%s] %s \n", config$id, type, text))}
+  id <- if(!is.null(config$profile$id)) config$profile$id else config$id
+  config$logger <- function(type, text){cat(sprintf("[geoflow][%s][%s] %s \n", id, type, text))}
   config$logger.info <- function(text){config$logger("INFO", text)}
   config$logger.warn <- function(text){config$logger("WARN", text)}
   config$logger.error <- function(text){config$logger("ERROR", text)}
@@ -29,44 +30,63 @@ initWorkflow <- function(file){
   if(!is.null(config$profile)){
     config$logger.info("Creating workflow profile...")
     profile <- geoflow_profile$new()
-    if(!is.null(config$profile$id)) profile$setId(config$profile$name)
+    #identifier
+    if(!is.null(config$profile$id)){
+      profile$setId(config$profile$id)
+    }else{
+      config$logger.warn("Configuration file TO UPDATE: 'id' should be defined in profile!")
+      profile$setId(config$id)
+    }
+    #other workflow metadata
     if(!is.null(config$profile$name)) profile$setName(config$profile$name)
     if(!is.null(config$profile$project)) profile$setProject(config$profile$project)
     if(!is.null(config$profile$organization)) profile$setOrganization(config$profile$organization)
     if(!is.null(config$profile$logos)){
       for(logo in config$profile$logos) profile$addLogo(logo)
     }
-    config$profile <- profile
-  }
-  
-  #options
-  if(!is.null(config$options)){
-    config$logger.info("Setting geoflow global options...")
-    if(!is.null(config$options$line_separator)){
-      config$logger.info(sprintf("Setting option 'line_separator' to '%s'", config$options$line_separator))
-      set_line_separator(config$options$line_separator)
+    #workflow mode
+    cfg_mode <- NULL
+    if(!is.null(config$profile$mode)){
+      cfg_mode <- config$profile$mode
+    }else{
+      config$logger.warn("Configuration file TO UPDATE: 'mode' should be defined in profile!")
+      cfg_mode <- config$mode
     }
+    if(!is.null(cfg_mode)){
+      allowedModes <- c("raw","entity")
+      if(!(cfg_mode %in% allowedModes)) {
+        errMsg <- sprintf("The workflow '%s' mode is incorrect. Allowed values are [%s]",
+                          cfg_mode, paste(allowedModes, collapse=","))
+        config$logger.error(errMsg)
+        stop(errMsg)
+      }
+      profile$mode <- cfg_mode
+    }else{
+      warnMes <- "No workflow mode specified, 'raw' mode specified by default!"
+      config$logger.warn(warnMes)
+      profile$mode <- "raw"
+    }
+    
+    #options
+    cfg_options <- NULL
+    if(!is.null(config$profile$options)){
+      cfg_options <- config$profile$options
+    }else{
+      config$logger.warn("Configuration file TO UPDATE: 'options' should be defined in profile!")
+      cfg_options <- config$options
+    }
+    config$logger.info("Setting geoflow global options...")
+    config$profile$options <- cfg_options
+    if(!is.null(config$profile$options$line_separator)){
+      config$logger.info(sprintf("Setting option 'line_separator' to '%s'", config$profile$options$line_separator))
+      set_line_separator(config$profile$options$line_separator)
+    }
+    
+    config$profile <- profile
   }
   
   #working dir
   if(is.null(config$wd)) config$wd <- getwd()
-  
-  #type of workflow
-  cfg_mode <- config$mode
-  if(!is.null(cfg_mode)){
-    allowedModes <- c("raw","entity")
-    if(!(cfg_mode %in% allowedModes)) {
-      errMsg <- sprintf("The workflow '%s' mode is incorrect. Allowed values are [%s]",
-                        cfg_mode, paste(allowedModes, collapse=","))
-      config$logger.error(errMsg)
-      stop(errMsg)
-    }
-    config$mode <- cfg_mode
-  }else{
-    warnMes <- "No workflow mode specified, 'raw' mode specified by default!"
-    config$logger.warn(warnMes)
-    config$mode <- "raw"
-  }
 
   #load source scripts
   #--------------------
@@ -446,7 +466,7 @@ initWorkflow <- function(file){
         
         action_to_trigger$options <- action$options
       }else{
-        if(config$mode == "entity"){
+        if(config$profile$mode == "entity"){
           source(action$script)
           customfun <- eval(parse(text = action$id))
           if(class(customfun)=="try-error"){
@@ -485,7 +505,7 @@ initWorkflow <- function(file){
             fun = customfun,
             options = action$options
           )
-        }else if(config$mode == "raw"){
+        }else if(config$profile$mode == "raw"){
           action_to_trigger <- geoflow_action$new(
             id = action$script,
             type = action$type,

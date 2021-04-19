@@ -4,9 +4,13 @@
 \alias{debugWorkflow}
 \title{debugWorkflow}
 \usage{
-debugWorkflow(i, copyData, runLocalActions)
+debugWorkflow(file, dir, entityIndex, copyData, runSoftwareActions, runLocalActions)
 }
 \arguments{
+\item{file}{configuration file}
+
+\item{dir}{directory where to debug/execute the workflow}
+
 \item{entityIndex}{index of the entity within the list of loaded entities. Default is 1}
 
 \item{copyData}{whether data should be downloaded/copied to job data directory.

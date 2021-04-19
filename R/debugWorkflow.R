@@ -44,7 +44,7 @@ debugWorkflow <- function(file, dir = NULL, entityIndex = 1,
   assign("entity", entity, envir = .GlobalEnv)
 
   #skipFileDownload
-  skipFileDownload <- if(!is.null(config$options$skipFileDownload)) config$options$skipFileDownload else FALSE
+  skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
   
   #run software actions?
   if(runSoftwareActions){

@@ -22,6 +22,12 @@ geoflow_profile
  \item{\code{new()}}{
    This method is used to instantiate a geoflow_profile object
  }
+ \item{\code{setId(id)}}{
+   Set identifier
+ }
+ \item{\code{setName(name)}}{
+   Set name
+ }
  \item{\code{setProject(project)}}{
    Set project
  }
@@ -31,12 +37,17 @@ geoflow_profile
  \item{\code{addLogo(logo)}}{
    Adds a logo
  }
+ \item{\code{setMode(mode)}}{
+   Set mode
+ }
 }
 }
 
 \examples{
 \dontrun{
   profile <- geoflow_profile$new()
+  profile$setId("workflow1")
+  profile$setName("Workflow 1")
   profile$setProject("My project")
   profile$setOrganization("My organization")
   provfile$addLogo("https://via.placeholder.com/300x150.png/09f/fff?text=geoflow")

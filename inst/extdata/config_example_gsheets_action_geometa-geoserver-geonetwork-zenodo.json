@@ -1,17 +1,18 @@
 {
-  "id": "my-workflow",
   "profile": {
-	"project": "Test geoflow project",
-	"organization": "My organization",
-	"logos": [
-		"https://via.placeholder.com/300x150.png/09f/fff?text=geometa",
-		"https://via.placeholder.com/300x150.png/09f/fff?text=ows4R"
-	]
+    "id": "my-workflow",
+    "name": "My workflow",
+	  "project": "Test geoflow project",
+	  "organization": "My organization",
+	  "logos": [
+		  "https://via.placeholder.com/300x150.png/09f/fff?text=geometa",
+		  "https://via.placeholder.com/300x150.png/09f/fff?text=ows4R"
+	  ],
+	  "mode": "entity",
+	  "options": {
+	    "line_separator": "_\n"
+    }
   },
-  "options": {
-	"line_separator": "_\n"
-  },
-  "mode": "entity",
   "metadata": {
     "entities": [
       {

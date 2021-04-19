@@ -9,12 +9,27 @@ R engine to orchestrate and run geospatial (meta)data workflows
 
 
 ***
-If you wish to sponsor ``geoflow``, do not hesitate to [contact me](mailto:emmanuel.blondel1@gmail.com)
-
 Many thanks to the following organizations that have provided fundings for strenghtening the ``geoflow`` package:
 
-<a href="https://en.ird.fr/"><img src="https://eblondel.github.io/assets/partners/ird.png" height="60"/></a>
+<div style="float:left;">
+  <a href="http://www.fao.org"><img height=200 width=200 src="http://www.fao.org/fileadmin/templates/family-farming-decade/images/FAO-IFAD-Logos/FAO-Logo-EN.svg">
+  <a href="https://en.ird.fr/"><img src="http://www.umr-marbec.fr/images/logo-ird-en.png" height=200 width=200/>
+  <a href="https://www.inrae.fr"><img height=200 width=200 src="https://www.inrae.fr/themes/custom/inrae_socle/logo.svg"></a>
+</div>
+<br>
+<div style="float:left;">
+  <a href="http://www.cnrs.fr"><img src="http://www.cnrs.fr/themes/custom/cnrs/logo.svg" height=200 width=200/></a>
+  <a href="https://inee.cnrs.fr/fr/zones-ateliers"><img src="https://inee.cnrs.fr/sites/institut_inee/files/inline-images/logo-za_0_0.jpg" height=150 width=300/></a>
+</div>
 
+The following projects have contributed to strenghten ``geoflow``:
+
+<a href="https://www.blue-cloud.org"><img height=100 width=300 src="https://www.blue-cloud.org/sites/all/themes/arcadia/logo.png"/></a>
+
+_Blue-Cloud has received funding from the European Union's Horizon programme call BG-07-2019-2020, topic: [A] 2019 - Blue Cloud services, Grant Agreement No.862409._
+
+
+For geoflow sponsoring/funding new developments, enhancements, support requests, please contact me by [e-mail](mailto:emmanuel.blondel1@gmail.com)
 ***
 
 
@@ -28,17 +43,14 @@ Many thanks to the following organizations that have provided fundings for stren
 &nbsp;&nbsp;&nbsp;[4.2 How to use geoflow](#geoflow_execute)<br/>
 &nbsp;&nbsp;&nbsp;[4.3 Description of a geoflow configuration](#geoflow_config)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.1 Overall structure](#geoflow_config_structure)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.2 Configuration components – ``id``](#geoflow_config_id)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.3 Configuration components – ``mode``](#geoflow_config_mode)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.4 Configuration components – ``metadata``](#geoflow_config_metadata)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.5 Configuration components – ``software``](#geoflow_config_software)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.6 Configuration components – ``registers``](#geoflow_config_register)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.7 Configuration components – ``actions``](#geoflow_config_actions)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.8 Configuration components – ``profile``](#geoflow_config_profile)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.9 Configuration components – ``options``](#geoflow_config_options)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.2 Configuration components – ``profile``](#geoflow_config_profile)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.3 Configuration components – ``metadata``](#geoflow_config_metadata)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.4 Configuration components – ``software``](#geoflow_config_software)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.5 Configuration components – ``actions``](#geoflow_config_actions)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3.6 Configuration components – ``registers``](#geoflow_config_registers)<br/>
 &nbsp;&nbsp;&nbsp;[4.4 How to create a geoflow configuration file](#geoflow_config_create)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.4.1 Create manually a configuration file](#geoflow_config_manual)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.4.2 Use the configuration Shiny User Interface](#geoflow_config_shiny)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.4.2 Use the geoflow-shiny R Shiny application](#geoflow_config_shiny)<br/>
 [**5. Issue reporting**](#package_issues)<br/>
 
 <a name="package_overview"/>
@@ -53,9 +65,7 @@ The principle of geoflow is to offer a simple framework in R to execute and orch
 ### 2. Development status
 ***
 
-On GitHub under consolidation.
-
-First version in CRAN expected end 2019.
+On GitHub.
 
 <a name="package_credits"/>
 
@@ -92,10 +102,10 @@ install_github("eblondel/geoflow", dependencies = c("Depends", "Imports"))
 
 #### 4.2 How to use geoflow in R
 
-In R, using ``geoflow`` consists essentially in running the function ``executeWorkflow", which takes a single parameter: the name of a configuration file in JSON format:
+In R, using ``geoflow`` consists essentially in running the function ``executeWorkflow", which takes a main parameter: the name of a configuration file in JSON format. An optional _dir_ parameter can be specified to instruct geoflow to store execution files in:
 
 ```{r, eval = FALSE}
-executeWorkflow("config.json")
+executeWorkflow("config.json", dir = NULL)
 ```
 
 The workflow that is going to be executed is entirely described in a configuration file. The main preparatory work of the data manager will then to prepare the configuration file, depending on the tasks to perform.
@@ -106,7 +116,7 @@ Prior to the execution, it also possible to check that the configuration is read
 config <- initWorkflow("config.json")
 ```
 
-> Note: It is planned to offer a shiny app interface, through geoflow, that will allow configure the workflow in a user-friendly manner (The shiny app will then take care of creating the appropriate JSON configuration file in a transparent way)
+> Note: The [geoflow-shiny](https://github.com/eblondel/geoflow-shiny) offers a graphic interface to help configuring the workflow in a user-friendly manner. If you are not familiar with JSON format, this shiny application can make your life easier.
 
 <a name="geoflow_config"/>
 
@@ -120,17 +130,14 @@ Before creating a configuration file first let's describe how the ``geoflow`` is
 
 ###### Description
 
-A geoflow configuration contains several parts (some that are optional) that are defined here below.
+A geoflow configuration contains several parts that are defined here below.
 
 Name | Definition | Optional/Required
 -----|------------|-------------------
-[**id**](#geoflow_config_id)|A string identifier/name for the workflow|Required
-[**mode**](#geoflow_config_mode)|A string, either 'raw' or 'entity' that defines the workflow mode: <br>* _raw_ mode: simple mode that allows to trigger basic tasks with R (known in geoflow as _actions_) in sequential way. This mode can be used by users that just want to chain R scripts. <br>* _entity_ mode: mode were all the _actions_ will be performed based on a set of entities. In geoflow, an ``entity`` includes both metadata and data elements. In most of cases, an _entity_ will describe a dataset for which we want to perform actions such as metadata handling/publishing in a web metadata catalogue, spatialdata upload in Geoserver, etc etc. With this mode, ``geoflow`` will take each _entity_ for which a set of _actions_ will be executed.|Required
+[**profile**](#geoflow_config_profile)|Global metadata workflow. Information that is common to all entities in case of mode _entity_, and that can be exploited in some of the actions. e.g. add a project logo for all dataset descriptions.|Required
 [**metadata**](#geoflow_config_metadata)|Part where the _entity_ set is defined, to be used for executing actions in mode _entity_.|Required with _entity_ mode
-[**software**](#geoflow_config_software)|Part where the software to interact with will be defined. It can be a software from where the user wants to get data, or a software where to publish data using [geoflow](https://github.com/eblondel/geoflow) e.g. a GeoNetwork metadata catalogue, a GeoServer, etc.|Optional
+[**software**](#geoflow_config_software)|Part where the software to interact with will be defined. It can be a software from where the user wants to get data, or a software where to publish data using [geoflow](https://github.com/eblondel/geoflow) e.g. a GeoNetwork metadata catalogue, a GeoServer, etc.|Required for publishing actions
 [**actions**](#geoflow_config_actions)|Part where the _actions_ to use are defined. These can be source R scripts in case of the _raw_ mode, or entity-based actions in case of mode _entity_. An action put in the list can be enabled/disabled and parameterized with a set of options that is specific to each action.|Required
-[**profile**](#geoflow_config_profile)|Global metadata workflow. Information that is common to all entities in case of mode _entity_, and that can be exploited in some of the actions. e.g. add a project logo for all dataset descriptions.|Optional
-[**options**](#geoflow_config_options)|Global workflow options|Optional
 
 ###### JSON
 
@@ -138,46 +145,82 @@ If we take the different blocks that define the structure of a geoflow configura
 
 ```{json}
 {
-  "id": "my-workflow",
-  "mode": "entity",
+  "profile": { <global profile (metadata) defined here> },
   "metadata": { <metadata sources defined here> },
   "software": [ <pieces of software defined here> ],
-  "registers": [ <register(s) defined here> ],
-  "actions": [ <actions defined here>  ],
-  "profile": { <global profile (metadata) defined here> },
-  "options": { <global options defined here> },
+  "actions": [ <actions defined here>  ]
 }
 ```
 
 
-<a name="geoflow_config_id"/>
+<a name="geoflow_config_profile"/>
 
-##### 4.3.2 Configuration components – ``id``
+##### 4.3.2 Configuration components – ``profile``
+
+###### Description
+ 
+The ``profile`` is where global workflow metadata is defined. This includes information about the workflow execution as well as workflow metadata elements that can be shared globally to all _entities_ managed and _actions_ applied on them. See below the profile properties that can/should be defined:
+
+Name | Definition | Optional/Required
+-----|------------|-------------------
+**id**|A string identifier/name for the workflow|Required
+**mode**|A string, either 'raw' or 'entity' that defines the workflow mode: <br>* _raw_ mode: simple mode that allows to trigger basic tasks with R (known in geoflow as _actions_) in sequential way. This mode can be used by users that just want to chain R scripts. <br>* _entity_ mode: mode were all the _actions_ will be performed based on a set of entities. In geoflow, an ``entity`` includes both metadata and data elements. In most of cases, an _entity_ will describe a dataset for which we want to perform actions such as metadata handling/publishing in a web metadata catalogue, spatialdata upload in Geoserver, etc etc. With this mode, ``geoflow`` will take each _entity_ for which a set of _actions_ will be executed.|Required
+**name**|A name for the workflow|Optional
+**project**| A project name for the workflow|Optional
+**organization**|An organization name for the workflow|Optional
+**logos**|One or more logo URLs to reference.As now, this will be shared in actions such as ``geometa_create_iso_19115`` where they are used as metadata graphic overviews.|Optional
+**options**|One or more options for the workflow execution|Optional
+
+The ``options`` are by definition optional. The table below defines the possible geoflow global options:
+
+Name|Definition|Default value
+----|----------|-------------
+``line_separator``|Defines the suite of characters used for splitting metadata components with a single tabular cell of an _entity_ (eg. Description field)|**;\n**
+``skipFileDownload```|Indicates whether data associated to an entity should be download|**false**
 
 
-This is a just simple string that identifies the user workflow. This string will be referenced in the logs of each workflow execution, and can be useful in case the user handles multiples flows with different configurations (e.g. one workflow per project).
-
-<a name="geoflow_config_mode"/>
-
-##### 4.3.3 Configuration components – ``mode``
+Note on the **mode**:
 
 At its earliest stage, [geoflow](https://github.com/eblondel/geoflow) was designed to chain a set of processings handled by different scripts. This is known as _raw_ mode, where the user just wants to use geoflow to chain some tasks with a set of R scripts.
 
 In order to facilitate the management of datasets within Spatial Data Infrastructures (SDI), including their processing, publication and description with proper metadata, a new mode called _entity_ was introduced. The concept of _entity_ refers to the description of a dataset or subset of it for which the user wants to perform actions. In this mode, each action defined in geoflow will be executed for each entity of the list of entities that will be defined in the [**metadata**](#geoflow_config_metadata) configuration part. 
 
+###### JSON
+
+JSON snippet of _profile_:
+
+```{json}
+"profile": {
+  "id": "my-workflow-identifier",
+  "name": "My workflow",
+	"project": "Test geoflow project",
+	"organization": "My organization",
+	"logos": [
+		"https://via.placeholder.com/300x150.png/09f/fff?text=geometa",
+		"https://via.placeholder.com/300x150.png/09f/fff?text=ows4R"
+	],
+  "mode": "entity",
+  "options": {
+    "line_separator": "_\n",
+    "skipFileDownload": false
+  }
+}
+```
+
 <a name="geoflow_config_metadata"/>
 
-##### 4.3.4 Configuration components – ``metadata``
+##### 4.3.3 Configuration components – ``metadata``
 
 ###### Description
 
-The metadata part is the section of the workflow configuration where to define the sources of metadata content. Such content is split into two categories:
-* _entities_: source for the list of entities, where each _entity_ represents the metadata
-* _contacts_: source for the directory of contacts, referenced with roles in the dataset metadata
+The metadata part is the section of the workflow configuration where to define the sources of metadata content. Such content is split into three categories:
+* _entities_: source(s) for the list of entities, where each _entity_ represents the metadata
+* _contacts_: source(s) for the directory of contacts, referenced with roles in the dataset metadata
+* _dictionary_: source(s) for the data dictionaries, used to describe datasets (eg. for producing ISO 19110)
 
-Whether is for _entities_ or _contacts_, the configuration consists in declaring the ``source`` (a file or URL) and the ``handler``, ie the source format.
+The configuration consists in declaring the ``source`` (a file or URL) and the ``handler``, ie the source format.
 
-The sources of _entities_ and _contacts_ can be handled for different ``handlers`` (for the timebeing ``gsheet`` - for Google spreadsheets, ``csv``, ``excel`` files, or a ``dbi`` source). The list of ``entity`` and ``contact`` handlers can be retrieved in R with ``list_entity_handlers()`` and ``list_contact_handlers()``. For the time being, [geoflow](https://github.com/eblondel/geoflow) provides basic format handlers.
+The sources of _entities_, _contacts_ and _dictionary_ can be handled for different ``handlers`` (for the timebeing ``gsheet`` - for Google spreadsheets, ``csv``, ``excel`` files, or a ``dbi`` source). The list of ``entity`` and ``contact`` handlers can be retrieved in R with ``list_entity_handlers()``, ``list_contact_handlers()`` and ``list_dictionary_handlers()``. For the time being, [geoflow](https://github.com/eblondel/geoflow) provides basic format handlers.
 
 * List of ``entity`` handlers supported by geoflow:
 
@@ -195,6 +238,15 @@ kable(geoflow::list_contact_handlers(), caption = "List of contact handlers supp
 
 ```
 
+* List of ``dictionary`` handlers supported by geoflow:
+
+```{r, echo = FALSE, message = FALSE, results = 'asis'}
+library(knitr)
+kable(geoflow::list_dictionary_handlers(), caption = "List of dictionary handlers supported by geoflow")
+
+```
+
+
 
 > Note: The list of handlers is expected to be extended in the future, eg LDAP handler for contacts.
 
@@ -203,33 +255,41 @@ kable(geoflow::list_contact_handlers(), caption = "List of contact handlers supp
 * JSON snippet for _entities_ handled with a Google spreadsheet:
 
 ```{json}
-    "entities": {
-      "handler": "gsheet",
-      "source": "https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing"
-    }
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing"
+      }
+    ]
 ```
 
 * JSON snippet for _contacts_ handled with a Google spreadsheet:
 
 ```{json}
-    "contacts" : {
-      "handler": "gsheet",
-      "source": "https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing"
-    }
+    "contacts" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing"
+      }
+    ]
 ```
 
 * JSON snippet for the metadata part (including _entities_ and _contacts_)
 
 ```{json}
   "metadata": {
-    "entities": {
-      "handler": "gsheet",
-      "source": "https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing"
-    },
-    "contacts" : {
-      "handler": "gsheet",
-      "source": "https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing"
-    }
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing"
+      }
+    ],
+    "contacts" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing"
+      }
+    ]
   }
 ```
 
@@ -240,11 +300,13 @@ It is possible to use a custom ``handler`` function provided by the user. For th
 The JSON configuration snippet for a custom contact LDAP ``handler`` would look like this:
 
 ```{json}
-    "contacts" : {
-      "handler": "my_ldap_function_to_load_contacts",
-      "source": "my_ldap_endpoint",
-      "script": "my_ldap_script.R"
-    }
+    "contacts" : [
+      {
+        "handler": "my_ldap_function_to_load_contacts",
+        "source": "my_ldap_endpoint",
+        "script": "my_ldap_script.R"
+      }
+    ]
 ```
 
 In R, the ``my_ldap_function_to_load_contacts`` function writen by user in ``my_ldap_script.R`` should implement a function having 2 arguments: ``config`` (to access the overall workflow configuration object loaded with ``initWorkflow``), ``source`` (the source as defined in above JSON snippet):
@@ -261,7 +323,7 @@ In R, the ``my_ldap_function_to_load_contacts`` function writen by user in ``my_
 
 <a name="geoflow_config_software"/>
 
-##### 4.3.5 Configuration components – ``software``
+##### 4.3.4 Configuration components – ``software``
 
 ###### Description
 
@@ -388,71 +450,9 @@ Since it is a list of software, the base JSON definition will be an _array_ (usi
 
 DOCUMENTATION IN PREPARATION
 
-
-<a name="geoflow_config_register"/>
-
-##### 4.3.6 Configuration components – ``registers``
-
-###### Description
-
-The ``registers`` part of the configuration consists in listing the registers needed for the workflow. Registers are here to fetch reference data (eg. list of species names, list of countries, etc) that the user want to exploit in actions, to enrich subjects or
-to enrich ISO 19110 feature attribute values with labels.
-
-* **List of registers managed by geoflow**
-
-By default [geoflow](https://github.com/eblondel/geoflow) does not yet handle registers but it's planned to handle common standard registers (e.g. list of ISO countries).
-
-* **How to configure a register**
-
-To configure a register, the latter should be provided with various elements:
-* an **id** (mandatory): it should be a user string id to identify the register in question. In case the user wants to handle his own register by mean of a R function, the ``id`` should be the name of the function.
-* a **definition** (mandatory): some description to characterize the register.
-* a **script** (optional): the file path/name of the R script that contains the user named function used to handle his custom register.
-
-
-###### JSON
-
-* JSON snippet for the overall "registers" component
-
-Since it is a list of registers, the base JSON definition will be an _array_ (using square brackets ```[ ]```):
-
-```{json}
-"registers": [
-     <here will be listed the registers>
-]
-```
-
-* **How to use a user's custom register**
-
-As described above, each ``register`` should have an ``id`` and ``definition``. For embed geoflow registers, these are the only information required. The function that is used to fetch the register content is handled internally by geoflow. On the other hand,
-a user's register should come with a function that will read the register and return the register data to R and geoflow. To declare a user function as register handler in the configuration, a ``script`` file path/name should be defined, and the name of the R function should be specified as ``id``.
-
-```{json}
-"registers": [
-  {
-    "id": "my_function",
-    "definition": "My custom register definition",
-    "script": "<path>/my_script_including_my_function.R"
-  }
-]
-```
-
-The function should a return a standard structure for geoflow registers with is an object of class ``data.frame`` with the following columns:
-* **code**: handles each register item code
-* **uri**: handles each register item URI (if existing)
-* **label**: handles each register item label
-* **definition**: handles each register item definition
-
-If this structure is not fulfilled, [geoflow](https://github.com/eblondel/geoflow) will return an error at initialization time. To make sure that your registers are well defined, you can then test to initialize the configuratinon with ``initWorkflow``.
-
-* Where/How registers are used in geoflow
-
-For the time being, the registers are exploited as EXPERIMENTAL FEATURE to enrich feature attribute (if annotated with the register id) listed values in the action to create an ISO 19110 feature catalogue (structural metadata describing the structure of dataset).
-
-
 <a name="geoflow_config_actions"/>
 
-##### 4.3.7 Configuration components – ``actions``
+##### 4.3.5 Configuration components – ``actions``
 
 ###### Description
 
@@ -512,41 +512,65 @@ Since it is a list of _actions_, the base JSON definition will be an _array_ (us
 ```
 
 
-<a name="geoflow_config_profile"/>
+<a name="geoflow_config_register"/>
 
-##### 4.3.8 Configuration components – ``profile``
+##### 4.3.5 Configuration components – ``registers``
 
 ###### Description
- 
-The ``profile`` is a part where global workflow metadata can be defined. For the time-being, this is essentially a placeholder. In the future this section may be further enriched with metadata elements that can be shared globally to all _entities_ managed and _actions_ applied on them.
 
-It is already possible to define one or more logo URLs to be shared in actions such as ``geometa_create_iso_19115`` where they are used as metadata graphic overviews.
+The ``registers`` part of the configuration consists in listing the registers needed for the workflow. Registers are here to fetch reference data (eg. list of species names, list of countries, etc) that the user want to exploit in actions, to enrich subjects or
+to enrich ISO 19110 feature attribute values with labels.
+
+* **List of registers managed by geoflow**
+
+By default [geoflow](https://github.com/eblondel/geoflow) does not yet handle registers but it's planned to handle common standard registers (e.g. list of ISO countries).
+
+* **How to configure a register**
+
+To configure a register, the latter should be provided with various elements:
+* an **id** (mandatory): it should be a user string id to identify the register in question. In case the user wants to handle his own register by mean of a R function, the ``id`` should be the name of the function.
+* a **definition** (mandatory): some description to characterize the register.
+* a **script** (optional): the file path/name of the R script that contains the user named function used to handle his custom register.
+
 
 ###### JSON
 
-JSON snippet of _profile_:
+* JSON snippet for the overall "registers" component
+
+Since it is a list of registers, the base JSON definition will be an _array_ (using square brackets ```[ ]```):
 
 ```{json}
-"profile": {
-	"project": "Test geoflow project",
-	"organization": "My organization",
-	"logos": [
-		"https://via.placeholder.com/300x150.png/09f/fff?text=geometa",
-		"https://via.placeholder.com/300x150.png/09f/fff?text=ows4R"
-	]
-}
+"registers": [
+     <here will be listed the registers>
+]
 ```
 
-<a name="geoflow_config_options"/>
+* **How to use a user's custom register**
 
-##### 4.3.9 Configuration components – ``options``
+As described above, each ``register`` should have an ``id`` and ``definition``. For embed geoflow registers, these are the only information required. The function that is used to fetch the register content is handled internally by geoflow. On the other hand,
+a user's register should come with a function that will read the register and return the register data to R and geoflow. To declare a user function as register handler in the configuration, a ``script`` file path/name should be defined, and the name of the R function should be specified as ``id``.
 
+```{json}
+"registers": [
+  {
+    "id": "my_function",
+    "definition": "My custom register definition",
+    "script": "<path>/my_script_including_my_function.R"
+  }
+]
+```
 
-The ``options`` are by definition optional. The table below defines the possible geoflow global options:
+The function should a return a standard structure for geoflow registers with is an object of class ``data.frame`` with the following columns:
+* **code**: handles each register item code
+* **uri**: handles each register item URI (if existing)
+* **label**: handles each register item label
+* **definition**: handles each register item definition
 
-Name|Definition|Default value
-----|----------|-------------
-``line_separator``|Defines the suite of characters used for splitting metadata components with a single tabular cell of an _entity_ (eg. Description field)|**;\n** (likely to be modified for the 1st geoflow release)
+If this structure is not fulfilled, [geoflow](https://github.com/eblondel/geoflow) will return an error at initialization time. To make sure that your registers are well defined, you can then test to initialize the configuratinon with ``initWorkflow``.
+
+* Where/How registers are used in geoflow
+
+For the time being, the registers are exploited as EXPERIMENTAL FEATURE to enrich feature attribute (if annotated with the register id) listed values in the action to create an ISO 19110 feature catalogue (structural metadata describing the structure of dataset).
 
 <a name="geoflow_config_create"/>
 
@@ -556,14 +580,13 @@ Name|Definition|Default value
 
 ##### 4.4.1 Create manually a configuration file
 
-DOCUMENTATION IN PREPARATION
+The above documentation gives you JSON snippets that help you preparing your configuration file. In addition you may have a look at the [examples](https://github.com/eblondel/geoflow/tree/master/inst/extdata) provided with geoflow.
 
 <a name="geoflow_config_shiny"/>
 
-##### 4.4.2 Use the geoflow configuration Shiny User Interface
+##### 4.4.2 Use the geoflow-shiny R Shiny application
 
-NOT YET AVAILABLE
-
+The [geoflow-shiny](https://github.com/eblondel/geoflow-shiny) R Shiny application can be used to ease the configuration of a workflow.
 
 <a name="package_issues"/>
 

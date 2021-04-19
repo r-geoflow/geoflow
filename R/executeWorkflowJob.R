@@ -18,7 +18,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
     config$logger.info("Executing workflow job...")
     
     #options
-    skipFileDownload <- if(!is.null(config$options$skipFileDownload)) config$options$skipFileDownload else FALSE
+    skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
   
     #Actions onstart
     config$logger.info("---------------------------------------------------------------------------------------")
@@ -56,13 +56,13 @@ executeWorkflowJob <- function(config, jobdir = NULL){
       if(length(actions)==0){
         config$logger.warn("No actions enabled for this workflow!")
       }else{
-        config$logger.info(sprintf("Workflow mode: %s", config$mode))
+        config$logger.info(sprintf("Workflow mode: %s", config$profile$mode))
         config$logger.info(sprintf("Workflow with %s actions", length(actions)))
         for(i in 1:length(actions)){config$logger.info(sprintf("Action %s: %s", i, actions[[i]]$id))}
       }
     }
     
-    if(config$mode == "entity"){
+    if(config$profile$mode == "entity"){
      
       #execute entity-based actions
       entities <- config$metadata$content$entities
@@ -205,7 +205,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           }
         }
       }
-    }else if(config$mode == "raw"){
+    }else if(config$profile$mode == "raw"){
       #execute raw actions (--> not based on metadata entities)
       for(i in 1:length(actions)){
         action <- actions[[i]]

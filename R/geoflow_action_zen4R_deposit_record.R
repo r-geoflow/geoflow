@@ -9,7 +9,7 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   #global options
-  skipFileDownload <- if(!is.null(config$options$skipFileDownload)) config$options$skipFileDownload else FALSE
+  skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
   
   #options
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE

@@ -1,10 +1,14 @@
 {
-  "id": "Zenodo_publish_workflow",
   "profile": {
+    "id": "Zenodo_publish_workflow",
+    "name": "My workflow for Zenodo publication",
     "project": "Test geoflow project",
-    "organization": "My organization"
+    "organization": "My organization",
+    "mode": "entity",
+    "options" : {
+      "skipFileDownload": true
+    }
   },
-  "mode": "entity",
   "metadata": {
     "entities": [
       {
@@ -40,8 +44,5 @@
       },
       "run": true
     }
-  ],
-  "options" : {
-    "skipFileDownload": true
-  }
+  ]
 }

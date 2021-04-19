@@ -41,6 +41,9 @@
 #'  \item{\code{addLogo(logo)}}{
 #'    Adds a logo
 #'  }
+#'  \item{\code{setMode(mode)}}{
+#'    Set mode
+#'  }
 #' }
 #' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
@@ -52,6 +55,7 @@ geoflow_profile <- R6Class("geoflow_profile",
    project = NULL,
    organization = NULL,
    logos = list(),
+   mode = "raw",
    initialize = function(){},
    
    #setId
@@ -77,6 +81,11 @@ geoflow_profile <- R6Class("geoflow_profile",
    #addLogo
    addLogo = function(logo){
      self$logos <- c(self$logos, logo) 
+   },
+   
+   #setMode
+   setMode = function(mode){
+      self$mode <- mode
    }
    
  )                                  
