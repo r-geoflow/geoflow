@@ -319,7 +319,7 @@ register_actions <- function(){
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
       fun = sf_write_generic,
       options = list(
-        type=list(def = "format to convert", class = "character", choices = c("shp", "dbtable"), default = NA),
+        type=list(def = "format to convert", class = "character", choices = c("shp", "dbtable","csv","gpkg"), default = NA),
         createIndexes=list(def = "create indexes for columns", class = "logical", default = FALSE),
         overwrite=list(def = "Overwrite policy", class = "logical", default = TRUE),
         append=list(def = "Append policy", class = "logical", default = FALSE),
