@@ -136,7 +136,7 @@ register_data_accessors <- function(){
     geoflow_data_accessor$new(
       id = "default",
       definition = "A default HTTP(S) data accessor",
-      download = function(resource, file, path){
+      download = function(resource, file, path, software = NULL){
         cat(sprintf("[geoflow][INFO] Default HTTP(S) data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
         download.file(resource, destfile = path, mode = "wb")
         if(endsWith(path, "zip")){
@@ -152,7 +152,12 @@ register_data_accessors <- function(){
       software_type = "googledrive",
       definition = "A Google Drive data accessor",
       packages = list("googledrive"),
-      download = function(resource, file, path){
+      download = function(resource, file, path, software = NULL){
+        if(is.null(software)){
+          errMsg <- sprintf("[geoflow] Google Drive data accessor requires a 'googledrive' software declaration in the geoflow configuration\n")
+          cat(errMsg)
+          stop(errMsg)
+        }
         cat(sprintf("[geoflow] Google Drive data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
         gdr <- googledrive::drive_get(resource)
         if(!is.null(gdr)){
@@ -171,10 +176,10 @@ register_data_accessors <- function(){
     #------------------------------------------------------------------------------------------------------- 
     geoflow_data_accessor$new(
       id = "zenodo",
-      software_type = "zenodo",
-      definition = "A Zenodo data accessor",
+      software_type = NA,
+      definition = "A Zenodo public data accessor",
       packages = list("zen4R"),
-      download = function(resource, file, path){
+      download = function(resource, file, path, software = NULL){
         if(startsWith(resource, "https://dx.doi.org/")) resource <- unlist(strsplit(resource, "https://dx.doi.org/"))[2]
         cat(sprintf("[geoflow] Zenodo data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
         zen4R::download_zenodo(doi = resource, files = file, path = dirname(path))

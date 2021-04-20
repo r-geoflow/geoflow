@@ -445,10 +445,20 @@ geoflow_entity <- R6Class("geoflow_entity",
         if(isSourceUrl || accessor$id != "default"){
           #case where data is remote and there was no data enrichment in initWorkflow
           config$logger.info(sprintf("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id))
+          access_software <- NULL
+          if(!is.na(accessor$software_type)){
+            config$logger.info(sprintf("Accessor '%s' seems to require a software. Try to locate 'input' software", accessor$id))
+            accessor_software <- config$software$input[[accessor$software_type]]
+            if(is.null(accessor_software)){
+              config$logger.info(sprintf("Accessor '%s' doesn't seem to have the required 'input' software. Try to locate 'output' software", accessor$id))
+              accessor_software <- config$software$output[[accessor$software_type]]
+            }
+          }
           accessor$download(
             resource = datasource_uri,
             file = datasource, 
-            path = file.path(getwd(), paste(basefilename, datasource_ext, sep="."))
+            path = file.path(getwd(), paste(basefilename, datasource_ext, sep=".")),
+            software = accessor_software
           )
         }else{
           config$logger.info("Copying data to Job data directory from local file(s)")
