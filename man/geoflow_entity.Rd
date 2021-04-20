@@ -107,6 +107,10 @@ geoflow_entity
    spatial metadata such as the bounding box and temporal extent. Note that the user spatial extent is not overwriten
    since it may content finer geometries than a bounding box
  }
+ \item{\code{prepareFeaturesToUpload(config)}}{
+   This function will 1)cheak (in case of upload is requested) if the type of source and upload are both different and files formats(csv,shp,gpkg). 
+   and 2)process automatically to conversion from source to upload type.
+ }
  \item{\code{enrichWithRelations(config)}}{
    This function that will enrich the entity with relations. At now this is essentially related to adding 
    relations if a Geoserver (geosapi) publishing action is enabled in which case this function will add 1) 

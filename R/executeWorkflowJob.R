@@ -125,6 +125,8 @@ executeWorkflowJob <- function(config, jobdir = NULL){
               #control is added in case of entity already enriched with features (when loaded from custom R entity handlers)
               if(is.null(entity$data$features)) entity$enrichWithFeatures(config, jobdir)
               setwd(entity$getEntityJobDirPath(config, jobdir)) #make sure we are in entity jobdir
+              #we cheak if the source and upload are both different file format (csv,shp,gpkg) and process automatically to conversion from source to upload type
+              entity$prepareFeaturesToUpload(config)
             }
             #data relations (eg. geosapi & OGC data protocol online resources)
             entity$enrichWithRelations(config)

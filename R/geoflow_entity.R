@@ -101,6 +101,10 @@
 #'    spatial metadata such as the bounding box and temporal extent. Note that the user spatial extent is not overwriten
 #'    since it may content finer geometries than a bounding box
 #'  }
+#'  \item{\code{prepareFeaturesToUpload(config)}}{
+#'    This function will 1)cheak (in case of upload is requested) if the type of source and upload are both different and files formats(csv,shp,gpkg). 
+#'    and 2)process automatically to conversion from source to upload type.
+#'  }
 #'  \item{\code{enrichWithRelations(config)}}{
 #'    This function that will enrich the entity with relations. At now this is essentially related to adding 
 #'    relations if a Geoserver (geosapi) publishing action is enabled in which case this function will add 1) 
@@ -910,6 +914,36 @@ geoflow_entity <- R6Class("geoflow_entity",
       
       setwd("..")
       
+    },
+    
+    #prepareFeaturesToUpload
+    prepareFeaturesToUpload = function(config) {
+      types_with_file<-c("csv","shp","gpkg")
+      
+      if(self$data$upload) if(self$data$sourceType %in% types_with_file & self$data$uploadType %in% types_with_file){
+        
+        if(self$data$sourceType != self$data$uploadType){
+          
+          config$logger.info(sprintf("Conversion of source file from sourceType (%s) to uploadType (%s)",self$data$sourceType,self$data$uploadType))
+          
+          datasource <- self$data$source[[1]]
+          datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
+          if(length(datasource_parts)<2) stop("Source data file should include a file extension")
+          datasource_name <- datasource_parts[1]
+          datasource_ext <- datasource_parts[2]
+          
+          uploadSourceExt<-switch(self$data$uploadType,
+                                  "shp" = "zip" ,
+                                  self$data$uploadType
+                                  
+          )
+          writeWorkflowJobDataResource(entity=self,config=config,type=self$data$uploadType,useFeatures=TRUE,resourcename=datasource_name)
+          self$data$uploadSource<-list(paste0(datasource_name,".",uploadSourceExt))
+          
+        }else{
+          config$logger.info("sourceType and uploadType are identical, no conversion require")		
+        }
+      }
     },
     
     #enrichWithRelations

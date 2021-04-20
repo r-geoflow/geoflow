@@ -49,15 +49,19 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
     resourcename<-entity$data$uploadSource[[1]]
   }
   
-  if(!type %in% c("shp","dbtable")){
-    errMsg<-"Error: unrecognized type, specify a type at this list : 'shp','dbtable'"
+  if(!type %in% c("shp","dbtable","csv","gpkg")){
+    errMsg<-"Error: unrecognized type, specify a type at this list : 'csv','shp','dbtable','gpkg'"
     config$logger.error(errMsg)
     stop(errMsg)
   } 
   
   switch(type,
+         "csv" = {
+          config$logger.info(sprintf("Format type: %s", type))
+          st_write(obj = obj, paste0("./data/",resourcename,".csv"))
+          config$logger.info("write csv file to data job directory")
+         },
          "shp" = {
-           
            resourcename_parts <- unlist(strsplit(resourcename, "\\."))
            if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
            
@@ -76,6 +80,14 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
              }
              entity$data$features<-df
            }
+         },
+         "gpkg" = {
+           resourcename_parts <- unlist(strsplit(resourcename, "\\."))
+           if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
+           
+           config$logger.info(sprintf("Format type: %s", type))
+           st_write(obj = obj, dsn=paste0("./data/",resourcename,".gpkg"))
+           config$logger.info("write gpkg file to data job directory")
          },
          "dbtable" = {
            if(is.null(config$software$output$dbi)){
