@@ -188,7 +188,36 @@ register_data_accessors <- function(){
           utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
         }
       }
-    )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #D4SCIENCE STORAGE HUB
+    #-------------------------------------------------------------------------------------------------------    
+    geoflow_data_accessor$new(
+      id = "d4storagehub",
+      software_type = "d4storagehub",
+      definition = "A D4science Storage Hub data accessor",
+      packages = list("d4storagehub4R"),
+      download = function(resource, file, path, software = NULL){
+        if(is.null(software)){
+          errMsg <- sprintf("[geoflow] D4science Storage Hub data accessor requires a 'd4storagehub' software declaration in the geoflow configuration\n")
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+        cat(sprintf("[geoflow] D4science Storage Hub data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
+        link = software$getPublicFileLink(resource)
+        if(!is.null(link)){
+          cat(sprintf("[geoflow][INFO] D4science Storage Hub resource ID: %s\n", link))
+          download.file(url = link, destfile = path)
+        }else{
+          cat(sprintf("No D4science Storage Hub resource ID for resource/file '%s'\n", resource))
+        }
+        
+        if(endsWith(path, "zip")){
+          utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
+        }
+      }
+    )    
   )
   .geoflow$data_accessors <- data_accessors
 }
