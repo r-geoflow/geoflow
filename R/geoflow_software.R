@@ -489,6 +489,19 @@ register_software <- function(){
           options(dataone_token = NULL)
         }
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #D4SCIENCE STORAGE HUB CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "d4storagehub",
+      definition = "D4science storage hub API Client powered by 'd4storagehub4R' package",
+      packages = list("d4storagehub4R"),
+      handler = try(d4storagehub4R::StoragehubManager$new, silent = TRUE),
+      arguments = list(
+        token = list(def = "D4Science storage hub user authentication token", class = "character"),
+        logger = list(def = "Level for 'd4storagehub4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = list(NULL,"INFO","DEBUG"))
+      )
     )
     
   )
