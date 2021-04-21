@@ -36,21 +36,19 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   }
   GS_CONFIG <- config$software$output$geoserver_config
   workspace <- GS_CONFIG$properties$workspace
+  if(is.null(workspace)) if(!is.null(entity$data$workspaces$geoserver)) workspace <- entity$data$workspaces$geoserver
   if(is.null(workspace)){
     errMsg <- "The geoserver configuration requires a workspace for publishing action"
     config$logger.error(errMsg)
     stop(errMsg)
   }
   datastore <- GS_CONFIG$properties$datastore
+  if(is.null(datastore)) if(!is.null(entity$data$datastore)) datastore <- entity$data$datastore
   if(is.null(datastore)){
     errMsg <- "The geoserver configuration requires a datastore for publishing action"
     config$logger.error(errMsg)
     stop(errMsg)
   }
-  
-  #check presence of workspace/datastore local config
-  if(!is.null(entity$data$workspace)) workspace <- entity$data$workspace
-  if(!is.null(entity$data$datastore)) datastore <- entity$data$datastore
   
   if(entity$data$uploadType == "other"){
     warnMsg <- "No 'geosapi' action possible for type 'other'. Action skipped"

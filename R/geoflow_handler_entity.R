@@ -253,6 +253,7 @@ handle_entities_df <- function(config, source){
     if(!is.na(data)){
       if(data != ""){
         data_obj <- geoflow_data$new(str = data)
+        data_obj$checkSoftwareProperties(config = config)
         entity$setData(data_obj)
         
         #check existence of feature type in dictionary

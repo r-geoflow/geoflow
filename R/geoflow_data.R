@@ -63,8 +63,10 @@
 #'    Sets a CQL filter. In case of spatial data, once the data is read by geoflow (during initialization phase),
 #'    the CQL filter will be applied to the data.
 #'  }
-#'  \item{\code{setWorkspace(workspace)}}{
-#'    Sets a workspace name, object of class \code{character}. Used as target workspace name for GeoServer action.
+#'  \item{\code{setWorkspace(software_type, workspace)}}{
+#'    Sets a workspace name, object of class \code{character}. A workspace must target a valid software type, object of
+#'    class \code{character}, to be declared as first argument of this function, assuming the corresponding software is
+#'    declared in the geoflow configuration.
 #'  }
 #'  \item{\code{setDatastore(datastore)}}{
 #'    Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action.
@@ -96,6 +98,10 @@
 #'  \item{\code{addAction(action)}}{
 #'    Adds an entity local action to be run
 #'  }
+#'  \item{\code{checkSoftwareProperties(config)}}{
+#'    A function triggered when loading a data object to check eventual software dependent properties, to make sure
+#'    the corresponding software are declared in the config.
+#'  }
 #'  
 #' }
 #' 
@@ -123,7 +129,7 @@ geoflow_data <- R6Class("geoflow_data",
     uploadType = "other",
     cqlfilter = NULL,
     features = NULL,
-    workspace = NULL,
+    workspaces = list(),
     datastore = NULL,
     layername = NULL,
     styles = list(),
@@ -281,7 +287,13 @@ geoflow_data <- R6Class("geoflow_data",
         #geoserver targets
         #workspace
         workspaces <- data_props[sapply(data_props, function(x){x$key=="workspace"})]
-        if(length(workspaces)>0) self$setWorkspace(workspaces[[1]]$values[[1]])
+        if(length(workspaces)>0){
+          for(value in workspaces[[1]]$values){
+            software_type = attr(value, "uri")
+            attributes(value) <- NULL
+            self$setWorkspace(software_type, value)
+          }
+        }
         #datastore
         datastores <- data_props[sapply(data_props, function(x){x$key=="datastore"})]
         if(length(datastores)>0) self$setDatastore(datastores[[1]]$values[[1]])
@@ -455,8 +467,8 @@ geoflow_data <- R6Class("geoflow_data",
     },
         
     #setWorkspace
-    setWorkspace = function(workspace){
-      self$workspace <- workspace
+    setWorkspace = function(software_type, workspace){
+      self$workspaces[[software_type]] <- workspace
     },
     
     #setDatastore
@@ -517,6 +529,24 @@ geoflow_data <- R6Class("geoflow_data",
     #addAction
     addAction = function(action){
       self$actions[[length(self$actions)+1]] <- action
+    },
+    
+    #checkSoftwareProperties
+    checkSoftwareProperties = function(config){
+      
+      #check workspace related software
+      software_types <- names(self$workspaces)
+      for(software_type in software_types){
+        workspace <- self$workspaces[[software_type]]
+        config$logger.info(sprintf("Check '%s' software availability for workspace '%s'", software_type, workspace))
+        if(!software_type %in% names(config$software$input) &&
+           !software_type %in% names(config$software$output)){
+          errMsg <- sprintf("No software '%s' declared as input/output for workspace '%s'.", software_type, workspace)
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
+      }
+      
     }
     
   )
