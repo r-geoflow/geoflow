@@ -205,12 +205,14 @@ register_data_accessors <- function(){
         }
         
         cat(sprintf("[geoflow] D4science Storage Hub data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
-        link = software$getPublicFileLink(resource)
-        if(!is.null(link)){
+        link = try(software$getPublicFileLink(resource))
+        if(class(link)!="try-error"){
           cat(sprintf("[geoflow][INFO] D4science Storage Hub resource ID: %s\n", link))
           download.file(url = link, destfile = path)
         }else{
-          cat(sprintf("No D4science Storage Hub resource ID for resource/file '%s'\n", resource))
+          errMsg<-sprintf("No D4science Storage Hub resource ID for resource/file '%s'\n", resource)
+          cat(errMsg)
+          stop(errMsg)
         }
         
         if(endsWith(path, "zip")){
