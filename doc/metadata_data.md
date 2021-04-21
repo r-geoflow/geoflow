@@ -6,7 +6,7 @@ As now, three software access are available, a downloadHandler function associat
 	 - *default* a file local or remote source (not need to specify this key for this usage) and in case of dbtable or dbquery with a software declared in input
 	 - *googledrive* for access to google drive, must be declared under the same name (id) as a access listed in **software** section of json configuration file. e.G. `access:googledrive`
 	 - *zenodo*  for access to zenodo software and download data resources associated to the Zenodo record based on DOI. e.g. `access:zenodo`
-	 - *d4storagehub*  for access to d4science storage hub software and download data resources store on d4science workspace e.g. `access:d4storagehub`
+	 - *d4storagehub*  for access to [d4science](https://www.d4science.org/)  storage hub software and download data resources store on d4science workspace e.g. `access:d4storagehub`
 ```{json}
 	{
 		"id": "googledrive",
