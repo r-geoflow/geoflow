@@ -6,20 +6,20 @@ workflows - List of actions and softwares
 
 ## 1.1 List of actions supported by geoflow
 
-| id                                                                          | types                                                            | definition                                                                 | pid\_generator | packages                 |
-| :-------------------------------------------------------------------------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------- | :------------- | :----------------------- |
-| [**geometa-create-iso-19115**](#geometa-create-iso-19115)<br>               | Metadata production                                              | Produce an ISO/OGC 19115/19139 metadata object                             | FALSE          | geometa                  |
-| [**geometa-create-iso-19110**](#geometa-create-iso-19110)<br>               | Metadata production                                              | Produce an ISO 19110/19139 metadata object                                 | FALSE          | geometa                  |
-| [**ows4R-publish-iso-19139**](#ows4R-publish-iso-19139)<br>                 | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol     | FALSE          | ows4R                    |
-| [**geonapi-publish-iso-19139**](#geonapi-publish-iso-19139)<br>             | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API        | FALSE          | geonapi                  |
-| [**geosapi-publish-ogc-services**](#geosapi-publish-ogc-services)<br>       | Data upload,Data publication,Metadata publication                | Publish vector data to GeoServer OGC web-services (WMS/WFS)                | FALSE          | geosapi                  |
-| [**zen4R-deposit-record**](#zen4R-deposit-record)<br>                       | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metadata in the Zenodo infrastructure         | TRUE           | zen4R                    |
-| [**atom4R-dataverse-deposit-record**](#atom4R-dataverse-deposit-record)<br> | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metetadata on a Dataverse using the Sword API | TRUE           | atom4R                   |
-| [**dataone-upload-datapackage**](#dataone-upload-datapackage)<br>           | Data upload,Data publication,Metadata publication,DOI assignment | Uploads a data package to a DataOne metacat node                           | TRUE           | mime,datapack,dataone    |
-| [**sf-write-generic**](#sf-write-generic)<br>                               | Data writing,Data upload                                         | Import features data into several formats                                  | FALSE          | sf,DBI,RSQLite,RPostgres |
-| [**sf-write-dbi**](#sf-write-dbi)<br>                                       | Data writing,Data upload                                         | Import features data into Postgres/Postgis                                 | FALSE          | sf,DBI,RSQLite,RPostgres |
-| [**sf-write-shp**](#sf-write-shp)<br>                                       | Data writing                                                     | Import features data and zip files                                         | FALSE          | sf                       |
-| [**eml-create-eml**](#eml-create-eml)<br>                                   | Metadata production                                              | Produce an EML metadata object                                             | FALSE          | EML,emld                 |
+| id                                                                          | types                                                            | definition                                                                 | target | target\_dir | pid\_generator | packages                 |
+| :-------------------------------------------------------------------------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------- | :----- | :---------- | :------------- | :----------------------- |
+| [**geometa-create-iso-19115**](#geometa-create-iso-19115)<br>               | Metadata production                                              | Produce an ISO/OGC 19115/19139 metadata object                             | entity | metadata    | FALSE          | geometa                  |
+| [**geometa-create-iso-19110**](#geometa-create-iso-19110)<br>               | Metadata production                                              | Produce an ISO 19110/19139 metadata object                                 | entity | metadata    | FALSE          | geometa                  |
+| [**ows4R-publish-iso-19139**](#ows4R-publish-iso-19139)<br>                 | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol     | NA     | NA          | FALSE          | ows4R                    |
+| [**geonapi-publish-iso-19139**](#geonapi-publish-iso-19139)<br>             | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API        | NA     | NA          | FALSE          | geonapi                  |
+| [**geosapi-publish-ogc-services**](#geosapi-publish-ogc-services)<br>       | Data upload,Data publication,Metadata publication                | Publish vector data to GeoServer OGC web-services (WMS/WFS)                | NA     | NA          | FALSE          | geosapi                  |
+| [**zen4R-deposit-record**](#zen4R-deposit-record)<br>                       | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metadata in the Zenodo infrastructure         | job    | zenodo      | TRUE           | zen4R                    |
+| [**atom4R-dataverse-deposit-record**](#atom4R-dataverse-deposit-record)<br> | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metetadata on a Dataverse using the Sword API | job    | dataverse   | TRUE           | atom4R                   |
+| [**dataone-upload-datapackage**](#dataone-upload-datapackage)<br>           | Data upload,Data publication,Metadata publication,DOI assignment | Uploads a data package to a DataOne metacat node                           | job    | dataone     | TRUE           | mime,datapack,dataone    |
+| [**sf-write-generic**](#sf-write-generic)<br>                               | Data writing,Data upload                                         | Import features data into several formats                                  | entity | data        | FALSE          | sf,DBI,RSQLite,RPostgres |
+| [**sf-write-dbi**](#sf-write-dbi)<br>                                       | Data writing,Data upload                                         | Import features data into Postgres/Postgis                                 | NA     | NA          | FALSE          | sf,DBI,RSQLite,RPostgres |
+| [**sf-write-shp**](#sf-write-shp)<br>                                       | Data writing                                                     | Import features data and zip files                                         | entity | data        | FALSE          | sf                       |
+| [**eml-create-eml**](#eml-create-eml)<br>                                   | Metadata production                                              | Produce an EML metadata object                                             | entity | metadata    | FALSE          | EML,emld                 |
 
 ### 1.1.1 List of geometa-create-iso-19115 options<a name= geometa-create-iso-19115 />
 
@@ -133,6 +133,7 @@ workflows - List of actions and softwares
 | [**zenodo**](#zenodo)<br>                             | Zenodo client powered by ‘zen4R’ package                                  | zen4R                 |
 | [**sword\_for\_dataverse**](#sword_for_dataverse)<br> | Dataverse SWORD API Client powered by ‘atom4R’ package                    | atom4R                |
 | [**dataone**](#dataone)<br>                           | DataONe API Client powered by ‘dataone’ package                           | dataone               |
+| [**d4storagehub**](#d4storagehub)<br>                 | D4science storage hub API Client powered by ‘d4storagehub4R’ package      | d4storagehub4R        |
 
 ### 2.1.1 List of dbi parameters<a name= dbi />
 
@@ -259,5 +260,16 @@ workflows - List of actions and softwares
 | token | Authorization token   |
 
 ### 2.1.18 List of dataone properties
+
+*No properties available for this software*
+
+### 2.1.19 List of d4storagehub parameters<a name= d4storagehub />
+
+| name   | definition                                                           |
+| :----- | :------------------------------------------------------------------- |
+| token  | D4Science storage hub user authentication token                      |
+| logger | Level for ‘d4storagehub4R’ logger messages (NULL, ‘INFO’ or ‘DEBUG’) |
+
+### 2.1.20 List of d4storagehub properties
 
 *No properties available for this software*
