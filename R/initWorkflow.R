@@ -171,7 +171,7 @@ initWorkflow <- function(file){
         config$logger.error(errMsg)
         stop(errMsg)
       }
-      config$software[[software$type]][[software$software_type]] <- client
+      config$software[[software$type]][[software$software_type]] <- if(!is.null(client)) client else software #return config in case software handler has no return
       config$software[[software$type]][[paste(software$software_type,"config",sep="_")]] <- software
     }
   }
