@@ -20,18 +20,18 @@ d4storagehub4R_upload_data <- function(entity, config, options){
   #verify  if folder exist and create it if missing
   #-------------------------------------------------------------------------------------------------  
   folderName = "data"
-  
-    folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = workspace)
+  workspace<- file.path(workspace,getEntityJobDirName())
+    folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = file.path(workspace,filderName))
     if (is.null(folderID)) {
       config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", workspace))
-      D4STORAGE_HUB$createFolder(folderPath = workspace, name=folderName, description = "", hidden = FALSE, recursive = TRUE)
+      D4STORAGE_HUB$createFolder(folderPath = workspace, name=folderName, description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
     }
 
   #upload
   #-------------------------------------------------------------------------------------------------
   if(entity$data$upload){
     config$logger.info("Upload mode is set to true")
-    fileName = entity$data$uploadSource
+    fileName = entity$data$uploadSource[[1]]
     filePath = file.path(getwd(),folderName,fileName)
     if(startsWith(entity$data$uploadType,"db")){
       errMsg <- "Skipping upload: Upload mode is no valid for 'database' type"
