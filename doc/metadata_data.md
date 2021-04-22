@@ -47,6 +47,7 @@ If data must be upload, declare server in **software** section of json configura
 	* *`csv`* for CSV table object
 	* *`gpkg`* for geopackage object
 	* *`other`* for other type of files
+* **workspace**: name of target workspace to connect and upload to remote storage (can also be specified in json configuration). To declare this parameter in data column of entites sheet you must indicate the name or path of workspace followed by the type of software  with `@` key.  Two softwares can be invoke :`geoserver`,`d4storagehub`. e.g.`workspace:MyWorkspace@geoserver` 
 
 <u>Enrich the data content</u>
 
@@ -69,7 +70,6 @@ If data must be upload, declare server in **software** section of json configura
 
 <u>Parameter specific to software - Geoserver</u>
 * **style**: Used as layer style name(s) for GeoServer action.
-* **workspace**: name of target workspace to server declared (can also be specified in json configuration) 
 * **datastore** : name of target datastore to server declared (can also be specified in json configuration)
 * **layername**: name give to layer if need (db, gpkg and shp object)
 * **for a 'dbquery' upload type**
