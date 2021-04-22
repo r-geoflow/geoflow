@@ -163,6 +163,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             generic_uploaders <- actions[sapply(actions, function(x){x$isGenericUploader()})]
             if(length(generic_uploaders)>0){
               for(generic_uploader in generic_uploaders){
+                config$logger.info(sprintf("Last trigger for action '%s' (generic upload behavior)", generic_uploader$id))
                 #For Zenodo: 
                 #if Zenodo is the only action then let's sleep to avoid latence issues when listing depositions
                 #if no sleep is specified, getDepositions doesn't list yet the newly deposited recorded with
