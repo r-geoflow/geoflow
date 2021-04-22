@@ -365,7 +365,7 @@ register_actions <- function(){
     geoflow_action$new(
       id = "d4storagehub4R-upload-data",
       types =  list("Data upload"),
-      def = "Upload features data to a D4Science Workspace",
+      def = "Upload data/metadata to a D4Science Workspace",
       target = NA,
       target_dir = NA,
       packages = list("d4storagehub4R"),
