@@ -372,7 +372,17 @@ register_actions <- function(){
       options = list(
         subject_taxonomy = list(def = "Identifier of the subject handling the Taxonomic coverage.", class = "character", default = "taxonomy")
       )
-    )
+    ),
+    geoflow_action$new(
+      id = "d4storagehub4R-upload-data",
+      types =  list("Data upload"),
+      def = "Upload data/metadata to a D4Science Workspace",
+      target = NA,
+      target_dir = NA,
+      packages = list("d4storagehub4R"),
+      fun = d4storagehub4R_upload_data,
+      options = list()
+    )   
   )
   .geoflow$actions <- objs
 }
