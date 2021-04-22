@@ -20,6 +20,7 @@ workflows - List of actions and softwares
 | [**sf-write-dbi**](#sf-write-dbi)<br>                                       | Data writing,Data upload                                         | Import features data into Postgres/Postgis                                 | NA     | NA          | FALSE          | sf,DBI,RSQLite,RPostgres |
 | [**sf-write-shp**](#sf-write-shp)<br>                                       | Data writing                                                     | Import features data and zip files                                         | entity | data        | FALSE          | sf                       |
 | [**eml-create-eml**](#eml-create-eml)<br>                                   | Metadata production                                              | Produce an EML metadata object                                             | entity | metadata    | FALSE          | EML,emld                 |
+| [**d4storagehub4R-upload-data**](#d4storagehub4R-upload-data)<br>           | Data upload                                                      | Upload features data to a D4Science Workspace                              | NA     | NA          | FALSE          | d4storagehub4R           |
 
 ### 1.1.1 List of geometa-create-iso-19115 options<a name= geometa-create-iso-19115 />
 
@@ -117,6 +118,10 @@ workflows - List of actions and softwares
 | name              | definition                                                 | default  |
 | :---------------- | :--------------------------------------------------------- | :------- |
 | subject\_taxonomy | Identifier of the subject handling the Taxonomic coverage. | taxonomy |
+
+### 1.1.13 List of d4storagehub4R-upload-data options<a name= d4storagehub4R-upload-data />
+
+*No options available for this action*
 
 # 2 Software
 
@@ -272,4 +277,6 @@ workflows - List of actions and softwares
 
 ### 2.1.20 List of d4storagehub properties
 
-*No properties available for this software*
+| name      | definition                           |
+| :-------- | :----------------------------------- |
+| workspace | D4Science storage hub workspace name |
