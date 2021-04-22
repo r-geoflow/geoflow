@@ -68,9 +68,8 @@ executeWorkflowJob <- function(config, jobdir = NULL){
       entities <- config$metadata$content$entities
       if(!is.null(entities)){
         
-        #inspect if there are DOI-management related actions
+        #TODO refactor actions in case they have specific behaviors to triggered early before entity iterator (eg. Zenodo cleaning)
         withZenodo <- any(sapply(actions, function(x){x$id=="zen4R-deposit-record"}))
-        withDataverse <- any(sapply(actions, function(x){x$id=="atom4R-dataverse-deposit-record"}))
         
         #cleaning in case Zenodo action is enabled with clean properties 
         if(withZenodo){
@@ -158,27 +157,27 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             config$logger.info(sprintf("Executing Action %s: %s - for entity %s", i, action$id, entity$identifiers[["id"]]))
             action$fun(entity = entity, config = config, options = action$options)
           }
-          #if zenodo is among actions, file upload (and possibly publish) to be managed here
-          if(withZenodo){
-            #if Zenodo is the only action then let's sleep to avoid latence issues when listing depositions
-            #if no sleep is specified, getDepositions doesn't list yet the newly deposited recorded with
-            #isIdenticalTo relationship
-            if(length(actions)==1){
-              config$logger.info("Zenodo: sleeping 5 seconds...")
-              Sys.sleep(5)
-            }
-            zen_action <- actions[sapply(actions, function(x){x$id=="zen4R-deposit-record"})][[1]]
-            act_options <- zen_action$options
-            act_options$depositWithFiles <- TRUE
-            zen_action$fun(entity, config, act_options)
-          }
           
-          #if atom4R/dataverse is among actions, file upload (and possibly publish) to be managed here
-          if(withDataverse){
-            dv_action <- actions[sapply(actions, function(x){x$id=="atom4R-dataverse-deposit-record"})][[1]]
-            act_options <- dv_action$options
-            act_options$depositWithFiles <- TRUE
-            dv_action$fun(entity, config, act_options)
+          #search for generic uploader actions (eg. Zenodo, Dataverse)
+          if(length(actions)>0) {
+            generic_uploaders <- actions[sapply(actions, function(x){x$isGenericUploader()})]
+            if(length(generic_uploaders)>0){
+              for(generic_uploader in generic_uploaders){
+                #For Zenodo: 
+                #if Zenodo is the only action then let's sleep to avoid latence issues when listing depositions
+                #if no sleep is specified, getDepositions doesn't list yet the newly deposited recorded with
+                #isIdenticalTo relationship
+                if(generic_uploader$id == "zen4R-deposit-record" & length(actions)==1){
+                  config$logger.info("Zenodo: sleeping 5 seconds...")
+                  Sys.sleep(5)
+                }
+                
+                #behavior for generic uploaders, we set depositWithFiles = TRUE and proceed with all resource uploads
+                generic_uploader_options <- generic_uploader$options
+                generic_uploader_options$depositWithFiles <- TRUE
+                generic_uploader$fun(entity, config, generic_uploader_options)
+              }
+            }
           }
           
           entity$data$features <- NULL

@@ -21,6 +21,7 @@
 #'    def = "some definition",
 #'    packages = list(),
 #'    pid_generator = NULL,
+#'    generic_uploader = FALSE,
 #'    fun = function(config, entity){},
 #'    options = list(
 #'      option_name = list(def = "option description", default = FALSE)
@@ -54,6 +55,7 @@ geoflow_action <- R6Class("geoflow_action",
     packages = list(),
     pid_generator = NULL,
     pid_types = list(),
+    generic_uploader = FALSE,
     fun = NA,
     script = NA,
     options = list(),
@@ -61,6 +63,7 @@ geoflow_action <- R6Class("geoflow_action",
                           target = NA, target_dir = NA,
                           packages = list(), 
                           pid_generator = NULL, pid_types = list(),
+                          generic_uploader = FALSE,
                           fun = NULL, script = NULL, options = list()){
       self$id <- id
       self$types <- types
@@ -71,6 +74,7 @@ geoflow_action <- R6Class("geoflow_action",
       self$packages <- packages
       self$pid_generator <- pid_generator
       self$pid_types <- pid_types
+      self$generic_uploader <- generic_uploader
       self$fun <- fun
       self$script <- script
       self$options <- options
@@ -162,6 +166,11 @@ geoflow_action <- R6Class("geoflow_action",
         src_config, file.path(getwd(),self$target_dir,paste0(self$pid_generator, "_geoflow_config_for_publication.json")),
         auto_unbox = TRUE, pretty = TRUE
       )
+    },
+    
+    #isGenericUploader
+    isGenericUploader = function(){
+      return(self$generic_uploader)
     }
     
   )
@@ -265,6 +274,7 @@ register_actions <- function(){
         doi = "DOI_for_version",
         conceptdoi = "DOI_for_allversions"
       ),
+      generic_uploader = TRUE,
       packages = list("zen4R"),
       fun = zen4R_deposit_record,
       options = list(
@@ -286,6 +296,7 @@ register_actions <- function(){
       pid_types = list(
         doi = "DOI_for_version"
       ),
+      generic_uploader = TRUE,
       packages = list("atom4R"),
       fun = atom4R_dataverse_deposit_record,
       options = list(
