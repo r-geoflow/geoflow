@@ -379,9 +379,13 @@ register_actions <- function(){
       def = "Upload data/metadata to a D4Science Workspace",
       target = NA,
       target_dir = NA,
+      generic_uploader = TRUE,
       packages = list("d4storagehub4R"),
       fun = d4storagehub4R_upload_data,
-      options = list()
+      options = list(
+        depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE)
+      ),
+      
     )   
   )
   .geoflow$actions <- objs
