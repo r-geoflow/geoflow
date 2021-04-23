@@ -1153,7 +1153,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #getJobResource
     getJobResource = function(config, resourceType, filename){
-      return(file.path(config$job, "entities", self$getEntityJobDirname(), resourceType, file))
+      return(file.path(config$job, "entities", self$getEntityJobDirname(), resourceType, filename))
     },
     
     #getJobDataResource
