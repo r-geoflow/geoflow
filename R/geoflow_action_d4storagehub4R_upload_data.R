@@ -22,7 +22,7 @@ d4storagehub4R_upload_data <- function(entity, config, options){
   
   #verify  if folder exist and create it if missing
   #-------------------------------------------------------------------------------------------------  
-  workspace<- file.path(workspace,entity$getEntityJobDirName())
+  workspace<- file.path(workspace,entity$getEntityJobDirname())
     folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = file.path(workspace,"data"))
     if (is.null(folderID)) {
       config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", workspace))
