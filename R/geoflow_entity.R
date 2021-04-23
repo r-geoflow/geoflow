@@ -676,7 +676,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                    }
                  }else{
                    #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
-                   if(!is.null(self$srid)) sf::st_crs(entity$data$features) <- self$srid 
+                   if(!is.null(self$srid)) sf::st_crs(self$data$features) <- self$srid 
                  }
                  #dynamic spatial extent
                  config$logger.info("Overwriting entity bounding box with shapefile bounding box")

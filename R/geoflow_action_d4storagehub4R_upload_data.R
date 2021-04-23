@@ -82,7 +82,7 @@ d4storagehub4R_upload_data <- function(entity, config, options){
       #upload metadata files
       for(metadata_file in metadata_files){
         config$logger.info(sprintf("D4storagehub: uploading metadata file '%s'", metadata_file))
-        D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, "metadata"), file=file.path(getwd(),"metadata",data_file), description = "", archive = FALSE)
+        D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, "metadata"), file=file.path(getwd(),"metadata",metadata_file), description = "", archive = FALSE)
       }
     }else{
       config$logger.warn("D4storagehub: no metadata files to upload")
