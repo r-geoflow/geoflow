@@ -738,8 +738,9 @@ geoflow_entity <- R6Class("geoflow_entity",
              }
              
            },
-           "dbtable" = {
+           #dbtable - A DB table
            #---------------------------------------------------------------------------------
+           "dbtable" = {
              DBI <- config$software$input$dbi
              if(!is.null(DBI)){
                sf.data <- sf::st_read(DBI, datasource_name)
@@ -823,33 +824,12 @@ geoflow_entity <- R6Class("geoflow_entity",
            #---------------------------------------------------------------------------------
            "dbquery" = {
              
-              trgFilename <- file.path(getwd(), paste0(datasource_name,".sql"))
-             
-              sqlFileExists <- FALSE
-              if(!is.null(datasource_file)){
-                isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_file) > 0
-                if(isSourceUrl){
-                  warnMsg <- "Downloading remote SQL file from URL to temporary geoflow temporary data directory!"
-                  config$logger.warn(warnMsg)
-                  accessor$download(datasource_file, trgFilename)
-                  sqlFileExists <- TRUE
-                }else{
-                  data.files <- list.files(path = dirname(datasource_file), pattern = datasource_name)
-                  if(length(data.files)>0){
-                    sqlFileExists <- TRUE
-                    config$logger.info("Copying local SQL scrit to temporary geoflow temporary data directory")
-                    file.copy(from = data.files[1], to = getwd())
-                  }
-                }
-              }
-             
-              if(sqlFileExists){
-                sqlfile <- file.path(getwd(), paste0(datasource_name,".sql"))
+              sqlfile <- file.path(getwd(), paste0(basefilename,".sql"))
+              if(file.exists(sqlfile)){
                 config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
                 sql <- paste(readLines(sqlfile), collapse="")
                 config$logger.info(sql)
                 self$data$setSourceSql(sql)
-                unlink(sqlfile)
               }else{
                 if(is.null(self$data$sourceSql)){
                   warnMsg <- sprintf("No SQL file provided as 'source' nor 'sourceSql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
