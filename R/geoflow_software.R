@@ -505,6 +505,20 @@ register_software <- function(){
       attributes = list(
         workspace = list(def = "D4Science storage hub workspace name", class = "character")
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #GBIF CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "gbif",
+      definition = "Gbif API Client",
+      packages = list(),
+      handler = list,
+      arguments = list(
+        user = list(def = "Username for Gbif authentication", class = "character"),
+        pwd = list(def = "Password for Gbif authentication", class = "character"),
+        email = list(def = "Email address for sending notification ", class = "character")
+      )
     )
   )
   .geoflow$software <- software
