@@ -112,8 +112,8 @@ geoflow_data <- R6Class("geoflow_data",
     supportedSourceTypes = c("dbtable", "dbview", "dbquery","shp", "csv", "gpkg", "other"),
     supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "gpkg", "other"),
     supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"),
-    supportedXPossibleNames = c("x","lon","long","longitude"),
-    supportedYPossibleNames = c("y","lat","lati","latitude")
+    supportedXPossibleNames = c("x","lon","long","longitude","decimalLongitude"),
+    supportedYPossibleNames = c("y","lat","lati","latitude","decimalLatitude")
 
   ),
   public = list(
