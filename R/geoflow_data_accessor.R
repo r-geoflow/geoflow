@@ -219,7 +219,39 @@ register_data_accessors <- function(){
           utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
         }
       }
-    )    
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #GBIF
+    #------------------------------------------------------------------------------------------------------- 
+    geoflow_data_accessor$new(
+      id = "gbif",
+      software_type = "gbif",
+      definition = "A gbif public data accessor",
+      packages = list("rgbif","jsonlite","readr"),
+      download = function(resource, file, path, software = NULL){
+
+        if(is.null(software)){
+          errMsg <- sprintf("[geoflow] Gbif data accessor requires a 'gbif' software declaration in the geoflow configuration\n")
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+        query<- readr::read_file(resource)
+        cat(sprintf("[geoflow][INFO] gbif Searching in 'gbif' database records corresponding to the query: %s ...\n" , file))        
+        data<-rgbif::occ_download(
+          body=query,
+          user=software$user,pwd=software$pwd,email=software$email
+        )
+        
+        rgbif::occ_download_wait(data)
+        download <- rgbif::occ_download_get(data)
+        df <- rgbif::occ_download_import(download)
+        cat("[geoflow][INFO] gbif Write csv file to data job directory\n")
+        readr::write_csv(df,gsub(".json",".csv",path))
+        #sapply(query_file$scientificName, function(x) rgbif::name_suggest(x)$data$key[1], USE.NAMES=FALSE))#NB: to convert scientificName to taxonKey
+        
+      }
+    )
   )
   .geoflow$data_accessors <- data_accessors
 }
