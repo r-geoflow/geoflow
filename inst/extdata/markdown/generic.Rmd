@@ -1,0 +1,165 @@
+---
+output: 
+  html_document
+---
+
+<div class="row">
+<div class ="col-md-8">
+
+<h1>`r entity$titles$title`</h1>
+`r if(!is.null(entity$titles$alternative)) paste0('<h2 style="color:grey; front-size:12px;" >', entity$titles$alternative,'</h2>')`
+<div>
+<p style=float:right;color: grey;"> `r paste0('Updated: ',Sys.Date())`</p>    
+<br style="clear:both;" />
+</div>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+if(!is.null(entity$descriptions$abstract)){
+  cat(sprintf('<p style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif; line-height: 1.42;font-size: 14px; color: #333333; background-color: #ddd; margin: 0px 0px 0px 5px; padding: 19px; border: 1px solid #ccc; border-radius:4px;text-align: justify;"> %s </p>',entity$descriptions$abstract))
+}
+```
+  
+<h3> Contacts and roles </h3>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+if(length(entity$contacts)>0){
+  cat('<ul style="list-style-type:none;">')
+  for (i in 1:length(entity$contacts)){
+    cat(sprintf('<li style="font-size: large;">**%s**</li>',entity$contacts[[i]]$role))
+    cat('<ul style="list-style-type:none;">')
+    cat(sprintf('<li> **%s** </li>',entity$contacts[[i]]$organizationName))
+    cat(sprintf('<li><a href=%s> %s %s (%s)</a></li>',entity$contacts[[i]]$email,entity$contacts[[i]]$lastName,entity$contacts[[i]]$firstName,entity$contacts[[i]]$positionName))
+    address<-c(entity$contacts[[i]]$postalAddress,entity$contacts[[i]]$postalCode,entity$contacts[[i]]$city,entity$contacts[[i]]$country) 
+    cat(paste0('<li>',paste0(address[!is.na(address)],collapse=","),'</li>'))
+    if(!is.na(entity$contacts[[i]]$voice)) cat(sprintf('<li> Call %s </li>',entity$contacts[[i]]$voice)) 
+    cat('</ul>')
+  }
+  cat('</ul>')
+}
+```
+
+<h3> Keywords </h3>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+if(length(entity$subjects)>0){
+  cat('<ul>')
+  for (i in 1:length(entity$subjects)){
+    cat(sprintf('<li>**%s: **',entity$subjects[[i]]$key))
+    keywords<-sapply(entity$subjects[[i]]$keywords, function(x) x$name)
+    cat(paste0(paste0(keywords,collapse=","),'</li>'))
+  }
+  cat('</ul>')
+}
+```
+
+<h3> Resource informations </h3>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+cat('<ul style="list-style-type:none;">')
+if(!is.null(entity$language)) cat(sprintf('<li> **Language: ** %s </li>',entity$language))
+if(!is.null(entity$types$generic)) cat(sprintf('<li> **Type: ** %s </li>',entity$types$generic))
+cat('<li> **Resource identifiers: ** </li>')
+cat('<ul style="list-style-type:none;">')
+if(!is.null(entity$identifiers$id)) cat(sprintf('<li> **id: ** %s </li>',entity$identifiers$id))
+if(!is.null(entity$identifiers$dsd)) cat(sprintf('<li> **dsd: ** %s </li>',entity$identifiers$dsd))
+cat('</ul>')
+if(length(entity$dates)>0){
+  cat('<li> **Dates: **</li>')
+  cat('<ul  style="list-style-type:none;">')
+  for(i in 1:length(entity$dates)){
+    cat(sprintf('<li> **%s :** %s </li>',entity$dates[[i]]$key,entity$dates[[i]]$value))
+  }
+  cat('</ul>')
+}
+if(length(entity$formats)>0){
+  cat('<li> **Format: **</li>')
+  cat('<ul  style="list-style-type:none;">')
+  for(i in 1:length(entity$formats)){
+  #cat(sprintf('<li> **%s :** %s </li>',entity$formats[[i]]$key,entity$formats[[i]]$name))
+    if(!is.na(entity$formats[[i]]$name)) cat(sprintf('<li> %s </li>',entity$formats[[i]]$name))
+  }
+  cat('</ul>')
+}
+if(length(entity$right)>0){
+  cat('<li> **Rights: **</li>')
+  cat('<ul  style="list-style-type:none;">')
+  for(i in 1:length(entity$rights)){
+    cat(sprintf('<li> **%s :** %s </li>',entity$rights[[i]]$key,entity$rights[[i]]$value))
+  }
+  cat('</ul>')
+}
+cat('</ul>')
+```
+
+<h3> Links </h3>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+if(length(entity$relations)>0){
+  cat('<ul  style="list-style-type:none;">')
+  for (i in 1:length(entity$relations)){
+    cat(sprintf('<li><a href=%s> %s </a></li>',entity$relations[[i]]$link,entity$relations[[i]]$name))
+  }
+  cat('</ul>')
+}
+```
+
+</div>
+
+<div class ="col-md-4">
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+if(length(config$profile$logos)>0){
+  for (i in 1:length(config$profile$logos)){
+    cat(sprintf('![](%s)',config$profile$logos[[i]]))
+  }
+}
+```
+
+<h4> Graphic overviews </h4>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis',fig.width=3, fig.height=2}
+  if(length(entity$relations)>0){
+    thumbnails <- entity$relations[sapply(entity$relations, function(x){x$key == "thumbnail"})]
+    for(thumbnail in thumbnails){
+      cat(sprintf('![](%s)', thumbnail$link))
+    }
+  }
+```
+
+<h4> Spatial extent </h4>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis',fig.width=3, fig.height=2}
+if(!is.null(entity$spatial_extent)){
+library(leaflet)
+  leaflet::leaflet(entity$spatial_extent) %>%
+    addTiles %>% 
+    addPolygons()
+}else{ 
+  if(!is.null(entity$spatial_bbox)){
+library(leaflet)
+  leaflet::leaflet(sf::st_as_sfc(entity$spatial_bbox)) %>%
+    addTiles %>% 
+    addPolygons()
+  }
+}
+```
+
+<h4> Temporal extent </h4>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis',fig.width=3, fig.height=2}
+if(!is.null(entity$temporal_extent)){
+    
+    if(!is.null(entity$temporal_extent$instant)){
+      begin = entity$temporal_extent$instant
+      end = entity$temporal_extent$instant
+    }
+    if(!is.null(entity$temporal_extent$start) & !is.null(entity$temporal_extent$end)){
+      begin = entity$temporal_extent$start
+      end = entity$temporal_extent$end
+    }
+cat(sprintf('From **%s** to **%s**',begin,end))
+  }
+```
+</div>
+</div>
+
