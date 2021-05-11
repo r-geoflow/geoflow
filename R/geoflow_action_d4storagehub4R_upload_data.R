@@ -2,6 +2,7 @@ d4storagehub4R_upload_data <- function(entity, config, options){
   
   #options
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
+  otherUploadFolders <- if(!is.null(options$otherUploadFolders)) options$otherUploadFolders else c()
   
   #verify existing of software and workspace property
   #------------------------------------------------------------------------------------------------- 
@@ -55,7 +56,37 @@ d4storagehub4R_upload_data <- function(entity, config, options){
     new_d4storagehub_link$setLink(D4STORAGE_HUB$getPublicFileLink(file.path(workspace, "data",fileName)))
     
     entity$addRelation(new_d4storagehub_link)
-
+  
+  if(otherUploadFolders>0){
+    for (folder in otherUploadFolders){
+      other_folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = file.path(workspace,folder))
+      #check if folder exists
+      if (is.null(other_folderID)) {
+        config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", file.path(workspace,folder)))
+        D4STORAGE_HUB$createFolder(folderPath = workspace, name=folder, description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
+      }
+      #upload files
+      files <- list.files(file.path(getwd(),folder))
+      for(file in files){
+        config$logger.info(sprintf("D4storagehub: uploading %s file '%s'", folder, file))
+        D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, folder), file=file.path(getwd(),folder,file), description = "", archive = FALSE)
+        
+        #specific case to html documents in markdown folder
+        if (folder =="markdown"){ 
+          file_ext <- unlist(strsplit(file, "\\.(?=[^\\.]+$)", perl=TRUE))[2]
+          if (file_ext=="html"){
+            new_d4storagehub_link<- geoflow_relation$new()
+            new_d4storagehub_link$setKey("http")
+            new_d4storagehub_link$setName(file)
+            new_d4storagehub_link$setDescription(paste0(entity$titles[['title']]," - D4Science html Document" ))
+            new_d4storagehub_link$setLink(D4STORAGE_HUB$getPublicFileLink(file.path(workspace, "markdown",file)))
+            
+            entity$addRelation(new_d4storagehub_link)
+          }
+        }
+      }
+    }
+  }
   #other files uploads
   if(depositWithFiles){
     #check if other data files than uploadSource exists
@@ -88,7 +119,7 @@ d4storagehub4R_upload_data <- function(entity, config, options){
       config$logger.warn("D4storagehub: no metadata files to upload")
     }
     
-    other_folders <- setdiff(list.dirs(getwd(),full.names =F),c("","data","metadata")) 
+    other_folders <- setdiff(list.dirs(getwd(),full.names =F),c("","data","metadata",otherUploadFolders)) 
     
     if(length(other_folders)>0){
       for (folder in other_folders){
@@ -101,23 +132,8 @@ d4storagehub4R_upload_data <- function(entity, config, options){
         #upload files
         files <- list.files(file.path(getwd(),folder))
         for(file in files){
-          config$logger.info(sprintf("D4storagehub: uploading %s file '%s'", folder, metadata_file))
+          config$logger.info(sprintf("D4storagehub: uploading %s file '%s'", folder, file))
           D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, folder), file=file.path(getwd(),folder,file), description = "", archive = FALSE)
-
-
-          #specific case to html documents in markdown folder
-          if (folder =="markdown"){ 
-            file_ext <- unlist(strsplit(file, "\\.(?=[^\\.]+$)", perl=TRUE))[2]
-            if (file_ext=="html"){
-              new_d4storagehub_link<- geoflow_relation$new()
-              new_d4storagehub_link$setKey("http")
-              new_d4storagehub_link$setName(file)
-              new_d4storagehub_link$setDescription(paste0(entity$titles[['title']]," - D4Science html Document" ))
-              new_d4storagehub_link$setLink(D4STORAGE_HUB$getPublicFileLink(file.path(workspace, "markdown",file)))
-              
-              entity$addRelation(new_d4storagehub_link)
-            }
-          }
         }
       }
     }else{
