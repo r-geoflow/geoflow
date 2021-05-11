@@ -384,9 +384,20 @@ register_actions <- function(){
       fun = d4storagehub4R_upload_data,
       options = list(
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE)
-      ),
-      
-    )   
+      )
+    ),
+    geoflow_action$new(
+      id = "create_metadata_Rmd",
+      types =  list("Metadata production"),
+      def = "Generate a Markdown out of a entity",
+      target = "entity",
+      target_dir = "markdown",
+      packages = list("rmarkdown"),
+      fun = create_metadata_Rmd,
+      options = list(
+        template = list(def = "Rmarkdown template", class = "character", default = "generic")
+      )
+    )    
   )
   .geoflow$actions <- objs
 }
