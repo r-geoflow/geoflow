@@ -146,7 +146,8 @@ geoflow_entity <- R6Class("geoflow_entity",
     allowedKeyValuesFor = list(
       titles = c("title", "alternative"),
       descriptions = c("abstract", "purpose", "credit", "info", "edition", "status"),
-      spatialCoverage = c("ewkt", "wkt", "srid")
+      spatialCoverage = c("ewkt", "wkt", "srid"),
+      formats = c("resource","distribution")
     ) 
   ),
   public = list(
