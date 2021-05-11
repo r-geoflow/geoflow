@@ -227,7 +227,7 @@ register_data_accessors <- function(){
       id = "gbif",
       software_type = "gbif",
       definition = "A gbif public data accessor",
-      packages = list("rgbif","jsonlite","readr"),
+      packages = list("rgbif"),
       download = function(resource, file, path, software = NULL){
 
         if(is.null(software)){

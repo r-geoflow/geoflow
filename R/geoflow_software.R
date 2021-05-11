@@ -511,8 +511,8 @@ register_software <- function(){
     #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(
       software_type = "gbif",
-      definition = "Gbif API Client",
-      packages = list(),
+      definition = "Gbif API Client powered by 'rgbif' package",
+      packages = list("rgbif"),
       handler = list,
       arguments = list(
         user = list(def = "Username for Gbif authentication", class = "character"),
