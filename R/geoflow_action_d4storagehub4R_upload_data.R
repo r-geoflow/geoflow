@@ -80,15 +80,50 @@ d4storagehub4R_upload_data <- function(entity, config, options){
         D4STORAGE_HUB$createFolder(folderPath = workspace, name="metadata", description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
       }
       #upload metadata files
-      for(metadata_file in metadata_files){
-        config$logger.info(sprintf("D4storagehub: uploading metadata file '%s'", metadata_file))
-        D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, "metadata"), file=file.path(getwd(),"metadata",metadata_file), description = "", archive = FALSE)
-      }
+        for(metadata_file in metadata_files){
+          config$logger.info(sprintf("D4storagehub: uploading metadata file '%s'", metadata_file))
+          D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, "metadata"), file=file.path(getwd(),"metadata",metadata_file), description = "", archive = FALSE)
+        }
     }else{
       config$logger.warn("D4storagehub: no metadata files to upload")
     }
-  }else{
-      config$logger.info("Skipping upload of no uploadSource files (option 'depositWithFiles' FALSE)")
-  }    
-}
+    
+    other_folders <- setdiff(list.dirs(getwd(),full.names =F),c("","data","metadata")) 
+    
+    if(length(other_folders)>0){
+      for (folder in other_folders){
+        other_folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = file.path(workspace,folder))
+        #check if folder exists
+        if (is.null(other_folderID)) {
+          config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", file.path(workspace,folder)))
+          D4STORAGE_HUB$createFolder(folderPath = workspace, name=folder, description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
+        }
+        #upload files
+        files <- list.files(file.path(getwd(),folder))
+        for(file in files){
+          config$logger.info(sprintf("D4storagehub: uploading %s file '%s'", folder, metadata_file))
+          D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, folder), file=file.path(getwd(),folder,file), description = "", archive = FALSE)
 
+
+          #specific case to html documents in markdown folder
+          if (folder =="markdown"){ 
+            file_ext <- unlist(strsplit(file, "\\.(?=[^\\.]+$)", perl=TRUE))[2]
+            if (file_ext=="html"){
+              new_d4storagehub_link<- geoflow_relation$new()
+              new_d4storagehub_link$setKey("http")
+              new_d4storagehub_link$setName(file)
+              new_d4storagehub_link$setDescription(paste0(entity$titles[['title']]," - D4Science html Document" ))
+              new_d4storagehub_link$setLink(D4STORAGE_HUB$getPublicFileLink(file.path(workspace, "markdown",file)))
+              
+              entity$addRelation(new_d4storagehub_link)
+            }
+          }
+        }
+      }
+    }else{
+      config$logger.warn("D4storagehub: no other files to upload")
+    }
+  }else{
+    config$logger.info("Skipping upload of no uploadSource files (option 'depositWithFiles' FALSE)")    
+  }
+}
