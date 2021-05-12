@@ -75,8 +75,7 @@ if(length(entity$formats)>0){
   cat('<li> **Format: **</li>')
   cat('<ul  style="list-style-type:none;">')
   for(i in 1:length(entity$formats)){
-  #cat(sprintf('<li> **%s :** %s </li>',entity$formats[[i]]$key,entity$formats[[i]]$name))
-    if(!is.na(entity$formats[[i]]$name)) cat(sprintf('<li> %s </li>',entity$formats[[i]]$name))
+    if(!is.na(entity$formats[[i]]$name)) cat(sprintf('<li> **%s :** %s </li>',entity$formats[[i]]$key,entity$formats[[i]]$name))
   }
   cat('</ul>')
 }

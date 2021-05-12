@@ -383,7 +383,8 @@ register_actions <- function(){
       packages = list("d4storagehub4R"),
       fun = d4storagehub4R_upload_data,
       options = list(
-        depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE)
+        depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
+        otherUploadFolders = list(def = "List of Folders (other than 'data' and 'metadata') to upload and which may contain files which should enrich others actions" , class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = c())
       )
     ),
     geoflow_action$new(
@@ -395,7 +396,8 @@ register_actions <- function(){
       packages = list("rmarkdown"),
       fun = create_metadata_Rmd,
       options = list(
-        template = list(def = "Rmarkdown template", class = "character", default = "generic")
+        template = list(def = "Rmarkdown template", class = "character", default = "generic"),
+        output_format = list(def = "output format generate by Rmarkdown template (e.g. 'html','pdf')", class = "character",choices = list("html","pdf","word","odt","rtf","md","github"), add_choices = FALSE, multiple = FALSE, default = "html")
       )
     )    
   )
