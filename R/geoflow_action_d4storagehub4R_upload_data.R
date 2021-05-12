@@ -78,7 +78,7 @@ d4storagehub4R_upload_data <- function(entity, config, options){
             new_d4storagehub_link<- geoflow_relation$new()
             new_d4storagehub_link$setKey("http")
             new_d4storagehub_link$setName(file)
-            new_d4storagehub_link$setDescription(paste0(entity$titles[['title']]," - D4Science html Document" ))
+            new_d4storagehub_link$setDescription(paste0(entity$titles[['title']]," - D4Science HTML Document" ))
             new_d4storagehub_link$setLink(D4STORAGE_HUB$getPublicFileLink(file.path(workspace, "markdown",file)))
             
             entity$addRelation(new_d4storagehub_link)
