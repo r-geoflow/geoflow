@@ -397,7 +397,7 @@ register_actions <- function(){
       fun = create_metadata_Rmd,
       options = list(
         template = list(def = "Rmarkdown template", class = "character", default = "generic"),
-        output_format = list(def = "output format generate by Rmarkdown template (e.g. 'html','pdf')", class = "character", default = "html")
+        output_format = list(def = "output format generate by Rmarkdown template (e.g. 'html','pdf')", class = "character",choices = list("html","pdf","word","odt","rtf","md","github"), add_choices = FALSE, multiple = FALSE, default = "html")
       )
     )    
   )
