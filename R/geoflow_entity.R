@@ -1017,7 +1017,25 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #enrichWithFormats
     enrichWithFormats = function(config){
-      stop("Not yet implemented")
+      
+      formats<-sapply(self$formats, function(x) x$key)
+      
+      if(!"resource" %in% formats)if(!is.null(self$data$sourceType)){
+        if(!self$data$sourceType%in%c("dbtable","dbquery","dbview")){
+          format <- paste0("resource:",mime::guess_type(paste0(".",self$data$sourceType)))
+          format_obj <- geoflow_format$new(str = format)
+          self$addFormat(format_obj)  
+        }
+      }
+      
+      if(!"distribution" %in% formats)if(!is.null(self$data$uploadType)){
+        if(!self$data$uploadType%in%c("dbtable","dbquery","dbview")){
+          format <- paste0("distribution:",mime::guess_type(paste0(".",self$data$uploadType)))
+          format_obj <- geoflow_format$new(str = format)
+          self$addFormat(format_obj)  
+        }
+      }
+        
     },
     
     #enrichWithMetadata

@@ -93,6 +93,9 @@ debugWorkflow <- function(file, dir = NULL, entityIndex = 1,
     }
     #data relations (eg. geosapi & OGC data protocol online resources)
     entity$enrichWithRelations(config)
+    
+    #data formats
+    entity$enrichWithFormats(config)
   }
   
   #runLocalActions?

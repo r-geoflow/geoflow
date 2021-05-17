@@ -129,6 +129,9 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             }
             #data relations (eg. geosapi & OGC data protocol online resources)
             entity$enrichWithRelations(config)
+            
+            #data formats
+            entity$enrichWithFormats(config)
           }
           
           #enrich entities with metadata (other properties)
