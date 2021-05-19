@@ -1011,8 +1011,22 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #enrichWithSubjects
+    #If no subject specify in Subjects, automatically add keyword from dictionary to 'theme' category
     enrichWithSubjects = function(config){
-      stop("Not yet implemented")
+      if(length(self$subjects)==0){
+        if(!is.null(config$register)) if(length(config$registers)>0){
+          keywords<-NULL
+          for(i in 1:length(config$registers)){
+            register<-config$metadata$content$dictionary$registers[[i]]$data
+            keywords<- c(keyword,unique(register$label),unique(register$code))
+          }
+          if(!is.null(keywords)){
+            subject <- paste0("theme:",paste0(keywords,collapse=","))
+            subject_obj <- geoflow_subject$new(str = subject)
+            self$addSubject(subject_obj)  
+          }
+        }
+      }
     },
     
     #enrichWithFormats
