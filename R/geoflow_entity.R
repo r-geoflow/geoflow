@@ -1014,16 +1014,52 @@ geoflow_entity <- R6Class("geoflow_entity",
     #If no subject specify in Subjects, automatically add keyword from dictionary to 'theme' category
     enrichWithSubjects = function(config){
       if(length(self$subjects)==0){
-        if(!is.null(config$register)) if(length(config$registers)>0){
-          keywords<-NULL
-          for(i in 1:length(config$registers)){
-            register<-config$metadata$content$dictionary$registers[[i]]$data
-            keywords<- c(keyword,unique(register$label),unique(register$code))
-          }
-          if(!is.null(keywords)){
-            subject <- paste0("theme:",paste0(keywords,collapse=","))
-            subject_obj <- geoflow_subject$new(str = subject)
-            self$addSubject(subject_obj)  
+        #List all columns of data features
+        columns <- colnames(self$data$features)
+        for(featureAttrName in columns){
+          #Check if correspond column exist in dictionary
+          fat_attr <- NULL
+          fto <- self$data$featureTypeObj
+          if(!is.null(fto)) fat_attr <- fto$getMemberById(featureAttrName)
+          if(!is.null(fat_attr)){
+            #Check if register is link
+            registerId <- fat_attr$registerId
+            
+            if(!is.null(registerId)) if(!is.na(registerId)){
+              registers <- config$registers
+              if(length(registers)>0) {
+                registers <- registers[sapply(registers, function(x){x$id == registerId})]
+                fat_attr_register <- registers[[1]]
+                
+                #Check if values of column are in register
+                dataAttrValues <- unique(self$data$features[featureAttrName])
+                featureAttrValues <- switch(class(self$data$features)[1],
+                                            "sf" = self$data$features[,featureAttrName][[1]],
+                                            "data.frame" = self$data$features[,featureAttrName]
+                )
+                featureAttrValues <- unique(featureAttrValues)
+                matchAttrValues <- subset(fat_attr_register$data, code %in% featureAttrValues)
+                
+                if (nrow(matchAttrValues)>0){
+                  #Extract label[code] of this values
+                  for(i in 1:nrow(matchAttrValues)){
+                    matchAttrValues$keyword[i]<-paste0(matchAttrValues$label[i],"[",matchAttrValues$code[i],"]",if(!is.na(matchAttrValues$uri[i])){paste0("@",matchAttrValues$uri[i])}else{""})
+                  }
+                  keywords<-unique(matchAttrValues$keyword)
+                  
+                  defSource <- fat_attr$defSource
+                  if(is.na(defSource)){desc_name<-paste0("[",fat_attr$name,"]")}else{
+                    desc_name<-paste0("[",defSource[1],"]")
+                    if(!is.null(attr(defSource,"description"))) desc_name<-paste0("[",attr(defSource,"description"),"]")
+                    if(!is.null(attr(defSource,"uri"))) desc_name<-paste0(desc_name,"@",attr(defSource,"uri"))
+                  }
+                  subject <- paste0("theme",desc_name,":",paste0(keywords,collapse=","))
+                  subject_obj <- geoflow_subject$new(str = subject)
+                  self$addSubject(subject_obj)  
+                  
+                }
+              }
+            }
           }
         }
       }
