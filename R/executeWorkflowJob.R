@@ -132,6 +132,9 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             
             #data formats
             entity$enrichWithFormats(config)
+            
+            #data subjects
+            entity$enrichWithSubjects(config)
           }
           
           #enrich entities with metadata (other properties)

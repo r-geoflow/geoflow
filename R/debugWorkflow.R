@@ -96,6 +96,9 @@ debugWorkflow <- function(file, dir = NULL, entityIndex = 1,
     
     #data formats
     entity$enrichWithFormats(config)
+    
+    #data subjects
+    entity$enrichWithSubjects(config)
   }
   
   #runLocalActions?
