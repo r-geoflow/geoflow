@@ -261,7 +261,12 @@ register_actions <- function(){
       target = NA,
       target_dir = NA,
       packages = list("geosapi"),
-      fun = geosapi_publish_ogc_services
+      fun = geosapi_publish_ogc_services,
+      options = list(
+        create_workspace = list(def = "Create Workspace if no already exist", class = "logical", default = FALSE),
+        create_datastore = list(def = "Create datastore if no already exist", class = "logical", default = FALSE),
+        datastore_description = list(def = "Specify a decription for the new datastore", class = "character", default = "")
+      )
     ),
     geoflow_action$new(
       id = "zen4R-deposit-record",
