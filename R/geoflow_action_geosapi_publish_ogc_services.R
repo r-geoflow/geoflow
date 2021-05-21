@@ -86,6 +86,42 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     }
   }
   
+  # Check existence of datastore
+  ns <- GS$getDataStore(workspace, datastore)
+  ds <- NULL
+  # If datastore not exist
+  # Check if createDataspace is TRUE
+  if(length(ns)==0){
+    if(createDatastore){
+      switch(entity$data$uploadType,
+        "gpkg"= ds<-GSGeoPackageDataStore$new(dataStore=datastore, description = datastore_description , enabled = TRUE, database = paste0("file://data/",workspace,"/",entity$data$uploadSource,".gpkg")),
+        "dbtable"= ds<-GSPostGISDataStore$new(dataStore=datastore, description = datastore_description, enabled = TRUE),
+        "dbquery"= ds<-GSPostGISDataStore$new(dataStore=datastore, description = datastore_description, enabled = TRUE),
+        "shp"= ds<-GSShapefileDirectoryDataStore$new(dataStore=datastore, description = datastore_description,enabled = TRUE, url = paste0("file://data","/",workspace))
+      )
+      if(is.null(ds)){
+        errMsg <- sprintf("Error during Geoserver datastore creation, format '%s' not supported. Aborting 'geosapi' action!",entity$data$uploadType)
+        config$logger.error(errMsg)
+        stop(errMsg)      
+      }else{
+        created <- GS$createDataStore(workspace, ds)
+        if(created){
+          infoMsg <- sprintf("Successful Geoserver '%s' datastore creaction", datastore)
+          config$logger.info(infoMsg)
+        }else{
+          errMsg <- "Error during Geoserver datastore creation. Aborting 'geosapi' action!"
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
+      }
+    }else{
+      # If createDatastore is FALSE edit ERROR Message
+      errMsg <- sprintf("Datastore '%s' don't exist and createDatastore option = FALSE, please verify config if datastore already exist or change createDatastore = TRUE to create it",datastore)
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }    
+  }
+  
   #upload
   #-------------------------------------------------------------------------------------------------
   if(entity$data$upload){
