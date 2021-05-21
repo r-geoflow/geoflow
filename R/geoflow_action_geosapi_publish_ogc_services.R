@@ -1,5 +1,10 @@
 geosapi_publish_ogc_services <- function(entity, config, options){
   
+  #options
+  createWorkspace <- if(!is.null(options$create_workspace)) options$create_workspace else FALSE
+  createDatastore <- if(!is.null(options$create_datastore)) options$create_datastore else FALSE
+  datastore_description <- if(!is.null(options$datastore_description)) options$datastore_description else ""
+  
   #for the timebeing, this action targets Vector data (featureType)
   #Later this action may also target coverage, but it's not yet supported by geosapi
   
@@ -54,6 +59,31 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     warnMsg <- "No 'geosapi' action possible for type 'other'. Action skipped"
     config$logger.warn(warnMsg)
     return(NULL)
+  }
+  
+  #check existence of workspace and datastore 
+  #------------------------------------------------------------------------------------------------
+  # Check existence of workspace
+  ws <- GS$getWorkspace(workspace)
+  # If workspace not exist
+  # Check if createWorkspace is TRUE
+  if(length(ws)==0){
+    if(createWorkspace){
+      created <- gsman$createWorkspace(workspace, "https://geoserver-sdi-lab.d4science.org/geoserver")
+      if(created){
+        infoMsg <- sprintf("Successful Geoserver '%s' workspace creaction", workspace)
+        config$logger.info(infoMsg)
+      }else{
+        errMsg <- "Error during Geoserver workspace creation. Aborting 'geosapi' action!"
+        config$logger.error(errMsg)
+        stop(errMsg)
+      }
+    }else{
+  # If createWorkspace is FALSE edit ERROR Message
+      errMsg <- sprintf("Workspace '%s' don't exist and createWorkspace option = FALSE, please verify config if workspace already exist or change createWorkpace = TRUE to create it",workspace)
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
   }
   
   #upload
