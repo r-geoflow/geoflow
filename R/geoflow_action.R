@@ -263,8 +263,8 @@ register_actions <- function(){
       packages = list("geosapi"),
       fun = geosapi_publish_ogc_services,
       options = list(
-        createWorkspace = list(def = "Create workspace if no already exist", class = "logical", default = FALSE),
-        createDatastore = list(def = "Create datastore if no already exist", class = "logical", default = FALSE),
+        createWorkspace = list(def = "Create workspace if not already existing", class = "logical", default = FALSE),
+        createDatastore = list(def = "Create datastore if not already existing", class = "logical", default = FALSE),
         datastore_description = list(def = "Specify a decription for the new datastore", class = "character", default = "")
       )
     ),
