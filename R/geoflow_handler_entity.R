@@ -129,9 +129,11 @@ handle_entities_df <- function(config, source){
     
     #formats
     src_format <- sanitize_str(source_entity[,"Format"])
-    allowedFormatsKeys <- entity$getAllowedKeyValuesFor("formats")
-    hasFormatKey <- any(sapply(allowedFormatsKeys, function(x){startsWith(src_format, x)}))
-    if(!hasFormatKey) src_format <- paste0("resource:", src_format)
+    if(!is.na(src_format)){
+      allowedFormatsKeys <- entity$getAllowedKeyValuesFor("formats")
+      hasFormatKey <- any(sapply(allowedFormatsKeys, function(x){startsWith(src_format, x)}))
+      if(!hasFormatKey) src_format <- paste0("resource:", src_format)
+    }
     formats <- if(!is.na(src_format)) extract_cell_components(src_format) else list()
     if(length(formats)>0){
       invisible(lapply(formats, function(format){
