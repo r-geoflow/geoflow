@@ -69,7 +69,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   # Check if createWorkspace is TRUE
   if(length(ws)==0){
     if(createWorkspace){
-      created <- gsman$createWorkspace(workspace, "https://geoserver-sdi-lab.d4science.org/geoserver")
+      created <- GS$createWorkspace(workspace, paste0("http://",workspace))
       if(created){
         infoMsg <- sprintf("Successful Geoserver '%s' workspace creaction", workspace)
         config$logger.info(infoMsg)
@@ -95,8 +95,50 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     if(createDatastore){
       switch(entity$data$uploadType,
         "gpkg"= ds<-GSGeoPackageDataStore$new(dataStore=datastore, description = datastore_description , enabled = TRUE, database = paste0("file://data/",workspace,"/",entity$data$uploadSource,".gpkg")),
-        "dbtable"= ds<-GSPostGISDataStore$new(dataStore=datastore, description = datastore_description, enabled = TRUE),
-        "dbquery"= ds<-GSPostGISDataStore$new(dataStore=datastore, description = datastore_description, enabled = TRUE),
+        "dbtable"= {
+          dbi<-config$software$output$dbi_config
+          if(is.null(dbi)) dbi<-config$software$output$dbi_config
+          if(is.null(dbi)) {
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, this datastore type requires a DBI type software declaration in the configuration",datastore)
+            config$logger.error(errMsg)
+            stop(errMsg)   
+          }
+          Postgres<-dbi$parameters$drv=="Postgres"
+          if(!Postgres){
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, the DBI software declared in the configuration is not a PostGis database",datastore)
+            config$logger.error(errMsg)
+            stop(errMsg)   
+          }
+          ds<-GSPostGISDataStore$new(dataStore=datastore, description = datastore_description, enabled = TRUE)
+          ds$setHost(dbi$parameters$host)
+          ds$setPort(dbi$parameters$port)
+          ds$setDatabase(dbi$parameters$dbname)
+          #ds$setSchema()#Not yet implemented in dbi software arguments
+          ds$setUser(dbi$parameters$user)
+          ds$setPassword(dbi$parameters$password)
+          },
+        "dbquery"= {
+          dbi<-config$software$output$dbi_config
+          if(is.null(dbi)) dbi<-config$software$output$dbi_config
+          if(is.null(dbi)) {
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, this datastore type requires a DBI type software declaration in the configuration",datastore)
+            config$logger.error(errMsg)
+            stop(errMsg)   
+          }
+          Postgres<-dbi$parameters$drv=="Postgres"
+          if(!Postgres){
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, the DBI software declared in the configuration is not a PostGis database",datastore)
+            config$logger.error(errMsg)
+            stop(errMsg)   
+          }
+          ds<-GSPostGISDataStore$new(dataStore=datastore, description = datastore_description, enabled = TRUE)
+          ds$setHost(dbi$parameters$host)
+          ds$setPort(dbi$parameters$port)
+          ds$setDatabase(dbi$parameters$dbname)
+          #ds$setSchema()#Not yet implemented in dbi software arguments
+          ds$setUser(dbi$parameters$user)
+          ds$setPassword(dbi$parameters$password)
+        },
         "shp"= ds<-GSShapefileDirectoryDataStore$new(dataStore=datastore, description = datastore_description,enabled = TRUE, url = paste0("file://data","/",workspace))
       )
       if(is.null(ds)){
