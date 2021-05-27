@@ -1,5 +1,10 @@
 geosapi_publish_ogc_services <- function(entity, config, options){
   
+  #options
+  createWorkspace <- if(!is.null(options$createWorkspace)) options$createWorkspace else FALSE
+  createDatastore <- if(!is.null(options$createDatastore)) options$createDatastore else FALSE
+  datastore_description <- if(!is.null(options$datastore_description)) options$datastore_description else ""
+  
   #for the timebeing, this action targets Vector data (featureType)
   #Later this action may also target coverage, but it's not yet supported by geosapi
   
@@ -54,6 +59,109 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     warnMsg <- "No 'geosapi' action possible for type 'other'. Action skipped"
     config$logger.warn(warnMsg)
     return(NULL)
+  }
+  
+  #check existence of workspace and datastore 
+  #------------------------------------------------------------------------------------------------
+  # Check existence of workspace
+  ws <- GS$getWorkspace(workspace)
+  # If workspace not exist
+  # Check if createWorkspace is TRUE
+  if(length(ws)==0){
+    if(createWorkspace){
+      created <- GS$createWorkspace(workspace, paste0("http://",workspace))
+      if(created){
+        infoMsg <- sprintf("Successful Geoserver '%s' workspace creaction", workspace)
+        config$logger.info(infoMsg)
+      }else{
+        errMsg <- "Error during Geoserver workspace creation. Aborting 'geosapi' action!"
+        config$logger.error(errMsg)
+        stop(errMsg)
+      }
+    }else{
+  # If createWorkspace is FALSE edit ERROR Message
+      errMsg <- sprintf("Workspace '%s' don't exist and createWorkspace option = FALSE, please verify config if workspace already exist or change createWorkpace = TRUE to create it",workspace)
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+  }
+  
+  # Check existence of datastore
+  ns <- GS$getDataStore(workspace, datastore)
+  ds <- NULL
+  # If datastore not exist
+  # Check if createDataspace is TRUE
+  if(length(ns)==0){
+    if(createDatastore){
+      switch(entity$data$uploadType,
+        "gpkg"= ds<-GSGeoPackageDataStore$new(dataStore=datastore, description = datastore_description , enabled = TRUE, database = paste0("file://data/",workspace,"/",entity$data$uploadSource,".gpkg")),
+        "dbtable"= {
+          dbi<-config$software$output$dbi_config
+          if(is.null(dbi)) dbi<-config$software$output$dbi_config
+          if(is.null(dbi)) {
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, this datastore type requires a DBI type software declaration in the configuration",datastore)
+            config$logger.error(errMsg)
+            stop(errMsg)   
+          }
+          Postgres<-dbi$parameters$drv=="Postgres"
+          if(!Postgres){
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, the DBI software declared in the configuration is not a PostGis database",datastore)
+            config$logger.error(errMsg)
+            stop(errMsg)   
+          }
+          ds<-GSPostGISDataStore$new(dataStore=datastore, description = datastore_description, enabled = TRUE)
+          ds$setHost(dbi$parameters$host)
+          ds$setPort(dbi$parameters$port)
+          ds$setDatabase(dbi$parameters$dbname)
+          #ds$setSchema()#Not yet implemented in dbi software arguments
+          ds$setUser(dbi$parameters$user)
+          ds$setPassword(dbi$parameters$password)
+          },
+        "dbquery"= {
+          dbi<-config$software$output$dbi_config
+          if(is.null(dbi)) dbi<-config$software$output$dbi_config
+          if(is.null(dbi)) {
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, this datastore type requires a DBI type software declaration in the configuration",datastore)
+            config$logger.error(errMsg)
+            stop(errMsg)   
+          }
+          Postgres<-dbi$parameters$drv=="Postgres"
+          if(!Postgres){
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, the DBI software declared in the configuration is not a PostGis database",datastore)
+            config$logger.error(errMsg)
+            stop(errMsg)   
+          }
+          ds<-GSPostGISDataStore$new(dataStore=datastore, description = datastore_description, enabled = TRUE)
+          ds$setHost(dbi$parameters$host)
+          ds$setPort(dbi$parameters$port)
+          ds$setDatabase(dbi$parameters$dbname)
+          #ds$setSchema()#Not yet implemented in dbi software arguments
+          ds$setUser(dbi$parameters$user)
+          ds$setPassword(dbi$parameters$password)
+        },
+        "shp"= ds<-GSShapefileDirectoryDataStore$new(dataStore=datastore, description = datastore_description,enabled = TRUE, url = paste0("file://data","/",workspace))
+      )
+      if(is.null(ds)){
+        errMsg <- sprintf("Error during Geoserver datastore creation, format '%s' not supported. Aborting 'geosapi' action!",entity$data$uploadType)
+        config$logger.error(errMsg)
+        stop(errMsg)      
+      }else{
+        created <- GS$createDataStore(workspace, ds)
+        if(created){
+          infoMsg <- sprintf("Successful Geoserver '%s' datastore creaction", datastore)
+          config$logger.info(infoMsg)
+        }else{
+          errMsg <- "Error during Geoserver datastore creation. Aborting 'geosapi' action!"
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
+      }
+    }else{
+      # If createDatastore is FALSE edit ERROR Message
+      errMsg <- sprintf("Datastore '%s' don't exist and createDatastore option = FALSE, please verify config if datastore already exist or change createDatastore = TRUE to create it",datastore)
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }    
   }
   
   #upload
