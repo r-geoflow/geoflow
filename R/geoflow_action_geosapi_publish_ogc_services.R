@@ -1,8 +1,8 @@
 geosapi_publish_ogc_services <- function(entity, config, options){
   
   #options
-  createWorkspace <- if(!is.null(options$create_workspace)) options$create_workspace else FALSE
-  createDatastore <- if(!is.null(options$create_datastore)) options$create_datastore else FALSE
+  createWorkspace <- if(!is.null(options$createWorkspace)) options$createWorkspace else FALSE
+  createDatastore <- if(!is.null(options$createDatastore)) options$createDatastore else FALSE
   datastore_description <- if(!is.null(options$datastore_description)) options$datastore_description else ""
   
   #for the timebeing, this action targets Vector data (featureType)
