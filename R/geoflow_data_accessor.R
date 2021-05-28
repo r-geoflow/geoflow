@@ -251,6 +251,49 @@ register_data_accessors <- function(){
         #sapply(query_file$scientificName, function(x) rgbif::name_suggest(x)$data$key[1], USE.NAMES=FALSE))#NB: to convert scientificName to taxonKey
         
       }
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #THREDDS
+    #-------------------------------------------------------------------------------------------------------    
+    geoflow_data_accessor$new(
+      id = "thredds",
+      software_type = "thredds",
+      definition = "A Thredds data server accessor",
+      packages = list("thredds"),
+      download = function(resource, file, path, software = NULL){
+        if(is.null(software)){
+          errMsg <- sprintf("[geoflow] Thredds data accessor requires a 'thredds' software declaration in the geoflow configuration\n")
+          cat(errMsg)
+          stop(errMsg)
+        }
+
+        decode_path<-unlist(stringr::str_split(resource,pattern="/"))
+        dataset<-tail(decode_path,1)
+        nodes<-decode_path[1:length(decode_path)-1]
+        top_url<-software$url
+        child<-software
+        for(node in nodes){
+          if(node %in% child$get_catalog_names()){
+            child<-child$get_catalogs(node)[[node]]
+          }else{
+            errMsg <- sprintf("[geoflow] node '%s' not existing, dataset '%s' can't be download\n",node,dataset)
+            cat(errMsg)
+            stop(errMsg)
+          }
+        }
+        datasetNode<-NULL
+        if(dataset %in% child$get_dataset_names()){
+          data<-child$get_datasets(dataset)[[dataset]]
+        }else{
+          errMsg <- sprintf("[geoflow] dataset '%s' not existing and  can't be download\n",dataset)
+          cat(errMsg)
+          stop(errMsg)
+        }
+        dataset_dest<-file.path(getwd(),paste0(dataset,".nc"))
+        dataset_uri<-paste0(unlist(strsplit(top_url,"/catalog.xml"))[1],data$url,".nc")
+        cat(sprintf("[geoflow] Thredds data accessor: Download data '%s' from '%s' to '%s'\n", dataset, dataset_uri, dataset_dest))
+        download.file(url = dataset_uri, destfile = dataset_dest)
+      }
     )
   )
   .geoflow$data_accessors <- data_accessors

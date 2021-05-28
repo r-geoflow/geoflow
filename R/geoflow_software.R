@@ -519,6 +519,19 @@ register_software <- function(){
         pwd = list(def = "Password for Gbif authentication", class = "character"),
         email = list(def = "Email address for sending notification ", class = "character")
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #THREDDS CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "thredds",
+      definition = "Thredds data server API Client powered by 'thredds' package",
+      packages = list("thredds"),
+      handler = try(thredds::CatalogNode$new, silent = TRUE),
+      arguments = list(
+        x = list(def = "url of top level catalog request", class = "character"),
+        prefix = list(def = "the namespace to examine", class = "character")
+      )
     )
   )
   .geoflow$software <- software
