@@ -292,7 +292,7 @@ register_data_accessors <- function(){
         dataset_dest<-file.path(getwd(),paste0(dataset,".nc"))
         dataset_uri<-paste0(unlist(strsplit(top_url,"/catalog.xml"))[1],data$url,".nc")
         cat(sprintf("[geoflow] Thredds data accessor: Download data '%s' from '%s' to '%s'\n", dataset, dataset_uri, dataset_dest))
-        download.file(url = dataset_uri, destfile = dataset_dest)
+        download.file(url = dataset_uri, destfile = dataset_dest,mode="wb")
       }
     )
   )
