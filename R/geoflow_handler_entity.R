@@ -429,9 +429,9 @@ handle_entities_ncdf <- function(config, source){
   }
  
   #description
-  description <- attr$comment
+  description <- attr$summary
   if(!is.null(description)){
-      entity$setDescription("abstract", attr$comment)
+      entity$setDescription("abstract", attr$summary)
   }
   
   #subjects
@@ -474,14 +474,38 @@ handle_entities_ncdf <- function(config, source){
     entity$addFormat(format_obj)
 
    #contacts
-    #not yet implemented
-    # owner: 
-    #   attr$creator_name
-    # attr$creator_email
-    # attr$creator_url
-    # publisher: 
-    #   attr$publisher_name
-    # attr$publisher_email
-    # attr$publisher_url
+   if(!is.null(attr$creator_name)){
+     contact_obj <- geoflow_contact$new()
+     contact_obj$setRole("owner")
+     contact_obj$setLastName(attr$creator_name)
+     contact_obj$setOrganizationName(attr$creator_institution)
+     contact_obj$setEmail(attr$creator_email)
+     contact_obj$setWebsiteUrl(attr$creator_url)
+     entity$addContact(contact_obj) 
+   }
+    
+    if(!is.null(attr$publisher_name)){
+      contact_obj <- geoflow_contact$new()
+      contact_obj$setRole("publisher")
+      contact_obj$setLastName(attr$publisher_name)
+      contact_obj$setOrganizationName(attr$publisher_institution)
+      contact_obj$setEmail(attr$publisher_email)
+      contact_obj$setWebsiteUrl(attr$publisher_url)
+      entity$addContact(contact_obj) 
+    }
+    
+    #rights
+    if(!is.null(attr$license)){
+      right_obj <- geoflow_right$new(str = paste0("license:",attr$license))
+      entity$addRight(right_obj)
+    }
+    
+    #dates
+   
+    if(!is.null(attr$date_created)) entity$addDate("creation", attr$date_created)
+    if(!is.null(attr$date_created)) entity$addDate("modification", attr$date_modified)
+    if(!is.null(attr$date_created)) entity$addDate("metadata", attr$date_metadata_modified)
+    if(!is.null(attr$date_created)) entity$addDate("issue", attr$date_issued)
+    
   
 }
