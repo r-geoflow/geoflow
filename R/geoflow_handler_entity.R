@@ -382,3 +382,106 @@ handle_entities_dbi <- function(config, source){
   entities <- handle_entities_df(config, source)
   return(entities)
 }
+
+#handle_entities_ncdf
+handle_entities_ncdf <- function(config, source){
+
+  if(!mime::guess_type(source)=="application/x-netcdf"){
+    errMsg <- "Error in 'handle_entities_df': source parameter should be an 'netcdf' file"
+    config$logger.error(errMsg)
+    stop(errMsg)
+  }
+  
+ #source <- raster::raster(source)
+  source_name<-source
+  source <- ncdf4::nc_open(source)
+  
+  #list attributes of source
+  attr<-ncdf4::ncatt_get(source,varid=0)
+  
+  #simplify attributes names 
+  for(i in 1:length(attr)){
+    if(stringr::str_detect(names(attr)[i],"NC_GLOBAL.")) names(attr)[i]<-gsub("NC_GLOBAL.","",names(attr)[i])
+  }
+  
+  #identifiers
+  identifier <-attr$id
+  if(!is.null(identifier)){
+      entity$setIdentifier("id", identifier)
+    }else{
+      entity$setIdentifier("id", source$filename)
+    }
+  
+  doi <- if(!is.null(attr$identifier_product_doi)&!is.null(attr$identifier_product_doi_authority)){
+    paste(attr$identifier_product_doi_authority,attr$identifier_product_doi,sep="/")
+  }else{
+    NULL
+  }
+  
+  if (!is.null(doi)){
+    entity$setIdentifier("doi", doi)
+  }
+  
+  #title
+  title <- attr$title
+  if(!is.null(title)){
+  entity$setTitle("title", title)
+  }
+ 
+  #description
+  description <- attr$comment
+  if(!is.null(description)){
+      entity$setDescription("abstract", attr$comment)
+  }
+  
+  #subjects
+  
+  for(subject in c(keywords,instrument,platform,project,product_name,institution)){
+    if(subject %in% names(attr)){
+      keywords<-paste0(unique(unlist(stringr::str_split(attr[subject],"[^a-zA-Z0-9_]+[[:blank:]]+"))),collapse=",")
+      key<-switch(subject,
+                  "keywords"="theme",
+                  "instrument"="instrument",
+                  "platform"="platform",
+                  "project"="project",
+                  "product_name"="product",
+                  "institution"="dataCenter"
+                  )
+      thesaurus<-if(paste0(subject,"_vocabulary") %in% names(attr)){attr[paste0(subject,"_vocabulary")] }else{""}
+      subject_obj <- geoflow_subject$new(str = paste0(key,"[",thesaurus,"]:",keywords))
+      entity$addSubject(subject_obj)
+    }
+  }
+
+  #spatial extent
+   raster <-raster::raster(source_name)
+   bbox<-raster::bbox(raster)
+   if(!is.null(bbox)){
+     spatial_cov<-paste0("POLYGON((",bbox[1,1]," ",bbox[2,1],",",bbox[1,1]," ",bbox[2,2],",",bbox[1,2]," ",bbox[2,2],",",bbox[1,2]," ",bbox[2,1],",",bbox[1,1]," ",bbox[2,1],"))")
+     spatial_srid<-raster::crs(raster)
+     entity$setSpatialExtent(spatial_cov, crs = spatial_srid)
+   }
+   
+   #temporal extent
+   
+   if(!is.null(attr$time_coverage_start)&!is.null(attr$time_coverage_end)){
+     temporal_cov<- paste(as.Date(attr$time_coverage_start),as.Date(attr$time_coverage_end),sep="/")
+     entity$setTemporalExtent(temporal_cov)
+   }
+   
+   #formats
+    format_obj <- geoflow_format$new(str = "resource:application/x-netcdf")
+    entity$addFormat(format_obj)
+
+   #contacts
+    #not yet implemented
+    # owner: 
+    #   attr$creator_name
+    # attr$creator_email
+    # attr$creator_url
+    # publisher: 
+    #   attr$publisher_name
+    # attr$publisher_email
+    # attr$publisher_url
+  
+}
