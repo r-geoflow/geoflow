@@ -522,6 +522,12 @@ handle_entities_ncdf <- function(config, source){
   #provenance
   #Not yet implemented
   
+  #data
+  data_obj <- geoflow_data$new()
+  data_obj$setSource(source_name)
+  data_obj$setSourceType("nc")
+  entity$setData(data_obj)
+
   return(entity)
 }
 
