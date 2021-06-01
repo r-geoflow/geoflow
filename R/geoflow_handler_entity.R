@@ -391,7 +391,7 @@ handle_entities_ncdf <- function(config, source){
     config$logger.error(errMsg)
     stop(errMsg)
   }
-  
+  entity <- geoflow_entity$new()
   source_name<-source
   source <- ncdf4::nc_open(source)
   
@@ -521,4 +521,74 @@ handle_entities_ncdf <- function(config, source){
   
   #provenance
   #Not yet implemented
+  
+  return(entity)
+}
+
+handle_entities_thredds <- function(config, source){
+  
+  catalog<-thredds::CatalogNode$new(source, prefix = "thredds")
+  if(length(catalog$get_dataset_names())==0) catalog<-thredds::CatalogNode$new(source, prefix = "d1")
+  if(length(catalog$get_dataset_names())==0) {
+    errMsg <- sprintf("No datasets for the source '%s'",source)
+    cat(errMsg)
+    stop(errMsg)
+  }
+
+  datasets<- catalog$get_dataset_names()
+
+  entities<-list()
+  entities<- lapply(datasets, function(dataset){
+    data<-catalog$get_datasets(dataset)[[dataset]]
+    base_uri<-sub("catalog.*.xml", "", catalog$url)
+    
+    #entity
+    if("odap" %in% names(catalog$list_service)){
+      odap<-catalog$list_services()$odap['base']
+      odap_uri<-paste0(sub("/thredds/",odap,base_uri),"/",data$url)
+      entity <- handle_entities_ncdf(config,odap_uri)[[1]]
+    }
+    
+    #relations
+    
+    #Thredds
+    new_thredds_link <- geoflow_relation$new()
+    new_thredds_link$setKey("http")
+    new_thredds_link$setName(dataset)
+    new_thredds_link$setDescription(paste0(entity$titles[["title"]]," - Thredds Catalog"))
+    new_thredds_link$setLink(source)
+    entity$addRelation(new_thredds_link)
+    
+    #data
+    new_data_link <- geoflow_relation$new()
+    new_data_link$setKey("http")
+    new_data_link$setName(dataset)
+    new_data_link$setDescription(paste0(entity$titles[["title"]]," - Data"))
+    new_data_link$setLink(odap_uri)
+    entity$addRelation(new_data_link)
+    
+    #WMS
+    if("wms" %in% names(catalog$list_service)){
+      wms<-catalog$list_services()$wms['base']
+      wms_uri<-paste0(sub("/thredds/",wms,base_uri),"/",data$url,"?service=WMS&version=1.3.0&request=GetCapabilities")
+      new_wms <- geoflow_relation$new()
+      new_wms$setKey("wms")
+      new_wms$setName(dataset)
+      new_wms$setDescription(entity$titles[["title"]])
+      new_wms$setLink(wms_uri)
+      entity$addRelation(new_wms)
+    }
+    #WCS
+    if("wcs" %in% names(catalog$list_service)){
+      wcs<-catalog$list_services()$wcs['base']
+      wcs_uri<-paste0(sub("/thredds/",wcs,base_uri),"/",data$url,"?service=WCS&version=1.0.0&request=GetCapabilities")
+      new_wcs <- geoflow_relation$new()
+      new_wcs$setKey("wcs")
+      new_wcs$setName(dataset)
+      new_wcs$setDescription(entity$titles[["title"]])
+      new_wcs$setLink(wcs_uri)
+      entity$addRelation(new_wcs)
+    }
+  })
+return(entities)
 }
