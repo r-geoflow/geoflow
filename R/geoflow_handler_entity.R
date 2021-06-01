@@ -391,6 +391,7 @@ handle_entities_ncdf <- function(config, source){
     config$logger.error(errMsg)
     stop(errMsg)
   }
+  entities<-list()
   entity <- geoflow_entity$new()
   source_name<-source
   source <- ncdf4::nc_open(source)
@@ -527,8 +528,8 @@ handle_entities_ncdf <- function(config, source){
   data_obj$setSource(source_name)
   data_obj$setSourceType("nc")
   entity$setData(data_obj)
-
-  return(entity)
+  entities <- c(entities, entity)
+  return(entities)
 }
 
 handle_entities_thredds <- function(config, source){
@@ -551,11 +552,13 @@ handle_entities_thredds <- function(config, source){
     #entity
     if("odap" %in% names(catalog$list_service)){
       odap<-catalog$list_services()$odap['base']
-      odap_uri<-paste0(sub("/thredds/",odap,base_uri),"/",data$url)
+      odap_uri<-paste0(sub("/thredds/",odap,base_uri),data$url)
       entity <- handle_entities_ncdf(config,odap_uri)[[1]]
     }
     
     #relations
+    
+    layername<-ncdf4::nc_open(odap_uri)$var[[2]]$name
     
     #Thredds
     new_thredds_link <- geoflow_relation$new()
@@ -576,10 +579,10 @@ handle_entities_thredds <- function(config, source){
     #WMS
     if("wms" %in% names(catalog$list_service)){
       wms<-catalog$list_services()$wms['base']
-      wms_uri<-paste0(sub("/thredds/",wms,base_uri),"/",data$url,"?service=WMS&version=1.3.0&request=GetCapabilities")
+      wms_uri<-paste0(sub("/thredds/",wms,base_uri),data$url,"?service=WMS")
       new_wms <- geoflow_relation$new()
       new_wms$setKey("wms")
-      new_wms$setName(dataset)
+      new_wms$setName(layername)
       new_wms$setDescription(entity$titles[["title"]])
       new_wms$setLink(wms_uri)
       entity$addRelation(new_wms)
@@ -587,10 +590,10 @@ handle_entities_thredds <- function(config, source){
     #WCS
     if("wcs" %in% names(catalog$list_service)){
       wcs<-catalog$list_services()$wcs['base']
-      wcs_uri<-paste0(sub("/thredds/",wcs,base_uri),"/",data$url,"?service=WCS&version=1.0.0&request=GetCapabilities")
+      wcs_uri<-paste0(sub("/thredds/",wcs,base_uri),data$url,"?service=WCS")
       new_wcs <- geoflow_relation$new()
       new_wcs$setKey("wcs")
-      new_wcs$setName(dataset)
+      new_wcs$setName(layername)
       new_wcs$setDescription(entity$titles[["title"]])
       new_wcs$setLink(wcs_uri)
       entity$addRelation(new_wcs)
