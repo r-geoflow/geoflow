@@ -392,7 +392,6 @@ handle_entities_ncdf <- function(config, source){
     stop(errMsg)
   }
   
- #source <- raster::raster(source)
   source_name<-source
   source <- ncdf4::nc_open(source)
   
@@ -401,7 +400,7 @@ handle_entities_ncdf <- function(config, source){
   
   #simplify attributes names 
   for(i in 1:length(attr)){
-    if(stringr::str_detect(names(attr)[i],"NC_GLOBAL.")) names(attr)[i]<-gsub("NC_GLOBAL.","",names(attr)[i])
+    names(attr)[i]<-gsub("NC_GLOBAL.","",names(attr)[i])
   }
   
   #identifiers
@@ -412,13 +411,8 @@ handle_entities_ncdf <- function(config, source){
       entity$setIdentifier("id", source$filename)
     }
   
-  doi <- if(!is.null(attr$identifier_product_doi)&!is.null(attr$identifier_product_doi_authority)){
-    paste(attr$identifier_product_doi_authority,attr$identifier_product_doi,sep="/")
-  }else{
-    NULL
-  }
-  
-  if (!is.null(doi)){
+  doi <- attr$identifier_product_doi
+  if(!is.null(doi)){
     entity$setIdentifier("doi", doi)
   }
   
@@ -429,16 +423,25 @@ handle_entities_ncdf <- function(config, source){
   }
  
   #description
-  description <- attr$summary
-  if(!is.null(description)){
+  summary <- attr$summary
+  if(!is.null(summary)){
       entity$setDescription("abstract", attr$summary)
   }
   
-  #subjects
+  edition <- attr$product_version
+  if(!is.null(edition)){
+    entity$setDescription("edition", attr$edition)
+  }
   
-  for(subject in c(keywords,instrument,platform,project,product_name,institution)){
+  credit <- attr$credit
+  if(!is.null(credit)){
+    entity$setDescription("credit", attr$edition)
+  }
+  
+  #subjects
+  for(subject in c("keywords","instrument","platform","project","product_name","institution")){
     if(subject %in% names(attr)){
-      keywords<-paste0(unique(unlist(stringr::str_split(attr[subject],"[^a-zA-Z0-9_]+[[:blank:]]+"))),collapse=",")
+      keywords<-paste0(unique(unlist(strsplit(attr[subject],";"))),collapse=",")
       key<-switch(subject,
                   "keywords"="theme",
                   "instrument"="instrument",
@@ -453,59 +456,69 @@ handle_entities_ncdf <- function(config, source){
     }
   }
 
-  #spatial extent
-   raster <-raster::raster(source_name)
-   bbox<-raster::bbox(raster)
-   if(!is.null(bbox)){
-     spatial_cov<-paste0("POLYGON((",bbox[1,1]," ",bbox[2,1],",",bbox[1,1]," ",bbox[2,2],",",bbox[1,2]," ",bbox[2,2],",",bbox[1,2]," ",bbox[2,1],",",bbox[1,1]," ",bbox[2,1],"))")
-     spatial_srid<-raster::crs(raster)
-     entity$setSpatialExtent(spatial_cov, crs = spatial_srid)
-   }
-   
-   #temporal extent
-   
-   if(!is.null(attr$time_coverage_start)&!is.null(attr$time_coverage_end)){
-     temporal_cov<- paste(as.Date(attr$time_coverage_start),as.Date(attr$time_coverage_end),sep="/")
-     entity$setTemporalExtent(temporal_cov)
-   }
-   
-   #formats
-    format_obj <- geoflow_format$new(str = "resource:application/x-netcdf")
-    entity$addFormat(format_obj)
-
-   #contacts
-   if(!is.null(attr$creator_name)){
-     contact_obj <- geoflow_contact$new()
-     contact_obj$setRole("owner")
-     contact_obj$setLastName(attr$creator_name)
-     contact_obj$setOrganizationName(attr$creator_institution)
-     contact_obj$setEmail(attr$creator_email)
-     contact_obj$setWebsiteUrl(attr$creator_url)
-     entity$addContact(contact_obj) 
-   }
-    
-    if(!is.null(attr$publisher_name)){
-      contact_obj <- geoflow_contact$new()
-      contact_obj$setRole("publisher")
-      contact_obj$setLastName(attr$publisher_name)
-      contact_obj$setOrganizationName(attr$publisher_institution)
-      contact_obj$setEmail(attr$publisher_email)
-      contact_obj$setWebsiteUrl(attr$publisher_url)
-      entity$addContact(contact_obj) 
-    }
-    
-    #rights
-    if(!is.null(attr$license)){
-      right_obj <- geoflow_right$new(str = paste0("license:",attr$license))
-      entity$addRight(right_obj)
-    }
-    
-    #dates
-   
-    if(!is.null(attr$date_created)) entity$addDate("creation", attr$date_created)
-    if(!is.null(attr$date_created)) entity$addDate("modification", attr$date_modified)
-    if(!is.null(attr$date_created)) entity$addDate("metadata", attr$date_metadata_modified)
-    if(!is.null(attr$date_created)) entity$addDate("issue", attr$date_issued)
-    
+  #contacts
+  if(!is.null(attr$creator_name)){
+    contact_obj <- geoflow_contact$new()
+    contact_obj$setRole("owner")
+    contact_obj$setLastName(attr$creator_name)
+    contact_obj$setOrganizationName(attr$creator_institution)
+    contact_obj$setEmail(attr$creator_email)
+    contact_obj$setWebsiteUrl(attr$creator_url)
+    entity$addContact(contact_obj) 
+  }
   
+  if(!is.null(attr$publisher_name)){
+    contact_obj <- geoflow_contact$new()
+    contact_obj$setRole("publisher")
+    contact_obj$setLastName(attr$publisher_name)
+    contact_obj$setOrganizationName(attr$publisher_institution)
+    contact_obj$setEmail(attr$publisher_email)
+    contact_obj$setWebsiteUrl(attr$publisher_url)
+    entity$addContact(contact_obj) 
+  }
+  
+  #dates
+  
+  if(!is.null(attr$date_created)) entity$addDate("creation", attr$date_created)
+  if(!is.null(attr$date_created)) entity$addDate("revision", attr$date_modified)
+  if(!is.null(attr$date_created)) entity$addDate("metadata", attr$date_metadata_modified)
+  if(!is.null(attr$date_created)) entity$addDate("publication", attr$date_issued)
+  
+  #Type
+  #Not yet implemented
+  
+  #Language
+  #Not yet implemented
+  
+  #spatial extent
+  spatial_cov<-if(!is.null(attr$geospatial_bounds)){attr$geospatial_bounds}else{NULL}
+  spatial_srid<-if(!is.null(attr$geospatial_bounds_crs)){attr$geospatial_bounds_crs}else{NULL}
+  if(is.null(spatial_cov)){
+    if(!is.null(attr$geospatial_lat_min)&!is.null(attr$geospatial_lat_max)&!is.null(attr$geospatial_lon_min)&!is.null(attr$geospatial_lon_max)){
+      spatial_cov<-paste0("POLYGON((",attr$geospatial_lon_min," ",attr$geospatial_lat_min,",",attr$geospatial_lon_min," ",attr$geospatial_lat_max,",",attr$geospatial_lon_max," ",attr$geospatial_lat_max,",",attr$geospatial_lon_max," ",attr$geospatial_lat_min,",",attr$geospatial_lon_min," ",attr$geospatial_lat_min,"))")
+    }
+  }
+  if(!is.null(spatial_cov)) entity$setSpatialExtent(spatial_cov, crs = spatial_srid)
+   
+  #temporal extent
+  if(!is.null(attr$time_coverage_start)&!is.null(attr$time_coverage_end)){
+    temporal_cov<- paste(as.Date(attr$time_coverage_start),as.Date(attr$time_coverage_end),sep="/")
+    entity$setTemporalExtent(temporal_cov)
+  }
+   
+  #relation
+  #Not yet implemented
+  
+  #rights
+  if(!is.null(attr$license)){
+    right_obj <- geoflow_right$new(str = paste0("license:",attr$license))
+    entity$addRight(right_obj)
+  }
+  
+  #formats
+  format_obj <- geoflow_format$new(str = "resource:application/x-netcdf")
+  entity$addFormat(format_obj)
+  
+  #provenance
+  #Not yet implemented
 }
