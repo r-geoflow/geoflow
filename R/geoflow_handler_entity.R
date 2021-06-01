@@ -382,3 +382,222 @@ handle_entities_dbi <- function(config, source){
   entities <- handle_entities_df(config, source)
   return(entities)
 }
+
+#handle_entities_ncdf
+handle_entities_ncdf <- function(config, source){
+
+  if(!mime::guess_type(source)=="application/x-netcdf"){
+    errMsg <- "Error in 'handle_entities_df': source parameter should be an 'netcdf' file"
+    config$logger.error(errMsg)
+    stop(errMsg)
+  }
+  entities<-list()
+  entity <- geoflow_entity$new()
+  source_name<-source
+  source <- ncdf4::nc_open(source)
+  
+  #list attributes of source
+  attr<-ncdf4::ncatt_get(source,varid=0)
+  
+  #simplify attributes names 
+  for(i in 1:length(attr)){
+    names(attr)[i]<-gsub("NC_GLOBAL.","",names(attr)[i])
+  }
+  
+  #identifiers
+  identifier <-attr$id
+  if(!is.null(identifier)){
+      entity$setIdentifier("id", identifier)
+    }else{
+      entity$setIdentifier("id", source$filename)
+    }
+  
+  doi <- attr$identifier_product_doi
+  if(!is.null(doi)){
+    entity$setIdentifier("doi", doi)
+  }
+  
+  #title
+  title <- attr$title
+  if(!is.null(title)){
+  entity$setTitle("title", title)
+  }
+ 
+  #description
+  summary <- attr$summary
+  if(!is.null(summary)){
+      entity$setDescription("abstract", attr$summary)
+  }
+  
+  edition <- attr$product_version
+  if(!is.null(edition)){
+    entity$setDescription("edition", attr$edition)
+  }
+  
+  credit <- attr$credit
+  if(!is.null(credit)){
+    entity$setDescription("credit", attr$edition)
+  }
+  
+  #subjects
+  for(subject in c("keywords","instrument","platform","project","product_name","institution")){
+    if(subject %in% names(attr)){
+      keywords<-paste0(unique(unlist(strsplit(attr[subject],";"))),collapse=",")
+      key<-switch(subject,
+                  "keywords"="theme",
+                  "instrument"="instrument",
+                  "platform"="platform",
+                  "project"="project",
+                  "product_name"="product",
+                  "institution"="dataCenter"
+                  )
+      thesaurus<-if(paste0(subject,"_vocabulary") %in% names(attr)){attr[paste0(subject,"_vocabulary")] }else{""}
+      subject_obj <- geoflow_subject$new(str = paste0(key,"[",thesaurus,"]:",keywords))
+      entity$addSubject(subject_obj)
+    }
+  }
+
+  #contacts
+  if(!is.null(attr$creator_name)){
+    contact_obj <- geoflow_contact$new()
+    contact_obj$setRole("owner")
+    contact_obj$setLastName(attr$creator_name)
+    contact_obj$setOrganizationName(attr$creator_institution)
+    contact_obj$setEmail(attr$creator_email)
+    contact_obj$setWebsiteUrl(attr$creator_url)
+    entity$addContact(contact_obj) 
+  }
+  
+  if(!is.null(attr$publisher_name)){
+    contact_obj <- geoflow_contact$new()
+    contact_obj$setRole("publisher")
+    contact_obj$setLastName(attr$publisher_name)
+    contact_obj$setOrganizationName(attr$publisher_institution)
+    contact_obj$setEmail(attr$publisher_email)
+    contact_obj$setWebsiteUrl(attr$publisher_url)
+    entity$addContact(contact_obj) 
+  }
+  
+  #dates
+  
+  if(!is.null(attr$date_created)) entity$addDate("creation", attr$date_created)
+  if(!is.null(attr$date_created)) entity$addDate("revision", attr$date_modified)
+  if(!is.null(attr$date_created)) entity$addDate("metadata", attr$date_metadata_modified)
+  if(!is.null(attr$date_created)) entity$addDate("publication", attr$date_issued)
+  
+  #Type
+  #Not yet implemented
+  
+  #Language
+  #Not yet implemented
+  
+  #spatial extent
+  spatial_cov<-if(!is.null(attr$geospatial_bounds)){attr$geospatial_bounds}else{NULL}
+  spatial_srid<-if(!is.null(attr$geospatial_bounds_crs)){attr$geospatial_bounds_crs}else{NULL}
+  if(is.null(spatial_cov)){
+    if(!is.null(attr$geospatial_lat_min)&!is.null(attr$geospatial_lat_max)&!is.null(attr$geospatial_lon_min)&!is.null(attr$geospatial_lon_max)){
+      spatial_cov<-paste0("POLYGON((",attr$geospatial_lon_min," ",attr$geospatial_lat_min,",",attr$geospatial_lon_min," ",attr$geospatial_lat_max,",",attr$geospatial_lon_max," ",attr$geospatial_lat_max,",",attr$geospatial_lon_max," ",attr$geospatial_lat_min,",",attr$geospatial_lon_min," ",attr$geospatial_lat_min,"))")
+    }
+  }
+  if(!is.null(spatial_cov)) entity$setSpatialExtent(spatial_cov, crs = spatial_srid)
+   
+  #temporal extent
+  if(!is.null(attr$time_coverage_start)&!is.null(attr$time_coverage_end)){
+    temporal_cov<- paste(as.Date(attr$time_coverage_start),as.Date(attr$time_coverage_end),sep="/")
+    entity$setTemporalExtent(temporal_cov)
+  }
+   
+  #relation
+  #Not yet implemented
+  
+  #rights
+  if(!is.null(attr$license)){
+    right_obj <- geoflow_right$new(str = paste0("license:",attr$license))
+    entity$addRight(right_obj)
+  }
+  
+  #formats
+  format_obj <- geoflow_format$new(str = "resource:application/x-netcdf")
+  entity$addFormat(format_obj)
+  
+  #provenance
+  #Not yet implemented
+  
+  #data
+  data_obj <- geoflow_data$new()
+  data_obj$setSource(source_name)
+  data_obj$setSourceType("nc")
+  entity$setData(data_obj)
+  entities <- c(entities, entity)
+  return(entities)
+}
+
+handle_entities_thredds <- function(config, source){
+  
+  catalog<-thredds::CatalogNode$new(source, prefix = "thredds")
+  if(length(catalog$get_dataset_names())==0) catalog<-thredds::CatalogNode$new(source, prefix = "d1")
+  if(length(catalog$get_dataset_names())==0) {
+    errMsg <- sprintf("No datasets for the source '%s'",source)
+    cat(errMsg)
+    stop(errMsg)
+  }
+
+  datasets<- catalog$get_dataset_names()
+
+  entities<-list()
+  entities<- lapply(datasets, function(dataset){
+    data<-catalog$get_datasets(dataset)[[dataset]]
+    base_uri<-sub("catalog.*.xml", "", catalog$url)
+    
+    #entity
+    if("odap" %in% names(catalog$list_service)){
+      odap<-catalog$list_services()$odap['base']
+      odap_uri<-paste0(sub("/thredds/",odap,base_uri),data$url)
+      entity <- handle_entities_ncdf(config,odap_uri)[[1]]
+    }
+    
+    #relations
+    
+    layername<-ncdf4::nc_open(odap_uri)$var[[2]]$name
+    
+    #Thredds
+    new_thredds_link <- geoflow_relation$new()
+    new_thredds_link$setKey("http")
+    new_thredds_link$setName(dataset)
+    new_thredds_link$setDescription(paste0(entity$titles[["title"]]," - Thredds Catalog"))
+    new_thredds_link$setLink(source)
+    entity$addRelation(new_thredds_link)
+    
+    #data
+    new_data_link <- geoflow_relation$new()
+    new_data_link$setKey("http")
+    new_data_link$setName(dataset)
+    new_data_link$setDescription(paste0(entity$titles[["title"]]," - Data"))
+    new_data_link$setLink(odap_uri)
+    entity$addRelation(new_data_link)
+    
+    #WMS
+    if("wms" %in% names(catalog$list_service)){
+      wms<-catalog$list_services()$wms['base']
+      wms_uri<-paste0(sub("/thredds/",wms,base_uri),data$url,"?service=WMS")
+      new_wms <- geoflow_relation$new()
+      new_wms$setKey("wms")
+      new_wms$setName(layername)
+      new_wms$setDescription(entity$titles[["title"]])
+      new_wms$setLink(wms_uri)
+      entity$addRelation(new_wms)
+    }
+    #WCS
+    if("wcs" %in% names(catalog$list_service)){
+      wcs<-catalog$list_services()$wcs['base']
+      wcs_uri<-paste0(sub("/thredds/",wcs,base_uri),data$url,"?service=WCS")
+      new_wcs <- geoflow_relation$new()
+      new_wcs$setKey("wcs")
+      new_wcs$setName(layername)
+      new_wcs$setDescription(entity$titles[["title"]])
+      new_wcs$setLink(wcs_uri)
+      entity$addRelation(new_wcs)
+    }
+  })
+return(entities)
+}
