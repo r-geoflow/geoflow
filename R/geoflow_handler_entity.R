@@ -523,18 +523,20 @@ handle_entities_ncdf <- function(config, source){
   #provenance
   #Not yet implemented
   
-if(!startWith(source_name,"http")){
-  #how to deduce a download link from an opendap link (without being on Thredds)
-  #data
-  data_obj <- geoflow_data$new()
-  data_obj$setSource(source_name)
-  data_obj$setSourceType("nc")
-  entity$setData(data_obj)
-  entities <- c(entities, entity)
-}
+  if(!startsWith(source_name,"http")){
+    #how to deduce a download link from an opendap link (without being on Thredds)
+    #data
+    data_obj <- geoflow_data$new()
+    data_obj$setSource(source_name)
+    data_obj$setSourceType("nc")
+    entity$setData(data_obj)
+  }
+  
+  entities <- list(entity)
   return(entities)
 }
 
+#handle_entities_thredds
 handle_entities_thredds <- function(config, source){
   
   thredds <- config$software$input$thredds
@@ -544,28 +546,39 @@ handle_entities_thredds <- function(config, source){
   
   if(length(thredds$get_dataset_names())==0) {
     errMsg <- sprintf("No datasets for the thredds")
-    cat(errMsg)
+    config$logger.error(errMsg)
     stop(errMsg)
   }
   
-  if(!is.null(source)){datasets<-unlist(strsplit(source,","))
-  }else{datasets<- catalog$get_dataset_names()}
+  if(!is.null(source)) if(source != ""){
+    datasets<-unlist(strsplit(source,","))
+  }else{
+    datasets<- thredds$get_dataset_names()
+  }
 
+  
+  base_uri<-sub("catalog.*.xml", "", thredds$url)
+  config$logger.info(sprintf("Thredds Base URL: %s", base_uri))
+  
   entities<-list()
   entities<- lapply(datasets, function(dataset){
     data<-thredds$get_datasets(dataset)[[dataset]]
-    base_uri<-sub("catalog.*.xml", "", catalog$url)
+    config$logger.info(sprintf("Build entity for '%s'", data$url))
     
     #entity
-    if("odap" %in% names(catalog$list_service)){
-      odap<-thredds$list_services()$odap['base']
-      odap_uri<-paste0(sub("/thredds/",odap,base_uri),data$url)
-      entity <- handle_entities_ncdf(config,odap_uri)[[1]]
+    if(!"odap" %in% names(thredds$list_services())){
+      errMsg <- sprintf("No OpenDAP service for Thredds '%s'", thredds$url)
+      config$logger.error(errMsg)
+      stop(errMsg)
     }
     
-    #relations
-    
+    odap<-thredds$list_services()$odap['base']
+    odap_uri<-paste0(sub("/thredds/",odap,base_uri),data$url)
+    config$logger.info(sprintf("OpenDAP URL for '%s': %s", data$url, odap_uri))
     layername<-ncdf4::nc_open(odap_uri)$var[[2]]$name
+    entity <- handle_entities_ncdf(config,odap_uri)[[1]]
+    
+    #relations
     
     #Thredds
     new_thredds_link <- geoflow_relation$new()
@@ -584,8 +597,8 @@ handle_entities_thredds <- function(config, source){
     entity$addRelation(new_data_link)
     
     #WMS
-    if("wms" %in% names(catalog$list_service)){
-      wms<-catalog$list_services()$wms['base']
+    if("wms" %in% names(thredds$list_services())){
+      wms<-thredds$list_services()$wms['base']
       wms_uri<-paste0(sub("/thredds/",wms,base_uri),data$url,"?service=WMS")
       new_wms <- geoflow_relation$new()
       new_wms$setKey("wms")
@@ -595,8 +608,8 @@ handle_entities_thredds <- function(config, source){
       entity$addRelation(new_wms)
     }
     #WCS
-    if("wcs" %in% names(catalog$list_service)){
-      wcs<-catalog$list_services()$wcs['base']
+    if("wcs" %in% names(thredds$list_services())){
+      wcs<-thredds$list_services()$wcs['base']
       wcs_uri<-paste0(sub("/thredds/",wcs,base_uri),data$url,"?service=WCS")
       new_wcs <- geoflow_relation$new()
       new_wcs$setKey("wcs")
@@ -606,13 +619,15 @@ handle_entities_thredds <- function(config, source){
       entity$addRelation(new_wcs)
     }
     
-  #data
+    #data
     data_obj <- geoflow_data$new()
     data_obj$setAccess("thredds")
     data_obj$setSource(dataset)
     data_obj$setSourceType("nc")
     entity$setData(data_obj)
     
+    return(entity)
+    
   })
-return(entities)
+  return(entities)
 }
