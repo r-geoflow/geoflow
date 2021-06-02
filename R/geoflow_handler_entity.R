@@ -442,7 +442,7 @@ handle_entities_ncdf <- function(config, source){
   #subjects
   for(subject in c("keywords","instrument","platform","project","product_name","institution")){
     if(subject %in% names(attr)){
-      keywords<-paste0(unique(unlist(strsplit(attr[subject],";"))),collapse=",")
+      keywords<-paste0(unique(unlist(strsplit(attr[[subject]],";"))),collapse=",")
       key<-switch(subject,
                   "keywords"="theme",
                   "instrument"="instrument",
@@ -481,9 +481,9 @@ handle_entities_ncdf <- function(config, source){
   #dates
   
   if(!is.null(attr$date_created)) entity$addDate("creation", attr$date_created)
-  if(!is.null(attr$date_created)) entity$addDate("revision", attr$date_modified)
-  if(!is.null(attr$date_created)) entity$addDate("metadata", attr$date_metadata_modified)
-  if(!is.null(attr$date_created)) entity$addDate("publication", attr$date_issued)
+  if(!is.null(attr$date_modified)) entity$addDate("revision", attr$date_modified)
+  if(!is.null(attr$date_metadata_modified)) entity$addDate("metadata", attr$date_metadata_modified)
+  if(!is.null(attr$date_issued)) entity$addDate("publication", attr$date_issued)
   
   #Type
   #Not yet implemented
@@ -493,7 +493,7 @@ handle_entities_ncdf <- function(config, source){
   
   #spatial extent
   spatial_cov<-if(!is.null(attr$geospatial_bounds)){attr$geospatial_bounds}else{NULL}
-  spatial_srid<-if(!is.null(attr$geospatial_bounds_crs)){attr$geospatial_bounds_crs}else{NULL}
+  spatial_srid<-if(!is.null(attr$geospatial_bounds_crs)){attr$geospatial_bounds_crs}else{NA}
   if(is.null(spatial_cov)){
     if(!is.null(attr$geospatial_lat_min)&!is.null(attr$geospatial_lat_max)&!is.null(attr$geospatial_lon_min)&!is.null(attr$geospatial_lon_max)){
       spatial_cov<-paste0("POLYGON((",attr$geospatial_lon_min," ",attr$geospatial_lat_min,",",attr$geospatial_lon_min," ",attr$geospatial_lat_max,",",attr$geospatial_lon_max," ",attr$geospatial_lat_max,",",attr$geospatial_lon_max," ",attr$geospatial_lat_min,",",attr$geospatial_lon_min," ",attr$geospatial_lat_min,"))")
@@ -523,35 +523,42 @@ handle_entities_ncdf <- function(config, source){
   #provenance
   #Not yet implemented
   
+if(!startWith(source_name,"http")){
+  #how to deduce a download link from an opendap link (without being on Thredds)
   #data
   data_obj <- geoflow_data$new()
   data_obj$setSource(source_name)
   data_obj$setSourceType("nc")
   entity$setData(data_obj)
   entities <- c(entities, entity)
+}
   return(entities)
 }
 
 handle_entities_thredds <- function(config, source){
   
-  catalog<-thredds::CatalogNode$new(source, prefix = "thredds")
-  if(length(catalog$get_dataset_names())==0) catalog<-thredds::CatalogNode$new(source, prefix = "d1")
-  if(length(catalog$get_dataset_names())==0) {
-    errMsg <- sprintf("No datasets for the source '%s'",source)
+  thredds <- config$software$input$thredds
+  if(is.null(thredds)){
+    stop("There is no database input software configured to handle entities from Thredds")
+  }
+  
+  if(length(thredds$get_dataset_names())==0) {
+    errMsg <- sprintf("No datasets for the thredds")
     cat(errMsg)
     stop(errMsg)
   }
-
-  datasets<- catalog$get_dataset_names()
+  
+  if(!is.null(source)){datasets<-unlist(strsplit(source,","))
+  }else{datasets<- catalog$get_dataset_names()}
 
   entities<-list()
   entities<- lapply(datasets, function(dataset){
-    data<-catalog$get_datasets(dataset)[[dataset]]
+    data<-thredds$get_datasets(dataset)[[dataset]]
     base_uri<-sub("catalog.*.xml", "", catalog$url)
     
     #entity
     if("odap" %in% names(catalog$list_service)){
-      odap<-catalog$list_services()$odap['base']
+      odap<-thredds$list_services()$odap['base']
       odap_uri<-paste0(sub("/thredds/",odap,base_uri),data$url)
       entity <- handle_entities_ncdf(config,odap_uri)[[1]]
     }
@@ -598,6 +605,14 @@ handle_entities_thredds <- function(config, source){
       new_wcs$setLink(wcs_uri)
       entity$addRelation(new_wcs)
     }
+    
+  #data
+    data_obj <- geoflow_data$new()
+    data_obj$setAccess("thredds")
+    data_obj$setSource(dataset)
+    data_obj$setSourceType("nc")
+    entity$setData(data_obj)
+    
   })
 return(entities)
 }

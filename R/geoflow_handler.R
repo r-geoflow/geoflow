@@ -190,6 +190,18 @@ register_entity_handlers <- function(){
       def = "Handle metadata entities from a DB source",
       packages = list("DBI", "RSQLite", "RPostgres"),
       fun = handle_entities_dbi
+    ),
+    geoflow_handler$new(
+      id = "ncdf",
+      def = "Handle metadata entities from a Netcdf source",
+      packages = list("ncdf4"),
+      fun = handle_entities_ncdf
+    ),
+    geoflow_handler$new(
+      id = "thredds",
+      def = "Handle metadata entities from a Thredds server source",
+      packages = list("ncdf4","thredds","mime"),
+      fun = handle_entities_thredds
     )
   )
   .geoflow$entity_handlers <- handlers
