@@ -267,9 +267,9 @@ register_data_accessors <- function(){
           stop(errMsg)
         }
 
-        decode_path<-unlist(stringr::str_split(resource,pattern="/"))
+        decode_path<-unlist(strsplit(resource,pattern="/"))
         dataset<-tail(decode_path,1)
-        nodes<-decode_path[1:length(decode_path)-1]
+        nodes<-if(length(decode_path)>1){decode_path[1:length(decode_path)-1]} else{NULL}
         top_url<-software$url
         child<-software
         for(node in nodes){
@@ -290,9 +290,18 @@ register_data_accessors <- function(){
           stop(errMsg)
         }
         dataset_dest<-file.path(getwd(),paste0(dataset,".nc"))
-        dataset_uri<-paste0(unlist(strsplit(top_url,"/catalog.xml"))[1],data$url,".nc")
-        cat(sprintf("[geoflow] Thredds data accessor: Download data '%s' from '%s' to '%s'\n", dataset, dataset_uri, dataset_dest))
-        download.file(url = dataset_uri, destfile = dataset_dest,mode="wb")
+        #dataset_uri<-paste0(unlist(strsplit(top_url,"/catalog.xml"))[1],data$url,".nc")
+        #
+        base_uri<-sub("catalog.*.xml", "", top_uri)
+        http<-unlist(sapply(names(catalog$list_services()), function(x) if(catalog$list_services()[[x]]["serviceType"]=="HTTPServer") catalog$list_services()[[x]]["base"]))
+        if(is.null(http)){
+          errMsg <- sprintf("no valid ",dataset)
+          cat(errMsg)
+          stop(errMsg)
+        }else{
+          dataset_uri<-paste0(sub("/thredds/",http,base_uri),data$url)
+          download.file(url = dataset_uri, destfile = dataset_dest,mode="wb")
+        }
       }
     )
   )
