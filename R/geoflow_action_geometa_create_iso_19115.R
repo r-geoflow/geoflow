@@ -94,7 +94,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md$setHierarchyLevel(dctype_iso)
   
   #add contacts
-  for(entity_contact in entity$contacts){
+  if(length(entity$contacts)>0)for(entity_contact in entity$contacts){
     if(tolower(entity_contact$role) == "metadata"){
       rp<-createResponsibleParty(entity_contact,"pointOfContact") 
       md$addContact(rp)
@@ -163,7 +163,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   }
   
   #adding contacts
-  for(entity_contact in entity$contacts){
+  if(length(entity$contacts)>0)for(entity_contact in entity$contacts){
     if(tolower(entity_contact$role) != "metadata"){
       rp<-createResponsibleParty(entity_contact) 
       ident$addPointOfContact(rp)
@@ -217,14 +217,16 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ct$addPresentationForm("mapDigital") #TODO to map with gsheet
   
   #adding responsible party (search for owner, otherwise take first contact)
-  owners <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
-  if(length(owners)==0) owners <- list(entity$contacts[[1]])
-  for(owner_entity in owners){
-    rp<-createResponsibleParty(owner_entity) 
-    ct$citedResponsibleParty <- c(ct$citedResponsibleParty, rp)
+  if(length(entity$contacts)>0){
+    owners <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
+    if(length(owners)==0) owners <- list(entity$contacts[[1]])
+    for(owner_entity in owners){
+      rp<-createResponsibleParty(owner_entity) 
+      ct$citedResponsibleParty <- c(ct$citedResponsibleParty, rp)
+    }
+    ident$setCitation(ct)
   }
-  ident$setCitation(ct)
- 
+  
   #graphic overviews
   if(length(entity$relations)>0){
     thumbnails <- entity$relations[sapply(entity$relations, function(x){x$key == "thumbnail"})]
