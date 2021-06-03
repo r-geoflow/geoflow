@@ -447,7 +447,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #add online resource for each relation
   if(length(entity$relations)>0){
     http_relations <- entity$relations[sapply(entity$relations, function(x){
-      x$key %in% c("ftp","http", "wfs", "wms", "wcs", "csw")
+      x$key %in% c("ftp","http", "wfs", "wms", "wms110", "wms111", "wms130", "wcs", "csw")
     })]
     for(http_relation in http_relations){
       or <- ISOOnlineResource$new()
@@ -456,7 +456,10 @@ geometa_create_iso_19115 <- function(entity, config, options){
       or$setDescription(http_relation$description)
       protocol <- switch(http_relation$key,
         "http" = "WWW:LINK-1.0-http--link",
-        "wms" = "OGC:WMS-1.1.0-http-get-map",
+        "wms" = "OGC:WMS-1.1.0-http-get-map", #defaut
+        "wms110" = "OGC:WMS-1.1.0-http-get-map",
+        "wms111" = "OGC:WMS-1.1.1-http-get-map",
+        "wms130" = "OGC:WMS-1.3.0-http-get-map",
         "WWW:LINK-1.0-http--link"
       )
       or$setProtocol(protocol)
