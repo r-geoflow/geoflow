@@ -421,6 +421,8 @@ handle_entities_ncdf <- function(config, source){
   title <- attr$title
   if(!is.null(title)){
   entity$setTitle("title", title)
+  }else{
+    entity$setTitle("title",basename(source_name))  
   }
  
   #description
