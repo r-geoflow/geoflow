@@ -224,8 +224,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
       rp<-createResponsibleParty(owner_entity) 
       ct$citedResponsibleParty <- c(ct$citedResponsibleParty, rp)
     }
-    ident$setCitation(ct)
   }
+  ident$setCitation(ct)
   
   #graphic overviews
   if(length(entity$relations)>0){
