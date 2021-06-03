@@ -405,12 +405,12 @@ handle_entities_ncdf <- function(config, source){
   }
   
   #identifiers
-  identifier <-attr$id
-  if(!is.null(identifier)){
-      entity$setIdentifier("id", identifier)
-    }else{
-      entity$setIdentifier("id", source$filename)
-    }
+  # identifier <-attr$id
+  # if(!is.null(identifier)){
+  #     entity$setIdentifier("id", identifier)
+  #   }else{
+      entity$setIdentifier("id", basename(source_name))
+  # }
   
   doi <- attr$identifier_product_doi
   if(!is.null(doi)){
@@ -480,7 +480,7 @@ handle_entities_ncdf <- function(config, source){
   
   #dates
   
-  if(!is.null(attr$date_created)) entity$addDate("creation", attr$date_created)
+  if(!is.null(attr$date_created)){entity$addDate("creation", attr$date_created)}else{entity$addDate("creation", Sys.time())}
   if(!is.null(attr$date_modified)) entity$addDate("revision", attr$date_modified)
   if(!is.null(attr$date_metadata_modified)) entity$addDate("metadata", attr$date_metadata_modified)
   if(!is.null(attr$date_issued)) entity$addDate("publication", attr$date_issued)
