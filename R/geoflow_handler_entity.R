@@ -601,7 +601,7 @@ handle_entities_thredds <- function(config, source){
       wms<-thredds$list_services()$wms['base']
       wms_uri<-paste0(sub("/thredds/",wms,base_uri),data$url,"?service=WMS")
       new_wms <- geoflow_relation$new()
-      new_wms$setKey("wms")
+      new_wms$setKey("wms130")
       new_wms$setName(layername)
       new_wms$setDescription(entity$titles[["title"]])
       new_wms$setLink(wms_uri)
