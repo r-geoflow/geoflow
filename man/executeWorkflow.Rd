@@ -8,6 +8,11 @@ executeWorkflow(file, dir)
 }
 \arguments{
 \item{file}{a JSON geoflow configuration file}
+
+\item{dir}{a directory where to execute the workflow}
+}
+\value{
+the path of the job directory
 }
 \description{
 \code{executeWorkflow} allows to execute a workflow
