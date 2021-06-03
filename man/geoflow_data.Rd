@@ -69,8 +69,10 @@ geoflow_data
    Sets a CQL filter. In case of spatial data, once the data is read by geoflow (during initialization phase),
    the CQL filter will be applied to the data.
  }
- \item{\code{setWorkspace(workspace)}}{
-   Sets a workspace name, object of class \code{character}. Used as target workspace name for GeoServer action.
+ \item{\code{setWorkspace(software_type, workspace)}}{
+   Sets a workspace name, object of class \code{character}. A workspace must target a valid software type, object of
+   class \code{character}, to be declared as first argument of this function, assuming the corresponding software is
+   declared in the geoflow configuration.
  }
  \item{\code{setDatastore(datastore)}}{
    Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action.
@@ -99,8 +101,15 @@ geoflow_data
  \item{\code{setVariables(variables)}}{
    Sets variables definition.
  }
+ \item{\code{setDimension(name, values)}}{
+   Sets a dimension (name and its values)
+ }
  \item{\code{addAction(action)}}{
    Adds an entity local action to be run
+ }
+ \item{\code{checkSoftwareProperties(config)}}{
+   A function triggered when loading a data object to check eventual software dependent properties, to make sure
+   the corresponding software are declared in the config.
  }
  
 }

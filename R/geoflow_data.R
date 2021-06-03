@@ -95,6 +95,9 @@
 #'  \item{\code{setVariables(variables)}}{
 #'    Sets variables definition.
 #'  }
+#'  \item{\code{setDimension(name, values)}}{
+#'    Sets a dimension (name and its values)
+#'  }
 #'  \item{\code{addAction(action)}}{
 #'    Adds an entity local action to be run
 #'  }
@@ -140,6 +143,7 @@ geoflow_data <- R6Class("geoflow_data",
     featureTypeObj = NULL,
     attributes = NULL,
     variables = NULL,
+    dimensions = list(),
     actions = list(),
     run = TRUE,
     initialize = function(str = NULL){
@@ -529,6 +533,11 @@ geoflow_data <- R6Class("geoflow_data",
     #addAction
     addAction = function(action){
       self$actions[[length(self$actions)+1]] <- action
+    },
+    
+    #setDimension
+    setDimension = function(name, values){
+      self$dimensions[[name]] <- values
     },
     
     #checkSoftwareProperties
