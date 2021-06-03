@@ -540,7 +540,7 @@ handle_entities_ncdf <- function(config, source){
 
 #handle_entities_thredds
 handle_entities_thredds <- function(config, source){
-  
+
   thredds <- config$software$input$thredds
   if(is.null(thredds)){
     stop("There is no database input software configured to handle entities from Thredds")
@@ -605,13 +605,20 @@ handle_entities_thredds <- function(config, source){
     #WMS
     wms<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WMS") thredds$list_services()[[x]]["base"]))
     if(!is.null(wms)){
+      requireNamespace("ows4R")
       wms_uri<-paste0(sub("/thredds/",wms,base_uri),data$url,"?service=WMS")
-      new_wms <- geoflow_relation$new()
-      new_wms$setKey("wms130")
-      new_wms$setName(layername)
-      new_wms$setDescription(entity$titles[["title"]])
-      new_wms$setLink(wms_uri)
-      entity$addRelation(new_wms)
+      wms_request<-paste0(sub("/thredds/",wms,base_uri),data$url)
+      wms <- ows4R::WMSClient$new(url = wms_request, serviceVersion = "1.3.0", logger = "INFO")
+      layers <- wms$getLayers(pretty = T)
+      layers <- layers[!is.na(layers$name),]
+      for(layer in layers$name){
+        new_wms <- geoflow_relation$new()
+        new_wms$setKey("wms130")
+        new_wms$setName(layer)
+        new_wms$setDescription(layers[layers$name==layer,]$title)
+        new_wms$setLink(wms_uri)
+        entity$addRelation(new_wms)
+      }
     }
     #WCS
     wcs<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WCS") thredds$list_services()[[x]]["base"]))
