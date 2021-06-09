@@ -44,6 +44,8 @@ sanitize_date <- function(date){
     }else{
       if(nchar(date)==10){
         date <- as.Date(date)
+      }else if(nchar(date)==7){
+        date <- as.Date(paste0(date,"-01"))
       }else{
         date <- as.POSIXct(date) 
       }
