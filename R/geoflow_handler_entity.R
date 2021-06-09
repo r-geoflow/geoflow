@@ -506,7 +506,6 @@ handle_entities_ncdf <- function(config, source){
    
   #temporal extent
   if(!is.null(attr$time_coverage_start)&!is.null(attr$time_coverage_end)){
-    #temporal_cov<- paste(as.Date(attr$time_coverage_start),as.Date(attr$time_coverage_end),sep="/")
     temporal_cov<- paste(attr$time_coverage_start,attr$time_coverage_end,sep="/")
     entity$setTemporalExtent(temporal_cov)
   }
