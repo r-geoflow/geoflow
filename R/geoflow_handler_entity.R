@@ -560,7 +560,7 @@ handle_entities_thredds <- function(config, source){
   }
 
   
-  base_uri<-unlist(strsplit(thredds$url,"/thredds/"))[1]
+  base_uri<-unlist(strsplit(thredds$url,"/thredds"))[1]
   config$logger.info(sprintf("Thredds Base URL: %s", base_uri))
   
   entities<-list()
@@ -606,6 +606,7 @@ handle_entities_thredds <- function(config, source){
     }
     
     #WMS
+    dimensions<-NULL
     wms<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WMS") thredds$list_services()[[x]]["base"]))[1]
     if(!is.null(wms)){
       requireNamespace("ows4R")
@@ -614,6 +615,8 @@ handle_entities_thredds <- function(config, source){
       wms <- ows4R::WMSClient$new(url = wms_request, serviceVersion = "1.3.0", logger = "INFO")
       layers <- wms$getLayers(pretty = T)
       layers <- layers[!is.na(layers$name),]
+      layers_names<-layers$name
+      
       for(layer in layers$name){
         new_wms <- geoflow_relation$new()
         new_wms$setKey("wms130")
@@ -622,7 +625,10 @@ handle_entities_thredds <- function(config, source){
         new_wms$setLink(wms_uri)
         entity$addRelation(new_wms)
       }
+
+      dimensions<-wms$getLayers()[[2]]$getDimensions()
     }
+    
     # #WCS
     # wcs<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WCS") thredds$list_services()[[x]]["base"]))
     # if(!is.null(wcs)){
@@ -642,6 +648,10 @@ handle_entities_thredds <- function(config, source){
     data_obj$setSource(dataset)
     data_obj$setSourceType("nc")
 #  }
+    if(!is.null(dimensions))for(dimension in names(dimensions)){
+      dimension<-dimensions[[dimension]]
+      data_obj$setDimension(dimension$name,dimension$values)
+    }
     entity$setData(data_obj)
     
     return(entity)
