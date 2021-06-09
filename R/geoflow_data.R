@@ -116,7 +116,8 @@ geoflow_data <- R6Class("geoflow_data",
     supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "gpkg", "other","nc"),
     supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"),
     supportedXPossibleNames = c("x","lon","long","longitude","decimalLongitude"),
-    supportedYPossibleNames = c("y","lat","lati","latitude","decimalLatitude")
+    supportedYPossibleNames = c("y","lat","lati","latitude","decimalLatitude"),
+    supportedSpatialRepresentationTypes = c("vector","grid")
 
   ),
   public = list(
@@ -144,6 +145,7 @@ geoflow_data <- R6Class("geoflow_data",
     attributes = NULL,
     variables = NULL,
     dimensions = list(),
+    spatialRepresentationType = "vector",
     actions = list(),
     run = TRUE,
     initialize = function(str = NULL){
@@ -325,6 +327,13 @@ geoflow_data <- R6Class("geoflow_data",
           }
         }))
         if(length(get_variables)>0) self$variables <- get_variables
+        
+        #spatialRepresentationType
+        if(!any(sapply(data_props, function(x){x$key=="spatialRepresentationType"}))){
+          self$setSpatialRepresentationType("vector")
+        }else{
+          self$spatialRepresentationType(data_props$spatialRepresentationType$values[[1]])
+        }
         
         #run entity actions
         runs <- data_props[sapply(data_props, function(x){x$key=="run"})]
@@ -538,6 +547,20 @@ geoflow_data <- R6Class("geoflow_data",
     #setDimension
     setDimension = function(name, values){
       self$dimensions[[name]] <- values
+    },
+    
+    #getAllowedSpatialRepresentationTypes
+    getAllowedSpatialRepresentationTypes = function(){
+      return(private$supportedSpatialRepresentationTypes)
+    },
+    
+    #setSpatialRepresentationType
+    setSpatialRepresentationType = function(spatialRepresentationType){
+      if(!(spatialRepresentationType %in% private$supportedSpatialRepresentationTypes)){
+        errMsg <- sprintf("Spatial representation type should be among values [%s]", paste0(private$supportedSpatialRepresentationTypes, collapse=","))
+        stop(errMsg)
+      }
+      self$spatialRepresentationType <- spatialRepresentationType
     },
     
     #checkSoftwareProperties
