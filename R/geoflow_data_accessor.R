@@ -290,14 +290,14 @@ register_data_accessors <- function(){
           stop(errMsg)
         }
         dataset_dest<-file.path(getwd(),paste0(dataset,".nc"))
-        base_uri<-sub("catalog.*.xml", "", top_url)
-        http<-unlist(sapply(names(software$list_services()), function(x) if(software$list_services()[[x]]["serviceType"]=="HTTPServer") software$list_services()[[x]]["base"]))
+        base_uri<-unlist(strsplit(software$url,"/thredds/"))[1]
+        http<-unlist(sapply(names(software$list_services()), function(x) if(software$list_services()[[x]]["serviceType"]=="HTTPServer") software$list_services()[[x]]["base"]))[1]
         if(is.null(http)){
           errMsg <- sprintf("no valid ",dataset)
           cat(errMsg)
           stop(errMsg)
         }else{
-          dataset_uri<-paste0(sub("/thredds/",http,base_uri),data$url)
+          dataset_uri<-paste0(base_uri,http,data$url)
           download.file(url = dataset_uri, destfile = dataset_dest,mode="wb")
         }
       }

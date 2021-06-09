@@ -386,11 +386,11 @@ handle_entities_dbi <- function(config, source){
 #handle_entities_ncdf
 handle_entities_ncdf <- function(config, source){
 
-  if(!mime::guess_type(source)=="application/x-netcdf"){
-    errMsg <- "Error in 'handle_entities_df': source parameter should be an 'netcdf' file"
-    config$logger.error(errMsg)
-    stop(errMsg)
-  }
+  #if(!mime::guess_type(source)=="application/x-netcdf"){
+  #  errMsg <- "Error in 'handle_entities_df': source parameter should be an 'netcdf' file"
+  #  config$logger.error(errMsg)
+  #  stop(errMsg)
+  #}
   entities<-list()
   entity <- geoflow_entity$new()
   source_name<-source
@@ -494,7 +494,8 @@ handle_entities_ncdf <- function(config, source){
   #Not yet implemented
   
   #spatial extent
-  spatial_cov<-if(!is.null(attr$geospatial_bounds)){attr$geospatial_bounds}else{NULL}
+ # spatial_cov<-if(!is.null(attr$geospatial_bounds)){attr$geospatial_bounds}else{NULL}
+    spatial_cov<-NULL
   spatial_srid<-if(!is.null(attr$geospatial_bounds_crs)){attr$geospatial_bounds_crs}else{NA}
   if(is.null(spatial_cov)){
     if(!is.null(attr$geospatial_lat_min)&!is.null(attr$geospatial_lat_max)&!is.null(attr$geospatial_lon_min)&!is.null(attr$geospatial_lon_max)){
@@ -505,7 +506,8 @@ handle_entities_ncdf <- function(config, source){
    
   #temporal extent
   if(!is.null(attr$time_coverage_start)&!is.null(attr$time_coverage_end)){
-    temporal_cov<- paste(as.Date(attr$time_coverage_start),as.Date(attr$time_coverage_end),sep="/")
+    #temporal_cov<- paste(as.Date(attr$time_coverage_start),as.Date(attr$time_coverage_end),sep="/")
+    temporal_cov<- paste(attr$time_coverage_start,attr$time_coverage_end,sep="/")
     entity$setTemporalExtent(temporal_cov)
   }
    
@@ -559,7 +561,7 @@ handle_entities_thredds <- function(config, source){
   }
 
   
-  base_uri<-sub("catalog.*.xml", "", thredds$url)
+  base_uri<-unlist(strsplit(thredds$url,"/thredds/"))[1]
   config$logger.info(sprintf("Thredds Base URL: %s", base_uri))
   
   entities<-list()
@@ -569,15 +571,17 @@ handle_entities_thredds <- function(config, source){
     
     #entity
     
-    odap<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="OPENDAP") thredds$list_services()[[x]]["base"]))
+    odap<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="OPENDAP") thredds$list_services()[[x]]["base"]))[1]
     if(is.null(odap)){
       errMsg <- sprintf("No OpenDAP service for Thredds '%s'", thredds$url)
       config$logger.error(errMsg)
       stop(errMsg)
     }
-    odap_uri<-paste0(sub("/thredds/",odap,base_uri),data$url)
+
+    odap_uri<-paste0(base_uri,odap,data$url)
+    cat(odap_uri)
     config$logger.info(sprintf("OpenDAP URL for '%s': %s", data$url, odap_uri))
-    layername<-ncdf4::nc_open(odap_uri)$var[[2]]$name
+    #layername<-ncdf4::nc_open(odap_uri)$var[[2]]$name
     entity <- handle_entities_ncdf(config,odap_uri)[[1]]
     
     #relations
@@ -591,9 +595,9 @@ handle_entities_thredds <- function(config, source){
     entity$addRelation(new_thredds_link)
     
     #data
-    http<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="HTTPServer") thredds$list_services()[[x]]["base"]))
+    http<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="HTTPServer") thredds$list_services()[[x]]["base"]))[1]
     if(!is.null(http)){
-      http_uri<-paste0(sub("/thredds/",http,base_uri),data$url)
+      http_uri<-paste0(base_uri,http,data$url)
       new_data_link <- geoflow_relation$new()
       new_data_link$setKey("http")
       new_data_link$setName(dataset)
@@ -603,11 +607,11 @@ handle_entities_thredds <- function(config, source){
     }
     
     #WMS
-    wms<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WMS") thredds$list_services()[[x]]["base"]))
+    wms<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WMS") thredds$list_services()[[x]]["base"]))[1]
     if(!is.null(wms)){
       requireNamespace("ows4R")
-      wms_uri<-paste0(sub("/thredds/",wms,base_uri),data$url,"?service=WMS")
-      wms_request<-paste0(sub("/thredds/",wms,base_uri),data$url)
+      wms_uri<-paste0(base_uri,wms,data$url,"?service=WMS")
+      wms_request<-paste0(base_uri,wms,data$url)
       wms <- ows4R::WMSClient$new(url = wms_request, serviceVersion = "1.3.0", logger = "INFO")
       layers <- wms$getLayers(pretty = T)
       layers <- layers[!is.na(layers$name),]
@@ -620,23 +624,25 @@ handle_entities_thredds <- function(config, source){
         entity$addRelation(new_wms)
       }
     }
-    #WCS
-    wcs<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WCS") thredds$list_services()[[x]]["base"]))
-    if(!is.null(wcs)){
-      wcs_uri<-paste0(sub("/thredds/",wcs,base_uri),data$url,"?service=WCS")
-      new_wcs <- geoflow_relation$new()
-      new_wcs$setKey("wcs")
-      new_wcs$setName(layername)
-      new_wcs$setDescription(entity$titles[["title"]])
-      new_wcs$setLink(wcs_uri)
-      entity$addRelation(new_wcs)
-    }
+    # #WCS
+    # wcs<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WCS") thredds$list_services()[[x]]["base"]))
+    # if(!is.null(wcs)){
+    #   wcs_uri<-paste0(base_uri,wcs,data$url,"?service=WCS")
+    #   new_wcs <- geoflow_relation$new()
+    #   new_wcs$setKey("wcs")
+    #   new_wcs$setName(layername)
+    #   new_wcs$setDescription(entity$titles[["title"]])
+    #   new_wcs$setLink(wcs_uri)
+    #   entity$addRelation(new_wcs)
+    # }
     
     #data
     data_obj <- geoflow_data$new()
+#    if(httr::status_code(http_uri)!="404"){
     data_obj$setAccess("thredds")
     data_obj$setSource(dataset)
     data_obj$setSourceType("nc")
+#  }
     entity$setData(data_obj)
     
     return(entity)
