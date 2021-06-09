@@ -95,7 +95,7 @@
 #'  \item{\code{setVariables(variables)}}{
 #'    Sets variables definition.
 #'  }
-#'  \item{\code{setDimension(name, values)}}{
+#'  \item{\code{setOgcDimension(name, values)}}{
 #'    Sets a dimension (name and its values)
 #'  }
 #'  \item{\code{addAction(action)}}{
@@ -144,7 +144,7 @@ geoflow_data <- R6Class("geoflow_data",
     featureTypeObj = NULL,
     attributes = NULL,
     variables = NULL,
-    dimensions = list(),
+    ogc_dimensions = list(),
     spatialRepresentationType = "vector",
     actions = list(),
     run = TRUE,
@@ -544,9 +544,9 @@ geoflow_data <- R6Class("geoflow_data",
       self$actions[[length(self$actions)+1]] <- action
     },
     
-    #setDimension
-    setDimension = function(name, values){
-      self$dimensions[[name]] <- values
+    #setOgcDimensions
+    setOgcDimensions = function(name, values){
+      self$ogc_dimensions[[name]] <- values
     },
     
     #getAllowedSpatialRepresentationTypes

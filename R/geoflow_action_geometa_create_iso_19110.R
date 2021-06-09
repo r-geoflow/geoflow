@@ -42,7 +42,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
   if(entity$data$uploadType == "dbquery" & length(entity$data$parameters)>0){
     ofv_scope <- "ogc_viewparams"
   }
-  if(length(entity$data$dimensions)>0){
+  if(length(entity$data$ogc_dimensions)>0){
     ofv_scope <- "ogc_dimensions"
   }
   fc$addScope(paste0("openfairviewer:", ofv_scope))

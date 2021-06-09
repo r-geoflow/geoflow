@@ -526,14 +526,27 @@ handle_entities_ncdf <- function(config, source){
   #provenance
   #Not yet implemented
   
+  #data
+  #spatialRepresentationType
+  if(!is.null(attr$featureType)){
+    spatialRepresentationType <-tolower(attr$featureType) 
+  }else if(!is.null(attr$cdm_data_type)){
+    spatialRepresentationType <-tolower(attr$cdm_data_type)
+  }else{
+    spatialRepresentationType <-""
+  }
+  
+  if(spatialRepresentationType=="trajectory"){spatialRepresentationType<-"vector"}else{spatialRepresentationType<-"grid"}
+  
+  data_obj <- geoflow_data$new()
+  data_obj$setSpatialRepresentationType(spatialRepresentationType)
+
   if(!startsWith(source_name,"http")){
     #how to deduce a download link from an opendap link (without being on Thredds)
-    #data
-    data_obj <- geoflow_data$new()
     data_obj$setSource(source_name)
     data_obj$setSourceType("nc")
-    entity$setData(data_obj)
   }
+  entity$setData(data_obj)
   
   entities <- list(entity)
   return(entities)
@@ -606,7 +619,7 @@ handle_entities_thredds <- function(config, source){
     }
     
     #WMS
-    dimensions<-NULL
+    ogc_dimensions<-NULL
     wms<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WMS") thredds$list_services()[[x]]["base"]))[1]
     if(!is.null(wms)){
       requireNamespace("ows4R")
@@ -626,7 +639,7 @@ handle_entities_thredds <- function(config, source){
         entity$addRelation(new_wms)
       }
 
-      dimensions<-wms$getLayers()[[2]]$getDimensions()
+      ogc_dimensions<-wms$getLayers()[[2]]$getDimensions()
     }
     
     # #WCS
@@ -640,17 +653,18 @@ handle_entities_thredds <- function(config, source){
     #   new_wcs$setLink(wcs_uri)
     #   entity$addRelation(new_wcs)
     # }
-    
+
     #data
     data_obj <- geoflow_data$new()
 #    if(httr::status_code(http_uri)!="404"){
     data_obj$setAccess("thredds")
+    data_obj$setSpatialRepresentationType(entity$data$spatialRepresentationType)
     data_obj$setSource(dataset)
     data_obj$setSourceType("nc")
 #  }
-    if(!is.null(dimensions))for(dimension in names(dimensions)){
-      dimension<-dimensions[[dimension]]
-      data_obj$setDimension(dimension$name,dimension$values)
+    if(!is.null(ogc_dimensions))for(ogc_dimension in names(ogc_dimensions)){
+      ogc_dimension<-ogc_dimensions[[ogc_dimension]]
+      data_obj$setOgcDimensions(ogc_dimension$name,ogc_dimension$values)
     }
     entity$setData(data_obj)
     
