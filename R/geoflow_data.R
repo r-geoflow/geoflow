@@ -145,6 +145,7 @@ geoflow_data <- R6Class("geoflow_data",
     attributes = NULL,
     variables = NULL,
     ogc_dimensions = list(),
+    dimensions = list(),
     spatialRepresentationType = "vector",
     actions = list(),
     run = TRUE,
@@ -547,6 +548,14 @@ geoflow_data <- R6Class("geoflow_data",
     #setOgcDimensions
     setOgcDimensions = function(name, values){
       self$ogc_dimensions[[name]] <- values
+    },
+    
+    #addDimension
+    addDimension = function(name,dimension){
+      if(!is(dimension, "geoflow_dimension")){
+        stop("The argument should be an object of class 'geoflow_dimension'")
+      }
+      self$dimensions[[name]] <- dimension
     },
     
     #getAllowedSpatialRepresentationTypes
