@@ -162,14 +162,14 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(spatialRepresentationType=="grid"){
     gsr <- ISOGridSpatialRepresentation$new()
     gsr$setNumberOfDimensions(length(entity$data$dimensions))
-    for(dimension in entity$data$dimensions){
+    for(dimension in names(entity$data$dimensions)){
       dimObject <- ISODimension$new()
-      dimObject$setName(names(dimension[[1]]))
-      dimObject$setSize(dimension[[1]]$size)
-      dim1$setResolution(ISOMeasure$new(value=dimension[[1]]$resolution$value,uom=dimension[[1]]$resolution$uom))
-    grs$addDimensions(dimObject)
+      dimObject$setName(dimension)
+      dimObject$setSize(entity$data$dimensions[[dimension]]$size)
+      dimObject$setResolution(ISOMeasure$new(value=entity$data$dimensions[[dimension]]$resolution$value,uom=entity$data$dimensions[[dimension]]$resolution$uom))
+    gsr$addDimension(dimObject)
     }
-    grs$dimObject$setCellGeometry("area")
+    gsr$setCellGeometry("area")
   }
   
   
