@@ -527,6 +527,65 @@ handle_entities_ncdf <- function(config, source){
   #Not yet implemented
   
   #data
+  data_obj <- geoflow_data$new()
+  
+  #dimensions
+  for(dim in names(source$dim)){
+    dimension_obj <- geoflow_dimension$new()
+
+    #row
+    if(startsWith(source$dim[[dim]]$name,"lat")){
+      name="row"
+      resolution = list(
+        uom=attr$geospatial_lat_units,
+        value = unlist(strsplit(attr$geospatial_lat_resolution," "))[1]
+      )
+    }
+    #column
+    if(startsWith(source$dim[[dim]]$name,"lon")){
+      name="column" 
+      resolution = list(
+        uom=attr$geospatial_lon_units,
+        value = unlist(strsplit(attr$geospatial_lon_resolution," "))[1]
+      )
+    }
+    #time
+    if(startsWith(source$dim[[dim]]$name,"time")){
+      name="time"
+      duration<-attr$time_coverage_resolution
+      resolution=list(
+        uom=
+          if(startsWith(duration,"PT")){
+            switch(substr(duration, nchar(duration),nchar(duration)),
+                   "H"="hour",
+                   "M"="minute",
+                   "S"="second")
+          }else if(startsWith(duration,"P")){
+            switch(substr(duration, nchar(duration),nchar(duration)),
+                   "Y"="year",
+                   "M"="month",
+                   "W"="week",
+                   "D"="day")    
+          }else{""},
+        value=gsub("\\D", "", duration)
+      )
+    }
+    #vertical
+    if(startsWith(source$dim[[dim]]$name,"z")){
+      name="vertical" 
+      resolution = list(
+        uom=attr$geospatial_vertical_units,
+        value = unlist(strsplit(attr$geospatial_vertical_resolution,"[.]"))[1]
+      )
+    }
+    dimension_obj<-geoflow_dimension$new()
+    dimension_obj$setResolution(uom = resolution$uom,value=resolution$value)
+    dimension_obj$setSize(source$dim[[dim]]$len)
+    dimension_obj$setValues(source$dim[[dim]]$vals)
+  
+    data_obj$addDimension(name,dimension_obj)
+  }
+  
   #spatialRepresentationType
   if(!is.null(attr$featureType)){
     spatialRepresentationType <-tolower(attr$featureType) 
@@ -538,7 +597,7 @@ handle_entities_ncdf <- function(config, source){
   
   if(spatialRepresentationType=="trajectory"){spatialRepresentationType<-"vector"}else{spatialRepresentationType<-"grid"}
   
-  data_obj <- geoflow_data$new()
+  
   data_obj$setSpatialRepresentationType(spatialRepresentationType)
 
   if(!startsWith(source_name,"http")){
@@ -655,18 +714,9 @@ handle_entities_thredds <- function(config, source){
     # }
 
     #data
-    data_obj <- geoflow_data$new()
-#    if(httr::status_code(http_uri)!="404"){
-    data_obj$setAccess("thredds")
-    data_obj$setSpatialRepresentationType(entity$data$spatialRepresentationType)
-    data_obj$setSource(dataset)
-    data_obj$setSourceType("nc")
-#  }
-    if(!is.null(ogc_dimensions))for(ogc_dimension in names(ogc_dimensions)){
-      ogc_dimension<-ogc_dimensions[[ogc_dimension]]
-      data_obj$setOgcDimensions(ogc_dimension$name,ogc_dimension$values)
-    }
-    entity$setData(data_obj)
+    entity$data$setAccess("thredds")
+    entity$data$setSource(dataset)
+    entity$data$setSourceType("nc")
     
     return(entity)
     
