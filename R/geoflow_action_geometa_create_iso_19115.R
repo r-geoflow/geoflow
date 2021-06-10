@@ -83,8 +83,21 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md$setCharacterSet("utf8")
   md$setLanguage(entity$language)
   md$setDateStamp(Sys.time())
-  md$setMetadataStandardName("ISO 19115:2003/19139")
-  md$setMetadataStandardVersion("1.0")
+  
+  if(!is.null(entity$data)) {
+    md$setMetadataStandardName(switch(entity$data$spatialRepresentationType,
+                                      "vector" = "ISO 19115:2003 Geographic information — Metadata",
+                                      "grid" = "ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data"
+    ))
+    md$setMetadataStandardVersion(switch(entity$data$spatialRepresentationType,
+                                         "vector" = "ISO 19115:2003",
+                                         "grid" = "ISO 19115-2:2009"
+    ))
+  }else{
+    md$setMetadataStandardName("ISO 19115:2003 Geographic information — Metadata")
+    md$setMetadataStandardVersion("ISO 19115:2003")
+  }
+  
   md$setDataSetURI(md$fileIdentifier)
   
   dctype <- entity$types[["generic"]]
