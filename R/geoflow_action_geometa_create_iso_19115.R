@@ -102,40 +102,56 @@ geometa_create_iso_19115 <- function(entity, config, options){
   }
   
   #spatial representation
-  spatialRepresentationType <- NULL
-  if(!is.null(features)){
-    #support vector spatial representation
-    if(is(features, "sf")){
-      geomtypes <- as.list(table(st_geometry_type(features)))
-      geomtypes <- geomtypes[geomtypes > 0]
-      if(length(geomtypes)>0){
-        spatialRepresentationType <- "vector"
-        for(geomtype in names(geomtypes)){
-          vsr <- ISOVectorSpatialRepresentation$new()
-          geomLevel <- "geometryOnly"
-          if(geomtype == "TIN") geomLevel = "planarGraph"
-          vsr$setTopologyLevel(geomLevel)
-          if(geomLevel == "geometryOnly"){
-            geomObject <- ISOGeometricObjects$new()
-            isoGeomType <- switch(geomtype,
-              "GEOMETRY" = "composite", "GEOMETRYCOLLECTION" = "composite",
-              "POINT" = "point", "MULTIPOINT" = "point", 
-              "LINESTRING" = "curve", "CIRCULARSTRING" = "curve", "MULTILINESTRING" = "curve", "CURVE" = "curve", "COMPOUNDCURVE" = "curve",
-              "POLYGON" = "surface", "MULTIPOLYGON" = "surface", "TRIANGLE" = "surface",
-              "CURVEPOLYGON" = "surface", "SURFACE" = "surface", "MULTISURFACE" = "surface",
-              "POLYHEDRALSURFACE" = "solid"
-            )
-            geomObject$setGeometricObjectType(isoGeomType)
-            geomObject$setGeometricObjectCount(nrow(features[st_geometry_type(features)==geomtype,]))
-            vsr$setGeometricObjects(geomObject)
+  spatialRepresentationType <- entity$data$spatialRepresentationType
+  if(spatialRepresentationType=="vector"){
+    if(!is.null(features)){
+      #support vector spatial representation
+      if(is(features, "sf")){
+        geomtypes <- as.list(table(st_geometry_type(features)))
+        geomtypes <- geomtypes[geomtypes > 0]
+        if(length(geomtypes)>0){
+          #spatialRepresentationType <- "vector"
+          for(geomtype in names(geomtypes)){
+            vsr <- ISOVectorSpatialRepresentation$new()
+            geomLevel <- "geometryOnly"
+            if(geomtype == "TIN") geomLevel = "planarGraph"
+            vsr$setTopologyLevel(geomLevel)
+            if(geomLevel == "geometryOnly"){
+              geomObject <- ISOGeometricObjects$new()
+              isoGeomType <- switch(geomtype,
+                "GEOMETRY" = "composite", "GEOMETRYCOLLECTION" = "composite",
+                "POINT" = "point", "MULTIPOINT" = "point", 
+                "LINESTRING" = "curve", "CIRCULARSTRING" = "curve", "MULTILINESTRING" = "curve", "CURVE" = "curve", "COMPOUNDCURVE" = "curve",
+                "POLYGON" = "surface", "MULTIPOLYGON" = "surface", "TRIANGLE" = "surface",
+                "CURVEPOLYGON" = "surface", "SURFACE" = "surface", "MULTISURFACE" = "surface",
+                "POLYHEDRALSURFACE" = "solid"
+              )
+              geomObject$setGeometricObjectType(isoGeomType)
+              geomObject$setGeometricObjectCount(nrow(features[st_geometry_type(features)==geomtype,]))
+              vsr$setGeometricObjects(geomObject)
+            }
+            md$addSpatialRepresentationInfo(vsr)
           }
-          md$addSpatialRepresentationInfo(vsr)
+        }else{
+          spatialRepresentationType <- "textTable"
         }
-      }else{
-        spatialRepresentationType <- "textTable"
       }
     }
   }
+  
+  if(spatialRepresentationType=="grid"){
+    gsr <- ISOGridSpatialRepresentation$new()
+    gsr$setNumberOfDimensions(length(entity$data$dimensions))
+    for(dimension in entity$data$dimensions){
+      dimObject <- ISODimension$new()
+      dimObject$setName(names(dimension[[1]]))
+      dimObject$setSize(dimension[[1]]$size)
+      dim1$setResolution(ISOMeasure$new(value=dimension[[1]]$resolution$value,uom=dimension[[1]]$resolution$uom))
+    grs$addDimensions(dimObject)
+    }
+    grs$dimObject$setCellGeometry("area")
+  }
+  
   
   #spatial reference system
   if(!is.null(entity$srid)){
