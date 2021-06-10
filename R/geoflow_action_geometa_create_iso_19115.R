@@ -55,7 +55,14 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #metadata creation
   #-----------------------------------------------------------------------------------------------------
   #create geometa object
-  md <- ISOMetadata$new()
+  if(!is.null(entity$data)) {
+    md<-switch(entity$data$spatialRepresentationType,
+                                      "vector" = ISOMetadata$new(),
+                                      "grid" = ISOImageryMetadata$new()
+    )
+  }else{
+    md <- ISOMetadata$new()
+  }
   mdId <- entity$identifiers[["id"]]
   md$setFileIdentifier(mdId)
   
