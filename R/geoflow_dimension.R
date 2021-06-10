@@ -37,7 +37,7 @@ geoflow_dimension <- R6Class("geoflow_dimension",
 
                              #setResolution
                              setResolution = function(uom,value){
-                               self$resolution <- list(uom,value)
+                               self$resolution <- list(uom=uom,value=value)
                              },
                                                           
                              #setSize
