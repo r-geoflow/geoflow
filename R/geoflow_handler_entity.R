@@ -539,7 +539,7 @@ handle_entities_ncdf <- function(config, source){
     name <- var$longname
     if(!is.null(var_attrs$standard_name)) name <- paste0(name, " (", var_attrs$standard_name, ")")
     attr(outvar, "description") <- name
-    attr(outvar, "units") <- attr(outvar, "description") <- gsub(" ","_",var_attrs$units)
+    attr(outvar, "units") <- gsub(" ","_",var_attrs$units)
     return(outvar)
   })
   

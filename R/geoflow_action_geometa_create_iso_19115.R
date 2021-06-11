@@ -93,7 +93,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   if(!is.null(entity$data)) {
     md$setMetadataStandardName(switch(entity$data$spatialRepresentationType,
-                                      "vector" = "ISO 19115:2003 Geographic information — Metadata",
+                                      "vector" = "ISO 19115:2003 Geographic information - Metadata",
                                       "grid" = "ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data"
     ))
     md$setMetadataStandardVersion(switch(entity$data$spatialRepresentationType,
@@ -101,7 +101,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
                                          "grid" = "ISO 19115-2:2009"
     ))
   }else{
-    md$setMetadataStandardName("ISO 19115:2003 Geographic information — Metadata")
+    md$setMetadataStandardName("ISO 19115:2003 Geographic information - Metadata")
     md$setMetadataStandardVersion("ISO 19115:2003")
   }
   
@@ -170,6 +170,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
     gsr$addDimension(dimObject)
     }
     gsr$setCellGeometry("area")
+    md$addSpatialRepresentationInfo(gsr)
   }
   
   
@@ -450,6 +451,93 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ident$setSupplementalInformation(entity$descriptions[["info"]])
   if(!is.null(spatialRepresentationType)) ident$setSpatialRepresentationType(spatialRepresentationType)
   md$addIdentificationInfo(ident)
+  
+  #contentInfo
+  #coverage description
+  if(entity$data$spatialRepresentationType=="grid"){
+    if(!is.null(entity$data$variables)){
+      #create coverage description
+      cov <- ISOImageryCoverageDescription$new()
+      cov$setAttributeDescription("data")
+      cov$setContentType("physicalMeasurement")
+      
+      #adding dimensions
+      for(variable in entity$data$variables){
+        band <- ISOBand$new()
+        mn <- ISOMemberName$new(aName = variable,attributeType ="float")
+        band$setSequenceIdentifier(mn)
+        band$setDescriptor(attr(variable,"description"))
+        
+        unit<-attr(variable,"units")
+        gml<-GMLUnitDefinition$buildFrom(unit)
+        if(is.null(gml)) gml<-GMLUnitDefinition$buildFrom(unit,"name_singular")
+        if(is.null(gml)) gml<-GMLUnitDefinition$buildFrom(unit,"name_plural")
+        if(!is.null(gml)) band$setUnits(gml)
+        
+        cov$addDimension(band)
+      }
+      md$addContentInfo(cov)
+    }
+    if(!is.null(entity$data$dimensions)){
+  #create coverage description
+    cov <- ISOImageryCoverageDescription$new()
+    cov$setAttributeDescription("data")
+    cov$setContentType("coordinate")
+  
+  #adding dimensions
+  for(dimension in names(entity$data$dimensions)){
+    dim_name<-dimension
+    dimension<-entity$data$dimensions[[dimension]]
+    
+    band <- ISOBand$new()
+    
+    mn <- ISOMemberName$new(aName = dim_name, attributeType = "float")
+    band$setSequenceIdentifier(mn)
+    band$setDescriptor(dimension$longName)
+    band$setMaxValue(dimension$minValue)
+    band$setMinValue(dimension$maxValue)
+    #unit
+    unit<-dimension$resolution$uom
+    gml<-try(GMLUnitDefinition$buildFrom(unit))
+    if(is.null(gml) | class(gml)=="try-error") gml<-try(GMLUnitDefinition$buildFrom(unit,"name_singular"))
+    if(is.null(gml) | class(gml)=="try-error") gml<-try(GMLUnitDefinition$buildFrom(unit,"name_plural"))
+    if(!is.null(gml) & class(gml)!="try-error") band$setUnits(gml)
+
+    cov$addDimension(band)
+    
+     des <- ISOImageryRangeElementDescription$new()
+     des$setName(dim_name)
+     des$setDefinition(dimension$longName)
+     des$rangeElement <- sapply(unique(dimension$values), function(x){ ISORecord$new(value = x)})
+
+     cov$addRangeElementDescription(des)
+  }
+    md$addContentInfo(cov)
+    }
+    if(!is.null(entity$data$ogc_dimensions)){
+      #create coverage description
+      cov <- ISOImageryCoverageDescription$new()
+      cov$setAttributeDescription("service")
+      cov$setContentType("coordinate")
+      #adding dimensions
+      for(ogc_dimension in names(entity$data$ogc_dimensions)){
+        ogc_dim_name<-ogc_dimension
+        ogc_dimension<-entity$data$ogc_dimensions[[ogc_dimension]]
+        band <- ISOBand$new()
+        mn <- ISOMemberName$new(aName = toupper(ogc_dim_name), attributeType = "float")
+        band$setSequenceIdentifier(mn)
+        #band$setUnits(gml)
+        cov$addDimension(band)
+        
+         des <- ISOImageryRangeElementDescription$new()
+         des$setName(toupper(ogc_dim_name))
+         des$setDefinition("")
+         des$rangeElement <- sapply(unique(ogc_dimension), function(x){ ISORecord$new(value = x)})
+         cov$addRangeElementDescription(des)
+      }
+      md$addContentInfo(cov)
+    }
+  }
   
   #distribution
   distrib <- ISODistribution$new()
