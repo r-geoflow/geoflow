@@ -55,7 +55,14 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #metadata creation
   #-----------------------------------------------------------------------------------------------------
   #create geometa object
-  md <- ISOMetadata$new()
+  if(!is.null(entity$data)) {
+    md<-switch(entity$data$spatialRepresentationType,
+                                      "vector" = ISOMetadata$new(),
+                                      "grid" = ISOImageryMetadata$new()
+    )
+  }else{
+    md <- ISOMetadata$new()
+  }
   mdId <- entity$identifiers[["id"]]
   md$setFileIdentifier(mdId)
   
@@ -83,8 +90,21 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md$setCharacterSet("utf8")
   md$setLanguage(entity$language)
   md$setDateStamp(Sys.time())
-  md$setMetadataStandardName("ISO 19115:2003/19139")
-  md$setMetadataStandardVersion("1.0")
+  
+  if(!is.null(entity$data)) {
+    md$setMetadataStandardName(switch(entity$data$spatialRepresentationType,
+                                      "vector" = "ISO 19115:2003 Geographic information - Metadata",
+                                      "grid" = "ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data"
+    ))
+    md$setMetadataStandardVersion(switch(entity$data$spatialRepresentationType,
+                                         "vector" = "ISO 19115:2003",
+                                         "grid" = "ISO 19115-2:2009"
+    ))
+  }else{
+    md$setMetadataStandardName("ISO 19115:2003 Geographic information - Metadata")
+    md$setMetadataStandardVersion("ISO 19115:2003")
+  }
+  
   md$setDataSetURI(md$fileIdentifier)
   
   dctype <- entity$types[["generic"]]
@@ -102,40 +122,57 @@ geometa_create_iso_19115 <- function(entity, config, options){
   }
   
   #spatial representation
-  spatialRepresentationType <- NULL
-  if(!is.null(features)){
-    #support vector spatial representation
-    if(is(features, "sf")){
-      geomtypes <- as.list(table(st_geometry_type(features)))
-      geomtypes <- geomtypes[geomtypes > 0]
-      if(length(geomtypes)>0){
-        spatialRepresentationType <- "vector"
-        for(geomtype in names(geomtypes)){
-          vsr <- ISOVectorSpatialRepresentation$new()
-          geomLevel <- "geometryOnly"
-          if(geomtype == "TIN") geomLevel = "planarGraph"
-          vsr$setTopologyLevel(geomLevel)
-          if(geomLevel == "geometryOnly"){
-            geomObject <- ISOGeometricObjects$new()
-            isoGeomType <- switch(geomtype,
-              "GEOMETRY" = "composite", "GEOMETRYCOLLECTION" = "composite",
-              "POINT" = "point", "MULTIPOINT" = "point", 
-              "LINESTRING" = "curve", "CIRCULARSTRING" = "curve", "MULTILINESTRING" = "curve", "CURVE" = "curve", "COMPOUNDCURVE" = "curve",
-              "POLYGON" = "surface", "MULTIPOLYGON" = "surface", "TRIANGLE" = "surface",
-              "CURVEPOLYGON" = "surface", "SURFACE" = "surface", "MULTISURFACE" = "surface",
-              "POLYHEDRALSURFACE" = "solid"
-            )
-            geomObject$setGeometricObjectType(isoGeomType)
-            geomObject$setGeometricObjectCount(nrow(features[st_geometry_type(features)==geomtype,]))
-            vsr$setGeometricObjects(geomObject)
+  spatialRepresentationType <- entity$data$spatialRepresentationType
+  if(spatialRepresentationType=="vector"){
+    if(!is.null(features)){
+      #support vector spatial representation
+      if(is(features, "sf")){
+        geomtypes <- as.list(table(st_geometry_type(features)))
+        geomtypes <- geomtypes[geomtypes > 0]
+        if(length(geomtypes)>0){
+          #spatialRepresentationType <- "vector"
+          for(geomtype in names(geomtypes)){
+            vsr <- ISOVectorSpatialRepresentation$new()
+            geomLevel <- "geometryOnly"
+            if(geomtype == "TIN") geomLevel = "planarGraph"
+            vsr$setTopologyLevel(geomLevel)
+            if(geomLevel == "geometryOnly"){
+              geomObject <- ISOGeometricObjects$new()
+              isoGeomType <- switch(geomtype,
+                "GEOMETRY" = "composite", "GEOMETRYCOLLECTION" = "composite",
+                "POINT" = "point", "MULTIPOINT" = "point", 
+                "LINESTRING" = "curve", "CIRCULARSTRING" = "curve", "MULTILINESTRING" = "curve", "CURVE" = "curve", "COMPOUNDCURVE" = "curve",
+                "POLYGON" = "surface", "MULTIPOLYGON" = "surface", "TRIANGLE" = "surface",
+                "CURVEPOLYGON" = "surface", "SURFACE" = "surface", "MULTISURFACE" = "surface",
+                "POLYHEDRALSURFACE" = "solid"
+              )
+              geomObject$setGeometricObjectType(isoGeomType)
+              geomObject$setGeometricObjectCount(nrow(features[st_geometry_type(features)==geomtype,]))
+              vsr$setGeometricObjects(geomObject)
+            }
+            md$addSpatialRepresentationInfo(vsr)
           }
-          md$addSpatialRepresentationInfo(vsr)
+        }else{
+          spatialRepresentationType <- "textTable"
         }
-      }else{
-        spatialRepresentationType <- "textTable"
       }
     }
   }
+  
+  if(spatialRepresentationType=="grid"){
+    gsr <- ISOGridSpatialRepresentation$new()
+    gsr$setNumberOfDimensions(length(entity$data$dimensions))
+    for(dimension in names(entity$data$dimensions)){
+      dimObject <- ISODimension$new()
+      dimObject$setName(dimension)
+      dimObject$setSize(entity$data$dimensions[[dimension]]$size)
+      dimObject$setResolution(ISOMeasure$new(value=entity$data$dimensions[[dimension]]$resolution$value,uom=entity$data$dimensions[[dimension]]$resolution$uom))
+    gsr$addDimension(dimObject)
+    }
+    gsr$setCellGeometry("area")
+    md$addSpatialRepresentationInfo(gsr)
+  }
+  
   
   #spatial reference system
   if(!is.null(entity$srid)){
@@ -414,6 +451,93 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ident$setSupplementalInformation(entity$descriptions[["info"]])
   if(!is.null(spatialRepresentationType)) ident$setSpatialRepresentationType(spatialRepresentationType)
   md$addIdentificationInfo(ident)
+  
+  #contentInfo
+  #coverage description
+  if(entity$data$spatialRepresentationType=="grid"){
+    if(!is.null(entity$data$variables)){
+      #create coverage description
+      cov <- ISOImageryCoverageDescription$new()
+      cov$setAttributeDescription("data")
+      cov$setContentType("physicalMeasurement")
+      
+      #adding dimensions
+      for(variable in entity$data$variables){
+        band <- ISOBand$new()
+        mn <- ISOMemberName$new(aName = variable,attributeType ="float")
+        band$setSequenceIdentifier(mn)
+        band$setDescriptor(attr(variable,"description"))
+        
+        unit<-attr(variable,"units")
+        gml<-GMLUnitDefinition$buildFrom(unit)
+        if(is.null(gml)) gml<-GMLUnitDefinition$buildFrom(unit,"name_singular")
+        if(is.null(gml)) gml<-GMLUnitDefinition$buildFrom(unit,"name_plural")
+        if(!is.null(gml)) band$setUnits(gml)
+        
+        cov$addDimension(band)
+      }
+      md$addContentInfo(cov)
+    }
+    if(!is.null(entity$data$dimensions)){
+  #create coverage description
+    cov <- ISOImageryCoverageDescription$new()
+    cov$setAttributeDescription("data")
+    cov$setContentType("coordinate")
+  
+  #adding dimensions
+  for(dimension in names(entity$data$dimensions)){
+    dim_name<-dimension
+    dimension<-entity$data$dimensions[[dimension]]
+    
+    band <- ISOBand$new()
+    
+    mn <- ISOMemberName$new(aName = dim_name, attributeType = "float")
+    band$setSequenceIdentifier(mn)
+    band$setDescriptor(dimension$longName)
+    band$setMaxValue(dimension$minValue)
+    band$setMinValue(dimension$maxValue)
+    #unit
+    unit<-dimension$resolution$uom
+    gml<-try(GMLUnitDefinition$buildFrom(unit))
+    if(is.null(gml) | class(gml)=="try-error") gml<-try(GMLUnitDefinition$buildFrom(unit,"name_singular"))
+    if(is.null(gml) | class(gml)=="try-error") gml<-try(GMLUnitDefinition$buildFrom(unit,"name_plural"))
+    if(!is.null(gml) & class(gml)!="try-error") band$setUnits(gml)
+
+    cov$addDimension(band)
+    
+     des <- ISOImageryRangeElementDescription$new()
+     des$setName(dim_name)
+     des$setDefinition(dimension$longName)
+     des$rangeElement <- sapply(unique(dimension$values), function(x){ ISORecord$new(value = x)})
+
+     cov$addRangeElementDescription(des)
+  }
+    md$addContentInfo(cov)
+    }
+    if(!is.null(entity$data$ogc_dimensions)){
+      #create coverage description
+      cov <- ISOImageryCoverageDescription$new()
+      cov$setAttributeDescription("service")
+      cov$setContentType("coordinate")
+      #adding dimensions
+      for(ogc_dimension in names(entity$data$ogc_dimensions)){
+        ogc_dim_name<-ogc_dimension
+        ogc_dimension<-entity$data$ogc_dimensions[[ogc_dimension]]
+        band <- ISOBand$new()
+        mn <- ISOMemberName$new(aName = toupper(ogc_dim_name), attributeType = "float")
+        band$setSequenceIdentifier(mn)
+        #band$setUnits(gml)
+        cov$addDimension(band)
+        
+         des <- ISOImageryRangeElementDescription$new()
+         des$setName(toupper(ogc_dim_name))
+         des$setDefinition("")
+         des$rangeElement <- sapply(unique(ogc_dimension), function(x){ ISORecord$new(value = x)})
+         cov$addRangeElementDescription(des)
+      }
+      md$addContentInfo(cov)
+    }
+  }
   
   #distribution
   distrib <- ISODistribution$new()

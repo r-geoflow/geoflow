@@ -119,7 +119,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             #data features
             if(!skipFileDownload){
               #we copy data to job data dir
-              entity$copyDataToJobDir(config, jobdir)
+              if(!is.null(entity$data$source)) entity$copyDataToJobDir(config, jobdir)
               #we enrich entity with features
               #control is added in case of entity already enriched with features (when loaded from custom R entity handlers)
               if(is.null(entity$data$features)) entity$enrichWithFeatures(config, jobdir)

@@ -95,9 +95,14 @@
 #'  \item{\code{setVariables(variables)}}{
 #'    Sets variables definition.
 #'  }
-#'  \item{\code{setDimension(name, values)}}{
-#'    Sets a dimension (name and its values)
+#'  \item{\code{setOgcDimension(name, values)}}{
+#'    Sets a ogc dimension (name and its values)
 #'  }
+#'  
+#'  \item{\code{addDimension(name, dimension)}}{
+#'    Add a dimension, object of class \code{geoflow_dimension}.
+#'  }
+#'  
 #'  \item{\code{addAction(action)}}{
 #'    Adds an entity local action to be run
 #'  }
@@ -116,7 +121,8 @@ geoflow_data <- R6Class("geoflow_data",
     supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "gpkg", "other","nc"),
     supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"),
     supportedXPossibleNames = c("x","lon","long","longitude","decimalLongitude"),
-    supportedYPossibleNames = c("y","lat","lati","latitude","decimalLatitude")
+    supportedYPossibleNames = c("y","lat","lati","latitude","decimalLatitude"),
+    supportedSpatialRepresentationTypes = c("vector","grid")
 
   ),
   public = list(
@@ -143,7 +149,9 @@ geoflow_data <- R6Class("geoflow_data",
     featureTypeObj = NULL,
     attributes = NULL,
     variables = NULL,
+    ogc_dimensions = list(),
     dimensions = list(),
+    spatialRepresentationType = "vector",
     actions = list(),
     run = TRUE,
     initialize = function(str = NULL){
@@ -325,6 +333,13 @@ geoflow_data <- R6Class("geoflow_data",
           }
         }))
         if(length(get_variables)>0) self$variables <- get_variables
+        
+        #spatialRepresentationType
+        if(!any(sapply(data_props, function(x){x$key=="spatialRepresentationType"}))){
+          self$setSpatialRepresentationType("vector")
+        }else{
+          self$spatialRepresentationType(data_props$spatialRepresentationType$values[[1]])
+        }
         
         #run entity actions
         runs <- data_props[sapply(data_props, function(x){x$key=="run"})]
@@ -535,9 +550,31 @@ geoflow_data <- R6Class("geoflow_data",
       self$actions[[length(self$actions)+1]] <- action
     },
     
-    #setDimension
-    setDimension = function(name, values){
-      self$dimensions[[name]] <- values
+    #setOgcDimensions
+    setOgcDimensions = function(name, values){
+      self$ogc_dimensions[[name]] <- values
+    },
+    
+    #addDimension
+    addDimension = function(name,dimension){
+      if(!is(dimension, "geoflow_dimension")){
+        stop("The argument should be an object of class 'geoflow_dimension'")
+      }
+      self$dimensions[[name]] <- dimension
+    },
+    
+    #getAllowedSpatialRepresentationTypes
+    getAllowedSpatialRepresentationTypes = function(){
+      return(private$supportedSpatialRepresentationTypes)
+    },
+    
+    #setSpatialRepresentationType
+    setSpatialRepresentationType = function(spatialRepresentationType){
+      if(!(spatialRepresentationType %in% private$supportedSpatialRepresentationTypes)){
+        errMsg <- sprintf("Spatial representation type should be among values [%s]", paste0(private$supportedSpatialRepresentationTypes, collapse=","))
+        stop(errMsg)
+      }
+      self$spatialRepresentationType <- spatialRepresentationType
     },
     
     #checkSoftwareProperties

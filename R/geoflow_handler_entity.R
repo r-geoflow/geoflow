@@ -386,11 +386,11 @@ handle_entities_dbi <- function(config, source){
 #handle_entities_ncdf
 handle_entities_ncdf <- function(config, source){
 
-  if(!mime::guess_type(source)=="application/x-netcdf"){
-    errMsg <- "Error in 'handle_entities_df': source parameter should be an 'netcdf' file"
-    config$logger.error(errMsg)
-    stop(errMsg)
-  }
+  #if(!mime::guess_type(source)=="application/x-netcdf"){
+  #  errMsg <- "Error in 'handle_entities_df': source parameter should be an 'netcdf' file"
+  #  config$logger.error(errMsg)
+  #  stop(errMsg)
+  #}
   entities<-list()
   entity <- geoflow_entity$new()
   source_name<-source
@@ -494,7 +494,8 @@ handle_entities_ncdf <- function(config, source){
   #Not yet implemented
   
   #spatial extent
-  spatial_cov<-if(!is.null(attr$geospatial_bounds)){attr$geospatial_bounds}else{NULL}
+ # spatial_cov<-if(!is.null(attr$geospatial_bounds)){attr$geospatial_bounds}else{NULL}
+    spatial_cov<-NULL
   spatial_srid<-if(!is.null(attr$geospatial_bounds_crs)){attr$geospatial_bounds_crs}else{NA}
   if(is.null(spatial_cov)){
     if(!is.null(attr$geospatial_lat_min)&!is.null(attr$geospatial_lat_max)&!is.null(attr$geospatial_lon_min)&!is.null(attr$geospatial_lon_max)){
@@ -505,7 +506,7 @@ handle_entities_ncdf <- function(config, source){
    
   #temporal extent
   if(!is.null(attr$time_coverage_start)&!is.null(attr$time_coverage_end)){
-    temporal_cov<- paste(as.Date(attr$time_coverage_start),as.Date(attr$time_coverage_end),sep="/")
+    temporal_cov<- paste(attr$time_coverage_start,attr$time_coverage_end,sep="/")
     entity$setTemporalExtent(temporal_cov)
   }
    
@@ -525,14 +526,105 @@ handle_entities_ncdf <- function(config, source){
   #provenance
   #Not yet implemented
   
+  #data
+  data_obj <- geoflow_data$new()
+  
+  #variables
+  
+  variables = lapply(names(source$var), function(x){
+    #TODO in future create a geoflow_variable class to handle more info (eg. min/max, type, domain eg. physicalMeasurement, etc)
+    var = source$var[[x]]
+    outvar <- x
+    var_attrs <- ncdf4::ncatt_get(source, x)
+    name <- var$longname
+    if(!is.null(var_attrs$standard_name)) name <- paste0(name, " (", var_attrs$standard_name, ")")
+    attr(outvar, "description") <- name
+    attr(outvar, "units") <- gsub(" ","_",var_attrs$units)
+    return(outvar)
+  })
+  
+  data_obj$setVariables(variables)
+  
+  #dimensions
+  for(dim in names(source$dim)){
+    dimension_obj <- geoflow_dimension$new()
+
+    #row
+    if(startsWith(source$dim[[dim]]$name,"lat")){
+      name="row"
+      resolution = list(
+        uom=attr$geospatial_lat_units,
+        value = unlist(strsplit(attr$geospatial_lat_resolution," "))[1]
+      )
+    }
+    #column
+    if(startsWith(source$dim[[dim]]$name,"lon")){
+      name="column" 
+      resolution = list(
+        uom=attr$geospatial_lon_units,
+        value = unlist(strsplit(attr$geospatial_lon_resolution," "))[1]
+      )
+    }
+    #time
+    if(startsWith(source$dim[[dim]]$name,"time")){
+      name="time"
+      duration<-attr$time_coverage_resolution
+      resolution=list(
+        uom=
+          if(startsWith(duration,"PT")){
+            switch(substr(duration, nchar(duration),nchar(duration)),
+                   "H"="hour",
+                   "M"="minute",
+                   "S"="second")
+          }else if(startsWith(duration,"P")){
+            switch(substr(duration, nchar(duration),nchar(duration)),
+                   "Y"="year",
+                   "M"="month",
+                   "W"="week",
+                   "D"="day")    
+          }else{""},
+        value=gsub("\\D", "", duration)
+      )
+    }
+    #vertical
+    if(startsWith(source$dim[[dim]]$name,"z")){
+      name="vertical" 
+      resolution = list(
+        uom=attr$geospatial_vertical_units,
+        value = unlist(strsplit(attr$geospatial_vertical_resolution,"[.]"))[1]
+      )
+    }
+    dimension_obj<-geoflow_dimension$new()
+    dimension_obj$setLongName(ncdf4::ncatt_get(source,source$dim[[dim]]$name)$long_name)
+    dimension_obj$setMinValue(ncdf4::ncatt_get(source,source$dim[[dim]]$name)$valid_min)
+    dimension_obj$setMaxValue(ncdf4::ncatt_get(source,source$dim[[dim]]$name)$valid_max)
+    dimension_obj$setResolution(uom = resolution$uom,value=resolution$value)
+    dimension_obj$setSize(source$dim[[dim]]$len)
+    dimension_obj$setValues(source$dim[[dim]]$vals)
+  
+    data_obj$addDimension(name,dimension_obj)
+  }
+  
+  #spatialRepresentationType
+  if(!is.null(attr$featureType)){
+    spatialRepresentationType <-tolower(attr$featureType) 
+  }else if(!is.null(attr$cdm_data_type)){
+    spatialRepresentationType <-tolower(attr$cdm_data_type)
+  }else{
+    spatialRepresentationType <-""
+  }
+  
+  if(spatialRepresentationType=="trajectory"){spatialRepresentationType<-"vector"}else{spatialRepresentationType<-"grid"}
+  
+  
+  data_obj$setSpatialRepresentationType(spatialRepresentationType)
+
   if(!startsWith(source_name,"http")){
     #how to deduce a download link from an opendap link (without being on Thredds)
-    #data
-    data_obj <- geoflow_data$new()
     data_obj$setSource(source_name)
     data_obj$setSourceType("nc")
-    entity$setData(data_obj)
   }
+  entity$setData(data_obj)
   
   entities <- list(entity)
   return(entities)
@@ -559,7 +651,7 @@ handle_entities_thredds <- function(config, source){
   }
 
   
-  base_uri<-sub("catalog.*.xml", "", thredds$url)
+  base_uri<-unlist(strsplit(thredds$url,"/thredds"))[1]
   config$logger.info(sprintf("Thredds Base URL: %s", base_uri))
   
   entities<-list()
@@ -569,15 +661,17 @@ handle_entities_thredds <- function(config, source){
     
     #entity
     
-    odap<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="OPENDAP") thredds$list_services()[[x]]["base"]))
+    odap<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="OPENDAP") thredds$list_services()[[x]]["base"]))[1]
     if(is.null(odap)){
       errMsg <- sprintf("No OpenDAP service for Thredds '%s'", thredds$url)
       config$logger.error(errMsg)
       stop(errMsg)
     }
-    odap_uri<-paste0(sub("/thredds/",odap,base_uri),data$url)
+
+    odap_uri<-paste0(base_uri,odap,data$url)
+    cat(odap_uri)
     config$logger.info(sprintf("OpenDAP URL for '%s': %s", data$url, odap_uri))
-    layername<-ncdf4::nc_open(odap_uri)$var[[2]]$name
+    #layername<-ncdf4::nc_open(odap_uri)$var[[2]]$name
     entity <- handle_entities_ncdf(config,odap_uri)[[1]]
     
     #relations
@@ -591,9 +685,9 @@ handle_entities_thredds <- function(config, source){
     entity$addRelation(new_thredds_link)
     
     #data
-    http<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="HTTPServer") thredds$list_services()[[x]]["base"]))
+    http<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="HTTPServer") thredds$list_services()[[x]]["base"]))[1]
     if(!is.null(http)){
-      http_uri<-paste0(sub("/thredds/",http,base_uri),data$url)
+      http_uri<-paste0(base_uri,http,data$url)
       new_data_link <- geoflow_relation$new()
       new_data_link$setKey("http")
       new_data_link$setName(dataset)
@@ -603,14 +697,17 @@ handle_entities_thredds <- function(config, source){
     }
     
     #WMS
-    wms<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WMS") thredds$list_services()[[x]]["base"]))
+    ogc_dimensions<-NULL
+    wms<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WMS") thredds$list_services()[[x]]["base"]))[1]
     if(!is.null(wms)){
       requireNamespace("ows4R")
-      wms_uri<-paste0(sub("/thredds/",wms,base_uri),data$url,"?service=WMS")
-      wms_request<-paste0(sub("/thredds/",wms,base_uri),data$url)
+      wms_uri<-paste0(base_uri,wms,data$url,"?service=WMS")
+      wms_request<-paste0(base_uri,wms,data$url)
       wms <- ows4R::WMSClient$new(url = wms_request, serviceVersion = "1.3.0", logger = "INFO")
       layers <- wms$getLayers(pretty = T)
       layers <- layers[!is.na(layers$name),]
+      layers_names<-layers$name
+      
       for(layer in layers$name){
         new_wms <- geoflow_relation$new()
         new_wms$setKey("wms130")
@@ -619,25 +716,31 @@ handle_entities_thredds <- function(config, source){
         new_wms$setLink(wms_uri)
         entity$addRelation(new_wms)
       }
-    }
-    #WCS
-    wcs<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WCS") thredds$list_services()[[x]]["base"]))
-    if(!is.null(wcs)){
-      wcs_uri<-paste0(sub("/thredds/",wcs,base_uri),data$url,"?service=WCS")
-      new_wcs <- geoflow_relation$new()
-      new_wcs$setKey("wcs")
-      new_wcs$setName(layername)
-      new_wcs$setDescription(entity$titles[["title"]])
-      new_wcs$setLink(wcs_uri)
-      entity$addRelation(new_wcs)
+
+      ogc_dimensions<-wms$getLayers()[[2]]$getDimensions()
     }
     
+    # #WCS
+    # NOT YET IMPLEMENTED
+    # wcs<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WCS") thredds$list_services()[[x]]["base"]))
+    # if(!is.null(wcs)){
+    #   wcs_uri<-paste0(base_uri,wcs,data$url,"?service=WCS")
+    #   new_wcs <- geoflow_relation$new()
+    #   new_wcs$setKey("wcs")
+    #   new_wcs$setName(layername)
+    #   new_wcs$setDescription(entity$titles[["title"]])
+    #   new_wcs$setLink(wcs_uri)
+    #   entity$addRelation(new_wcs)
+    # }
+
     #data
-    data_obj <- geoflow_data$new()
-    data_obj$setAccess("thredds")
-    data_obj$setSource(dataset)
-    data_obj$setSourceType("nc")
-    entity$setData(data_obj)
+    entity$data$setAccess("thredds")
+    entity$data$setSource(dataset)
+    entity$data$setSourceType("nc")
+    if(!is.null(ogc_dimensions))for(ogc_dimension in names(ogc_dimensions)){
+      ogc_dimension<-ogc_dimensions[[ogc_dimension]]
+      entity$data$setOgcDimensions(ogc_dimension$name,ogc_dimension$values)
+    }
     
     return(entity)
     

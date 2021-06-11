@@ -101,9 +101,14 @@ geoflow_data
  \item{\code{setVariables(variables)}}{
    Sets variables definition.
  }
- \item{\code{setDimension(name, values)}}{
-   Sets a dimension (name and its values)
+ \item{\code{setOgcDimension(name, values)}}{
+   Sets a ogc dimension (name and its values)
  }
+ 
+ \item{\code{addDimension(name, dimension)}}{
+   Add a dimension, object of class \code{geoflow_dimension}.
+ }
+ 
  \item{\code{addAction(action)}}{
    Adds an entity local action to be run
  }
