@@ -529,6 +529,22 @@ handle_entities_ncdf <- function(config, source){
   #data
   data_obj <- geoflow_data$new()
   
+  #variables
+  
+  variables = lapply(names(source$var), function(x){
+    #TODO in future create a geoflow_variable class to handle more info (eg. min/max, type, domain eg. physicalMeasurement, etc)
+    var = source$var[[x]]
+    outvar <- x
+    var_attrs <- ncdf4::ncatt_get(source, x)
+    name <- var$longname
+    if(!is.null(var_attrs$standard_name)) name <- paste0(name, " (", var_attrs$standard_name, ")")
+    attr(outvar, "description") <- name
+    attr(outvar, "units") <- attr(outvar, "description") <- gsub(" ","_",var_attrs$units)
+    return(outvar)
+  })
+  
+  data_obj$setVariables(variables)
+  
   #dimensions
   for(dim in names(source$dim)){
     dimension_obj <- geoflow_dimension$new()
@@ -579,6 +595,9 @@ handle_entities_ncdf <- function(config, source){
       )
     }
     dimension_obj<-geoflow_dimension$new()
+    dimension_obj$setLongName(ncdf4::ncatt_get(source,source$dim[[dim]]$name)$long_name)
+    dimension_obj$setMinValue(ncdf4::ncatt_get(source,source$dim[[dim]]$name)$valid_min)
+    dimension_obj$setMaxValue(ncdf4::ncatt_get(source,source$dim[[dim]]$name)$valid_max)
     dimension_obj$setResolution(uom = resolution$uom,value=resolution$value)
     dimension_obj$setSize(source$dim[[dim]]$len)
     dimension_obj$setValues(source$dim[[dim]]$vals)
@@ -702,6 +721,7 @@ handle_entities_thredds <- function(config, source){
     }
     
     # #WCS
+    # NOT YET IMPLEMENTED
     # wcs<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WCS") thredds$list_services()[[x]]["base"]))
     # if(!is.null(wcs)){
     #   wcs_uri<-paste0(base_uri,wcs,data$url,"?service=WCS")
@@ -717,6 +737,10 @@ handle_entities_thredds <- function(config, source){
     entity$data$setAccess("thredds")
     entity$data$setSource(dataset)
     entity$data$setSourceType("nc")
+    if(!is.null(ogc_dimensions))for(ogc_dimension in names(ogc_dimensions)){
+      ogc_dimension<-ogc_dimensions[[ogc_dimension]]
+      entity$data$setOgcDimensions(ogc_dimension$name,ogc_dimension$values)
+    }
     
     return(entity)
     
