@@ -96,8 +96,13 @@
 #'    Sets variables definition.
 #'  }
 #'  \item{\code{setOgcDimension(name, values)}}{
-#'    Sets a dimension (name and its values)
+#'    Sets a ogc dimension (name and its values)
 #'  }
+#'  
+#'  \item{\code{addDimension(name, dimension)}}{
+#'    Add a dimension, object of class \code{geoflow_dimension}.
+#'  }
+#'  
 #'  \item{\code{addAction(action)}}{
 #'    Adds an entity local action to be run
 #'  }
