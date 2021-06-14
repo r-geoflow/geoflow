@@ -158,11 +158,12 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           }
           
           #Check existance of Workspace and create it if need
-          withGeosapi <- any(sapply(actions, function(x){x$id=="geosapi-publish-ogc-services"}))
+          geosapi <-sapply(actions, function(x){x$id=="geosapi-publish-ogc-services"})
+          withGeosapi <- any(geosapi)
           
           if(withGeosapi){
-            createWorkspace<-actions[sapply(actions, function(x){x$id=="geosapi-publish-ogc-services"})][[1]]$options$createWorkspace
-            createWorkspace <- if(!is.null(actions[sapply(actions, function(x){x$id=="geosapi-publish-ogc-services"})][[1]]$options$createWorkspace)) actions[sapply(actions, function(x){x$id=="geosapi-publish-ogc-services"})][[1]]$options$createWorkspace else FALSE  
+            createWorkspace<-actions[geosapi][[1]]$options$createWorkspace
+            createWorkspace <- if(!is.null(actions[geosapi][[1]]$options$createWorkspace)) actions[geosapi][[1]]$options$createWorkspace else FALSE  
             
             GS <- config$software$output$geoserver
             if(is.null(GS)){
