@@ -157,6 +157,53 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             }
           }
           
+          #Check existance of Workspace and create it if need
+          withGeosapi <- any(sapply(actions, function(x){x$id=="geosapi-publish-ogc-services"}))
+          
+          if(withGeosapi){
+            createWorkspace<-actions[sapply(actions, function(x){x$id=="geosapi-publish-ogc-services"})][[1]]$options$createWorkspace
+            createWorkspace <- if(!is.null(actions[sapply(actions, function(x){x$id=="geosapi-publish-ogc-services"})][[1]]$options$createWorkspace)) actions[sapply(actions, function(x){x$id=="geosapi-publish-ogc-services"})][[1]]$options$createWorkspace else FALSE  
+            
+            GS <- config$software$output$geoserver
+            if(is.null(GS)){
+              errMsg <- "This action requires a GeoServer software to be declared in the configuration"
+              config$logger.error(errMsg)
+              stop(errMsg)
+            }
+            
+            GEOSAPI_CONFIG <- config$software$output$geosapi_config
+            workspace <- GEOSAPI_CONFIG$properties$workspace
+            if(is.null(workspace)) if(!is.null(entity$data$workspaces$geoserver)) workspace <- entity$data$workspaces$geoserver
+            if(is.null(workspace)){
+              errMsg <- "The geoserver configuration requires a workspace for publishing action"
+              config$logger.error(errMsg)
+              stop(errMsg)
+            }
+              
+            # Check existence of workspace
+            ws <- GS$getWorkspace(workspace)
+            # If workspace not exist
+            # Check if createWorkspace is TRUE
+            if(length(ws)==0){
+              if(createWorkspace){
+                created <- GS$createWorkspace(workspace, paste0("http://",workspace))
+                if(created){
+                  infoMsg <- sprintf("Successful Geoserver '%s' workspace creaction", workspace)
+                  config$logger.info(infoMsg)
+                }else{
+                  errMsg <- "Error during Geoserver workspace creation. Aborting 'geosapi' action!"
+                  config$logger.error(errMsg)
+                  stop(errMsg)
+                }
+              }else{
+                # If createWorkspace is FALSE edit ERROR Message
+                errMsg <- sprintf("Workspace '%s' don't exist and createWorkspace option = FALSE, please verify config if workspace already exist or change createWorkpace = TRUE to create it",workspace)
+                config$logger.error(errMsg)
+                stop(errMsg)
+              }
+            }
+          }
+          
           #run sequence of global actions
           if(length(actions)>0) for(i in 1:length(actions)){
             action <- actions[[i]]
