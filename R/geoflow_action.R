@@ -197,7 +197,7 @@ register_actions <- function(){
       def = "Produce an ISO/OGC 19115/19139 metadata object",
       target = "entity",
       target_dir = "metadata",
-      packages = list("geometa"),
+      packages = list("geometa","ows4R"),
       fun = geometa_create_iso_19115,
       options = list(
         doi = list(def = "Add entity DOI - if defined - as metadata identifier and online resource", class = "logical", default = FALSE),
