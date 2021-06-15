@@ -55,14 +55,15 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #metadata creation
   #-----------------------------------------------------------------------------------------------------
   #create geometa object
-  if(!is.null(entity$data)) {
-    md<-switch(entity$data$spatialRepresentationType,
-                                      "vector" = ISOMetadata$new(),
-                                      "grid" = ISOImageryMetadata$new()
-    )
-  }else{
-    md <- ISOMetadata$new()
-  }
+  # if(!is.null(entity$data)) {
+  #   md<-switch(entity$data$spatialRepresentationType,
+  #                                     "vector" = ISOMetadata$new(),
+  #                                     "grid" = ISOImageryMetadata$new()
+  #   )
+  # }else{
+  #   md <- ISOMetadata$new()
+  # }
+  md <- ISOMetadata$new()
   mdId <- entity$identifiers[["id"]]
   md$setFileIdentifier(mdId)
   
@@ -451,6 +452,70 @@ geometa_create_iso_19115 <- function(entity, config, options){
   ident$setSupplementalInformation(entity$descriptions[["info"]])
   if(!is.null(spatialRepresentationType)) ident$setSpatialRepresentationType(spatialRepresentationType)
   md$addIdentificationInfo(ident)
+  
+  #service information
+  #WMS
+  wms<-entity$relations[sapply(entity$relations, function(x){startsWith(x$key,"wms")})][[1]]
+  WMS<-WMSClient$new(url=gsub("service=WMS","",wms$link),serviceVersion=switch(wms$key,
+                                                                               "wms" = "1.1.0",
+                                                                               "wms110" = "1.1.0",
+                                                                               "wms111" = "1.1.1",
+                                                                               "wms130" = "1.3.0"))
+  if(!is.null(wms)){
+    #SRVServiceIdentification
+    si <- ISOSRVServiceIdentification$new()
+    
+    #citation
+    #title
+    #date
+    #citedResponsibleParty
+    #abstract
+    si$setAbstract(WMS$getCapabilities()$getServiceIdentification()$getAbstract())
+    #extent
+    #keyword
+    #Fees
+    orderProcess <- ISOStandardOrderProcess$new()
+    orderProcess$setFees(WMS$getCapabilities()$getServiceIdentification()$getFees())
+    si$setAccessProperties(orderProcess)
+    #coupling type
+    
+    switch(entity$data$spatialRepresentationType,
+           "vector" = si$setCouplingType("mixed"),
+           "grid" = si$setCouplingType("tight")
+    )
+    
+    for(request in WMS$getCapabilities()$getRequestNames()){
+      #add operation metadata 
+      scriptOp <- ISOOperationMetadata$new()
+      scriptOp$setOperationName(request)
+      
+      if(request=="GetMap"){
+        #GetMap
+        if(length(entity$data$ogc_dimensions)>0) for(ogc_dimension in names(entity$data$ogc_dimensions)){
+          param <- ISOParameter$new()
+          param$setName(toupper(ogc_dimension), "xs:string")
+          param$setDirection("in")
+          param$setOptionality(FALSE)
+          param$setRepeatability(FALSE)
+          param$setValueType("xs:string")
+          scriptOp$addParameter(param)  
+        }
+        if(entity$data$uploadType == "dbquery" & length(entity$data$parameters)>0){
+          param <- ISOParameter$new()
+          param$setName("VIEWPARAMS", "xs:string")
+          param$setDirection("in")
+          param$setOptionality(FALSE)
+          param$setRepeatability(FALSE)
+          param$setValueType("xs:string")
+          scriptOp$addParameter(param)  
+        }
+      }
+      
+      si$addOperationMetadata(scriptOp)
+      
+    }
+  }
+  md$addIdentificationInfo(si)
   
   #contentInfo
   #coverage description
