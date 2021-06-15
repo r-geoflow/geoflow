@@ -456,7 +456,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #service information
   #WMS
   wms<-entity$relations[sapply(entity$relations, function(x){startsWith(x$key,"wms")})][[1]]
-  WMS<-WMSClient$new(url=gsub("service=WMS","",wms$link),serviceVersion=switch(wms$key,
+  WMS<-ows4R::WMSClient$new(url=gsub("service=WMS","",wms$link),serviceVersion=switch(wms$key,
                                                                                "wms" = "1.1.0",
                                                                                "wms110" = "1.1.0",
                                                                                "wms111" = "1.1.1",
