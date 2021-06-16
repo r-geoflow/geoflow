@@ -718,7 +718,7 @@ handle_entities_thredds <- function(config, source){
         entity$addRelation(new_wms)
       }
 
-      ogc_dimensions<-wms$getLayers()[[2]]$getDimensions()
+      ogc_dimensions<-wms$getLayers()[[2]]$getDimensions()#in some case the service layer 1 has no dimension
     }
     
     # #WCS
@@ -738,10 +738,7 @@ handle_entities_thredds <- function(config, source){
     entity$data$setAccess("thredds")
     entity$data$setSource(dataset)
     entity$data$setSourceType("nc")
-    if(!is.null(ogc_dimensions))for(ogc_dimension in names(ogc_dimensions)){
-      ogc_dimension<-ogc_dimensions[[ogc_dimension]]
-      entity$data$setOgcDimensions(ogc_dimension$name,ogc_dimension$values)
-    }
+    if(!is.null(ogc_dimensions))entity$data$ogc_dimensions<-ogc_dimensions
     
     return(entity)
     
