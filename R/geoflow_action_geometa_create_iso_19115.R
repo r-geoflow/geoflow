@@ -464,7 +464,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(!is.null(wms)){
     #SRVServiceIdentification
     si <- ISOSRVServiceIdentification$new()
-    
+    si$setAttr("id","OGC-WMS")
     #citation
     #title
     #date
@@ -591,16 +591,21 @@ geometa_create_iso_19115 <- function(entity, config, options){
       cov$setContentType("coordinate")
       #adding dimensions
       for(ogc_dimension in names(entity$data$ogc_dimensions)){
-        ogc_dim_name<-ogc_dimension
+        ogc_dim_name<-toupper(ogc_dim_name)
         ogc_dimension<-entity$data$ogc_dimensions[[ogc_dimension]]
         band <- ISOBand$new()
-        mn <- ISOMemberName$new(aName = toupper(ogc_dim_name), attributeType = "float")
+       
+        mn <- switch(ogc_dim_name,
+          "TIME"  = ISOMemberName$new(aName = ogc_dim_name, attributeType = "xsd:datetime"),
+          "ELEVATION" = ISOMemberName$new(aName = ogc_dim_name, attributeType = "xsd:decimal")
+        )
+        
         band$sequenceIdentifier<-mn
         #band$setUnits(gml)
         cov$dimension = c(cov$dimension, band)
         
          des <- ISOImageryRangeElementDescription$new()
-         des$name<-toupper(ogc_dim_name)
+         des$name<-ogc_dim_name
          des$definition<-""
          des$rangeElement <- sapply(ogc_dimension$values, function(x){ ISORecord$new(value = x)})
          cov$rangeElementDescription = c(cov$rangeElementDescription,des)
