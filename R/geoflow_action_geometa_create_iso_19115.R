@@ -451,7 +451,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   ident$setSupplementalInformation(entity$descriptions[["info"]])
   if(!is.null(spatialRepresentationType)) ident$setSpatialRepresentationType(spatialRepresentationType)
-  md$addIdentificationInfo(ident)
+  md$identificationInfo = c(md$identificationInfo,ident)
   
   #service information
   #WMS
@@ -460,11 +460,11 @@ geometa_create_iso_19115 <- function(entity, config, options){
                                                                                "wms" = "1.1.0",
                                                                                "wms110" = "1.1.0",
                                                                                "wms111" = "1.1.1",
-                                                                               "wms130" = "1.3.0"))
+                                                                               "wms130" = "1.3.0"),logger="DEBUG")
   if(!is.null(wms)){
     #SRVServiceIdentification
     si <- ISOSRVServiceIdentification$new()
-    
+    si$setAttr("id","OGC-WMS")
     #citation
     #title
     #date
@@ -498,7 +498,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
           param$setOptionality(FALSE)
           param$setRepeatability(FALSE)
           param$setValueType("xs:string")
-          scriptOp$addParameter(param)  
+          scriptOp$parameters=c(scriptOp$parameters,param)  
         }
         if(entity$data$uploadType == "dbquery" & length(entity$data$parameters)>0){
           param <- ISOParameter$new()
@@ -507,15 +507,14 @@ geometa_create_iso_19115 <- function(entity, config, options){
           param$setOptionality(FALSE)
           param$setRepeatability(FALSE)
           param$setValueType("xs:string")
-          scriptOp$addParameter(param)  
+          scriptOp$parameters=c(scriptOp$parameters,param)    
         }
       }
       
-      si$addOperationMetadata(scriptOp)
-      
+      si$containsOperations = c(si$containsOperations, scriptOp)
     }
   }
-  md$addIdentificationInfo(si)
+  md$identificationInfo = c(md$identificationInfo,si)
   
   #contentInfo
   #coverage description
@@ -528,20 +527,23 @@ geometa_create_iso_19115 <- function(entity, config, options){
       
       #adding dimensions
       for(variable in entity$data$variables){
+        print(variable)
         band <- ISOBand$new()
         mn <- ISOMemberName$new(aName = variable,attributeType ="float")
-        band$setSequenceIdentifier(mn)
-        band$setDescriptor(attr(variable,"description"))
+        band$sequenceIdentifier<-mn
+        band$descriptor<-attr(variable,"description")
         
-        unit<-attr(variable,"units")
-        gml<-GMLUnitDefinition$buildFrom(unit)
-        if(is.null(gml)) gml<-GMLUnitDefinition$buildFrom(unit,"name_singular")
-        if(is.null(gml)) gml<-GMLUnitDefinition$buildFrom(unit,"name_plural")
-        if(!is.null(gml)) band$setUnits(gml)
-        
-        cov$addDimension(band)
+        # unit<-attr(variable,"units")
+        # if(length(unit)>0){
+        #   gml<-GMLUnitDefinition$buildFrom(unit)
+        #   if(is.null(gml)) invisible(capture.output(gml<-GMLUnitDefinition$buildFrom(unit,"name_singular"),type="message"))
+        #   if(is.null(gml)) invisible(capture.output(gml<-GMLUnitDefinition$buildFrom(unit,"name_plural"),type="message"))
+        #   if(!is.null(gml)) band$units<-gml
+        # }
+        band$units<-NA
+        cov$dimension = c(cov$dimension, band)
       }
-      md$addContentInfo(cov)
+      md$contentInfo = c(md$contentInfo,cov)
     }
     if(!is.null(entity$data$dimensions)){
   #create coverage description
@@ -550,6 +552,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
     cov$setContentType("coordinate")
   
   #adding dimensions
+
   for(dimension in names(entity$data$dimensions)){
     dim_name<-dimension
     dimension<-entity$data$dimensions[[dimension]]
@@ -557,27 +560,29 @@ geometa_create_iso_19115 <- function(entity, config, options){
     band <- ISOBand$new()
     
     mn <- ISOMemberName$new(aName = dim_name, attributeType = "float")
-    band$setSequenceIdentifier(mn)
-    band$setDescriptor(dimension$longName)
-    band$setMaxValue(dimension$minValue)
-    band$setMinValue(dimension$maxValue)
+    band$sequenceIdentifier<-mn
+    band$descriptor<-dimension$longName
+    band$maxValue<-dimension$minValue
+    band$minValue<-dimension$maxValue
     #unit
-    unit<-dimension$resolution$uom
-    gml<-try(GMLUnitDefinition$buildFrom(unit))
-    if(is.null(gml) | class(gml)=="try-error") gml<-try(GMLUnitDefinition$buildFrom(unit,"name_singular"))
-    if(is.null(gml) | class(gml)=="try-error") gml<-try(GMLUnitDefinition$buildFrom(unit,"name_plural"))
-    if(!is.null(gml) & class(gml)!="try-error") band$setUnits(gml)
-
-    cov$addDimension(band)
+    # unit<-dimension$resolution$uom
+    # if(length(unit)>0){
+    #   invisible(capture.output(gml<-try(GMLUnitDefinition$buildFrom(unit)),type="message"))
+    #   if(is.null(gml) | class(gml)=="try-error") invisible(capture.output(gml<-try(GMLUnitDefinition$buildFrom(unit,"name_singular")),type="message"))
+    #   if(is.null(gml) | class(gml)=="try-error") invisible(capture.output(gml<-try(GMLUnitDefinition$buildFrom(unit,"name_plural")),type="message"))
+    #   if(!is.null(gml) & class(gml)!="try-error") band$units<-gml
+    # }
+    band$units<-NA
+    cov$dimension = c(cov$dimension, band)
     
-     des <- ISOImageryRangeElementDescription$new()
-     des$setName(dim_name)
-     des$setDefinition(dimension$longName)
-     des$rangeElement <- sapply(unique(dimension$values), function(x){ ISORecord$new(value = x)})
+     #des <- ISOImageryRangeElementDescription$new()
+     #des$name<-dim_name
+     #des$definition<-dimension$longName
+     #des$rangeElement <- sapply(unique(dimension$values), function(x){ ISORecord$new(value = x)})
 
-     cov$addRangeElementDescription(des)
+     #cov$rangeElementDescription = c(cov$rangeElementDescription,des)
   }
-    md$addContentInfo(cov)
+    md$contentInfo = c(md$contentInfo,cov)
     }
     if(!is.null(entity$data$ogc_dimensions)){
       #create coverage description
@@ -586,21 +591,26 @@ geometa_create_iso_19115 <- function(entity, config, options){
       cov$setContentType("coordinate")
       #adding dimensions
       for(ogc_dimension in names(entity$data$ogc_dimensions)){
-        ogc_dim_name<-ogc_dimension
+        ogc_dim_name<-toupper(ogc_dim_name)
         ogc_dimension<-entity$data$ogc_dimensions[[ogc_dimension]]
         band <- ISOBand$new()
-        mn <- ISOMemberName$new(aName = toupper(ogc_dim_name), attributeType = "float")
-        band$setSequenceIdentifier(mn)
+       
+        mn <- switch(ogc_dim_name,
+          "TIME"  = ISOMemberName$new(aName = ogc_dim_name, attributeType = "xsd:datetime"),
+          "ELEVATION" = ISOMemberName$new(aName = ogc_dim_name, attributeType = "xsd:decimal")
+        )
+        
+        band$sequenceIdentifier<-mn
         #band$setUnits(gml)
-        cov$addDimension(band)
+        cov$dimension = c(cov$dimension, band)
         
          des <- ISOImageryRangeElementDescription$new()
-         des$setName(toupper(ogc_dim_name))
-         des$setDefinition("")
-         des$rangeElement <- sapply(unique(ogc_dimension), function(x){ ISORecord$new(value = x)})
-         cov$addRangeElementDescription(des)
+         des$name<-ogc_dim_name
+         des$definition<-""
+         des$rangeElement <- sapply(ogc_dimension$values, function(x){ ISORecord$new(value = x)})
+         cov$rangeElementDescription = c(cov$rangeElementDescription,des)
       }
-      md$addContentInfo(cov)
+      md$contentInfo = c(md$contentInfo,cov)
     }
   }
   
@@ -654,7 +664,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
         "WWW:LINK-1.0-http--link"
       )
       or$setProtocol(protocol)
-      dto$addOnlineResource(or)
+      dto$onLine = c(dto$onLine,or)
     }
   }
   distrib$setDigitalTransferOptions(dto)

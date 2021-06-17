@@ -481,12 +481,11 @@ handle_entities_ncdf <- function(config, source){
   }
   
   #dates
-  
-  if(!is.null(attr$date_created)){entity$addDate("creation", attr$date_created)}else{entity$addDate("creation", Sys.time())}
-  if(!is.null(attr$date_modified)) entity$addDate("revision", attr$date_modified)
-  if(!is.null(attr$date_metadata_modified)) entity$addDate("metadata", attr$date_metadata_modified)
-  if(!is.null(attr$date_issued)) entity$addDate("publication", attr$date_issued)
-  
+  if(!is.null(attr$date_created)) if(class(try(as.POSIXlt.character(attr$date_created)))!="try-error"){entity$addDate("creation", attr$date_created)}else{entity$addDate("creation", Sys.time())}
+  if(!is.null(attr$date_modified)) if(class(try(as.POSIXlt.character(attr$date_modified)))!="try-error")entity$addDate("revision", attr$date_modified)
+  if(!is.null(attr$date_metadata_modified)) if(class(try(as.POSIXlt.character(attr$date_metadata_modified)))!="try-error")entity$addDate("metadata", attr$date_metadata_modified)
+  if(!is.null(attr$date_issued)) if(class(try(as.POSIXlt.character(attr$date_issued)))!="try-error")entity$addDate("publication", attr$date_issued)
+
   #Type
   #Not yet implemented
   
@@ -506,8 +505,10 @@ handle_entities_ncdf <- function(config, source){
    
   #temporal extent
   if(!is.null(attr$time_coverage_start)&!is.null(attr$time_coverage_end)){
-    temporal_cov<- paste(attr$time_coverage_start,attr$time_coverage_end,sep="/")
-    entity$setTemporalExtent(temporal_cov)
+    if(class(try(as.POSIXlt.character(attr$time_coverage_start)))!="try-error")if(class(try(as.POSIXlt.character(attr$time_coverage_end)))!="try-error"){
+      temporal_cov<- paste(attr$time_coverage_start,attr$time_coverage_end,sep="/")
+      entity$setTemporalExtent(temporal_cov)
+    }
   }
    
   #relation
@@ -717,7 +718,7 @@ handle_entities_thredds <- function(config, source){
         entity$addRelation(new_wms)
       }
 
-      ogc_dimensions<-wms$getLayers()[[2]]$getDimensions()
+      ogc_dimensions<-wms$getLayers()[[2]]$getDimensions()#in some case the service layer 1 has no dimension
     }
     
     # #WCS
@@ -737,10 +738,7 @@ handle_entities_thredds <- function(config, source){
     entity$data$setAccess("thredds")
     entity$data$setSource(dataset)
     entity$data$setSourceType("nc")
-    if(!is.null(ogc_dimensions))for(ogc_dimension in names(ogc_dimensions)){
-      ogc_dimension<-ogc_dimensions[[ogc_dimension]]
-      entity$data$setOgcDimensions(ogc_dimension$name,ogc_dimension$values)
-    }
+    if(!is.null(ogc_dimensions))entity$data$ogc_dimensions<-ogc_dimensions
     
     return(entity)
     
