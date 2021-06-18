@@ -259,7 +259,7 @@ register_data_accessors <- function(){
       id = "thredds",
       software_type = "thredds",
       definition = "A Thredds data server accessor",
-      packages = list("thredds","httr"),
+      packages = list("thredds","httr","XML"),
       download = function(resource, file, path, software = NULL){
         if(is.null(software)){
           errMsg <- sprintf("[geoflow] Thredds data accessor requires a 'thredds' software declaration in the geoflow configuration\n")
@@ -290,7 +290,8 @@ register_data_accessors <- function(){
           stop(errMsg)
         }
         dataset_dest<-file.path(getwd(),paste0(dataset,".nc"))
-        base_uri<-unlist(strsplit(software$url,"/thredds/"))[1]
+        uri<-XML::parseURI(software$url)
+        base_uri<-paste0(uri$scheme,"://",uri$server)
         http<-unlist(sapply(names(software$list_services()), function(x) if(software$list_services()[[x]]["serviceType"]=="HTTPServer") software$list_services()[[x]]["base"]))[1]
         if(!is.null(http)){
         #   errMsg <- sprintf("no valid ",dataset)
