@@ -115,12 +115,22 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md$setHierarchyLevel(dctype_iso)
   
   #add contacts
-  if(length(entity$contacts)>0)for(entity_contact in entity$contacts){
-    if(tolower(entity_contact$role) == "metadata"){
-      rp<-createResponsibleParty(entity_contact,"pointOfContact") 
-      md$addContact(rp)
-    }
-  }
+   # if(length(entity$contacts)>0){
+   #   metadata_contacts <- entity$contacts[sapply(entity$contacts, function(x){tolower(x$role) == "metadata"})]
+   #   if(is.null(metadata_contacts)) metadata_contacts<-entity$contacts[sapply(entity$contacts, function(x){tolower(x$role) == "owner"})]
+   #     for(metadata_contact in metadata$contacts){
+   #       metadata_contact$setRole("metadata")
+   #       rp<-createResponsibleParty(metadata_contact,"pointOfContact") 
+   #       md$addContact(rp)
+   #     }
+   # }
+  
+   if(length(entity$contacts)>0)for(entity_contact in entity$contacts){
+     if(tolower(entity_contact$role) == "metadata"){
+       rp<-createResponsibleParty(entity_contact,"pointOfContact") 
+        md$addContact(rp)
+     } 
+   }
   
   #spatial representation
   spatialRepresentationType <- entity$data$spatialRepresentationType
@@ -591,7 +601,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
       cov$setContentType("coordinate")
       #adding dimensions
       for(ogc_dimension in names(entity$data$ogc_dimensions)){
-        ogc_dim_name<-toupper(ogc_dim_name)
+        ogc_dim_name<-toupper(ogc_dimension)
         ogc_dimension<-entity$data$ogc_dimensions[[ogc_dimension]]
         band <- ISOBand$new()
        
