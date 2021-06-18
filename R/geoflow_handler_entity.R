@@ -725,6 +725,7 @@ handle_entities_thredds <- function(config, source){
       wms_request<-paste0(base_uri,wms,data$url)
       wms <- ows4R::WMSClient$new(url = wms_request, serviceVersion = "1.3.0", logger = "INFO")
       
+      thumbnails<-data.frame(NULL)
       for(layer in wms$getLayers()){
       layername<-layer$getName()  
         if(!is.null(layername)){
@@ -735,13 +736,19 @@ handle_entities_thredds <- function(config, source){
           thumbnail<-sprintf("%s&version=1.1.1&request=GetMap&LAYERS=%s&SRS=%s&BBOX=%s&WIDTH=600&HEIGHT=300&STYLES=%s&FORMAT=image/png&TRANSPARENT=true",
                   wms_uri,layername,srs,bbox,style)
           
-          #add thumbnail relation
-          new_thumbnail <- geoflow_relation$new()
-          new_thumbnail$setKey("thumbnail")
-          new_thumbnail$setName(layername)
-          new_thumbnail$setDescription(paste0(title," [",layername,"]", " - Layer Overview"))
-          new_thumbnail$setLink(thumbnail)
-          entity$addRelation(new_thumbnail)
+          #thumbnail quality
+          img<-png::readPNG(RCurl::getURLContent(thumbnail))
+          R = length(unique(as.vector(img[,,1])))
+          G = length(unique(as.vector(img[,,2])))
+          B = length(unique(as.vector(img[,,3])))
+          imgScoring <- data.frame(
+            layername = layername,
+            title = title,
+            link = thumbnail,
+            score = sum(c(R,G,B))
+          )
+          
+          thumbnails<-rbind(thumbnails,imgScoring)
           
           #add wms relation
           new_wms <- geoflow_relation$new()
@@ -752,7 +759,19 @@ handle_entities_thredds <- function(config, source){
           entity$addRelation(new_wms)
           }
       }
-      
+      #add prettiest thumbnail relation
+      if(!is.null(thumbnails)){
+        thumbnails<-thumbnails[order(thumbnails$score, decreasing = T),]
+        for(i in 1:nrow(thumbnails)){
+          thumbnail<-thumbnails[i,]
+          new_thumbnail <- geoflow_relation$new()
+          new_thumbnail$setKey("thumbnail")
+          new_thumbnail$setName(thumbnail$layername)
+          new_thumbnail$setDescription(paste0(thumbnail$title," [",thumbnail$layername,"]", " - Layer Overview",if(i==1)" - Pretty" else ""))
+          new_thumbnail$setLink(thumbnail$link)
+          entity$addRelation(new_thumbnail)
+        }
+      }
       ogc_dimensions<-wms$getLayers()[[2]]$getDimensions()#in some case the service layer 1 has no dimension
     }
     
