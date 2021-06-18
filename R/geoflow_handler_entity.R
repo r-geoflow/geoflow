@@ -468,6 +468,14 @@ handle_entities_ncdf <- function(config, source){
     contact_obj$setEmail(attr$creator_email)
     contact_obj$setWebsiteUrl(attr$creator_url)
     entity$addContact(contact_obj) 
+    
+    contact_obj <- geoflow_contact$new()
+    contact_obj$setRole("metadata")
+    contact_obj$setLastName(attr$creator_name)
+    contact_obj$setOrganizationName(attr$creator_institution)
+    contact_obj$setEmail(attr$creator_email)
+    contact_obj$setWebsiteUrl(attr$creator_url)
+    entity$addContact(contact_obj) 
   }
   
   if(!is.null(attr$publisher_name)){
@@ -548,62 +556,72 @@ handle_entities_ncdf <- function(config, source){
   
   #dimensions
   for(dim in names(source$dim)){
-    dimension_obj <- geoflow_dimension$new()
-
-    #row
-    if(startsWith(source$dim[[dim]]$name,"lat")){
-      name="row"
-      resolution = list(
-        uom=attr$geospatial_lat_units,
-        value = unlist(strsplit(attr$geospatial_lat_resolution," "))[1]
-      )
+    if(length(ncdf4::ncatt_get(source,dim))>0){
+      #row
+      if(startsWith(source$dim[[dim]]$name,"lat")){
+        name="row"
+        resolution = list(
+          uom=attr$geospatial_lat_units,
+          value = if(is.numeric(attr$geospatial_lat_resolution)){attr$geospatial_lat_resolution}else{unlist(strsplit(attr$geospatial_lat_resolution," "))[1]}
+        )
+      }
+      #column
+      if(startsWith(source$dim[[dim]]$name,"lon")){
+        name="column" 
+        resolution = list(
+          uom=attr$geospatial_lon_units,
+          value = if(is.numeric(attr$geospatial_lat_resolution)){attr$geospatial_lat_resolution}else{unlist(strsplit(attr$geospatial_lat_resolution," "))[1]}
+        )
+      }
+      #time
+      if(startsWith(source$dim[[dim]]$name,"time")){
+        name="time"
+        if(!is.null(attr$time_coverage_resolution)){
+          duration<-attr$time_coverage_resolution
+          resolution=list(
+            uom=
+              if(startsWith(duration,"PT")){
+                switch(substr(duration, nchar(duration),nchar(duration)),
+                       "H"="hour",
+                       "M"="minute",
+                       "S"="second")
+              }else if(startsWith(duration,"P")){
+                switch(substr(duration, nchar(duration),nchar(duration)),
+                       "Y"="year",
+                       "M"="month",
+                       "W"="week",
+                       "D"="day")    
+              }else{""},
+            value=gsub("\\D", "", duration)
+          )
+        }else if(!is.null(attr$temporal_range)){
+          duration<-attr$temporal_range
+          resolution=list(
+            uom=gsub("[^[:alpha:]]", "", duration),
+            value=if(gsub("\\D", "", duration)!=""){gsub("\\D", "", duration)}else{"1"}
+          )
+        }else{
+          resolution=list(uom=NULL,value=NULL)
+        }
+      }
+      #vertical
+      if(startsWith(source$dim[[dim]]$name,"z")){
+        name="vertical" 
+        resolution = list(
+          uom=attr$geospatial_vertical_units,
+          value = unlist(strsplit(attr$geospatial_vertical_resolution,"[.]"))[1]
+        )
+      }
+      dimension_obj<-geoflow_dimension$new()
+      dimension_obj$setLongName(ncdf4::ncatt_get(source,dim)$long_name)
+      dimension_obj$setMinValue(ncdf4::ncatt_get(source,dim)$valid_min)
+      dimension_obj$setMaxValue(ncdf4::ncatt_get(source,dim)$valid_max)
+      dimension_obj$setResolution(uom = resolution$uom,value=resolution$value)
+      dimension_obj$setSize(source$dim[[dim]]$len)
+      dimension_obj$setValues(source$dim[[dim]]$vals)
+    
+      data_obj$addDimension(name,dimension_obj)
     }
-    #column
-    if(startsWith(source$dim[[dim]]$name,"lon")){
-      name="column" 
-      resolution = list(
-        uom=attr$geospatial_lon_units,
-        value = unlist(strsplit(attr$geospatial_lon_resolution," "))[1]
-      )
-    }
-    #time
-    if(startsWith(source$dim[[dim]]$name,"time")){
-      name="time"
-      duration<-attr$time_coverage_resolution
-      resolution=list(
-        uom=
-          if(startsWith(duration,"PT")){
-            switch(substr(duration, nchar(duration),nchar(duration)),
-                   "H"="hour",
-                   "M"="minute",
-                   "S"="second")
-          }else if(startsWith(duration,"P")){
-            switch(substr(duration, nchar(duration),nchar(duration)),
-                   "Y"="year",
-                   "M"="month",
-                   "W"="week",
-                   "D"="day")    
-          }else{""},
-        value=gsub("\\D", "", duration)
-      )
-    }
-    #vertical
-    if(startsWith(source$dim[[dim]]$name,"z")){
-      name="vertical" 
-      resolution = list(
-        uom=attr$geospatial_vertical_units,
-        value = unlist(strsplit(attr$geospatial_vertical_resolution,"[.]"))[1]
-      )
-    }
-    dimension_obj<-geoflow_dimension$new()
-    dimension_obj$setLongName(ncdf4::ncatt_get(source,source$dim[[dim]]$name)$long_name)
-    dimension_obj$setMinValue(ncdf4::ncatt_get(source,source$dim[[dim]]$name)$valid_min)
-    dimension_obj$setMaxValue(ncdf4::ncatt_get(source,source$dim[[dim]]$name)$valid_max)
-    dimension_obj$setResolution(uom = resolution$uom,value=resolution$value)
-    dimension_obj$setSize(source$dim[[dim]]$len)
-    dimension_obj$setValues(source$dim[[dim]]$vals)
-  
-    data_obj$addDimension(name,dimension_obj)
   }
   
   #spatialRepresentationType
@@ -652,7 +670,8 @@ handle_entities_thredds <- function(config, source){
   }
 
   
-  base_uri<-unlist(strsplit(thredds$url,"/thredds"))[1]
+  uri<-XML::parseURI(thredds$url)
+  base_uri<-paste0(uri$scheme,"://",uri$server)
   config$logger.info(sprintf("Thredds Base URL: %s", base_uri))
   
   entities<-list()
@@ -705,19 +724,35 @@ handle_entities_thredds <- function(config, source){
       wms_uri<-paste0(base_uri,wms,data$url,"?service=WMS")
       wms_request<-paste0(base_uri,wms,data$url)
       wms <- ows4R::WMSClient$new(url = wms_request, serviceVersion = "1.3.0", logger = "INFO")
-      layers <- wms$getLayers(pretty = T)
-      layers <- layers[!is.na(layers$name),]
-      layers_names<-layers$name
       
-      for(layer in layers$name){
-        new_wms <- geoflow_relation$new()
-        new_wms$setKey("wms130")
-        new_wms$setName(layer)
-        new_wms$setDescription(layers[layers$name==layer,]$title)
-        new_wms$setLink(wms_uri)
-        entity$addRelation(new_wms)
+      for(layer in wms$getLayers()){
+      layername<-layer$getName()  
+        if(!is.null(layername)){
+          title<-layer$getTitle()
+          bbox<-paste(entity$spatial_bbox,collapse=",")
+          srs<-if(!is.null(entity$srid))entity$srid else "EPSG:4326"
+          style<-layer$getStyle()
+          thumbnail<-sprintf("%s&version=1.1.1&request=GetMap&LAYERS=%s&SRS=%s&BBOX=%s&WIDTH=600&HEIGHT=300&STYLES=%s&FORMAT=image/png&TRANSPARENT=true",
+                  wms_uri,layername,srs,bbox,style)
+          
+          #add thumbnail relation
+          new_thumbnail <- geoflow_relation$new()
+          new_thumbnail$setKey("thumbnail")
+          new_thumbnail$setName(layername)
+          new_thumbnail$setDescription(paste0(title," [",layername,"]", " - Layer Overview"))
+          new_thumbnail$setLink(thumbnail)
+          entity$addRelation(new_thumbnail)
+          
+          #add wms relation
+          new_wms <- geoflow_relation$new()
+          new_wms$setKey("wms130")
+          new_wms$setName(layername)
+          new_wms$setDescription(title)
+          new_wms$setLink(wms_uri)
+          entity$addRelation(new_wms)
+          }
       }
-
+      
       ogc_dimensions<-wms$getLayers()[[2]]$getDimensions()#in some case the service layer 1 has no dimension
     }
     
@@ -739,6 +774,13 @@ handle_entities_thredds <- function(config, source){
     entity$data$setSource(dataset)
     entity$data$setSourceType("nc")
     if(!is.null(ogc_dimensions))entity$data$ogc_dimensions<-ogc_dimensions
+    
+    time<-entity$data$ogc_dimensions$time$values
+    if(!is.null(time)){
+      values<-as.POSIXct(entity$data$ogc_dimensions$time$values,format ="%Y-%m-%dT%H:%M:%S")
+      temporal_cov<- paste(min(values),max(values),sep="/")
+      entity$setTemporalExtent(temporal_cov)
+    }
     
     return(entity)
     
