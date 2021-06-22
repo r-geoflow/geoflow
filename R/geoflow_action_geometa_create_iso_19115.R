@@ -13,6 +13,9 @@ geometa_create_iso_19115 <- function(entity, config, options){
   addfeatures <- if(!is.null(options$addfeatures)) options$addfeatures else FALSE
   featureid <- if(!is.null(options$featureid)){ options$featureid } else { if(!is.null(features)) colnames(features)[1] else NULL} 
   geographySubject <- if(!is.null(options$subject_geography)) options$subject_geography else "geography"
+  include_coverage_data_dimension_values <- if(!is.null(options$include_coverage_data_dimension_values)) options$include_coverage_data_dimension_values else FALSE
+  include_coverage_service_dimension_values <- if(!is.null(options$include_coverage_service_dimension_values)) options$include_coverage_service_dimension_values else FALSE
+  
   
   createResponsibleParty = function(x, role = NULL){
     if(is.null(role)) role <- x$role 
@@ -499,6 +502,19 @@ geometa_create_iso_19115 <- function(entity, config, options){
       scriptOp <- ISOOperationMetadata$new()
       scriptOp$setOperationName(request)
       
+      if(request=="GetCapabilities"){
+        or1 <- ISOOnlineResource$new()
+        or1$setLinkage(paste0(wms$link,"&version=",switch(wms$key,
+                                                                  "wms" = "1.1.0",
+                                                                  "wms110" = "1.1.0",
+                                                                  "wms111" = "1.1.1",
+                                                                  "wms130" = "1.3.0"),"&request=GetCapabilities"))
+        or1$setName("OGC:WMS")
+        or1$setDescription("Open Geospatial Consortium Web Map Service (WMS)")
+        or1$setProtocol("OGC:WMS")
+        scriptOp$addConnectPoint(or1)
+      }
+      
       if(request=="GetMap"){
         #GetMap
         if(length(entity$data$ogc_dimensions)>0) for(ogc_dimension in names(entity$data$ogc_dimensions)){
@@ -585,12 +601,13 @@ geometa_create_iso_19115 <- function(entity, config, options){
     band$units<-NA
     cov$dimension = c(cov$dimension, band)
     
-     #des <- ISOImageryRangeElementDescription$new()
-     #des$name<-dim_name
-     #des$definition<-dimension$longName
-     #des$rangeElement <- sapply(unique(dimension$values), function(x){ ISORecord$new(value = x)})
-
-     #cov$rangeElementDescription = c(cov$rangeElementDescription,des)
+    if(include_coverage_data_dimension_values){
+       des <- ISOImageryRangeElementDescription$new()
+       des$name<-dim_name
+       des$definition<-dimension$longName
+       des$rangeElement <- sapply(unique(dimension$values), function(x){ ISORecord$new(value = x)})
+       cov$rangeElementDescription = c(cov$rangeElementDescription,des)
+    }
   }
     md$contentInfo = c(md$contentInfo,cov)
     }
@@ -614,11 +631,13 @@ geometa_create_iso_19115 <- function(entity, config, options){
         #band$setUnits(gml)
         cov$dimension = c(cov$dimension, band)
         
-         des <- ISOImageryRangeElementDescription$new()
-         des$name<-ogc_dim_name
-         des$definition<-""
-         des$rangeElement <- sapply(ogc_dimension$values, function(x){ ISORecord$new(value = x)})
-         cov$rangeElementDescription = c(cov$rangeElementDescription,des)
+        if(include_coverage_service_dimension_values){
+           des <- ISOImageryRangeElementDescription$new()
+           des$name<-ogc_dim_name
+           des$definition<-""
+           des$rangeElement <- sapply(ogc_dimension$values, function(x){ ISORecord$new(value = x)})
+           cov$rangeElementDescription = c(cov$rangeElementDescription,des)
+        }
       }
       md$contentInfo = c(md$contentInfo,cov)
     }

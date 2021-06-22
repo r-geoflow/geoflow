@@ -198,9 +198,15 @@ register_entity_handlers <- function(){
       fun = handle_entities_ncdf
     ),
     geoflow_handler$new(
+      id = "ncml",
+      def = "Handle metadata entities from a NCML source",
+      packages = list("XML"),
+      fun = handle_entities_ncml
+    ),
+    geoflow_handler$new(
       id = "thredds",
       def = "Handle metadata entities from a Thredds server source",
-      packages = list("ncdf4","thredds","mime"),
+      packages = list("ncdf4","thredds","XML","png","curl"),
       fun = handle_entities_thredds
     )
   )
