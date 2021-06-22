@@ -206,7 +206,9 @@ register_actions <- function(){
         logo = list(def = "Add configure profile logo(s) - if defined - as metadata thumbnail(s)", class = "logical", default = FALSE),
         addfeatures = list(def = "Add entity data features - if defined - as metadata bounding polygon(s)", class = "logical", default = FALSE),
         featureId = list(def = "ID of entity data features used to identify bounding polygon(s) with option 'addfeatures'", class = "character", default = NA),
-        subject_geography = list(def = "Identifier of the subject handling a Geographic coverage.", class = "character", default = "geography")
+        subject_geography = list(def = "Identifier of the subject handling a Geographic coverage.", class = "character", default = "geography"),
+        include_coverage_data_dimension_values = list(def = "Include data dimensions's range values to coverage description", class = "logical", default = FALSE),
+        include_coverage_service_dimension_values = list(def = "Include ogc dimensions's range values to coverage description", class = "logical", default = FALSE),
       )
     ),
     geoflow_action$new(
