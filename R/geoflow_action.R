@@ -208,7 +208,7 @@ register_actions <- function(){
         featureId = list(def = "ID of entity data features used to identify bounding polygon(s) with option 'addfeatures'", class = "character", default = NA),
         subject_geography = list(def = "Identifier of the subject handling a Geographic coverage.", class = "character", default = "geography"),
         include_coverage_data_dimension_values = list(def = "Include data dimensions's range values to coverage description", class = "logical", default = FALSE),
-        include_coverage_service_dimension_values = list(def = "Include ogc dimensions's range values to coverage description", class = "logical", default = FALSE),
+        include_coverage_service_dimension_values = list(def = "Include ogc dimensions's range values to coverage description", class = "logical", default = FALSE)
       )
     ),
     geoflow_action$new(
