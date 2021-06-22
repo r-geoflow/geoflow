@@ -499,6 +499,19 @@ geometa_create_iso_19115 <- function(entity, config, options){
       scriptOp <- ISOOperationMetadata$new()
       scriptOp$setOperationName(request)
       
+      if(request=="GetCapabilities"){
+        or1 <- ISOOnlineResource$new()
+        or1$setLinkage(paste0(wms$link,"&version=",switch(wms$key,
+                                                                  "wms" = "1.1.0",
+                                                                  "wms110" = "1.1.0",
+                                                                  "wms111" = "1.1.1",
+                                                                  "wms130" = "1.3.0"),"&request=GetCapabilities"))
+        or1$setName("OGC:WMS")
+        or1$setDescription("Open Geospatial Consortium Web Map Service (WMS)")
+        or1$setProtocol("OGC:WMS")
+        scriptOp$addConnectPoint(or1)
+      }
+      
       if(request=="GetMap"){
         #GetMap
         if(length(entity$data$ogc_dimensions)>0) for(ogc_dimension in names(entity$data$ogc_dimensions)){
