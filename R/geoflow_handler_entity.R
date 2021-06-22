@@ -385,6 +385,8 @@ handle_entities_dbi <- function(config, source){
 
 #handle_entities_ncdf
 handle_entities_ncdf <- function(config, source){
+  
+  config$logger.info("NCDF Handle")
 
   #if(!mime::guess_type(source)=="application/x-netcdf"){
   #  errMsg <- "Error in 'handle_entities_df': source parameter should be an 'netcdf' file"
@@ -489,7 +491,7 @@ handle_entities_ncdf <- function(config, source){
   }
   
   #dates
-  if(is.null(attr$date_created)){entity$addDate("creation", Sys.time())} else if(!"try-error" %in% class(try(as.POSIXlt.character(attr$date_created)))){entity$addDate("creation", attr$date_created)} else {}
+  if(is.null(attr$date_created)){entity$addDate("creation", Sys.time())} else if(!"try-error" %in% class(try(as.POSIXlt.character(attr$date_created)))){entity$addDate("creation", attr$date_created)} else {entity$addDate("creation", Sys.time())}
   if(!is.null(attr$date_modified)) if(!"try-error" %in% class(try(as.POSIXlt.character(attr$date_modified))))entity$addDate("revision", attr$date_modified)
   if(!is.null(attr$date_metadata_modified)) if(!"try-error" %in% class(try(as.POSIXlt.character(attr$date_metadata_modified))))entity$addDate("metadata", attr$date_metadata_modified)
   if(!is.null(attr$date_issued)) if(!"try-error" %in% class(try(as.POSIXlt.character(attr$date_issued))))entity$addDate("publication", attr$date_issued)
@@ -654,6 +656,8 @@ handle_entities_ncdf <- function(config, source){
 #handle_entities_ncml
 handle_entities_ncml <- function(config, source){
   
+config$logger.info("NCML Handle")
+  
   getNCML <- function(file){
     
     xml <- XML::xmlParse(httr::content(httr::GET(file),"text"))
@@ -815,10 +819,11 @@ handle_entities_ncml <- function(config, source){
   }
   
   #dates
-  if(is.null(attr$date_created$value)){entity$addDate("creation", Sys.time())} else if(!"try-error" %in% class(try(as.POSIXlt.character(attr$date_created$value)))){entity$addDate("creation", attr$date_created$value)} else {}
+  if(is.null(attr$date_created$value)){entity$addDate("creation", Sys.time())} else if(!"try-error" %in% class(try(as.POSIXlt.character(attr$date_created$value)))){entity$addDate("creation", attr$date_created$value)} else {entity$addDate("creation", Sys.time())}
   if(!is.null(attr$date_modified$value)) if(!"try-error" %in% class(try(as.POSIXlt.character(attr$date_modified$value))))entity$addDate("revision", attr$date_modified$value)
   if(!is.null(attr$date_metadata_modified$value)) if(!"try-error" %in% class(try(as.POSIXlt.character(attr$date_metadata_modified$value))))entity$addDate("metadata", attr$date_metadata_modified$value)
   if(!is.null(attr$date_issued$value)) if(!"try-error" %in% class(try(as.POSIXlt.character(attr$date_issued$value))))entity$addDate("publication", attr$date_issued$value)
+
   
   #Type
   #No information available
