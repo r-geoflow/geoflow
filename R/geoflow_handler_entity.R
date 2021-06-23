@@ -613,7 +613,7 @@ handle_entities_ncdf <- function(config, source){
         name="vertical" 
         resolution = list(
           uom=attr$geospatial_vertical_units,
-          value = unlist(strsplit(attr$geospatial_vertical_resolution,"[.]"))[1]
+          value = if(!is.null(attr$geospatial_vertical_resolution)) as.numeric(gsub("\\D","",attr$geospatial_vertical_resolution)) else NULL
         )
       }
       dimension_obj<-geoflow_dimension$new()
@@ -759,6 +759,8 @@ config$logger.info("NCML Handle")
   summary <- attr$summary$value
   if(!is.null(summary)){
     entity$setDescription("abstract", summary)
+    #entity$setDescription("abstract","Test")
+    
   }
   
   edition <- attr$product_version$value
@@ -940,7 +942,7 @@ config$logger.info("NCML Handle")
         name="vertical" 
         resolution = list(
           uom=attr$geospatial_vertical_units$value,
-          value = unlist(strsplit(attr$geospatial_vertical_resolution$value,"[.]"))[1]
+          value = if(!is.null(attr$geospatial_vertical_resolution$value)) as.numeric(gsub("\\D","",attr$geospatial_vertical_resolution$value)) else NULL
         )
       }
       dimension_obj<-geoflow_dimension$new()
