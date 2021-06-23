@@ -990,7 +990,7 @@ handle_entities_thredds <- function(config, source){
     stop("There is no database input software configured to handle entities from Thredds")
   }
   
-  if(length(thredds$get_dataset_names())==0) {
+  if(length(thredds$get_dataset_names())==0) if(length(thredds$get_dataset_names(xpath=".//d1:dataset"))==0) {
     errMsg <- sprintf("No datasets for the thredds")
     config$logger.error(errMsg)
     stop(errMsg)
@@ -1000,6 +1000,7 @@ handle_entities_thredds <- function(config, source){
     datasets<-unlist(strsplit(source,","))
   }else{
     datasets<- thredds$get_dataset_names()
+    if(is.null(datasets)) datasets <- thredds$get_dataset_names(xpath=".//d1:dataset")
   }
 
   
@@ -1010,6 +1011,7 @@ handle_entities_thredds <- function(config, source){
   entities<-list()
   entities<- lapply(datasets, function(dataset){
     data<-thredds$get_datasets(dataset)[[dataset]]
+    if(is.null(data)) data<-thredds$get_datasets(dataset,xpath=".//d1:dataset")[[dataset]]
     config$logger.info(sprintf("Build entity for '%s'", data$url))
     
     #entity

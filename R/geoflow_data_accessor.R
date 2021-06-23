@@ -284,6 +284,8 @@ register_data_accessors <- function(){
         datasetNode<-NULL
         if(dataset %in% child$get_dataset_names()){
           data<-child$get_datasets(dataset)[[dataset]]
+        }else if(dataset %in% child$get_dataset_names(xpath=".//d1:dataset")){
+          data<-child$get_datasets(dataset,xpath=".//d1:dataset")[[dataset]]
         }else{
           errMsg <- sprintf("[geoflow] dataset '%s' not existing and  can't be download\n",dataset)
           cat(errMsg)
@@ -294,10 +296,6 @@ register_data_accessors <- function(){
         base_uri<-paste0(uri$scheme,"://",uri$server)
         http<-unlist(sapply(names(software$list_services()), function(x) if(software$list_services()[[x]]["serviceType"]=="HTTPServer") software$list_services()[[x]]["base"]))[1]
         if(!is.null(http)){
-        #   errMsg <- sprintf("no valid ",dataset)
-        #   cat(errMsg)
-        #   stop(errMsg)
-        # }else{
           dataset_uri<-paste0(base_uri,http,data$url)
           if(httr::GET(dataset_uri)$status=="200") download.file(url = dataset_uri, destfile = dataset_dest,mode="wb")
         }
