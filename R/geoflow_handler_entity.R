@@ -83,9 +83,11 @@ handle_entities_df <- function(config, source){
     
     #title
     src_title <- sanitize_str(source_entity[,"Title"])
-    allowedTitleKeys <- entity$getAllowedKeyValuesFor("titles")
-    hasTitleKey <- any(sapply(allowedTitleKeys, function(x){startsWith(src_title, x)}))
-    if(!hasTitleKey) src_title <- paste0("title:", src_title)
+    if(!is.na(src_title)){
+      allowedTitleKeys <- entity$getAllowedKeyValuesFor("titles")
+      hasTitleKey <- any(sapply(allowedTitleKeys, function(x){startsWith(src_title, x)}))
+      if(!hasTitleKey) src_title <- paste0("title:", src_title)
+    }
     titles <- if(!is.na(src_title)) extract_cell_components(src_title) else list()
     if(length(titles)>0){
       if(length(titles)==1){
@@ -101,9 +103,11 @@ handle_entities_df <- function(config, source){
 
     #description
     src_description <- sanitize_str(source_entity[,"Description"])
-    allowedDescKeys <- entity$getAllowedKeyValuesFor("descriptions")
-    hasDescKey <- any(sapply(allowedDescKeys, function(x){startsWith(src_description, x)}))
-    if(!hasDescKey) src_description <- paste0("abstract:", src_description)
+    if(!is.na(src_description)){
+      allowedDescKeys <- entity$getAllowedKeyValuesFor("descriptions")
+      hasDescKey <- any(sapply(allowedDescKeys, function(x){startsWith(src_description, x)}))
+      if(!hasDescKey) src_description <- paste0("abstract:", src_description)
+    }
     descriptions <- if(!is.na(src_description)) extract_cell_components(src_description) else list()
     if(length(descriptions)>0){
       if(length(descriptions)==1){
@@ -888,24 +892,20 @@ config$logger.info("NCML Handle")
   
   #dimensions
   for(dim in names(source$dimensions)){
-      #row
-      if(startsWith(dim,"lat")){
+      
+      if(startsWith(dim,"lat")){#row
         name="row"
         resolution = list(
           uom=if(!is.null(attr$geospatial_lat_units$value)) attr$geospatial_lat_units$value else source$variables[[dim]]$attributes$units$value,
           value = if(!is.null(attr$geospatial_lat_resolution$value)){if(is.numeric(attr$geospatial_lat_resolution$value)){attr$geospatial_lat_resolution$value}else{unlist(strsplit(attr$geospatial_lat_resolution$value," "))[1]}}else{NULL}
         )
-      }
-      #column
-      if(startsWith(dim,"lon")){
+      }else if(startsWith(dim,"lon")){#column
         name="column" 
         resolution = list(
           uom=if(!is.null(attr$geospatial_lon_units$value)) attr$geospatial_lon_units$value else source$variables[[dim]]$attributes$units$value,
           value = if(!is.null(attr$geospatial_lon_resolution$value)){if(is.numeric(attr$geospatial_lon_resolution$value)){attr$geospatial_lon_resolution$value}else{unlist(strsplit(attr$geospatial_lon_resolution$value," "))[1]}}else{NULL}
         )
-      }
-      #time
-      if(startsWith(dim,"time")){
+      }else if(startsWith(dim,"time")){#time
         name="time"
         if(!is.null(attr$time_coverage_resolution$value)){
           duration<-attr$time_coverage_resolution$value
@@ -936,13 +936,17 @@ config$logger.info("NCML Handle")
         }else{
           resolution=list(uom=NULL,value=NULL)
         }
-      }
-      #vertical
-      if(startsWith(dim,"z")){
+      }else if(startsWith(dim,"z")|startsWith(dim,"alt")){#vertical
         name="vertical" 
         resolution = list(
           uom=attr$geospatial_vertical_units$value,
           value = if(!is.null(attr$geospatial_vertical_resolution$value)) as.numeric(gsub("\\D","",attr$geospatial_vertical_resolution$value)) else NULL
+        )
+      }else{
+        name=dim
+        resolution = list(
+          uom=source$variables[[dim]]$attributes$units$value,
+          value=NULL
         )
       }
       dimension_obj<-geoflow_dimension$new()
@@ -1148,5 +1152,96 @@ handle_entities_thredds <- function(config, source){
     return(entity)
     
   })
+  return(entities)
+}
+
+#handle_entities_thredds_df
+handle_entities_thredds_df = function(config, source){
+  
+  entities <- handle_entities_df(config, source)
+  
+  thredds_entities <- lapply(entities, function(entity){
+    
+    thredds_source <- entity$data$source[[1]]
+    
+    thredds_entity <- handle_entities_thredds(config, thredds_source)[[1]]
+    
+    #identifiers (priority to df)
+    if(is.null(entity$identifiers$doi)) if(!is.null(thredds_entity$identifiers$doi)) entity$identifiers$doi<-thredds_entity$identifiers$doi
+    
+    #titles (priority to df)
+    if(is.null(entity$titles$title)) if(!is.null(thredds_entity$entity$titles$title)) entity$identifiers$doi<-thredds_entity$entity$titles$title
+    
+    #descriptions (priority to df)
+    if(is.null(entity$descriptions$abstract)) if(!is.null(thredds_entity$descriptions$abstract)) entity$identifiers$doi<-thredds_entity$descriptions$abstract
+    if(is.null(entity$descriptions$edition)) if(!is.null(thredds_entity$descriptions$edition)) entity$identifiers$doi<-thredds_entity$descriptions$edition
+    if(is.null(entity$descriptions$credit)) if(!is.null(thredds_entity$descriptions$credit)) entity$identifiers$doi<-thredds_entity$descriptions$credit
+    
+    #subjects (cumulative)
+    entity$subjects<-unique(c(entity$subjects,thredds_entity$subjects))
+    
+    #contacts (cumulative)
+    entity$contacts<-unique(c(entity$contacts,thredds_entity$contacts))
+    
+    #dates (priority to thredds)
+    entity$dates<-thredds_entity$dates
+    
+    #types (use df)
+    #language (use df)
+    
+    #spatial coverage (priority to thredds)
+    if(!is.null(thredds_entity$spatial_extent)) entity$spatial_extent<-thredds_entity$spatial_extent
+    if(!is.null(thredds_entity$spatial_bbox)) entity$spatial_bbox<-thredds_entity$spatial_bbox
+    
+    #temporal coverage (priority to thredds)
+    if(!is.null(thredds_entity$temporal_extent)) entity$temporal_extent<-thredds_entity$temporal_extent
+    
+    #relations (cumulative)
+    entity$relations<-unique(c(entity$relations,thredds_entity$relations))
+    
+    #rights (cumulative)
+    entity$rights<-unique(c(entity$rights,thredds_entity$rights))
+    
+    #formats (use df)
+    #provenance (use df)
+    
+    #data (use thredds)
+    entity$data<-thredds_entity$data
+    
+    return(entity)
+  })
+  return(thredds_entities)
+}
+
+#handle_entities_thredds_gsheets
+handle_entities_thredds_gsheet <- function(config, source){
+  
+  #read gsheet URL
+  source <- as.data.frame(gsheet::gsheet2tbl(source))
+  
+  #apply generic handler
+  entities <- handle_entities_thredds_df(config, source)
+  return(entities)
+}
+
+#handle_entities_thredds_csv
+handle_entities_thredds_csv <- function(config, source){
+  
+  #read csv TODO -> options management: sep, encoding etc
+  source <- read.csv(source,stringsAsFactors = F)
+  
+  #apply generic handler
+  entities <- handle_entities_thredds_df(config, source)
+  return(entities)
+}
+
+#handle_entities_thredds_excel
+handle_entities_thredds_excel <- function(config, source){
+  
+  #read excel TODO -> options management: sep, encoding etc
+  source <- as.data.frame(readxl::read_excel(source))
+  
+  #apply generic handler
+  entities <- handle_entities_thredds_df(config, source)
   return(entities)
 }
