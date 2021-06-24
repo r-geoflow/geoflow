@@ -180,7 +180,12 @@ geometa_create_iso_19115 <- function(entity, config, options){
       dimObject <- ISODimension$new()
       dimObject$setName(dimension)
       dimObject$setSize(entity$data$dimensions[[dimension]]$size)
-      dimObject$setResolution(ISOMeasure$new(value=entity$data$dimensions[[dimension]]$resolution$value,uom=entity$data$dimensions[[dimension]]$resolution$uom))
+      resolution<-entity$data$dimensions[[dimension]]$resolution
+      if(is.null(resolution$value)){
+        dimObject$resolution <- ISOAttributes$new("gco:nilReason" = "missing")  
+      }else{
+        dimObject$setResolution(ISOMeasure$new(value=resolution$value,uom=resolution$uom))
+      }
     gsr$addDimension(dimObject)
     }
     gsr$setCellGeometry("area")
