@@ -135,6 +135,9 @@ geometa_create_iso_19115 <- function(entity, config, options){
      } 
    }
   
+  if(length(md$contact)==0) md$contact <- ISOAttributes$new("gco:nilReason" = "missing")   
+
+  
   #spatial representation
   spatialRepresentationType <- entity$data$spatialRepresentationType
   if(spatialRepresentationType=="vector"){
