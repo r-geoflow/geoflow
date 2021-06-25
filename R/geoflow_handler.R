@@ -208,6 +208,23 @@ register_entity_handlers <- function(){
       def = "Handle metadata entities from a Thredds server source",
       packages = list("ncdf4","thredds","XML","png","curl"),
       fun = handle_entities_thredds
+    ),
+    geoflow_handler$new(
+      id = "thredds_csv",
+      def = "Handle metadata thredds entities from a CSV file",
+      fun = handle_entities_thredds_csv
+    ),
+    geoflow_handler$new(
+      id = "thredds_excel",
+      def = "Handle metadata thredds entities from a Microsoft Excel (xls,xlsx) file",
+      packages = list("readxl"),
+      fun = handle_entities_thredds_excel
+    ),
+    geoflow_handler$new(
+      id = "thredds_gsheet",
+      def = "Handle metadata thredds entities from a Google spreadsheet",
+      packages = list("gsheet"),
+      fun = handle_entities_thredds_gsheet
     )
   )
   .geoflow$entity_handlers <- handlers
