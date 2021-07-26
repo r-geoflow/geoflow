@@ -38,10 +38,10 @@ handle_contacts_df <- function(config, source){
       }))
     }else{
       config$logger.warn("Use 'Email' column as contact Ids. Make sure to upgrade your 'contacts' table to include contact ids in the 'Identifier' column")
-      contact$setIdentifier("id", tolower(source_contact[,"Email"]))
+      contact$setIdentifier("id", source_contact[,"Email"])
     }
     
-    contact$setEmail(tolower(source_contact[,"Email"]))
+    contact$setEmail(source_contact[,"Email"])
     contact$setFirstName(source_contact[,"FirstName"])
     contact$setLastName(source_contact[,"LastName"])
     contact$setOrganizationName(source_contact[,"OrganizationName"])

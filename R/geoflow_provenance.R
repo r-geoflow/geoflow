@@ -63,7 +63,7 @@ geoflow_provenance <- R6Class("geoflow_provenance",
            #processors
            processors <- data_props[sapply(data_props, function(x){startsWith(x,"processor:")})]
            processors_splits <- unlist(strsplit(processors, ":"))
-           processors <- tolower(unlist(strsplit(processors_splits[2],",")))
+           processors <- unlist(strsplit(processors_splits[2],","))
            #control processors vs. processes
            if(length(processors)!=length(processes)){
               stop(sprintf("Number of processors [%s] doesn't match the number of processes [%s]",

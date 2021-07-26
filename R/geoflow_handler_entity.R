@@ -152,7 +152,7 @@ handle_entities_df <- function(config, source){
     if(length(contacts)>0){
       invisible(lapply(contacts, function(contact){
         contact_splits <- unlist(strsplit(contact, ":"))
-        contact_ids <- tolower(unlist(strsplit(contact_splits[2],",")))
+        contact_ids <- unlist(strsplit(contact_splits[2],","))
         for(contact_id in contact_ids){
           if(is.na(contact_id)){
             config$logger.warn(sprintf("Warning: In entity %s, empty contact id will be ignored!", i))
