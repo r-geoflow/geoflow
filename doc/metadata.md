@@ -59,7 +59,7 @@ Examples cover both:
 | **other keys available**     | ``alternative`` (short title, subtitle or alternative title)              |
 | **Examples**                 |                              |
 | Simple usage                 | ``This is my dataset title`` |
-| Advanced usage               | ``title:This is my dataset title_``<br/>``alternatve:This is an alternative title``           |
+| Advanced usage               | ``title:This is my dataset title_``<br/>``alternative:This is an alternative title``           |
 
 #### Description
 
@@ -89,13 +89,13 @@ Examples cover both:
 
 | **Column name**              | <u>Creator</u>    |
 | ---------------------------- | ----------------- |
-| **Definition**               | Parties having a role in the managment of the dataset. Each party should be identify with one identifier in a contact table. For keys specific to a geoflow action please see the table(link to add)|
+| **Definition**               | Parties having a role in the managment of the dataset. Each party should be identify with one identifier in a contact table. For keys specific to a geoflow action please see the table (link to add)|
 | **Need**                     | Recommended       |
 | **Default key (if omitted)** | *Not applicable*  |
 | **other keys available**     | ``owner``<br />``publisher`` <br />``metadata``  <br />``pointOfContact`` (other contributors) | 
 | **Examples**                 |                   |
 | Simple usage                 |*role:email*  e.g. owner:xxx@mail.com                 |
-| Advanced usage               |on owner with multiples contributors:  <br />`owner:owner@mail.com_` <br />`pointOfcontact:contact1@mail.com,contact2@mail.com`                   | 
+| Advanced usage               |on owner with multiples contributors:  <br />`owner:owner@mail.com_` <br />`pointOfContact:contact1@mail.com,contact2@mail.com`                   | 
 
 #### Date
 
@@ -178,7 +178,7 @@ Examples cover both:
 | **Definition**               | Describe of the access and/or use constrinct. Restriction code are map ISO 19115, the 2 conscrinct are related to code list . Control to term , use limitation can be use for any term of use (license, prefered citatation, disclaimer). other conscrinct free text can be use for any other constrinct want to use |
 | **Need**                     |Optional               |
 | **Default key (if omitted)** |*Not applicable*|
-| **other keys available**     |``license``  <br /> ``use``  <br /> ``uselimitation``  <br /> ``useConstraint`` <br /> ``accessConstraint`` <br />  ``otherConstraint``|
+| **other keys available**     |``license``  <br /> ``use``  <br /> ``useLimitation``  <br /> ``useConstraint`` <br /> ``accessConstraint`` <br />  ``otherConstraint``|
 | **Examples**                 |               |
 | Simple usage                 |rule:key       |
 | Advanced usage               |`useLimitation:Free usage_` <br/> `accessConstraint:otherRestrictions_` <br/> `useConstraint:intellectualPropertyRights_` <br/> `otherConstraint:The supplier is unable to guarantee the accuracy, updating, integrity, completeness of the data`               |
