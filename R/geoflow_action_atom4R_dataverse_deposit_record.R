@@ -153,6 +153,9 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
     }
   }
   
+  #save Dublin Core XML to metadata folder
+  dcentry$save(file.path(getwd(), "metadata", paste0(entity$getEntityJobDirname(), "_DC.xml")))
+  
   #action (create/update) on dataverse
   doi <- entity$identifiers[["doi"]]
   action <- ifelse(is.null(doi),"CREATE","UPDATE")
