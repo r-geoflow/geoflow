@@ -89,6 +89,7 @@ debugWorkflow <- function(file, dir = NULL, entityIndex = 1,
     #data features
     if(is.null(entity$data$features) & !skipFileDownload) {
       entity$enrichWithFeatures(config, jobdir)
+      setwd(entity$getEntityJobDirPath(config, jobdir)) #make sure we are in entity jobdir
       entity$prepareFeaturesToUpload(config)
     }
     #data relations (eg. geosapi & OGC data protocol online resources)
