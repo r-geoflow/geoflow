@@ -477,11 +477,14 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #service information
   #WMS
   wms<-entity$relations[sapply(entity$relations, function(x){startsWith(x$key,"wms")})][[1]]
-  WMS<-ows4R::WMSClient$new(url=gsub("service=WMS","",wms$link),serviceVersion=switch(wms$key,
-                                                                               "wms" = "1.1.0",
-                                                                               "wms110" = "1.1.0",
-                                                                               "wms111" = "1.1.1",
-                                                                               "wms130" = "1.3.0"),logger="DEBUG")
+  wms_link <- gsub("ows", "wms", gsub("service=WMS","",wms$link))
+  wms_version <- switch(wms$key,
+                        "wms" = "1.1.0",
+                        "wms110" = "1.1.0",
+                        "wms111" = "1.1.1",
+                        "wms130" = "1.3.0")
+  config$logger.info(sprintf("Configuring WMS client on '%s' (version = '%s')", wms_link, wms_version))
+  WMS<-ows4R::WMSClient$new(url=wms_link,serviceVersion=wms_version,logger="DEBUG")
   if(!is.null(wms)){
     #SRVServiceIdentification
     si <- ISOSRVServiceIdentification$new()
