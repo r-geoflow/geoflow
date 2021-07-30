@@ -33,6 +33,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   layername <- if(!is.null(entity$data$layername)) entity$data$layername else entity$identifiers$id
   
   #shortcut for gs config
+  GS_CONFIG <- config$software$output$geoserver_config
   GS <- config$software$output$geoserver
   if(is.null(GS)){
     errMsg <- "This action requires a GeoServer software to be declared in the configuration"
