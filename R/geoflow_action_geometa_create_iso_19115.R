@@ -300,7 +300,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #resource formats
   if(length(entity$formats)>0){
     resourceFormats = entity$formats[sapply(entity$formats, function(x){x$key == "resource"})]
-    for(resourceFormat in resourceFormats){
+    if(length(resourceFormats)>0) for(resourceFormat in resourceFormats){
       format = ISOFormat$new()
       format_name = resourceFormat$name
       if(!is.null(resourceFormat$uri)){
@@ -671,7 +671,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #add distribution formats
   if(length(entity$formats)>0){
     distFormats = entity$formats[sapply(entity$formats, function(x){x$key == "distribution"})]
-    for(distFormat in distFormats){
+    if(length(distFormats)>0) for(distFormat in distFormats){
       format = ISOFormat$new()
       format_name = distFormat$name
       if(!is.null(distFormat$uri)){
