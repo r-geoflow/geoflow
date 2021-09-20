@@ -1,0 +1,35 @@
+---
+title: "geoflow – R engine to orchestrate and run geospatial (meta)data workflows - List of accessors and handlers"
+output: 
+  github_document:
+    number_sections: true
+    
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(geoflow)
+```
+
+# Accessors
+
+## List of accessors supported by geoflow
+```{r, echo = FALSE, message = FALSE, results = 'asis'}
+
+tab<-geoflow::list_data_accessors()
+tab[is.na(tab)]<-""
+tab[,1]<-paste0("[**",tab[,1],"**](#",tab[,1],")<br>")
+kable(tab)
+
+```
+
+# Handlers
+
+## List of handlers supported by geoflow
+```{r, echo = FALSE, message = FALSE, results = 'asis'}
+
+tab<-geoflow::list_entity_handlers()
+tab[,1]<-paste0("[**",tab[,1],"**](#",tab[,1],")<br>")
+kable(tab)
+
+```
