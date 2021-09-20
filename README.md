@@ -14,6 +14,10 @@
 
 Please check the [online documentation](https://github.com/eblondel/geoflow/wiki) for more details! **(documentation in preparation)**
 
+For questions about using geoflow, you can ask them in the chat room here: [![Gitter](https://img.shields.io/badge/chat%20room-for%20users-brown.svg?style=flat-square)](https://gitter.im/geoflow-users/community)
+
+For questions about contributing to geoflow, adding new functions/enhancements or discuss potential bugs, you can write in the chat room dedicated to development: [![Gitter](https://img.shields.io/badge/chat%20room-for%20developers-brown.svg?style=flat-square)](https://gitter.im/geoflow-developers/community)
+
 
 ## Sponsors
 
@@ -21,7 +25,7 @@ Many thanks to the following organizations that have provided fundings for stren
 
 <div style="float:left;">
   <a href="http://www.fao.org"><img height=200 width=200 src="http://www.fao.org/fileadmin/templates/family-farming-decade/images/FAO-IFAD-Logos/FAO-Logo-EN.svg">
-  <a href="https://en.ird.fr/"><img src="http://www.umr-marbec.fr/images/logo-ird-en.png" height=200 width=200/>
+<a href="https://en.ird.fr/"><img src="https://en-dial.ird.fr/var/ird/storage/images/media/ird-sites-d-unites-de-recherche/dial/images/logos/logo_ird_2016_longueur_uk/4030160-1-eng-GB/logo_ird_2016_longueur_uk.png" height=100 width=300/></a>
   <a href="https://www.inrae.fr"><img height=200 width=200 src="https://www.inrae.fr/themes/custom/inrae_socle/logo.svg"></a>
 </div>
 <br>

@@ -457,7 +457,7 @@ register_software <- function(){
       arguments = list(
         hostname = list(def = "Dataverse base URL", class = "character"),
         token = list(def = "Dataverse user authentication token", class = "character"),
-        logger = list(def = "Level for 'atom4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = list(NULL,"INFO","DEBUG"))
+        logger = list(def = "Level for 'atom4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = list("INFO","DEBUG"))
       ),
       attributes = list(
         dataverse = list(def = "Dataverse id where to deposit/publish records", class = "character")
@@ -500,7 +500,7 @@ register_software <- function(){
       handler = try(d4storagehub4R::StoragehubManager$new, silent = TRUE),
       arguments = list(
         token = list(def = "D4Science storage hub user authentication token", class = "character"),
-        logger = list(def = "Level for 'd4storagehub4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = list(NULL,"INFO","DEBUG"))
+        logger = list(def = "Level for 'd4storagehub4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = list("INFO","DEBUG"))
       ),
       attributes = list(
         workspace = list(def = "D4Science storage hub workspace name", class = "character")
