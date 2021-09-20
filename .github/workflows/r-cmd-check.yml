@@ -35,7 +35,7 @@ jobs:
         if: ${{ matrix.config.sdi && matrix.config.metadata_server == 'pycsw' }}
         run: |
           docker pull geopython/pycsw:latest
-          docker run --name pycsw -v $GITHUB_WORKSPACE/tests/pycsw/pycsw.cfg:/etc/pycsw/pycsw.cfg -d -p 8080:8080 geopython/pycsw:latest
+          docker run --name pycsw -v $GITHUB_WORKSPACE/tests/pycsw/pycsw.cfg:/etc/pycsw/pycsw.cfg -d -p 8000:8000 geopython/pycsw:latest
       #Docker GeoNetwork set-up
       - name: Set up GeoNetwork (latest)
         if: ${{ matrix.config.sdi && matrix.config.metadata_server == 'geonetwork' }}
