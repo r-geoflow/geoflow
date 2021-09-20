@@ -7,6 +7,8 @@ As now, three software access are available, a downloadHandler function associat
 	 - *googledrive* for access to google drive, must be declared under the same name (id) as a access listed in **software** section of json configuration file. e.G. `access:googledrive`
 	 - *zenodo*  for access to zenodo software and download data resources associated to the Zenodo record based on DOI. e.g. `access:zenodo`
 	 - *d4storagehub*  for access to [d4science](https://www.d4science.org/)  storage hub software and download data resources store on d4science workspace e.g. `access:d4storagehub`
+	 - *gbif*  for access to [gbif](https://www.gbif.org/) open access biodiversity data ressources e.g. `access:gbif`. See the detailed documentation sheet (in preparation).
+	 - *thredds*  for access to [Thredds Data Server](https://www.unidata.ucar.edu/software/tds/current/) and read netcdf datasets e.g. `access:thredds`. See the detailed documentation sheet (in preparation).
 ```{json}
 	{
 		"id": "googledrive",
@@ -19,6 +21,7 @@ As now, three software access are available, a downloadHandler function associat
 		"properties" : {}
 	}
 ```
+	- 
 	- *otherAccess*(in dev)* other application with api (owncloud, etc)
 
 * **source** : name with extension of files to source. For spatial source, a single source can be used, for other type several files can be declare for a same workflow, they must be on the same extension and separated by a comma (,). 
@@ -30,6 +33,7 @@ If sourced files are in local repertory the complete path of file must be declar
 	* *`shp`* for shapefile object
 	* *`csv`* for CSV table object. If spacialized the current geometry field expression supported are `"the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"`.
 	* *`gpkg`* for geopackage object
+	* *`nc`* for netcfd4 object
 	* *`other`* for other type of files
 * **sourceSql**: a sql request as source 
 * **sourceZip**: a boolean argument whether if a zipped version of the data file(s) should be created from a source files. Default value is `FALSE`
@@ -46,6 +50,7 @@ If data must be upload, declare server in **software** section of json configura
 	* *`shp`* for shapefile object
 	* *`csv`* for CSV table object
 	* *`gpkg`* for geopackage object
+	* *`nc`* for netcfd4 object
 	* *`other`* for other type of files
 * **workspace**: name of target workspace to connect and upload to remote storage (can also be specified in json configuration). To declare this parameter in data column of entites sheet you must indicate the name or path of workspace followed by the type of software  with `@` key.  Two softwares can be invoke :`geoserver`,`d4storagehub`. e.g.`workspace:MyWorkspace@geoserver` 
 
@@ -54,6 +59,8 @@ If data must be upload, declare server in **software** section of json configura
 * **featureType**: set dictionary identifier if declared on FeatureType column of Dictionary sheet.
 * **attribute**: declared attributes definition if featureType (*not use, depracated*). It is an alternative usage without dictionary sheet, you can declare the list of attribute item by id with a label and a register. This register must be declared in the configuration file like below  . e.g. `field1[Specie]@eml_species_register,field2[Area]@registre_pyrenees`
 * **variable**: declared variables definition if featureType (*not use, depracated*) (same usage than `attribute`)
+* **dimensions**: declared data dimensions (only use for netcdf case) 
+* **ogc_dimensions**:  declare data dimensions to communicate with ogc services (only use for netcdf case) 
 ```
 "registers" : [
 	{
