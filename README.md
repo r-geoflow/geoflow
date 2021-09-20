@@ -14,6 +14,10 @@
 
 Please check the [online documentation](https://github.com/eblondel/geoflow/wiki) for more details! **(documentation in preparation)**
 
+For questions about using geoflow, you can ask them in the chat room here: [![Gitter](https://img.shields.io/badge/chat%20room-for%20users-brown.svg?style=flat-square)](https://gitter.im/geoflow-users/community)
+
+For questions about contributing to geoflow, adding new functions/enhancements or discuss potential bugs, you can write in the chat room dedicated to development: [![Gitter](https://img.shields.io/badge/chat%20room-for%20developers-brown.svg?style=flat-square)](https://gitter.im/geoflow-developers/community)
+
 
 ## Sponsors
 
