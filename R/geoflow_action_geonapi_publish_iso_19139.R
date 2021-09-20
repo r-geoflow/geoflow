@@ -14,13 +14,13 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     stop(errMsg)
   }
   
-  privileges <- if(!is.null(options$privileges)) options$privileges else  c("view","dynamic","featured")
-  
   #to insert or update a metadata into a geonetwork.
   #An insert has to be done in 2 operations (the insert itself, and the privilege setting to "publish" it either to a restrained group or to public)
   #An update has to be done based on the internal Geonetwork id (that can be queried as well
   #function doPublish
   doPublish <- function(mdfile, inspire){
+    
+    privileges <- if(!is.null(options$privileges)) options$privileges else  c("view","dynamic","featured")
     mdId <- NULL
     md <- readISO19139(metaFile)
     privs <- privileges
@@ -32,28 +32,53 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
       mdId <- md$attrs[["uuid"]]
       privs <- "view"
     }
-    metaId <- GN$get(mdId, by = "uuid", output = "id")
-    if(is.null(metaId)){
-      #insert metadata (once inserted only visible to the publisher)
-      group <- if(!is.null(options$group)) options$group else "1"
-      category <- if(!is.null(options$category)) options$category else "datasets"
-      created = GN$insertMetadata(geometa = md, group = group, category = category,
-                                  geometa_inspire = inspire)
-      
-      #config privileges
-      config <- GNPrivConfiguration$new()
-      config$setPrivileges("all", privs)
-      GN$setPrivConfiguration(id = created, config = config)
-    }else{
-      #update a metadata
-      updated = GN$updateMetadata(id = metaId, geometa = md,
-                                  geometa_inspire = inspire)
-      
-      #config privileges
-      gn_config <- GNPrivConfiguration$new()
-      gn_config$setPrivileges("all", privs)
-      GN$setPrivConfiguration(id = metaId, config = gn_config)
+    
+    #group
+    group <- if(!is.null(options$group)) options$group else "1"
+    available_groups <- GN$getGroups()
+    if(!group %in% available_groups$id){
+      errMsg <- sprintf("Geonetwork: no group for id = %s - Please check below the Geonetwork available groups", group)
+      config$logger.error(errMsg)
+      print(available_groups)
+      stop(errMsg)
     }
+    #category
+    category <- if(!is.null(options$category)) options$category else "1"
+    available_categories <- GN$getCategories()
+    if(!category %in% available_categories){
+      errMsg <- sprintf("Geonetwork: no category for id = %s - Please check below the Geonetwork available categories", category)
+      config$logger.error(errMsg)
+      print(available_categories)
+      stop(errMsg)
+    }
+    
+    switch(GN$getClassName(),
+      "GNOpenAPIManager" = {
+        GN$insertRecord(geometa = md, group = group, category = category,
+                          uuidProcessing = "OVERWRITE", geometa_inspire = inspire)
+      },
+      "GNLegacyAPIManager" = {
+        metaId <- GN$get(mdId, by = "uuid", output = "id")
+        if(is.null(metaId)){
+          #insert metadata (once inserted only visible to the publisher)
+          created = GN$insertMetadata(geometa = md, group = group, category = category,
+                                      geometa_inspire = inspire)
+          #config privileges
+          config <- GNPrivConfiguration$new()
+          config$setPrivileges("all", privs)
+          GN$setPrivConfiguration(id = created, config = config)
+        }else{
+          #update a metadata
+          updated = GN$updateMetadata(id = metaId, geometa = md,
+                                      geometa_inspire = inspire)
+          
+          #config privileges
+          gn_config <- GNPrivConfiguration$new()
+          gn_config$setPrivileges("all", privs)
+          GN$setPrivConfiguration(id = metaId, config = gn_config)
+        }
+      }
+    )
     rm(md)
   }
   
