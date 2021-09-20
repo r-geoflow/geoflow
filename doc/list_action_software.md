@@ -8,7 +8,7 @@ workflows - List of actions and softwares
 
 | id                                                                          | types                                                            | definition                                                                 | target | target\_dir | pid\_generator | packages                 |
 | :-------------------------------------------------------------------------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------- | :----- | :---------- | :------------- | :----------------------- |
-| [**geometa-create-iso-19115**](#geometa-create-iso-19115)<br>               | Metadata production                                              | Produce an ISO/OGC 19115/19139 metadata object                             | entity | metadata    | FALSE          | geometa                  |
+| [**geometa-create-iso-19115**](#geometa-create-iso-19115)<br>               | Metadata production                                              | Produce an ISO/OGC 19115/19139 metadata object                             | entity | metadata    | FALSE          | geometa,ows4R            |
 | [**geometa-create-iso-19110**](#geometa-create-iso-19110)<br>               | Metadata production                                              | Produce an ISO 19110/19139 metadata object                                 | entity | metadata    | FALSE          | geometa                  |
 | [**ows4R-publish-iso-19139**](#ows4R-publish-iso-19139)<br>                 | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol     | NA     | NA          | FALSE          | ows4R                    |
 | [**geonapi-publish-iso-19139**](#geonapi-publish-iso-19139)<br>             | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API        | NA     | NA          | FALSE          | geonapi                  |
@@ -21,18 +21,21 @@ workflows - List of actions and softwares
 | [**sf-write-shp**](#sf-write-shp)<br>                                       | Data writing                                                     | Import features data and zip files                                         | entity | data        | FALSE          | sf                       |
 | [**eml-create-eml**](#eml-create-eml)<br>                                   | Metadata production                                              | Produce an EML metadata object                                             | entity | metadata    | FALSE          | EML,emld                 |
 | [**d4storagehub4R-upload-data**](#d4storagehub4R-upload-data)<br>           | Data upload                                                      | Upload data/metadata to a D4Science Workspace                              | NA     | NA          | FALSE          | d4storagehub4R           |
+| [**create\_metadata\_Rmd**](#create_metadata_Rmd)<br>                       | Metadata production                                              | Generate a Markdown out of a entity                                        | entity | markdown    | FALSE          | rmarkdown                |
 
 ### 1.1.1 List of geometa-create-iso-19115 options<a name= geometa-create-iso-19115 />
 
-| name               | definition                                                                                | default   |
-| :----------------- | :---------------------------------------------------------------------------------------- | :-------- |
-| doi                | Add entity DOI - if defined - as metadata identifier and online resource                  | FALSE     |
-| doi\_thumbnail     | if option ‘doi’ is true and this option enabled, a DOI thumbnail will be added            | FALSE     |
-| inspire            | Validates ISO 19139 metadata with INSPIRE reference validator                             | FALSE     |
-| logo               | Add configure profile logo(s) - if defined - as metadata thumbnail(s)                     | FALSE     |
-| addfeatures        | Add entity data features - if defined - as metadata bounding polygon(s)                   | FALSE     |
-| featureId          | ID of entity data features used to identify bounding polygon(s) with option ‘addfeatures’ | NA        |
-| subject\_geography | Identifier of the subject handling a Geographic coverage.                                 | geography |
+| name                                          | definition                                                                                | default   |
+| :-------------------------------------------- | :---------------------------------------------------------------------------------------- | :-------- |
+| doi                                           | Add entity DOI - if defined - as metadata identifier and online resource                  | FALSE     |
+| doi\_thumbnail                                | if option ‘doi’ is true and this option enabled, a DOI thumbnail will be added            | FALSE     |
+| inspire                                       | Validates ISO 19139 metadata with INSPIRE reference validator                             | FALSE     |
+| logo                                          | Add configure profile logo(s) - if defined - as metadata thumbnail(s)                     | FALSE     |
+| addfeatures                                   | Add entity data features - if defined - as metadata bounding polygon(s)                   | FALSE     |
+| featureId                                     | ID of entity data features used to identify bounding polygon(s) with option ‘addfeatures’ | NA        |
+| subject\_geography                            | Identifier of the subject handling a Geographic coverage.                                 | geography |
+| include\_coverage\_data\_dimension\_values    | Include data dimensions’s range values to coverage description                            | FALSE     |
+| include\_coverage\_service\_dimension\_values | Include ogc dimensions’s range values to coverage description                             | FALSE     |
 
 ### 1.1.2 List of geometa-create-iso-19110 options<a name= geometa-create-iso-19110 />
 
@@ -63,7 +66,11 @@ workflows - List of actions and softwares
 
 ### 1.1.5 List of geosapi-publish-ogc-services options<a name= geosapi-publish-ogc-services />
 
-*No options available for this action*
+| name                   | definition                                 | default |
+| :--------------------- | :----------------------------------------- | :------ |
+| createWorkspace        | Create workspace if not already existing   | FALSE   |
+| createDatastore        | Create datastore if not already existing   | FALSE   |
+| datastore\_description | Specify a decription for the new datastore |         |
 
 ### 1.1.6 List of zen4R-deposit-record options<a name= zen4R-deposit-record />
 
@@ -121,7 +128,17 @@ workflows - List of actions and softwares
 
 ### 1.1.13 List of d4storagehub4R-upload-data options<a name= d4storagehub4R-upload-data />
 
-*No options available for this action*
+| name               | definition                                                                                                                  | default |
+| :----------------- | :-------------------------------------------------------------------------------------------------------------------------- | :------ |
+| depositWithFiles   | Indicates if the action is uploading files                                                                                  | FALSE   |
+| otherUploadFolders | List of Folders (other than ‘data’ and ‘metadata’) to upload and which may contain files which should enrich others actions |         |
+
+### 1.1.14 List of create\_metadata\_Rmd options<a name= create_metadata_Rmd />
+
+| name           | definition                                                       | default |
+| :------------- | :--------------------------------------------------------------- | :------ |
+| template       | Rmarkdown template                                               | generic |
+| output\_format | output format generate by Rmarkdown template (e.g. ‘html’,‘pdf’) | html    |
 
 # 2 Software
 
@@ -139,6 +156,8 @@ workflows - List of actions and softwares
 | [**sword\_for\_dataverse**](#sword_for_dataverse)<br> | Dataverse SWORD API Client powered by ‘atom4R’ package                    | atom4R                |
 | [**dataone**](#dataone)<br>                           | DataONe API Client powered by ‘dataone’ package                           | dataone               |
 | [**d4storagehub**](#d4storagehub)<br>                 | D4science storage hub API Client powered by ‘d4storagehub4R’ package      | d4storagehub4R        |
+| [**gbif**](#gbif)<br>                                 | Gbif API Client powered by ‘rgbif’ package                                | rgbif                 |
+| [**thredds**](#thredds)<br>                           | Thredds data server API Client powered by ‘thredds’ package               | thredds               |
 
 ### 2.1.1 List of dbi parameters<a name= dbi />
 
@@ -280,3 +299,26 @@ workflows - List of actions and softwares
 | name      | definition                           |
 | :-------- | :----------------------------------- |
 | workspace | D4Science storage hub workspace name |
+
+### 2.1.21 List of gbif parameters<a name= gbif />
+
+| name  | definition                             |
+| :---- | :------------------------------------- |
+| user  | Username for Gbif authentication       |
+| pwd   | Password for Gbif authentication       |
+| email | Email address for sending notification |
+
+### 2.1.22 List of gbif properties
+
+*No properties available for this software*
+
+### 2.1.23 List of thredds parameters<a name= thredds />
+
+| name   | definition                       |
+| :----- | :------------------------------- |
+| x      | url of top level catalog request |
+| prefix | the namespace to examine         |
+
+### 2.1.24 List of thredds properties
+
+*No properties available for this software*
