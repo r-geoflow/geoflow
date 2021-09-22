@@ -22,7 +22,9 @@ jobs:
       # Install Linux systems libs
       - name: "Install required system libs"
         if: runner.os == 'Linux'
-        run: sudo apt install librdf0-dev
+        run: |
+          sudo apt-get update
+          sudo apt install librdf0-dev
       #SDI integration tests
       #-------------------------
       #Docker Geoserver set-up
