@@ -474,7 +474,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   }
   
   ident$setSupplementalInformation(entity$descriptions[["info"]])
-  if(!is.null(spatialRepresentationType)) ident$setSpatialRepresentationType(spatialRepresentationType)
+  if(!is.null(entity$data)) ident$setSpatialRepresentationType(entity$data$spatialRepresentationType)
   md$identificationInfo = c(md$identificationInfo,ident)
   
   #service information
@@ -506,10 +506,12 @@ geometa_create_iso_19115 <- function(entity, config, options){
     si$setAccessProperties(orderProcess)
     #coupling type
     
-    switch(entity$data$spatialRepresentationType,
-           "vector" = si$setCouplingType("mixed"),
-           "grid" = si$setCouplingType("tight")
-    )
+    if(!is.null(entity$data)) {
+      switch(entity$data$spatialRepresentationType,
+             "vector" = si$setCouplingType("mixed"),
+             "grid" = si$setCouplingType("tight")
+      )
+    }
     
     for(request in WMS$getCapabilities()$getRequestNames()){
       #add operation metadata 
@@ -558,7 +560,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   #contentInfo
   #coverage description
-  if(entity$data$spatialRepresentationType=="grid"){
+  if(!is.null(entity$data)) if(entity$data$spatialRepresentationType=="grid"){
     if(!is.null(entity$data$variables)){
       #create coverage description
       cov <- ISOImageryCoverageDescription$new()
