@@ -478,85 +478,90 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md$identificationInfo = c(md$identificationInfo,ident)
   
   #service information
-  #WMS
-  wms<-entity$relations[sapply(entity$relations, function(x){startsWith(x$key,"wms")})][[1]]
-  wms_link <- gsub("service=WMS","",wms$link)
-  wms_version <- switch(wms$key,
-                        "wms" = "1.1.0",
-                        "wms110" = "1.1.0",
-                        "wms111" = "1.1.1",
-                        "wms130" = "1.3.0")
-  config$logger.info(sprintf("Configuring WMS client on '%s' (version = '%s')", wms_link, wms_version))
-  WMS<-ows4R::WMSClient$new(url=wms_link,serviceVersion=wms_version,logger="DEBUG")
-  if(!is.null(wms)){
-    #SRVServiceIdentification
-    si <- ISOSRVServiceIdentification$new()
-    si$setAttr("id","OGC-WMS")
-    #citation
-    #title
-    #date
-    #citedResponsibleParty
-    #abstract
-    si$setAbstract(WMS$getCapabilities()$getServiceIdentification()$getAbstract())
-    #extent
-    #keyword
-    #Fees
-    orderProcess <- ISOStandardOrderProcess$new()
-    orderProcess$setFees(WMS$getCapabilities()$getServiceIdentification()$getFees())
-    si$setAccessProperties(orderProcess)
-    #coupling type
-    
-    if(!is.null(entity$data)) {
-      switch(entity$data$spatialRepresentationType,
-             "vector" = si$setCouplingType("mixed"),
-             "grid" = si$setCouplingType("tight")
-      )
-    }
-    
-    for(request in WMS$getCapabilities()$getRequestNames()){
-      #add operation metadata 
-      scriptOp <- ISOOperationMetadata$new()
-      scriptOp$setOperationName(request)
-      
-      if(request=="GetCapabilities"){
-        or1 <- ISOOnlineResource$new()
-        or1$setLinkage(paste0(wms$link,"&version=",switch(wms$key,
-                                                                  "wms" = "1.1.0",
-                                                                  "wms110" = "1.1.0",
-                                                                  "wms111" = "1.1.1",
-                                                                  "wms130" = "1.3.0"),"&request=GetCapabilities"))
-        or1$setName("OGC:WMS")
-        or1$setDescription("Open Geospatial Consortium Web Map Service (WMS)")
-        or1$setProtocol("OGC:WMS")
-        scriptOp$addConnectPoint(or1)
-      }
-      
-      if(request=="GetMap"){
-        #GetMap
-        if(length(entity$data$ogc_dimensions)>0) for(ogc_dimension in names(entity$data$ogc_dimensions)){
-          param <- ISOParameter$new()
-          param$setName(toupper(ogc_dimension), "xs:string")
-          param$setDirection("in")
-          param$setOptionality(FALSE)
-          param$setRepeatability(FALSE)
-          param$setValueType("xs:string")
-          scriptOp$parameters=c(scriptOp$parameters,param)  
+  if(length(entity$relations)>0){
+    #WMS
+    wms<-entity$relations[sapply(entity$relations, function(x){startsWith(x$key,"wms")})]
+    if(length(wms)>0){
+      wms <- wms[[1]]
+      wms_link <- gsub("service=WMS","",wms$link)
+      wms_version <- switch(wms$key,
+                            "wms" = "1.1.0",
+                            "wms110" = "1.1.0",
+                            "wms111" = "1.1.1",
+                            "wms130" = "1.3.0")
+      config$logger.info(sprintf("Configuring WMS client on '%s' (version = '%s')", wms_link, wms_version))
+      WMS<-ows4R::WMSClient$new(url=wms_link,serviceVersion=wms_version,logger="DEBUG")
+      if(!is.null(wms)){
+        #SRVServiceIdentification
+        si <- ISOSRVServiceIdentification$new()
+        si$setAttr("id","OGC-WMS")
+        #citation
+        #title
+        #date
+        #citedResponsibleParty
+        #abstract
+        si$setAbstract(WMS$getCapabilities()$getServiceIdentification()$getAbstract())
+        #extent
+        #keyword
+        #Fees
+        orderProcess <- ISOStandardOrderProcess$new()
+        orderProcess$setFees(WMS$getCapabilities()$getServiceIdentification()$getFees())
+        si$setAccessProperties(orderProcess)
+        #coupling type
+        
+        if(!is.null(entity$data)) {
+          switch(entity$data$spatialRepresentationType,
+                 "vector" = si$setCouplingType("mixed"),
+                 "grid" = si$setCouplingType("tight")
+          )
         }
-        if(entity$data$uploadType == "dbquery" & length(entity$data$parameters)>0){
-          param <- ISOParameter$new()
-          param$setName("VIEWPARAMS", "xs:string")
-          param$setDirection("in")
-          param$setOptionality(FALSE)
-          param$setRepeatability(FALSE)
-          param$setValueType("xs:string")
-          scriptOp$parameters=c(scriptOp$parameters,param)    
+        
+        for(request in WMS$getCapabilities()$getRequestNames()){
+          #add operation metadata 
+          scriptOp <- ISOOperationMetadata$new()
+          scriptOp$setOperationName(request)
+          
+          if(request=="GetCapabilities"){
+            or1 <- ISOOnlineResource$new()
+            or1$setLinkage(paste0(wms$link,"&version=",switch(wms$key,
+                                                                      "wms" = "1.1.0",
+                                                                      "wms110" = "1.1.0",
+                                                                      "wms111" = "1.1.1",
+                                                                      "wms130" = "1.3.0"),"&request=GetCapabilities"))
+            or1$setName("OGC:WMS")
+            or1$setDescription("Open Geospatial Consortium Web Map Service (WMS)")
+            or1$setProtocol("OGC:WMS")
+            scriptOp$addConnectPoint(or1)
+          }
+          
+          if(request=="GetMap"){
+            #GetMap
+            if(length(entity$data$ogc_dimensions)>0) for(ogc_dimension in names(entity$data$ogc_dimensions)){
+              param <- ISOParameter$new()
+              param$setName(toupper(ogc_dimension), "xs:string")
+              param$setDirection("in")
+              param$setOptionality(FALSE)
+              param$setRepeatability(FALSE)
+              param$setValueType("xs:string")
+              scriptOp$parameters=c(scriptOp$parameters,param)  
+            }
+            if(entity$data$uploadType == "dbquery" & length(entity$data$parameters)>0){
+              param <- ISOParameter$new()
+              param$setName("VIEWPARAMS", "xs:string")
+              param$setDirection("in")
+              param$setOptionality(FALSE)
+              param$setRepeatability(FALSE)
+              param$setValueType("xs:string")
+              scriptOp$parameters=c(scriptOp$parameters,param)    
+            }
+          }
+          
+          si$containsOperations = c(si$containsOperations, scriptOp)
         }
       }
-      
-      si$containsOperations = c(si$containsOperations, scriptOp)
+      md$identificationInfo = c(md$identificationInfo,si)
     }
   }
-  md$identificationInfo = c(md$identificationInfo,si)
   
   #contentInfo
   #coverage description
