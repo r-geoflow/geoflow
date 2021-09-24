@@ -45,7 +45,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     #category
     category <- if(!is.null(options$category)) options$category else "1"
     available_categories <- GN$getCategories()
-    if(!category %in% available_categories){
+    if(!category %in% available_categories$id){
       errMsg <- sprintf("Geonetwork: no category for id = %s - Please check below the Geonetwork available categories", category)
       config$logger.error(errMsg)
       print(available_categories)
