@@ -24,7 +24,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt install librdf0-dev
+          sudo apt install librdf0 librdf0-dev
       #SDI integration tests
       #-------------------------
       #Docker Geoserver set-up
