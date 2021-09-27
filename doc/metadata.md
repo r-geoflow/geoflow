@@ -2,7 +2,7 @@
 
 The _metadata_ configuration can be constituted of three different inputs:
 
-* *entities*: correspond to the dataset descriptions. [geoflow](https://github.com/eblondel) models each dataset metadata as *entity*. An *entity* is compound by core metadata building blocks essentially inspired from the [Dublin Core metadata standard][https://dublincore.org/] . In order to build richer metadata, each building block can be described with finer levels of information. For more information, see details on how to describe a dataset with geoflow.
+* *entities*: correspond to the dataset descriptions. [geoflow](https://github.com/eblondel) models each dataset metadata as *entity*. An *entity* is compound by core metadata building blocks essentially inspired from the [Dublin Core metadata standard](https://dublincore.org/) . In order to build richer metadata, each building block can be described with finer levels of information. For more information, see details on how to describe a dataset with geoflow.
 * _contacts_: correspond to a simplified directory of contacts (people / organizations) used by geoflow to manage contact/roles associated to *entities*. Having such directory of contacts will simplify the use and binding of *responsible parties* to dataset metadata.
 * *dictionary*: allows to describe the structure of datasets. This is required for advanced [geoflow](https://github.com/eblondel) use cases where one wants to produce finer dataset description (dataset structural metadata).
 
