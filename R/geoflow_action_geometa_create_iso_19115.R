@@ -545,7 +545,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
               param$setValueType("xs:string")
               scriptOp$parameters=c(scriptOp$parameters,param)  
             }
-            if(entity$data$uploadType == "dbquery" & length(entity$data$parameters)>0){
+            if(!is.null(entity$data)) if(entity$data$uploadType == "dbquery" & length(entity$data$parameters)>0){
               param <- ISOParameter$new()
               param$setName("VIEWPARAMS", "xs:string")
               param$setDirection("in")
