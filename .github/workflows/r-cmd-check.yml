@@ -19,12 +19,6 @@ jobs:
           - {os: ubuntu-20.04,   r: '4.0.5', sdi: true, data_server: 'geoserver', metadata_server: 'geonetwork', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
     steps:
       - uses: actions/checkout@v2
-      # Install Linux systems libs
-      - name: "Install required system libs"
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update -qq 
-          sudo apt-get install -y librdf0-dev
       #SDI integration tests
       #-------------------------
       #Docker Geoserver set-up
