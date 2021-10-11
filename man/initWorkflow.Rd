@@ -4,10 +4,12 @@
 \alias{initWorkflow}
 \title{initWorkflow}
 \usage{
-initWorkflow(file)
+initWorkflow(file, dir)
 }
 \arguments{
 \item{file}{a JSON configuration file}
+
+\item{dir}{a directory where to execute the workflow}
 }
 \description{
 \code{initWorkflow} allows to init a workflow

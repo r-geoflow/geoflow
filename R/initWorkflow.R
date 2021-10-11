@@ -3,7 +3,7 @@
 #' @title initWorkflow
 #' @description \code{initWorkflow} allows to init a workflow
 #'
-#' @usage initWorkflow(file)
+#' @usage initWorkflow(file, dir)
 #'                 
 #' @param file a JSON configuration file
 #' @param dir a directory where to execute the workflow
