@@ -6,11 +6,12 @@
 #' @usage initWorkflow(file)
 #'                 
 #' @param file a JSON configuration file
+#' @param dir a directory where to execute the workflow
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'
-initWorkflow <- function(file){
+initWorkflow <- function(file, dir = "."){
 
   file <- tools::file_path_as_absolute(file)
   config <- jsonlite::read_json(file)
@@ -87,7 +88,7 @@ initWorkflow <- function(file){
   }
   
   #working dir
-  if(is.null(config$wd)) config$wd <- dirname(file)
+  if(is.null(config$wd)) config$wd <- tools::file_path_as_absolute(dir)
 
   #load source scripts
   #--------------------

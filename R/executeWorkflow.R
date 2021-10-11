@@ -12,7 +12,7 @@
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
-executeWorkflow <- function(file, dir = NULL){
+executeWorkflow <- function(file, dir = "."){
   
   #options
   .defaultOptions <- options()
@@ -20,7 +20,7 @@ executeWorkflow <- function(file, dir = NULL){
   options(gargle_oob_default = TRUE)
   
   #1. Init the workflow based on configuration file
-  config <- initWorkflow(file)
+  config <- initWorkflow(file, dir = dir)
   
   #2. Inits workflow job (create directories)
   wd <- getwd()

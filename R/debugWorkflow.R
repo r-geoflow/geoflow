@@ -21,7 +21,7 @@
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
-debugWorkflow <- function(file, dir = NULL, entityIndex = 1, 
+debugWorkflow <- function(file, dir = ".", entityIndex = 1, 
                           copyData = TRUE, 
                           runSoftwareActions = TRUE,  
                           runLocalActions = TRUE){
