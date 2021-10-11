@@ -1,5 +1,9 @@
 atom4R_dataverse_deposit_record <- function(entity, config, options){
   
+  if(!requireNamespace("atom4R", quietly = TRUE)){
+    stop("The 'atom4R-dataverse-deposit-record' action requires the 'atom4R' package")
+  }
+  
   #global options
   skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
   
@@ -46,7 +50,7 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   }
   
   #create DC entry
-  dcentry <- DCEntry$new()
+  dcentry <- atom4R::DCEntry$new()
   dcentry$setId(entity$identifiers[["id"]])
   #fill dc entry
   ##date
@@ -58,7 +62,7 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   dcentry$addDCTitle(entity$titles[["title"]])
   ##type
   dctype <- entity$types[["generic"]]
-  dctype_allowed <- getDCMIVocabulary(id = "http://purl.org/dc/dcmitype/")$get()$label
+  dctype_allowed <- atom4R::getDCMIVocabulary(id = "http://purl.org/dc/dcmitype/")$get()$label
   dctype_idx <- which(tolower(dctype_allowed) == tolower(dctype))
   dctype_dataverse <- dctype_allowed[dctype_idx]
   if(length(dctype_dataverse)==0) dctype_dataverse <- "Dataset"
@@ -83,7 +87,7 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
     }else{
       creator <- owner_entity$organizationName
     }
-    dc_creator <- DCCreator$new(value = creator)
+    dc_creator <- atom4R::DCCreator$new(value = creator)
     dc_creator$attrs[["affiliation"]] <- owner_entity$organizationName
     dcentry$addDCCreator(dc_creator)
   }
@@ -109,7 +113,7 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
       }else{
         contrib <- contrib_entity$organizationName
       }
-      dc_contrib <- DCContributor$new(value = contrib)
+      dc_contrib <- atom4R::DCContributor$new(value = contrib)
       dc_contrib$attrs[["type"]] <- contrib_entity$role #TODO mapping with controlled terms from Dataverse
       dcentry$addDCContributor(dc_contrib)
     }

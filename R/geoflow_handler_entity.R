@@ -390,7 +390,10 @@ handle_entities_dbi <- function(config, source){
 #handle_entities_ncdf
 handle_entities_ncdf <- function(config, source){
   
-  config$logger.info("NCDF Handle")
+  config$logger.info("NCDF Handler")
+  if(!requireNamespace("ncdf4", quietly = TRUE)){
+    stop("The NCDF handler requires the 'ncdf4' package")
+  }
 
   #if(!mime::guess_type(source)=="application/x-netcdf"){
   #  errMsg <- "Error in 'handle_entities_df': source parameter should be an 'netcdf' file"
@@ -989,6 +992,13 @@ config$logger.info("NCML Handle")
 #handle_entities_thredds
 handle_entities_thredds <- function(config, source){
 
+  if(!requireNamespace("thredds", quietly = TRUE)){
+    stop("The Thredds handler requires the 'thredds' package")
+  }
+  if(!requireNamespace("ncdf4", quietly = TRUE)){
+    stop("The NCDF handler requires the 'ncdf4' package")
+  }
+  
   thredds <- config$software$input$thredds
   if(is.null(thredds)){
     stop("There is no database input software configured to handle entities from Thredds")
@@ -1065,7 +1075,9 @@ handle_entities_thredds <- function(config, source){
     ogc_dimensions<-NULL
     wms<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WMS") thredds$list_services()[[x]]["base"]))[1]
     if(!is.null(wms)){
-      requireNamespace("ows4R")
+      if(!requireNamespace("ows4R", quietly = TRUE)){
+        stop("The Thredds handler requires the 'ows4R' package")
+      }
       wms_uri<-paste0(base_uri,wms,data$url,"?service=WMS")
       wms_request<-paste0(base_uri,wms,data$url)
       wms <- ows4R::WMSClient$new(url = wms_request, serviceVersion = "1.3.0", logger = "DEBUG")

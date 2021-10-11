@@ -395,7 +395,7 @@ register_actions <- function(){
       )
     ),
     geoflow_action$new(
-      id = "create_metadata_Rmd",
+      id = "create-metadata-rmd",
       types =  list("Metadata production"),
       def = "Generate a Markdown out of a entity",
       target = "entity",

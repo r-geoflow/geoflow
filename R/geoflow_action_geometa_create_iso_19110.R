@@ -1,5 +1,9 @@
 geometa_create_iso_19110 <- function(entity, config, options){
   
+  if(!requireNamespace("geometa", quietly = TRUE)){
+    stop("The 'geometa-create-iso-19110' action requires the 'geometa' package")
+  }
+  
   ISOMetadataNamespace$GML$uri <- "http://www.opengis.net/gml/3.2"
   
   #features if any

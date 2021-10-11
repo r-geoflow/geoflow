@@ -1,5 +1,18 @@
 dataone_upload_datapackage <- function(entity, config, options){
   
+  if(!requireNamespace("EML", quietly = TRUE)){
+    stop("The 'dataone-upload-datapackage' action requires the 'EML' package")
+  }
+  if(!requireNamespace("emld", quietly = TRUE)){
+    stop("The 'dataone-upload-datapackage' action requires the 'emld' package")
+  }
+  if(!requireNamespace("datapack", quietly = TRUE)){
+    stop("The 'dataone-upload-datapackage' action requires the 'datapack' package")
+  }
+  if(!requireNamespace("dataone", quietly = TRUE)){
+    stop("The 'dataone-upload-datapackage' action requires the 'dataone' package")
+  }
+  
   #options
   publish <- TRUE #see https://github.com/DataONEorg/rdataone/issues/262
   accessRules <- NA
@@ -82,7 +95,7 @@ dataone_upload_datapackage <- function(entity, config, options){
   
   #upload
   out <- try(
-    uploadDataPackage(
+    dataone::uploadDataPackage(
       DATAONE,
       dp,
       public = publish,

@@ -1,5 +1,9 @@
 zen4R_deposit_record <- function(entity, config, options){
   
+  if(!requireNamespace("zen4R", quietly = TRUE)){
+    stop("The 'zen4R-deposit-record' action requires the 'zen4R' package")
+  }
+  
   ZENODO <- config$software$output$zenodo
   
   if(is.null(ZENODO)){

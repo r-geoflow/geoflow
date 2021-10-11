@@ -1,6 +1,6 @@
 Package: geoflow
-Version: 0.0.20210928
-Date: 2021-09-28
+Version: 0.0.20211012
+Date: 2021-10-12
 Title: R engine to orchestrate and run geospatial (meta)data workflows
 Authors@R: c(
   person("Emmanuel", "Blondel", role = c("aut", "cre"), email = "emmanuel.blondel1@gmail.com", comment = c(ORCID = "0000-0002-5870-5762")),
@@ -20,12 +20,6 @@ Imports:
   mime,
   plyr,
   readr,
-  readxl,
-  gsheet,
-  googledrive,
-  DBI,
-  RPostgres,
-  RSQLite,
   zip,
   png,
   uuid,
@@ -33,7 +27,23 @@ Imports:
   geometa,
   geosapi,
   geonapi,
-  ows4R,
+  ows4R
+Remotes:
+  eblondel/atom4R,
+  eblondel/geonapi,
+  eblondel/ows4R,
+  eblondel/d4storagehub4R,
+  BigelowLab/thredds,
+  ropensci/datapack,
+  DataONEorg/rdataone
+Suggests: 
+  testthat,
+  readxl,
+  gsheet,
+  googledrive,
+  DBI,
+  RPostgres,
+  RSQLite,
   ncdf4,
   thredds,
   EML,
@@ -45,16 +55,6 @@ Imports:
   atom4R,
   d4storagehub4R,
   rmarkdown
-Remotes:
-  eblondel/atom4R,
-  eblondel/geonapi,
-  eblondel/ows4R,
-  eblondel/d4storagehub4R,
-  BigelowLab/thredds,
-  ropensci/datapack,
-  DataONEorg/rdataone
-Suggests: 
-  testthat
 Description: Provides an engine to manage Spatial Data Infrastructures (SDI) and to orchestrate, run and automate 
   geospatial (meta)data workflows in compliance with international standards (ISO, OGC).
 License: MIT + file LICENSE

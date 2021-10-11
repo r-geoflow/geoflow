@@ -1,5 +1,9 @@
 geosapi_publish_ogc_services <- function(entity, config, options){
   
+  if(!requireNamespace("geosapi", quietly = TRUE)){
+    stop("The 'geosapi-publish-ogc-services' action requires the 'geosapi' package")
+  }
+  
   #options
   createWorkspace <- if(!is.null(options$createWorkspace)) options$createWorkspace else FALSE
   createDatastore <- if(!is.null(options$createDatastore)) options$createDatastore else FALSE

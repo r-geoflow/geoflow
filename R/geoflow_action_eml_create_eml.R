@@ -3,6 +3,9 @@ eml_create_eml <- function(entity, config, options){
   if(!requireNamespace("EML", quietly = TRUE)){
     stop("The EML action requires the 'EML' package")
   }
+  if(!requireNamespace("emld", quietly = TRUE)){
+    stop("The EML action requires the 'emld' package")
+  }
   
   #options
   taxonomySubject <- if(!is.null(options$subject_taxonomy)) options$subject_taxonomy else "taxonomy"

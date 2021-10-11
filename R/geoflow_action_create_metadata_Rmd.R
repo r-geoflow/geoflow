@@ -1,7 +1,7 @@
 create_metadata_Rmd <- function(entity, config, options){
   
   if(!requireNamespace("rmarkdown")){
-    stop("This action requires the 'rmarkdown' package")
+    stop("The action 'create-metadata-rmd' requires the 'rmarkdown' package")
   }
   
   config$logger.info('Generate Rmd')

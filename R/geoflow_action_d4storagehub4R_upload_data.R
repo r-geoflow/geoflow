@@ -1,5 +1,9 @@
 d4storagehub4R_upload_data <- function(entity, config, options){
   
+  if(!requireNamespace("d4storagehub4R", quietly = TRUE)){
+    stop("The 'd4storagehub4R-upload-datas' action requires the 'd4storagehub4R' package")
+  }
+  
   #options
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
   otherUploadFolders <- if(!is.null(options$otherUploadFolders)) options$otherUploadFolders else c()

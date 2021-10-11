@@ -1,5 +1,9 @@
 geometa_create_iso_19115 <- function(entity, config, options){
   
+  if(!requireNamespace("geometa", quietly = TRUE)){
+    stop("The 'geometa-create-iso-19115' action requires the 'geometa' package")
+  }
+  
   ISOMetadataNamespace$GML$uri <- "http://www.opengis.net/gml/3.2"
   
   #features if any
@@ -490,6 +494,11 @@ geometa_create_iso_19115 <- function(entity, config, options){
                             "wms111" = "1.1.1",
                             "wms130" = "1.3.0")
       config$logger.info(sprintf("Configuring WMS client on '%s' (version = '%s')", wms_link, wms_version))
+      
+      if(!requireNamespace("ows4R", quietly = TRUE)){
+        stop("The 'geometa-create-iso-19115' action requires the 'ows4R' package")
+      }
+      
       WMS<-ows4R::WMSClient$new(url=wms_link,serviceVersion=wms_version,logger="DEBUG")
       if(!is.null(wms)){
         #SRVServiceIdentification
