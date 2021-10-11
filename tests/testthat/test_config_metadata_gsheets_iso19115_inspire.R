@@ -37,11 +37,11 @@ test_that("debug",{
 test_that("execute",{
   EXEC <- geoflow::executeWorkflow(cfg_file, dir = ".")
   expect_true(dir.exists(EXEC))
-  expect_true(file.exists("job.json"))
-  expect_true(file.exists("job-logs.txt"))
-  expect_true(file.exists("config_copyof_contacts_1.csv"))
-  expect_true(file.exists("config_copyof_entities_1.csv"))
-  expect_true(dir.exists("entities"))
+  expect_true(file.exists(file.path(EXEC, "job.json")))
+  expect_true(file.exists(file.path(EXEC, "job-logs.txt")))
+  expect_true(file.exists(file.path(EXEC, "config_copyof_contacts_1.csv")))
+  expect_true(file.exists(file.path(EXEC, "config_copyof_entities_1.csv")))
+  expect_true(dir.exists(file.path(EXEC, "entities")))
   entity_dirs <- list.dirs(path = file.path(EXEC, "entities"), full.names = F,recursive = F)
   expect_equal(entity_dirs, c("my-geoflow-record1", "my-geoflow-record2"))
   for(entity_dir in entity_dirs){
