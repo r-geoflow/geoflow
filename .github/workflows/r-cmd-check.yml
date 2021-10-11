@@ -17,6 +17,8 @@ jobs:
       matrix:
         config:
           - {os: ubuntu-20.04, r: 'oldrel', sdi: true, data_server: 'geoserver', metadata_server: 'pycsw'}
+          - {os: ubuntu-20.04, r: 'oldrel', sdi: true, data_server: 'geoserver', metadata_server: 'geonetwork'}
+          - {os: ubuntu-20.04, r: 'release', sdi: true, data_server: 'geoserver', metadata_server: 'pycsw'}
           - {os: ubuntu-20.04, r: 'release', sdi: true, data_server: 'geoserver', metadata_server: 'geonetwork'}
     steps:
       - uses: actions/checkout@v2
@@ -56,12 +58,6 @@ jobs:
       #Install dependencies
       - name: Install dependencies
         uses: r-lib/actions/setup-r-dependencies@v1
-        with:
-          extra-packages: covr
-      #Test code coverage
-      - name: Test code coverage
-        run: covr::codecov()
-        shell: Rscript {0}
       #Check R Package
       - name: Check R package
         uses: r-lib/actions/check-r-package@check-r-package
