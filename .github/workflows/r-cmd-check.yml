@@ -29,18 +29,18 @@ jobs:
           docker run -d --name="postgis" kartoza/postgis
           docker run --link postgis:postgis -d -p 8080:8080 oscarfonts/geoserver:latest
       #OGC CSW integration tests
+      #Docker GeoNetwork set-up
+      - name: Set up GeoNetwork (latest)
+        run: |
+          docker network create elasticnetwork
+          docker run -d --name elasticsearch --net elasticnetwork --add-host host.docker.internal:host-gateway -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:7.9.2
+          docker run --add-host host.docker.internal:host-gateway -e ES_HOST=host.docker.internal --net elasticnetwork --name geonetwork -d -p 8081:8080 geonetwork
       #-------------------------
       #Docker PyCSW set-up
       - name: Set up PyCSW (latest)
         run: |
           docker pull geopython/pycsw:latest
           docker run --name pycsw -v $GITHUB_WORKSPACE/tests/resources/pycsw/pycsw.cfg:/etc/pycsw/pycsw.cfg -d -p 8000:8000 geopython/pycsw:latest
-      #Docker GeoNetwork set-up
-      - name: Set up GeoNetwork (latest)
-        run: |
-          docker network create elasticnetwork
-          docker run -d --name elasticsearch --net elasticnetwork --add-host host.docker.internal:host-gateway -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:7.9.2
-          docker run --add-host host.docker.internal:host-gateway -e ES_HOST=host.docker.internal --net elasticnetwork --name geonetwork -d -p 8000:8000 geonetwork
       #R tests
       #--------------------------
       #R Set-up
