@@ -13,10 +13,11 @@ jobs:
     name: R ${{ matrix.config.r }} | ${{ matrix.config.os }}
     runs-on: ${{ matrix.config.os }}
     strategy:
+      fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-20.04,   r: '4.0.5', sdi: true, data_server: 'geoserver', metadata_server: 'pycsw', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04,   r: '4.0.5', sdi: true, data_server: 'geoserver', metadata_server: 'geonetwork', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-20.04, r: 'oldrel', sdi: true, data_server: 'geoserver', metadata_server: 'pycsw'}
+          - {os: ubuntu-20.04, r: 'release', sdi: true, data_server: 'geoserver', metadata_server: 'geonetwork'}
     steps:
       - uses: actions/checkout@v2
       #SDI integration tests
@@ -50,6 +51,8 @@ jobs:
         uses: r-lib/actions/setup-r@v1
         with:
           r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
       #Install dependencies
       - name: Install dependencies
         uses: r-lib/actions/setup-r-dependencies@v1
