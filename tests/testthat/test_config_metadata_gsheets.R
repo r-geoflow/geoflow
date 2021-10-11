@@ -6,7 +6,7 @@
 require(geoflow, quietly = TRUE)
 require(testthat)
 
-cfg_file = system.file("extdata/workflows/config_example_gsheets.json", package = "geoflow")
+cfg_file = system.file("extdata/workflows/config_metadata_gsheets.json", package = "geoflow")
 
 #init
 test_that("init",{
@@ -16,6 +16,8 @@ test_that("init",{
   expect_equal(names(CFG$metadata$content), c("contacts", "entities"))
   expect_equal(length(CFG$metadata$content$contacts), 3L)
   expect_equal(length(CFG$metadata$content$entities), 2L)
+  expect_equal(length(CFG$actions), 0L)
+  expect_equal(length(CFG$software), 0L)
 })
 
 #debug
