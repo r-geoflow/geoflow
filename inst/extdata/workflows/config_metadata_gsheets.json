@@ -13,13 +13,13 @@
     "entities": [
       {
         "handler": "gsheet",
-        "source": "https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing"
+        "source": "https://docs.google.com/spreadsheets/d/1KSc_IrM86GrNpUASCIVfq6L9cmML77iwpcSbliynYZk/edit?usp=sharing"
       }
     ],
     "contacts" : [
       {
         "handler": "gsheet",
-        "source": "https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing"
+        "source": "https://docs.google.com/spreadsheets/d/1BqlXwA2fKiRuozNAQhBb_PbQVSPTCfl8_Q9rfM8E2ws/edit?usp=sharing"
       }
     ]
   },

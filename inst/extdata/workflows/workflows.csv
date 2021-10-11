@@ -1,4 +1,3 @@
 config_file,description
 config_metadata_gsheets.json,Load metadata entities/contacts from Google Spreadsheets
-config_metadata_gsheets_iso19115.json,Load metadata entities/contacts from Google Spreadsheets and generate ISO 19115/19139 metadata
 config_metadata_gsheets_iso19115_inspire.json,Load metadata entities/contacts from Google Spreadsheets and generate ISO 19115/19139 metadata (with INSPIRE validation)
