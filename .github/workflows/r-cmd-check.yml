@@ -17,9 +17,7 @@ jobs:
       matrix:
         config:
           - {os: ubuntu-20.04, r: 'oldrel', sdi: true, data_server: 'geoserver', metadata_server: 'pycsw'}
-          - {os: ubuntu-20.04, r: 'oldrel', sdi: true, data_server: 'geoserver', metadata_server: 'geonetwork'}
           - {os: ubuntu-20.04, r: 'release', sdi: true, data_server: 'geoserver', metadata_server: 'pycsw'}
-          - {os: ubuntu-20.04, r: 'release', sdi: true, data_server: 'geoserver', metadata_server: 'geonetwork'}
     steps:
       - uses: actions/checkout@v2
       #SDI integration tests

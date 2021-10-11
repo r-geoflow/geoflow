@@ -14,12 +14,3 @@ test_that("GeoServer is properly configured",{
   )
   expect_is(GS, "GSManager")
 })
-
-test_that("GeoNetwork is properly configured",{
-  GN <- geonapi::GNManager$new(
-    url = "http://localhost:8282/geonetwork", version = "3.6.0",
-    user = "admin", pwd = "admin",
-    logger = "DEBUG"
-  )
-  expect_is(GS, "GNManager")
-})
