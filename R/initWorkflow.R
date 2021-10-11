@@ -166,7 +166,7 @@ initWorkflow <- function(file){
         client <- client_handler(client_params)
       }
       if(!is.null(config$software[[software$type]][[switch(software$type,"input"=software$id,"output"=software$software_type)]])){
-        if(software$type=="input") errMsg <- sprinttf("An input software with id '%s' has been already declared!", software$id)
+        if(software$type=="input") errMsg <- sprintf("An input software with id '%s' has been already declared!", software$id)
         if(software$type=="output") errMsg <- sprintf("An output software with software type '%s' has been already declared!", software$software_type)
         config$logger.error(errMsg)
         stop(errMsg)

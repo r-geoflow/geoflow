@@ -3,7 +3,10 @@
 #' @title writeWorkflowJobDataResource
 #' @description \code{writeWorkflowJobDataResource} allows to transform datasource into different formats
 #'
-#' @usage writeWorkflowJobDataResource(entity,config,obj,useFeatures,resourcename,useUploadSource,type)
+#' @usage writeWorkflowJobDataResource(entity, config, obj, 
+#'                                     useFeatures, resourcename, useUploadSource, 
+#'                                     createIndexes, overwrite, append, chunk.size, 
+#'                                     type)
 #'
 #' @param entity a entity object as read by \code{geoflow_entity} 
 #' @param config a configuration object as read by \code{initWorkflow}

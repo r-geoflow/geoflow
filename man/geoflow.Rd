@@ -8,16 +8,6 @@
 \description{
 R engine to orchestrate and run geospatial (meta)data workflows
 }
-\details{
-\tabular{ll}{
-   Package: \tab geoflow\cr
-   Type: \tab Package\cr
-   Version: \tab 0.0.20210928\cr
-   Date: \tab 2021-09-28\cr
-   License: \tab MIT\cr
-   LazyLoad: \tab yes\cr
- }
-}
 \author{
 Emmanuel Blondel \email{emmanuel.blondel1@gmail.com}
 }

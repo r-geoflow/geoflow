@@ -1145,7 +1145,7 @@ handle_entities_thredds <- function(config, source){
     time<-entity$data$ogc_dimensions$time$values
     if(!is.null(time)){
       values<-as.POSIXct(entity$data$ogc_dimensions$time$values,format ="%Y-%m-%dT%H:%M:%S")
-      temporal_cov<- paste(head(sort(values),1),tail(sort(values),1),sep="/")
+      temporal_cov<- paste(utils::head(sort(values),1), utils::tail(sort(values),1),sep="/")
       entity$setTemporalExtent(temporal_cov)
     }
     

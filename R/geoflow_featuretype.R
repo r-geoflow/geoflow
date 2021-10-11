@@ -11,10 +11,6 @@
 #' @return Object of \code{\link{R6Class}} for modelling a dictionary feature type
 #' @format \code{\link{R6Class}} object.
 #' 
-#' @examples
-#' \dontrun{
-#' }
-#' 
 #' @section Methods:
 #' \describe{
 #'  \item{\code{new()}}{

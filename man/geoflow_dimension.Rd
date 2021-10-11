@@ -40,7 +40,7 @@ geoflow_dimension
  \item{\code{setMaxValue(maxValue)}}{
    Set maximal value
  }
- }
+}
 }
 
 \author{

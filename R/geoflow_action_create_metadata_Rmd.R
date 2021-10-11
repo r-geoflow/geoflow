@@ -1,6 +1,6 @@
 create_metadata_Rmd <- function(entity, config, options){
   
-  if(!require("rmarkdown")){
+  if(!requireNamespace("rmarkdown")){
     stop("This action requires the 'rmarkdown' package")
   }
   

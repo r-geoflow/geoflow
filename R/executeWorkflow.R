@@ -26,6 +26,7 @@ executeWorkflow <- function(file, dir = NULL){
   wd <- getwd()
   if(!is.null(dir)) setwd(dir)
   jobdir <- initWorkflowJob(config)
+  config$debug <- FALSE
   config$job <- jobdir
   
   #3. Execute the workflow job

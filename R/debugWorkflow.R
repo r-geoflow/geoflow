@@ -15,6 +15,9 @@
 #' @param runLocalActions whether entity data local actions (if any) should be run.
 #' Default is \code{TRUE}
 #' 
+#' @return a named list including the workflow \code{config}, the selected \code{entity} and
+#' the eventual \code{options} associated to the entity.
+#' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
@@ -32,16 +35,18 @@ debugWorkflow <- function(file, dir = NULL, entityIndex = 1,
   
   #1. Init the workflow based on configuration file
   config <- initWorkflow(file)
+  config$debug <- TRUE
   
   #2. Inits workflow job (create directories)
   jobdir <- initWorkflowJob(config)
   config$job <- jobdir
-  assign("config", config, envir = .GlobalEnv)
+  .geoflow$debug = list()
+  .geoflow$debug$config = config
   
   #entities
   entities <- config$getEntities()
   entity <- entities[[entityIndex]]
-  assign("entity", entity, envir = .GlobalEnv)
+  .geoflow$debug$entity <- entity
 
   #skipFileDownload
   skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
@@ -111,7 +116,7 @@ debugWorkflow <- function(file, dir = NULL, entityIndex = 1,
             entity_action <- entity$data$actions[[i]]
             config$logger.info(sprintf("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script))
             entity_action$fun(entity, config, entity_action$options)
-            assign("options", entity_action$options, envir = .GlobalEnv)
+            .geoflow$debug$options <- entity_action$options
           }
           #we trigger entity enrichment (in case entity data action involved modification of entity)
           entity$enrichWithMetadata()
@@ -121,5 +126,7 @@ debugWorkflow <- function(file, dir = NULL, entityIndex = 1,
       }
     }
   }
+  
+  return(.geoflow$debug)
   
 }

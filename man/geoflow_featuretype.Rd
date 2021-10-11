@@ -25,11 +25,6 @@ geoflow_featuretype
 }
 }
 
-\examples{
-\dontrun{
-}
-
-}
 \author{
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }

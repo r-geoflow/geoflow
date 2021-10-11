@@ -6,6 +6,9 @@
 \usage{
 check_packages(pkgs)
 }
+\arguments{
+\item{pkgs}{a vector of package names}
+}
 \description{
 \code{check_packages} checks availability of a list of R packages in R. This
 function is essentially used internally by \pkg{geoflow} in assocation to \code{geoflow_software} and

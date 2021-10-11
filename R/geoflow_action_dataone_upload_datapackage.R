@@ -34,7 +34,7 @@ dataone_upload_datapackage <- function(entity, config, options){
   if(file.exists(eml_file)){
     eml_meta_obj <- EML::read_eml(eml_file)
     newPackageId <- eml_meta_obj$packageId
-    eml_format <- head(unlist(strsplit(eml_meta_obj$schemaLocation, " ")), n = 1)
+    eml_format <- utils::head(unlist(strsplit(eml_meta_obj$schemaLocation, " ")), n = 1)
     dp_eml_meta_obj <- new(
       "DataObject",
       format = eml_format,

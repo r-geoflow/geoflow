@@ -45,7 +45,7 @@
 #'  \item{\code{setMaxValue(maxValue)}}{
 #'    Set maximal value
 #'  }
-#'  }
+#' }
 #' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'

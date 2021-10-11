@@ -9,19 +9,52 @@ Authors@R: c(
   person("Alexandre", "Bennici", role = c("ctb"), comment = c(ORCID = "0000-0003-2160-3487")))
 Maintainer: Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 Depends: R (>= 3.3)
-Imports: R6, methods, httr, jsonlite, xml2, plyr, readr, zip, sf
+Imports:
+  R6, 
+  methods,
+  httr,
+  jsonlite,
+  XML,
+  xml2,
+  curl,
+  mime,
+  plyr,
+  readr,
+  readxl,
+  gsheet,
+  googledrive,
+  DBI,
+  RPostgres,
+  RSQLite,
+  zip,
+  png,
+  uuid,
+  sf,
+  geometa,
+  geosapi,
+  geonapi,
+  ows4R,
+  ncdf4,
+  thredds,
+  EML,
+  emld,
+  datapack,
+  dataone,
+  rgbif,
+  zen4R,
+  atom4R,
+  d4storagehub4R,
+  rmarkdown
 Remotes:
   eblondel/atom4R,
+  eblondel/geonapi,
+  eblondel/ows4R,
+  eblondel/d4storagehub4R,
+  BigelowLab/thredds,
   ropensci/datapack,
   DataONEorg/rdataone
 Suggests: 
-  testthat, 
-  DBI, RPostgres, RSQLite, 
-  readxl, 
-  gsheet, googledrive, 
-  geometa, geosapi, geonapi, ows4R, 
-  zen4R, atom4R, 
-  EML, emld, mime, datapack, dataone
+  testthat
 Description: Provides an engine to manage Spatial Data Infrastructures (SDI) and to orchestrate, run and automate 
   geospatial (meta)data workflows in compliance with international standards (ISO, OGC).
 License: MIT + file LICENSE

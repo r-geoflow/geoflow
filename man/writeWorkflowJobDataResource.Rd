@@ -4,7 +4,10 @@
 \alias{writeWorkflowJobDataResource}
 \title{writeWorkflowJobDataResource}
 \usage{
-writeWorkflowJobDataResource(entity,config,obj,useFeatures,resourcename,useUploadSource,type)
+writeWorkflowJobDataResource(entity, config, obj, 
+                                    useFeatures, resourcename, useUploadSource, 
+                                    createIndexes, overwrite, append, chunk.size, 
+                                    type)
 }
 \arguments{
 \item{entity}{a entity object as read by \code{geoflow_entity}}

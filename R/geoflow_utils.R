@@ -205,13 +205,13 @@ filter_sf_by_cqlfilter <- function(sfdata, cqlfilter){
 #'
 #' @usage extract_cell_components(str)
 #'                 
-#' @param x a string as object of class \code{character}
+#' @param str a string as object of class \code{character}
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'
-extract_cell_components <- function(x){
-  lines <- unlist(strsplit(x, get_line_separator()))
+extract_cell_components <- function(str){
+  lines <- unlist(strsplit(str, get_line_separator()))
   return(lines)
 }
 
@@ -324,6 +324,8 @@ enrich_text_from_entity = function(str, entity){
 #' \code{geoflow_action} that would need specific packages to be imported in R.
 #' 
 #' @usage check_packages(pkgs)
+#' 
+#' @param pkgs a vector of package names
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export

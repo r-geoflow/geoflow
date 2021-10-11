@@ -21,6 +21,10 @@ Default is \code{TRUE}.}
 \item{runLocalActions}{whether entity data local actions (if any) should be run.
 Default is \code{TRUE}}
 }
+\value{
+a named list including the workflow \code{config}, the selected \code{entity} and
+the eventual \code{options} associated to the entity.
+}
 \description{
 \code{debugWorkflow} allows to initiate a workflow job for
 developers to work / debug on workflow actions.

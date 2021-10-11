@@ -7,7 +7,7 @@
 extract_cell_components(str)
 }
 \arguments{
-\item{x}{a string as object of class \code{character}}
+\item{str}{a string as object of class \code{character}}
 }
 \description{
 \code{extract_cell_components} extracts the components of a cell

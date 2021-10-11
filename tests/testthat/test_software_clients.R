@@ -3,7 +3,7 @@
 #
 # Description: Unit tests for software clients
 #=======================
-require(geosapi, quietly = TRUE)
+require(geoflow, quietly = TRUE)
 require(testthat)
 
 test_that("GeoServer is properly configured",{
