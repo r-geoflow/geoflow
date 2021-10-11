@@ -35,3 +35,6 @@ vignettes/*.pdf
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
 .Rproj.user
+
+#geoflow jobs (if any stored localy)
+jobs
