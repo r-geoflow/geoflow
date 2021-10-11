@@ -43,6 +43,18 @@ geoflow_dimension
 }
 }
 
+\examples{
+ \dontrun{
+  dimension <- geoflow_dimension$new()
+  dimension$setLongName("longname")
+  dimension$setResolution(uom="s",value=1)
+  dimension$setSize(10)
+  dimension$setValues(c(1,2,3))
+  dimension$setMinValue(1)
+  dimension$setMaxValue(3)
+ }
+
+}
 \author{
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }

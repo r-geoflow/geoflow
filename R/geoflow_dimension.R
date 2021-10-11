@@ -12,15 +12,15 @@
 #' @format \code{\link{R6Class}} object.
 #' 
 #' @examples
-#' \dontrun{
+#'  \dontrun{
 #'   dimension <- geoflow_dimension$new()
 #'   dimension$setLongName("longname")
-#'   dimension$setResolution(uom="s',value=1)
+#'   dimension$setResolution(uom="s",value=1)
 #'   dimension$setSize(10)
 #'   dimension$setValues(c(1,2,3))
 #'   dimension$setMinValue(1)
 #'   dimension$setMaxValue(3)
-#' }
+#'  }
 #' 
 #' @section Methods:
 #' \describe{
