@@ -128,8 +128,8 @@ geoflow_action <- R6Class("geoflow_action",
         src_entities = config$src_entities[[i]]
         src_entities$Identifier <- sapply(1:nrow(src_entities), function(i){
           identifier <- src_entities[i, "Identifier"]
-          if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
-          if(regexpr(.geoflow$LINE_SEPARATOR, identifier)>0) return(identifier)
+          if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0("id:", identifier, .geoflow$LINE_SEPARATOR)
+          if(regexpr(.geoflow$LINE_SEPARATOR, identifier)>0 && !endsWith(identifier, .geoflow$LINE_SEPARATOR)) return(identifier)
           if(out_pids[i,"Status"] == "published") return(identifier)
           for(pid_type in names(self$pid_types)){
             if(!endsWith(identifier, .geoflow$LINE_SEPARATOR)) identifier <- paste0(identifier, .geoflow$LINE_SEPARATOR)
