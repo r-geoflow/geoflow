@@ -174,7 +174,7 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             
             GS_CONFIG <- config$software$output$geoserver_config
             workspace <- GS_CONFIG$properties$workspace
-            if(is.null(workspace)) if(!is.null(entity$data$workspaces$geoserver)) workspace <- entity$data$workspaces$geoserver
+            if(!is.null(entity$data$workspaces$geoserver)) workspace <- entity$data$workspaces$geoserver
             if(is.null(workspace)){
               errMsg <- "The geoserver configuration requires a workspace for publishing action"
               config$logger.error(errMsg)
