@@ -94,7 +94,9 @@ initWorkflow <- function(file, dir = "."){
     config$profile <- profile
   }
   
-  #working dir
+  #session_wd
+  config$session_wd <- getwd()
+  #working dir (where jobs will be created)
   if(is.null(config$wd)) config$wd <- tools::file_path_as_absolute(dir)
 
   #load source scripts
