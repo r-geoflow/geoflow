@@ -15,8 +15,15 @@ initWorkflow <- function(file, dir = "."){
 
   file <- tools::file_path_as_absolute(file)
   config <- jsonlite::read_json(file)
+  
+  #keep the source
   config$src <- file
   config$src_config <- config
+  
+  #convert back to string to eval variable expressions
+  config_str <- jsonlite::toJSON(config, auto_unbox = TRUE)
+  config_str <- geoflow::eval_variable_expressions(config_str)
+  config <- jsonlite::parse_json(config_str)
   
   #worfklow config$loggers
   id <- if(!is.null(config$profile$id)) config$profile$id else config$id

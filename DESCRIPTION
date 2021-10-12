@@ -17,6 +17,7 @@ Imports:
   XML,
   xml2,
   curl,
+  whisker,
   mime,
   plyr,
   readr,

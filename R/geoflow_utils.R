@@ -350,3 +350,21 @@ check_packages <- function(pkgs){
   }
   return(pkgs_df)
 }
+
+#' @name eval_variable_expressions
+#' @aliases eval_variable_expressions
+#' @title eval_variable_expressions
+#' @description \code{evaluate_variable_expression} evaluate a variable expression in the 
+#' form \code{${{variable}}}. If no variable expression pattern is identified in the string, 
+#' the function will return the original string.
+#' 
+#' @usage eval_variable_expressions(str)
+#' 
+#' @param str a character string
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+eval_variable_expressions <- function(str){
+  eval_str <- whisker::whisker.render(str, as.list(Sys.getenv()))
+  return(eval_str)
+}

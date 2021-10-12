@@ -16,6 +16,7 @@
 #' @importFrom zip zipr
 #' @importFrom png readPNG
 #' @importFrom curl curl_fetch_memory
+#' @importFrom whisker whisker.render
 #' @import uuid
 #' @import httr
 #' @import jsonlite
