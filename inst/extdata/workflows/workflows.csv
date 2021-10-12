@@ -1,3 +1,4 @@
 config_file,description
 config_metadata_gsheets.json,Load metadata entities/contacts from Google Spreadsheets
 config_metadata_gsheets_iso19115_inspire.json,Load metadata entities/contacts from Google Spreadsheets and generate ISO 19115/19139 metadata (with INSPIRE validation)
+config_metadata_gsheets_zenodo.json,Load metadata entity/contacts from Google Spreadsheets and deposit records on Zenodo
