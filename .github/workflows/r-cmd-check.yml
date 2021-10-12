@@ -18,6 +18,10 @@ jobs:
         config:
           - {os: ubuntu-20.04, r: 'oldrel'}
           - {os: ubuntu-20.04, r: 'release'}
+    
+    env:
+        ZENODO_SANDBOX_TOKEN: ${{ secrets.ZENODO_SANDBOX_TOKEN }}      
+    
     steps:
       - uses: actions/checkout@v2
       #SDI integration tests
@@ -27,7 +31,7 @@ jobs:
         run: |
           docker pull kartoza/postgis
           docker run -d --name="postgis" kartoza/postgis
-          docker run --link postgis:postgis -d -p 8080:8080 oscarfonts/geoserver:latest
+          docker run --link postgis:postgis -d -p 8080:8080 -e SAMPLE_DATA=true kartoza/geoserver:latest
       #OGC CSW integration tests
       #Docker GeoNetwork set-up
       - name: Set up GeoNetwork (latest)
@@ -35,7 +39,6 @@ jobs:
           docker network create elasticnetwork
           docker run -d --name elasticsearch --net elasticnetwork --add-host host.docker.internal:host-gateway -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:7.9.2
           docker run --add-host host.docker.internal:host-gateway -e ES_HOST=host.docker.internal --net elasticnetwork --name geonetwork -d -p 8081:8080 geonetwork
-      #-------------------------
       #Docker PyCSW set-up
       - name: Set up PyCSW (latest)
         run: |
