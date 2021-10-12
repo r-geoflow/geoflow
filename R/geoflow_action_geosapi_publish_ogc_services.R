@@ -46,7 +46,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   }
 
   workspace <- GS_CONFIG$properties$workspace
-  if(is.null(workspace)) if(!is.null(entity$data$workspace)) datastore <- entity$data$workspace
+  if(is.null(workspace)) if(!is.null(entity$data$workspaces$geoserver)) workspace <- entity$data$workspaces$geoserver
   if(is.null(workspace)){
     errMsg <- "The geoserver configuration requires a workspace for publishing action"
     config$logger.error(errMsg)
@@ -54,7 +54,6 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   }
   
   datastore <- GS_CONFIG$properties$datastore
-  if(is.null(datastore)) if(!is.null(entity$data$datastore)) datastore <- entity$data$datastore
   if(is.null(datastore)){
     errMsg <- "The geoserver configuration requires a datastore for publishing action"
     config$logger.error(errMsg)
