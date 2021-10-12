@@ -33,6 +33,7 @@ Remotes:
   eblondel/atom4R,
   eblondel/geonapi,
   eblondel/ows4R,
+  eblondel/zen4R,
   eblondel/d4storagehub4R,
   BigelowLab/thredds,
   ropensci/datapack,
