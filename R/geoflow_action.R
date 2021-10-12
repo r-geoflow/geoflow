@@ -145,8 +145,9 @@ geoflow_action <- R6Class("geoflow_action",
       
       
       #modifying handler to csv/exported table - to see with @juldebar
-      src_config$metadata$entities$handler <- "csv"
-      src_config$metadata$entities$source <- paste0(self$pid_generator, "_entities_with_pids_for_publication.csv")
+      src_config$metadata$entities <- lapply(1:length(src_config$metadata$entities), function(i){
+        list(handler = "csv", source = paste0(self$pid_generator, "_entities_",i,"_with_pids_for_publication.csv"))
+      })
       
       #altering publish option
       pid_action <- src_config$actions[sapply(src_config$actions, function(x){x$id==self$id})][[1]]
