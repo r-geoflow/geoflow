@@ -48,7 +48,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
       stop(errMsg)
     }else{
       if(group_match_col=="name"){
-        group <- available.groups[available.groups$name==group,]$id
+        group <- available_groups[available_groups$name==group,]$id
       }
     }
     #category
@@ -65,14 +65,14 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     switch(GN$getClassName(),
       "GNOpenAPIManager" = {
         if(category_match_col=="name"){
-          category <- available.categories[available.categories$name==category,]$id
+          category <- available_categories[available_categories$name==category,]$id
         }
         GN$insertRecord(geometa = md, group = group, category = category,
                           uuidProcessing = "OVERWRITE", geometa_inspire = inspire)
       },
       "GNLegacyAPIManager" = {
         if(category_match_col=="id"){
-          category <- available.categories[available.categories$id==category,]$name
+          category <- available_categories[available_categories$id==category,]$name
         }
         metaId <- GN$get(mdId, by = "uuid", output = "id")
         if(is.null(metaId)){
