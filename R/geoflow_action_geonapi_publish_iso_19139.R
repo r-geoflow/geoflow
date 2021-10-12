@@ -39,18 +39,24 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     
     #group
     group <- if(!is.null(options$group)) options$group else "1"
+    group_match_col<-if(!grepl("\\D", group)){"id"}else{"name"}
     available_groups <- GN$getGroups()
-    if(!group %in% available_groups$id){
-      errMsg <- sprintf("Geonetwork: no group for id = %s - Please check below the Geonetwork available groups", group)
+    if(!group %in% available_groups[[group_match_col]]){
+      errMsg <- sprintf("Geonetwork: no group for %s = %s - Please check below the Geonetwork available groups",group_match_col, group)
       config$logger.error(errMsg)
       print(available_groups)
       stop(errMsg)
+    }else{
+      if(group_match_col=="name"){
+        group <- available_groups[available_groups$name==group,]$id
+      }
     }
     #category
-    category <- if(!is.null(options$category)) options$category else "1"
+    category <- if(!is.null(options$category)) options$category else "datasets"
+    category_match_col<-if(!grepl("\\D", category)){"id"}else{"name"}
     available_categories <- GN$getCategories()
-    if(!category %in% available_categories$id){
-      errMsg <- sprintf("Geonetwork: no category for id = %s - Please check below the Geonetwork available categories", category)
+    if(!category %in% available_categories[[category_match_col]]){
+      errMsg <- sprintf("Geonetwork: no category for %s = %s - Please check below the Geonetwork available categories",category_match_col, category)
       config$logger.error(errMsg)
       print(available_categories)
       stop(errMsg)
@@ -58,10 +64,16 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     
     switch(GN$getClassName(),
       "GNOpenAPIManager" = {
+        if(category_match_col=="name"){
+          category <- available_categories[available_categories$name==category,]$id
+        }
         GN$insertRecord(geometa = md, group = group, category = category,
                           uuidProcessing = "OVERWRITE", geometa_inspire = inspire)
       },
       "GNLegacyAPIManager" = {
+        if(category_match_col=="id"){
+          category <- available_categories[available_categories$id==category,]$name
+        }
         metaId <- GN$get(mdId, by = "uuid", output = "id")
         if(is.null(metaId)){
           #insert metadata (once inserted only visible to the publisher)
