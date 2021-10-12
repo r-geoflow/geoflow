@@ -23,7 +23,7 @@ test_that("init",{
   expect_equal(names(CFG$software), c("input", "output"))
   expect_equal(length(CFG$software$input), 0L)
   expect_equal(length(CFG$software$output), 2L)
-  expect_equal(CFG$software$output, c("zenodo", "zenodo_config"))
+  expect_equal(names(CFG$software$output), c("zenodo", "zenodo_config"))
 })
 
 #debug
