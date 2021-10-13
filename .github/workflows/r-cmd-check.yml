@@ -32,7 +32,6 @@ jobs:
           docker pull kartoza/postgis
           docker run -d --name="postgis" kartoza/postgis
           docker run --link postgis:postgis -d -p 8080:8080 -e SAMPLE_DATA=true kartoza/geoserver:latest
-      #OGC CSW integration tests
       #Docker GeoNetwork set-up
       - name: Set up GeoNetwork (latest)
         run: |
