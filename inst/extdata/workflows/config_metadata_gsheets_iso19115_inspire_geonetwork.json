@@ -30,7 +30,7 @@
 		"parameters": {
 			"url": "http://localhost:8081/geonetwork",
 			"user": "admin",
-			"pwd": "geonetwork",
+			"pwd": "admin",
 			"version": "4.0.5",
 			"logger": "DEBUG"
 		}
