@@ -54,7 +54,7 @@ test_that("execute",{
   zenodo = config$software$output$zenodo
   
   zenodo_records <- as.data.frame(readr::read_csv(file.path(EXEC, "zenodo", "zenodo_pids.csv")))
-  expect_equal(zenodo_records$Identifier, c("my-geoflow-record-test1", "my-geoflow-record-test2"))
+  expect_equal(zenodo_records$Identifier, c("my-geoflow-zenodo-deposit1", "my-geoflow-zenodo-deposit2"))
   expect_equal(zenodo_records$Status, c("draft", "draft"))
   for(id in zenodo_records$Identifier){
     conceptdoi <- zenodo_records[zenodo_records$Identifier == id, "DOI_for_allversions"]
@@ -66,10 +66,10 @@ test_that("execute",{
 #execute - with publication & versioning
 test_that("execute - with publication & versioning",{
   
-  cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo_full.json", package = "geoflow")
+  cfg_file_full = system.file("extdata/workflows/config_metadata_gsheets_zenodo_full.json", package = "geoflow")
   
   #deposit
-  EXEC <- geoflow::executeWorkflow(cfg_file, dir = ".")
+  EXEC <- geoflow::executeWorkflow(cfg_file_full, dir = ".")
   expect_true(dir.exists(EXEC))
   expect_true(file.exists(file.path(EXEC, "job.json")))
   expect_true(file.exists(file.path(EXEC, "job-logs.txt")))
@@ -82,11 +82,11 @@ test_that("execute - with publication & versioning",{
                                "zenodo_geoflow_config_for_publication.json",
                                "zenodo_pids.csv"))
   
-  config <- geoflow::initWorkflow(cfg_file, dir = ".")
+  config <- geoflow::initWorkflow(cfg_file_full, dir = ".")
   zenodo = config$software$output$zenodo
   
   zenodo_records <- as.data.frame(readr::read_csv(file.path(EXEC, "zenodo", "zenodo_pids.csv")))
-  expect_equal(zenodo_records$Identifier, c("my-geoflow-record1", "my-geoflow-record2"))
+  expect_equal(zenodo_records$Identifier, c("my-geoflow-zenodo-record1", "my-geoflow-zenodo-record2"))
   expect_equal(zenodo_records$Status, c("draft", "draft"))
   for(id in zenodo_records$Identifier){
     conceptdoi <- zenodo_records[zenodo_records$Identifier == id, "DOI_for_allversions"]
@@ -118,7 +118,7 @@ test_that("execute - with publication & versioning",{
   setwd(wd)
   
   zenodo_published_records <- as.data.frame(readr::read_csv(file.path(EXEC2, "zenodo", "zenodo_pids.csv")))
-  expect_equal(zenodo_published_records$Identifier, c("my-geoflow-record1", "my-geoflow-record2"))
+  expect_equal(zenodo_published_records$Identifier, c("my-geoflow-zenodo-record1", "my-geoflow-zenodo-record2"))
   expect_equal(zenodo_published_records$Status, c("published", "published"))
   for(id in zenodo_published_records$Identifier){
     conceptdoi <- zenodo_published_records[zenodo_published_records$Identifier == id, "DOI_for_allversions"]
