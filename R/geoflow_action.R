@@ -288,6 +288,7 @@ register_actions <- function(){
       options = list(
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
         publish = list(def = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", class = "logical", default = FALSE),
+        strategy = list(def = "Strategy to use when handling published records, either 'newversion' (default) or 'edition'", class = "character", choices = list("newversion", "edition"), default = "newversion"),
         deleteOldFiles = list(def = "Indicates if the action should delete old files prior upload new files", class = "logical", default = TRUE),
         update_metadata = list(def = "For an existing deposit, indicates if metadata elements should be updated", class = "logical", default = TRUE),
         update_files = list(def = "For an existing deposit, indicates if files should be updated", class = "logical", default = TRUE),

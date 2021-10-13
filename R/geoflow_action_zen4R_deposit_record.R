@@ -18,6 +18,7 @@ zen4R_deposit_record <- function(entity, config, options){
   #options
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
   publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
+  strategy <- if(!is.null(options$strategy)) options$strategy else "newversion"
   deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
   update_metadata <- if(!is.null(options$update_metadata)) options$update_metadata else TRUE
   update_files <- if(!is.null(options$update_files)) options$update_files else TRUE
@@ -67,17 +68,20 @@ zen4R_deposit_record <- function(entity, config, options){
   
   #action to perform: create empty record or update existing record
   update <- FALSE
+  record_state <- NULL
   if(is.null(zenodo_metadata)){
     config$logger.info(sprintf("Zenodo: No existing Zenodo record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
     config$logger.info("Zenodo: creating a new deposit empty record")
     zenodo_metadata <- ZENODO$createEmptyRecord()
     zenodo_metadata$addRelatedIdentifier("isIdenticalTo", paste("urn", entity$identifiers[["id"]], sep=":"))
+    record_state <- zenodo_metadata$state
   }else{
     config$logger.info(sprintf("Zenodo: Existing record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
     update <- TRUE
+    record_state <- zenodo_metadata$state
     
-    #case of submitted records, need to unlock record
-    if(zenodo_metadata$state == "done"){
+    #case of submitted records and 'edition' strategy, need to unlock record
+    if(zenodo_metadata$state == "done" && strategy == "edition"){
       config$logger.info(sprintf("Zenodo: record '%s' already published. Need to unlock it for edition", zenodo_metadata$id))
       unlocked_rec <- ZENODO$editRecord(zenodo_metadata$id)
       if(is(unlocked_rec, "ZenodoRecord")){
@@ -201,8 +205,9 @@ zen4R_deposit_record <- function(entity, config, options){
     config$logger.info("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")
   }
   
-  #file uploads
-  if(depositWithFiles & (!update | (update & update_files))){
+  #file uploads (for new or edited records)
+  #note: for new versions this is managed directly with ZENODO$depositRecordVersion
+  if(depositWithFiles & (!update | (update & update_files)) & record_state == "unsubmitted"){
     if(deleteOldFiles & !skipFileDownload){
       config$logger.info("Zenodo: deleting old files...")
       zen_files <- ZENODO$getFiles(zenodo_metadata$id)
@@ -259,7 +264,25 @@ zen4R_deposit_record <- function(entity, config, options){
     }
   }
   config$logger.info(sprintf("Deposit record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
-  out <- ZENODO$depositRecord(zenodo_metadata, publish = publish)
+  out <- switch(record_state,
+      "unsubmitted" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
+      "done" = {
+        switch(strategy,
+          "edition" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
+          "newversion" = {
+            data_files <- list.files(file.path(getwd(),"data"))
+            metadata_files <- list.files(file.path(getwd(),"metadata"))
+            files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
+            ZENODO$depositRecordVersion(
+              record = zenodo_metadata, 
+              delete_latest_files = TRUE,
+              files = files_to_upload,
+              publish = publish
+            )
+          }
+        )
+      }
+  )
   if(!is(out,"ZenodoRecord")){
     errMsg <- sprintf("Zenodo: %s", out$errors[[1]]$message)
     config$logger.error(errMsg)
@@ -267,27 +290,27 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   
   #we set the (prereserved) doi to the entity in question
-  doi_to_save <- try(zenodo_metadata$metadata$prereserve_doi$doi, silent = TRUE)
+  doi_to_save <- try(out$metadata$prereserve_doi$doi, silent = TRUE)
   if(is(doi_to_save, "try-error")) doi_to_save <- entity$identifiers[["doi"]]
-  config$logger.info(sprintf("Setting DOI '%s' to save and export for record",zenodo_metadata$metadata$prereserve_doi$doi))
+  config$logger.info(sprintf("Setting DOI '%s' to save and export for record",out$metadata$prereserve_doi$doi))
   for(i in 1:length(config$metadata$content$entities)){
     ent <- config$metadata$content$entities[[i]]
     if(ent$identifiers[["id"]]==entity$identifiers[["id"]]){
       if(regexpr("zenodo", doi)>0){
-        config$metadata$content$entities[[i]]$identifiers[["zenodo_doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
-        config$metadata$content$entities[[i]]$identifiers[["zenodo_conceptdoi_to_save"]] <- zenodo_metadata$getConceptDOI()
+        config$metadata$content$entities[[i]]$identifiers[["zenodo_doi_to_save"]] <- out$metadata$prereserve_doi$doi
+        config$metadata$content$entities[[i]]$identifiers[["zenodo_conceptdoi_to_save"]] <- out$getConceptDOI()
         config$metadata$content$entities[[i]]$setStatus("zenodo", ifelse(publish, "published", "draft"))
       }
       break;
     }
   }
-  entity$identifiers[["zenodo_doi_to_save"]] <- zenodo_metadata$metadata$prereserve_doi$doi
-  entity$identifiers[["zenodo_conceptdoi_to_save"]] <- zenodo_metadata$getConceptDOI()
+  entity$identifiers[["zenodo_doi_to_save"]] <- out$metadata$prereserve_doi$doi
+  entity$identifiers[["zenodo_conceptdoi_to_save"]] <- out$getConceptDOI()
   entity$setStatus("zenodo", ifelse(publish, "published", "draft"))
   
   #if publish, we save all
   if(publish){
-    config$logger.info(sprintf("Export record to Zenodo metadata formats", zenodo_metadata$getConceptDOI()))
+    config$logger.info(sprintf("Export record to Zenodo metadata formats", out$getConceptDOI()))
     out$exportAsAllFormats(file.path(getwd(),"metadata",entity$identifiers[["id"]]))
   }
   
