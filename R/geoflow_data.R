@@ -385,7 +385,7 @@ geoflow_data <- R6Class("geoflow_data",
               type = "Entity data action",
               def = desc,
               fun = eval(expr = parse(text = paste0("function(entity, config, options){
-                source(",script_to_source,"), local = TRUE)
+                source(",script_to_source,", local = TRUE)
               }"))),
               script = script,
               options = action_options
