@@ -368,3 +368,20 @@ eval_variable_expressions <- function(str){
   eval_str <- whisker::whisker.render(str, as.list(Sys.getenv()))
   return(eval_str)
 }
+
+#' @name is_absolute_path
+#' @aliases is_absolute_path
+#' @title is_absolute_path
+#' @description \code{is_absolute_path} evaluate if a \code{${{path}}} expression is an absolute path, 
+#' the function will return a boolean argument.
+#' 
+#' @usage is_absolute_path(path)
+#' 
+#' @param path a path in character string
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+
+is_absolute_path <- function(path) {
+  grepl("^(/|[A-Za-z]:|\\\\|~)", path)
+}

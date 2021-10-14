@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-20.04, r: 'oldrel'}
+          #- {os: ubuntu-20.04, r: 'oldrel'}
           - {os: ubuntu-20.04, r: 'release'}
     
     env:
