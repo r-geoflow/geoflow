@@ -28,7 +28,7 @@
 		"type": "output",
 		"software_type": "geonetwork",
 		"parameters": {
-			"url": "http://localhost:8081/geonetwork",
+			"url": "http://localhost:8181/geonetwork",
 			"user": "admin",
 			"pwd": "admin",
 			"version": "4.0.5",

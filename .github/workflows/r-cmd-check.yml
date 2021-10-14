@@ -37,7 +37,7 @@ jobs:
         run: |
           docker network create elasticnetwork
           docker run -d --name elasticsearch --net elasticnetwork --add-host host.docker.internal:host-gateway -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:7.9.2
-          docker run --add-host host.docker.internal:host-gateway -e ES_HOST=host.docker.internal --net elasticnetwork --name geonetwork -d -p 8081:8080 geonetwork
+          docker run --add-host host.docker.internal:host-gateway -e ES_HOST=host.docker.internal --net elasticnetwork --name geonetwork -d -p 8181:8080 geonetwork
       #Docker PyCSW set-up
       - name: Set up PyCSW (latest)
         run: |
