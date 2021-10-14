@@ -38,7 +38,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     }
     
     #group
-    group <- if(!is.null(options$group)) options$group else "1"
+    group <- if(!is.null(options$group)) options$group else "2" #2 = sample (provided by default GN installation)
     group_match_col<-if(!grepl("\\D", group)){"id"}else{"name"}
     available_groups <- GN$getGroups()
     if(!group %in% available_groups[[group_match_col]]){
