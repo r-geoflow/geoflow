@@ -368,6 +368,16 @@ geoflow_data <- R6Class("geoflow_data",
           for(action in actions){
             action <- action$values[[1]]
             script <- attr(action, "uri")
+            
+            isSourceUrl <- regexpr('(http|https)[^([:blank:]|\\\'|<|&|#\n\r)]+', script) > 0
+            if(isFALSE(isSourceUrl)){
+              if(!is_absolute_path(script)){
+                script_to_source<-paste0("file.path(config$session_wd,\"",script,"\")")
+              }else{
+                script_to_source<-paste0("\"",script,"\"")
+              }}else{
+              script_to_source<-paste0("\"",script,"\"")}
+              
             desc <- attr(action, "description")
             attributes(action) <- NULL
             entity_action <- geoflow_action$new(
@@ -375,7 +385,7 @@ geoflow_data <- R6Class("geoflow_data",
               type = "Entity data action",
               def = desc,
               fun = eval(expr = parse(text = paste0("function(entity, config, options){
-                source(\"",script,"\", local = TRUE)
+                source(",script_to_source,", local = TRUE)
               }"))),
               script = script,
               options = action_options
