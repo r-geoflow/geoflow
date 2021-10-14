@@ -6,10 +6,9 @@
 require(geoflow, quietly = TRUE)
 require(testthat)
 
-cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo.json", package = "geoflow")
-
 #init
 test_that("init",{
+  cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo.json", package = "geoflow")
   CFG <- geoflow::initWorkflow(cfg_file)
   expect_is(CFG$metadata$content, "list")
   expect_equal(length(CFG$metadata$content), 2L)
@@ -28,6 +27,7 @@ test_that("init",{
 
 #debug
 test_that("debug",{
+  cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo.json", package = "geoflow")
   DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = ".")
   expect_equal(names(DEBUG), c("config", "entity"))
   expect_is(DEBUG$config, "list")
@@ -36,6 +36,7 @@ test_that("debug",{
 
 #execute
 test_that("execute",{
+  cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo.json", package = "geoflow")
   #deposit
   EXEC <- geoflow::executeWorkflow(cfg_file, dir = ".")
   expect_true(dir.exists(EXEC))
@@ -54,6 +55,7 @@ test_that("execute",{
   zenodo = config$software$output$zenodo
   
   zenodo_records <- as.data.frame(readr::read_csv(file.path(EXEC, "zenodo", "zenodo_pids.csv")))
+  print(zenodo_records)
   expect_equal(zenodo_records$Identifier, c("my-geoflow-zenodo-deposit1", "my-geoflow-zenodo-deposit2"))
   expect_equal(zenodo_records$Status, c("draft", "draft"))
   for(id in zenodo_records$Identifier){
