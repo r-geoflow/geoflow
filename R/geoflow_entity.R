@@ -466,6 +466,9 @@ geoflow_entity <- R6Class("geoflow_entity",
             software = accessor_software
           )
         }else{
+          if(!is.null(datasource_uri)){
+            if(!is_absolute_path(datasource_uri)) datasource_uri <- file.path(config$session_wd,datasource_uri)
+          }
           config$logger.info("Copying data to Job data directory from local file(s)")
           data.files <- list.files(path = dirname(datasource_uri), pattern = datasource_name)
           if(length(data.files)>0){
