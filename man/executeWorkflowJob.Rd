@@ -4,7 +4,7 @@
 \alias{executeWorkflowJob}
 \title{executeWorkflowJob}
 \usage{
-executeWorkflowJob(config, jobdir)
+executeWorkflowJob(config, jobdir, monitor)
 }
 \arguments{
 \item{config}{a configuration object as read by \code{initWorkflow}}

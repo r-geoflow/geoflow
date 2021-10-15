@@ -3,7 +3,7 @@
 #' @title executeWorkflow
 #' @description \code{executeWorkflow} allows to execute a workflow
 #'
-#' @usage executeWorkflow(file, dir)
+#' @usage executeWorkflow(file, dir, monitor)
 #'                 
 #' @param file a JSON geoflow configuration file
 #' @param dir a directory where to execute the workflow
