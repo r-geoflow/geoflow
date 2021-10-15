@@ -7,33 +7,18 @@
 #'                 
 #' @param file a JSON geoflow configuration file
 #' @param dir a directory where to execute the workflow
-#' @param shinyMonitor a monitor shiny function to increase progress bar 
+#' @param monitor a monitor function to increase progress bar 
 #' @return the path of the job directory
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
-executeWorkflow <- function(file, dir = ".", shinyMonitor = NULL){
+executeWorkflow <- function(file, dir = ".", monitor = NULL){
   
   #options
   .defaultOptions <- options()
   options(stringsAsFactors = FALSE)
   options(gargle_oob_default = TRUE)
-  
-  #manage monitor
-  if(!is.null(shinyMonitor)){
-    if(isTRUE(shinyMonitor)){
-      shinyMonitor = function(step,init=FALSE, entity,action){
-        if(init){
-          shiny::setProgress(value = step, detail = paste0("Initialsation of workflow","...",step,"%"))
-        }else{
-          shiny::setProgress(value = step, detail = paste0("Executing action:",action,"of entity:",entity,"...",step,"%"))
-        }
-      }
-    }else if(!is.function(shinyMonitor)){
-        shinyMonitor = NULL
-      }else{}
-  }
   
   #1. Init the workflow based on configuration file
   config <- initWorkflow(file, dir = dir)
@@ -44,6 +29,21 @@ executeWorkflow <- function(file, dir = ".", shinyMonitor = NULL){
   jobdir <- initWorkflowJob(config)
   config$debug <- FALSE
   config$job <- jobdir
+  
+  #manage monitor
+  if(!is.null(monitor)){
+    if(is.function(monitor)){
+      if(all(names(formals(monitor)),c("step","config","entity","action"))){
+        config$logger.info("use monitor function to trace processing steps")
+      }else{
+        config$logger.info("Monitor function escaped, parameter(s) missing or in wrong order")
+        monitor=NULL
+      }
+    }else{
+      config$logger.info("Monitor escaped, monitor must be a function")
+      monitor = NULL
+    }
+  }
   
   #3. Execute the workflow job
   capture.output({

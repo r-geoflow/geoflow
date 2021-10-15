@@ -11,7 +11,7 @@ executeWorkflow(file, dir)
 
 \item{dir}{a directory where to execute the workflow}
 
-\item{shinyMonitor}{a monitor shiny function to increase progress bar}
+\item{monitor}{a monitor function to increase progress bar}
 }
 \value{
 the path of the job directory

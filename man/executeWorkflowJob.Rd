@@ -11,7 +11,7 @@ executeWorkflowJob(config, jobdir)
 
 \item{jobdir}{the Job directory. Optional, by default inherited with the configuration.}
 
-\item{shinyMonitor}{a monitor shiny function to increase progress bar}
+\item{monitor}{a monitor function to increase progress bar}
 }
 \description{
 \code{executeWorkflowJob} allows to execute a workflow job
