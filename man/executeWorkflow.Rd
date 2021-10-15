@@ -10,6 +10,8 @@ executeWorkflow(file, dir)
 \item{file}{a JSON geoflow configuration file}
 
 \item{dir}{a directory where to execute the workflow}
+
+\item{monitor}{a monitor function to increase progress bar}
 }
 \value{
 the path of the job directory

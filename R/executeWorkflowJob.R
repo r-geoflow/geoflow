@@ -7,11 +7,12 @@
 #'                 
 #' @param config a configuration object as read by \code{initWorkflow}
 #' @param jobdir the Job directory. Optional, by default inherited with the configuration.
+#' @param monitor a monitor function to increase progress bar 
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'    
-executeWorkflowJob <- function(config, jobdir = NULL){
+executeWorkflowJob <- function(config, jobdir = NULL,monitor){
   
     if(is.null(jobdir)) jobdir <- config$job
   
@@ -106,6 +107,11 @@ executeWorkflowJob <- function(config, jobdir = NULL){
           }
         }
         
+        #Monitor incrementation
+        nb_step<-length(entities) * length(config$actions) + sum(sapply(entities, function(entity){length(entity$data$actions)}))
+        inc_step<-1/nb_step*100
+        step=0
+        
         for(entity in entities){
           
           #create entity jobdir
@@ -148,6 +154,10 @@ executeWorkflowJob <- function(config, jobdir = NULL){
                   entity_action <- entity$data$actions[[i]]
                   config$logger.info(sprintf("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script))
                   entity_action$fun(entity, config, entity_action$options)
+                  #monitor local action
+                  step<-step+inc_step
+                  config$logger.info(sprintf("WORKFLOW PROGRESS : ACTION '%s' of ENTITY '%s' ... %s %%",entity_action$id,entity$identifiers[["id"]],step))
+                  if(!is.null(monitor)) monitor(step=step,config=config,entity=entity,action=entity_action)
                 }
                 #we trigger entity enrichment (in case entity data action involved modification of entity)
                 entity$enrichWithMetadata()
@@ -210,6 +220,11 @@ executeWorkflowJob <- function(config, jobdir = NULL){
             action <- actions[[i]]
             config$logger.info(sprintf("Executing Action %s: %s - for entity %s", i, action$id, entity$identifiers[["id"]]))
             action$fun(entity = entity, config = config, options = action$options)
+            
+            #monitor global action
+            step<-step+inc_step
+            config$logger.info(sprintf("WORKFLOW PROGRESS : ACTION '%s' of ENTITY '%s' ... %s %%",action$id,entity$identifiers[["id"]],step))
+            if(!is.null(monitor)) monitor(step=step,config=config,entity=entity,action=action)
           }
           
           #search for generic uploader actions (eg. Zenodo, Dataverse)
