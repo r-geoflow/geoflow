@@ -377,6 +377,22 @@ register_software <- function(){
       )
     ),
     #-------------------------------------------------------------------------------------------------------
+    #OGC WPS
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "wps",
+      definition = "OGC Web Processing Service (WPS) client powered by 'ows4R' package",
+      packages = list("ows4R"),
+      handler = try(ows4R::WPSClient$new, silent = TRUE),
+      arguments = list(
+        url = list(def = "WPS service endpoint URL", class = "character"),
+        serviceVersion = list(def = "WPS service version (limited to '1.0.0')", class = "character"),
+        user = list(def = "Username for WPS authentication", class = "character"),
+        pwd = list(def = "Password for WPS authentication", class = "character"),
+        logger = list(def = "Level for 'ows4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))
+      )
+    ),
+    #-------------------------------------------------------------------------------------------------------
     #GEONETWORK API
     #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(
