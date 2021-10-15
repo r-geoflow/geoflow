@@ -7,17 +7,33 @@
 #'                 
 #' @param file a JSON geoflow configuration file
 #' @param dir a directory where to execute the workflow
+#' @param shinyMonitor a monitor shiny function to increase progress bar 
 #' @return the path of the job directory
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
-executeWorkflow <- function(file, dir = "."){
+executeWorkflow <- function(file, dir = ".", shinyMonitor = NULL){
   
   #options
   .defaultOptions <- options()
   options(stringsAsFactors = FALSE)
   options(gargle_oob_default = TRUE)
+  
+  #manage monitor
+  if(!is.null(shinyMonitor)){
+    if(isTRUE(shinyMonitor)){
+      shinyMonitor = function(step,init=FALSE, entity,action){
+        if(init){
+          shiny::setProgress(value = step, detail = paste0("Initialsation of workflow","...",step,"%"))
+        }else{
+          shiny::setProgress(value = step, detail = paste0("Executing action:",action,"of entity:",entity,"...",step,"%"))
+        }
+      }
+    }else if(!is.function(shinyMonitor)){
+        shinyMonitor = NULL
+      }else{}
+  }
   
   #1. Init the workflow based on configuration file
   config <- initWorkflow(file, dir = dir)
@@ -31,7 +47,7 @@ executeWorkflow <- function(file, dir = "."){
   
   #3. Execute the workflow job
   capture.output({
-    exec <- try(executeWorkflowJob(config))
+    exec <- try(executeWorkflowJob(config,monitor = monitor))
     if(class(exec)=="try-error"){
       setwd(wd)
       closeWorkflow(config)
