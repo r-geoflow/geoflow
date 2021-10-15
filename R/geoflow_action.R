@@ -15,6 +15,7 @@
 #' \dontrun{
 #'   action <- geoflow_action$new(
 #'    id = "some-id",
+#'    scope = "global",
 #'    types = list("some purpose1", "some purpose2"),
 #'    target = "entity",
 #'    target_dir = "data",
@@ -31,7 +32,7 @@
 #' 
 #' @section Methods:
 #' \describe{
-#'  \item{\code{new(id, types, target, target_dir, def, fun, script, options)}}{
+#'  \item{\code{new(id, scope, types, target, target_dir, def, fun, script, options)}}{
 #'    This method is used to instantiate a geoflow_action object
 #'  }
 #'  \item{\code{checkPackages()}}{
@@ -48,6 +49,7 @@ geoflow_action <- R6Class("geoflow_action",
   inherit = geoflowLogger,
   public = list(
     id = NA,
+    scope = NULL,
     types = list(),
     def = NA,
     target = NA,
@@ -59,13 +61,17 @@ geoflow_action <- R6Class("geoflow_action",
     fun = NA,
     script = NA,
     options = list(),
-    initialize = function(id, types = list(), def = "", 
+    initialize = function(id, scope = "global", types = list(), def = "", 
                           target = NA, target_dir = NA,
                           packages = list(), 
                           pid_generator = NULL, pid_types = list(),
                           generic_uploader = FALSE,
                           fun = NULL, script = NULL, options = list()){
       self$id <- id
+      if(!scope %in% c("global", "local")){
+        stop("Action should be either of 'global' or 'local' scope")
+      }
+      self$scope <- scope
       self$types <- types
       self$def <- def
       if(!is.na(target)) if(!target %in% c("entity","job")) stop("Action target should be either 'entity' or 'job'")

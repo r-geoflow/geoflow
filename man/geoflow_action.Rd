@@ -19,7 +19,7 @@ geoflow_action
 \section{Methods}{
 
 \describe{
- \item{\code{new(id, types, target, target_dir, def, fun, script, options)}}{
+ \item{\code{new(id, scope, types, target, target_dir, def, fun, script, options)}}{
    This method is used to instantiate a geoflow_action object
  }
  \item{\code{checkPackages()}}{
@@ -35,6 +35,7 @@ geoflow_action
 \dontrun{
   action <- geoflow_action$new(
    id = "some-id",
+   scope = "global",
    types = list("some purpose1", "some purpose2"),
    target = "entity",
    target_dir = "data",
