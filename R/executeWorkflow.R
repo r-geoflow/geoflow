@@ -33,7 +33,7 @@ executeWorkflow <- function(file, dir = ".", monitor = NULL){
   #manage monitor
   if(!is.null(monitor)){
     if(is.function(monitor)){
-      if(all(names(formals(monitor)),c("step","config","entity","action"))){
+      if(all(names(formals(monitor))==c("step","config","entity","action"))){
         config$logger.info("use monitor function to trace processing steps")
       }else{
         config$logger.info("Monitor function escaped, parameter(s) missing or in wrong order")

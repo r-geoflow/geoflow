@@ -156,7 +156,7 @@ executeWorkflowJob <- function(config, jobdir = NULL,monitor){
                   entity_action$fun(entity, config, entity_action$options)
                   #monitor local action
                   step<-step+inc_step
-                  config$logger.info(sprintf("WORKFLOW PROGRESS : ACTION '%s' of ENTITY '%s' ... %s %",entity_action$id,entity$identifiers[["id"]],step))
+                  config$logger.info(sprintf("WORKFLOW PROGRESS : ACTION '%s' of ENTITY '%s' ... %s %%",entity_action$id,entity$identifiers[["id"]],step))
                   if(!is.null(monitor)) monitor(step=step,config=config,entity=entity,action=entity_action)
                 }
                 #we trigger entity enrichment (in case entity data action involved modification of entity)
@@ -223,8 +223,8 @@ executeWorkflowJob <- function(config, jobdir = NULL,monitor){
             
             #monitor global action
             step<-step+inc_step
-            config$logger.info(sprintf("WORKFLOW PROGRESS : ACTION '%s' of ENTITY '%s' ... %s %",action$id,entity$identifiers[["id"]],step))
-            if(!is.null(monitor)) monitor(step=step,confg=config,entity=entity,action=action)
+            config$logger.info(sprintf("WORKFLOW PROGRESS : ACTION '%s' of ENTITY '%s' ... %s %%",action$id,entity$identifiers[["id"]],step))
+            if(!is.null(monitor)) monitor(step=step,config=config,entity=entity,action=action)
           }
           
           #search for generic uploader actions (eg. Zenodo, Dataverse)
