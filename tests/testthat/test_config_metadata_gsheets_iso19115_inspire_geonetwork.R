@@ -8,6 +8,7 @@ require(testthat)
 
 cfg_file = system.file("extdata/workflows/config_metadata_gsheets_iso19115_inspire_geonetwork.json", package = "geoflow")
 
+if(FALSE){
 #init
 test_that("init",{
   CFG <- geoflow::initWorkflow(cfg_file)
@@ -53,3 +54,4 @@ test_that("execute",{
     expect_is(entity_md, "ISOMetadata")
   }
 })
+}
