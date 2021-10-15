@@ -9,7 +9,6 @@ require(testthat)
 #execute - with publication & versioning
 test_that("execute - with publication & versioning",{
  
-  if(FALSE){ 
   cfg_file_full = system.file("extdata/workflows/config_metadata_gsheets_zenodo_full.json", package = "geoflow")
   
   #deposit
@@ -69,6 +68,5 @@ test_that("execute - with publication & versioning",{
     rec <- zenodo$getRecordByConceptDOI(conceptdoi)
     expect_is(rec, "ZenodoRecord")
   }
-  
-  }
+
 })
