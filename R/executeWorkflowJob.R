@@ -12,7 +12,7 @@
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'    
-executeWorkflowJob <- function(config, jobdir = NULL,monitor){
+executeWorkflowJob <- function(config, jobdir = NULL, monitor = NULL){
   
     if(is.null(jobdir)) jobdir <- config$job
   
