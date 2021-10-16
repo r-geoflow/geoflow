@@ -266,6 +266,7 @@ zen4R_deposit_record <- function(entity, config, options){
   config$logger.info(sprintf("Deposit record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
   out <- switch(record_state,
       "unsubmitted" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
+      "inprogress" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
       "done" = {
         switch(strategy,
           "edition" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
