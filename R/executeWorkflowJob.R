@@ -7,12 +7,13 @@
 #'                 
 #' @param config a configuration object as read by \code{initWorkflow}
 #' @param jobdir the Job directory. Optional, by default inherited with the configuration.
+#' @param queue an \pkg{ipc} queue to use geoflow in \pkg{geoflow-shiny}
 #' @param monitor a monitor function to increase progress bar 
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'    
-executeWorkflowJob <- function(config, jobdir = NULL, monitor = NULL){
+executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NULL){
   
     if(is.null(jobdir)) jobdir <- config$job
   
@@ -157,7 +158,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, monitor = NULL){
                   #monitor local action
                   step<-step+inc_step
                   config$logger.info(sprintf("WORKFLOW PROGRESS : ACTION '%s' of ENTITY '%s' ... %s %%",entity_action$id,entity$identifiers[["id"]],step))
-                  if(!is.null(monitor)) monitor(step=step,config=config,entity=entity,action=entity_action)
+                  if(!is.null(monitor)) monitor(step=step,config=config,entity=entity,action=entity_action,queue=queue)
                 }
                 #we trigger entity enrichment (in case entity data action involved modification of entity)
                 entity$enrichWithMetadata()
@@ -224,7 +225,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, monitor = NULL){
             #monitor global action
             step<-step+inc_step
             config$logger.info(sprintf("WORKFLOW PROGRESS : ACTION '%s' of ENTITY '%s' ... %s %%",action$id,entity$identifiers[["id"]],step))
-            if(!is.null(monitor)) monitor(step=step,config=config,entity=entity,action=action)
+            if(!is.null(monitor)) monitor(step=step,config=config,entity=entity,action=action,queue=queue)
           }
           
           #search for generic uploader actions (eg. Zenodo, Dataverse)

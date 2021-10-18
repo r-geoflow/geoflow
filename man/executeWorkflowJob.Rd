@@ -11,6 +11,8 @@ executeWorkflowJob(config, jobdir, monitor)
 
 \item{jobdir}{the Job directory. Optional, by default inherited with the configuration.}
 
+\item{queue}{an \pkg{ipc} queue to use geoflow in \pkg{geoflow-shiny}}
+
 \item{monitor}{a monitor function to increase progress bar}
 }
 \description{

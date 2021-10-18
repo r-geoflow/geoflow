@@ -11,6 +11,14 @@ executeWorkflow(file, dir, monitor)
 
 \item{dir}{a directory where to execute the workflow}
 
+\item{queue}{an \pkg{ipc} queue to use geoflow in \pkg{geoflow-shiny}}
+
+\item{on_initWorkflow}{a function to trigger once \code{initWorkflow} is executed}
+
+\item{on_initWorkflowJob}{a function to trigger once \code{initWorkflowJob} is executed}
+
+\item{on_closeWorkflow}{a function to trigger once \code{closeWorkflow} is executed}
+
 \item{monitor}{a monitor function to increase progress bar}
 }
 \value{

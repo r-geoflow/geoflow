@@ -7,13 +7,22 @@
 #'                 
 #' @param file a JSON geoflow configuration file
 #' @param dir a directory where to execute the workflow
+#' @param queue an \pkg{ipc} queue to use geoflow in \pkg{geoflow-shiny}
+#' @param on_initWorkflow a function to trigger once \code{initWorkflow} is executed
+#' @param on_initWorkflowJob a function to trigger once \code{initWorkflowJob} is executed
+#' @param on_closeWorkflow a function to trigger once \code{closeWorkflow} is executed
 #' @param monitor a monitor function to increase progress bar 
 #' @return the path of the job directory
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
-executeWorkflow <- function(file, dir = ".", monitor = NULL){
+executeWorkflow <- function(file, dir = ".", 
+                            queue = NULL, 
+                            on_initWorkflow = NULL,
+                            on_initWorkflowJob = NULL,
+                            on_closeWorkflow = NULL,
+                            monitor = NULL){
   
   #options
   .defaultOptions <- options()
@@ -22,6 +31,9 @@ executeWorkflow <- function(file, dir = ".", monitor = NULL){
   
   #1. Init the workflow based on configuration file
   config <- initWorkflow(file, dir = dir)
+  if(!is.null(on_initWorkflow)){
+    on_initWorkflow(config = config, queue = queue)
+  }
   
   #2. Inits workflow job (create directories)
   wd <- getwd()
@@ -29,11 +41,14 @@ executeWorkflow <- function(file, dir = ".", monitor = NULL){
   jobdir <- initWorkflowJob(config)
   config$debug <- FALSE
   config$job <- jobdir
+  if(!is.null(on_initWorkflowJob)){
+    on_initWorkflowJob(config = config, queue = queue)
+  }
   
   #manage monitor
   if(!is.null(monitor)){
     if(is.function(monitor)){
-      if(all(names(formals(monitor))==c("step","config","entity","action"))){
+      if(all(names(formals(monitor))==c("step","config","entity","action","queue"))){
         config$logger.info("use monitor function to trace processing steps")
       }else{
         config$logger.info("Monitor function escaped, parameter(s) missing or in wrong order")
@@ -47,7 +62,7 @@ executeWorkflow <- function(file, dir = ".", monitor = NULL){
   
   #3. Execute the workflow job
   capture.output({
-    exec <- try(executeWorkflowJob(config,monitor = monitor))
+    exec <- try(executeWorkflowJob(config, queue = queue, monitor = monitor))
     if(class(exec)=="try-error"){
       setwd(wd)
       closeWorkflow(config)
@@ -57,6 +72,9 @@ executeWorkflow <- function(file, dir = ".", monitor = NULL){
   
   #4. close workflow
   closeWorkflow(config)
+  if(!is.null(on_closeWorkflow)){
+    on_closeWorkflow(config = config, queue = queue)
+  }
   
   #reset options
   options(.defaultOptions)
