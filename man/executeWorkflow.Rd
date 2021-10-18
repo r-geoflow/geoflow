@@ -4,7 +4,7 @@
 \alias{executeWorkflow}
 \title{executeWorkflow}
 \usage{
-executeWorkflow(file, dir, monitor)
+executeWorkflow(file, dir, queue, on_initWorkflow, on_initWorkflowJob, on_closeWorkflow, monitor)
 }
 \arguments{
 \item{file}{a JSON geoflow configuration file}
