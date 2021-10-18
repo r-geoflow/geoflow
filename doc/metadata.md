@@ -77,7 +77,7 @@ Examples cover both:
 
 | **Column name**              | <u>Subject</u>                                               |
 | ---------------------------- | ------------------------------------------------------------ |
-| **Definition**               | Subjects(s) associated to the dataset. A subject can be summarized as a set of keyword that describes the dataset for a given type of keywords. In addition the keyword set can be associated to a thesaurus. The thesaurus name can be added with in bracket associated to a key. Hyperlink can be added with @. Each keyword can be enriched with hyperlink with @ Multiple keyword sets can be added to a dataset. Keyword should be added with a coma separated list. If default key is omited .  |
+| **Definition**               | Subject(s) associated to the dataset. A subject can be summarized as a set of keywords that describes the dataset for a given type of keywords. In addition the keyword set can be associated to a thesaurus. The thesaurus name can be added with in bracket associated to a key. Hyperlink can be added with @. Each keyword can be enriched with hyperlink with @ Multiple keyword sets can be added to a dataset. Keyword should be added with a coma separated list. If default key is omited .  |
 | **Need**                     | Recommended                                                  |
 | **Default key (if omitted)** | *Not applicable* : <br />Note: To add one subject, the key used will be the type of key word. The subjet name ca be added as bracket |
 | **Examples**                 |                                                              |
