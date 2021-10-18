@@ -77,11 +77,11 @@ Examples cover both:
 
 | **Column name**              | <u>Subject</u>                                               |
 | ---------------------------- | ------------------------------------------------------------ |
-| **Definition**               | Subjects(s) associated to the dataset. A subject can be summarized as a set of keworld that describe the dataset for a given type of kews worlds. In addition the keworld set can be associated to a thesorus. The thesorus name can be added with in bracket associated to a key. Hyperlink can be added with @. Each keyword can be enrish with hyperlink with @ Multiple keyword sets can be added to a dataset. Keyword should be added with a coma separted list. If default key is omited .  |
+| **Definition**               | Subjects(s) associated to the dataset. A subject can be summarized as a set of keyword that describes the dataset for a given type of keywords. In addition the keyword set can be associated to a thesaurus. The thesaurus name can be added with in bracket associated to a key. Hyperlink can be added with @. Each keyword can be enriched with hyperlink with @ Multiple keyword sets can be added to a dataset. Keyword should be added with a coma separated list. If default key is omited .  |
 | **Need**                     | Recommended                                                  |
-| **Default key (if omitted)** | *Not applicable* : <br />Note: To add one subject, the key use will be the type of key word. The subjet name ca be added as bracket |
+| **Default key (if omitted)** | *Not applicable* : <br />Note: To add one subject, the key used will be the type of key word. The subjet name ca be added as bracket |
 | **Examples**                 |                                                              |
-| Simple usage                 | theme[general]:@) |
+| Simple usage                 | theme[general]:@() |
 | Advanced usages              | |
 |                              |  |
 
@@ -89,7 +89,7 @@ Examples cover both:
 
 | **Column name**              | <u>Creator</u>    |
 | ---------------------------- | ----------------- |
-| **Definition**               | Parties having a role in the managment of the dataset. Each party should be identify with one identifier in a contact table. For keys specific to a geoflow action please see the table (link to add)|
+| **Definition**               | Parties having a role in the management of the dataset. Each party should be identified with one identifier in a contact table. For keys specific to a geoflow action please see the table (link to add)|
 | **Need**                     | Recommended       |
 | **Default key (if omitted)** | *Not applicable*  |
 | **other keys available**     | ``owner``<br />``publisher`` <br />``metadata``  <br />``pointOfContact`` (other contributors) | 
