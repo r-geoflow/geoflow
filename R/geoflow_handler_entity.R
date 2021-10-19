@@ -1086,7 +1086,7 @@ handle_entities_thredds <- function(config, source){
       for(layer in wms$getLayers()){
       layername<-layer$getName()  
         if(!is.null(layername)){
-          title<-layer$getTitle()
+          title<-sprintf("Map access - OGC Web Map Service (WMS) - %s", layer$getTitle())
           bbox<-paste(entity$spatial_bbox,collapse=",")
           srs<-if(!is.null(entity$srid))entity$srid else "EPSG:4326"
           style<-layer$getStyle()
