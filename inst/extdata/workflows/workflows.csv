@@ -1,5 +1,6 @@
 config_file,description
 config_metadata_gsheets.json,Load metadata entities/contacts from Google Spreadsheets
+config_metadata_gsheets_eml.json, Load metadata entities/contacts from Google Spreadsheets and genrate EML metadata
 config_metadata_gsheets_iso19115_inspire.json,Load metadata entities/contacts from Google Spreadsheets and generate ISO 19115/19139 metadata (with INSPIRE validation)
 config_metadata_gsheets_iso19115_inspire_geonetwork.json,Load metadata entities/contact from Google Spreadsheet, generate ISO 19115/19139 metadata (with INSPIRE validation) and publish them in GeoNetwork (using the GeoNetwork API)
 config_metadata_gsheets_zenodo.json,Load metadata entity/contacts from Google Spreadsheets and deposit records on Zenodo
