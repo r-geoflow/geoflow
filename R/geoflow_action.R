@@ -24,9 +24,10 @@
 #'    pid_generator = NULL,
 #'    generic_uploader = FALSE,
 #'    fun = function(config, entity){},
-#'    options = list(
+#'    available_options = list(
 #'      option_name = list(def = "option description", default = FALSE)
-#'    )
+#'    ),
+#'    options = list(option_name = TRUE)
 #'  )
 #' }
 #' 
@@ -61,12 +62,14 @@ geoflow_action <- R6Class("geoflow_action",
     fun = NA,
     script = NA,
     options = list(),
+    available_options= list(),
     initialize = function(id, scope = "global", types = list(), def = "", 
                           target = NA, target_dir = NA,
                           packages = list(), 
                           pid_generator = NULL, pid_types = list(),
                           generic_uploader = FALSE,
-                          fun = NULL, script = NULL, options = list()){
+                          fun = NULL, script = NULL, options = list(),
+                          available_options = list()){
       self$id <- id
       if(!scope %in% c("global", "local")){
         stop("Action should be either of 'global' or 'local' scope")
@@ -84,6 +87,7 @@ geoflow_action <- R6Class("geoflow_action",
       self$fun <- fun
       self$script <- script
       self$options <- options
+      self$available_options  <- available_options
     },
     
     #checkPackages
@@ -206,7 +210,7 @@ register_actions <- function(){
       target_dir = "metadata",
       packages = list("geometa","ows4R"),
       fun = geometa_create_iso_19115,
-      options = list(
+      available_options = list(
         doi = list(def = "Add entity DOI - if defined - as metadata identifier and online resource", class = "logical", default = FALSE),
         doi_thumbnail = list(def = "if option 'doi' is true and this option enabled, a DOI thumbnail will be added", class = "logical", default = FALSE),
         inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator", class = "logical", default = FALSE),
@@ -226,7 +230,7 @@ register_actions <- function(){
       target_dir = "metadata",
       packages = list("geometa"),
       fun = geometa_create_iso_19110,
-      options = list(
+      available_options = list(
         doi = list(def = "Add entity DOI - if defined - as metadata identifier and online resource", class = "logical", default = FALSE),
         exclude_attributes = list(def = "Attributes that should be excluded from the ISO 19110 production", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
         exclude_attributes_not_in_dictionary = list(def = "Enable to exclude all attributes/variables not referenced as dictionary/featuretype", class="logical", default = FALSE),
@@ -244,7 +248,7 @@ register_actions <- function(){
       target_dir = NA,
       packages = list("ows4R"),
       fun = ows4R_publish_iso_19139,
-      options = list(
+      available_options = list(
         geometa_inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", class = "logical", default = FALSE)
       )
     ),
@@ -256,7 +260,7 @@ register_actions <- function(){
       target_dir = NA,
       packages = list("geonapi"),
       fun = geonapi_publish_iso_19139,
-      options = list(
+      available_options = list(
         geometa_inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", class = "logical", default = FALSE),
         privileges = list(def = "Geonetwork privileges to set for the metadata to be published", class = "character", choices = c("view","dynamic","featured"), default = c("view","dynamic","featured"), multiple = TRUE),
         group = list(def = "Geonetwork user group to which the metadata should be associated", class = "character", default = "1"),
@@ -271,7 +275,7 @@ register_actions <- function(){
       target_dir = NA,
       packages = list("geosapi"),
       fun = geosapi_publish_ogc_services,
-      options = list(
+      available_options = list(
         createWorkspace = list(def = "Create workspace if not already existing", class = "logical", default = FALSE),
         createDatastore = list(def = "Create datastore if not already existing", class = "logical", default = FALSE),
         datastore_description = list(def = "Specify a decription for the new datastore", class = "character", default = "")
@@ -291,7 +295,7 @@ register_actions <- function(){
       generic_uploader = TRUE,
       packages = list("zen4R"),
       fun = zen4R_deposit_record,
-      options = list(
+      available_options = list(
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
         publish = list(def = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", class = "logical", default = FALSE),
         strategy = list(def = "Strategy to use when handling published records, either 'newversion' (default) or 'edition'", class = "character", choices = list("newversion", "edition"), default = "newversion"),
@@ -314,7 +318,7 @@ register_actions <- function(){
       generic_uploader = TRUE,
       packages = list("atom4R"),
       fun = atom4R_dataverse_deposit_record,
-      options = list(
+      available_options = list(
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
         publish = list(def = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", class = "logical", default = FALSE),
         deleteOldFiles = list(def = "Indicates if the action should delete old files prior upload new files", class = "logical", default = TRUE),
@@ -334,7 +338,7 @@ register_actions <- function(){
       ),
       packages = list("mime", "datapack", "dataone"),
       fun = dataone_upload_datapackage,
-      options = list()
+      available_options = list()
     ),
     geoflow_action$new(
       id = "sf-write-generic",
@@ -344,7 +348,7 @@ register_actions <- function(){
       target_dir = "data",
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
       fun = sf_write_generic,
-      options = list(
+      available_options = list(
         type=list(def = "format to convert", class = "character", choices = c("shp", "dbtable","csv","gpkg"), default = NA),
         createIndexes=list(def = "create indexes for columns", class = "logical", default = FALSE),
         overwrite=list(def = "Overwrite policy", class = "logical", default = TRUE),
@@ -360,7 +364,7 @@ register_actions <- function(){
       target_dir = NA,
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
       fun = sf_write_dbi,
-      options = list(
+      available_options = list(
         createIndexes=list(def = "create indexes for columns", class = "logical",  default = FALSE),
         overwrite=list(def = "Overwrite policy", class = "logical",  default = TRUE),
         append=list(def = "Append policy", class = "logical", default = FALSE),
@@ -384,7 +388,7 @@ register_actions <- function(){
       target_dir = "metadata",
       packages = list("EML", "emld"),
       fun = eml_create_eml,
-      options = list(
+      available_options = list(
         subject_taxonomy = list(def = "Identifier of the subject handling the Taxonomic coverage.", class = "character", default = "taxonomy")
       )
     ),
@@ -397,7 +401,7 @@ register_actions <- function(){
       generic_uploader = TRUE,
       packages = list("d4storagehub4R"),
       fun = d4storagehub4R_upload_data,
-      options = list(
+      available_options = list(
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
         otherUploadFolders = list(def = "List of Folders (other than 'data' and 'metadata') to upload and which may contain files which should enrich others actions" , class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = c())
       )
@@ -410,7 +414,7 @@ register_actions <- function(){
       target_dir = "markdown",
       packages = list("rmarkdown"),
       fun = create_metadata_Rmd,
-      options = list(
+      available_options = list(
         template = list(def = "Rmarkdown template", class = "character", default = "generic"),
         output_format = list(def = "output format generate by Rmarkdown template (e.g. 'html','pdf')", class = "character",choices = list("html","pdf","word","odt","rtf","md","github"), add_choices = FALSE, multiple = FALSE, default = "html")
       )
@@ -459,14 +463,14 @@ list_actions <- function(raw = FALSE){
 #' @name list_action_options
 #' @aliases list_action_options
 #' @title list_action_options
-#' @description \code{list_action_options} lists the options of a given action supported by geoflow.
+#' @description \code{list_action_options} lists the options available for a given action supported by geoflow.
 #'
 #' @usage list_action_options(id, raw)
 #' 
 #' @param id An action identifier
 #' @param raw if raw list should be returned
 #' 
-#' @return an object of class \code{data.frame} (or \code{list} if raw is TRUE) listing the action options.
+#' @return an object of class \code{data.frame} (or \code{list} if raw is TRUE) listing the available action options.
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
@@ -477,12 +481,12 @@ list_action_options <- function(id, raw = FALSE){
   action <- actions[sapply(actions, function(x){x$id == id})]
   if(length(action)==0) stop(sprintf("No action with id '%s'!", id))
   action <- action[[1]]
-  if(raw) return(action$options)
-  if(length(action$options)>0){
+  if(raw) return(action$available_options)
+  if(length(action$available_options)>0){
     out <- data.frame(
-      name = names(action$options),
-      definition = sapply(action$options, function(x){x$def}),
-      default = sapply(action$options, function(x){paste0(x$default, collapse=",")}),
+      name = names(action$available_options),
+      definition = sapply(action$available_options, function(x){x$def}),
+      default = sapply(action$available_options, function(x){paste0(x$default, collapse=",")}),
       stringsAsFactors = FALSE
     )
     row.names(out) <- 1:nrow(out)

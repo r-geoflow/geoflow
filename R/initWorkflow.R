@@ -473,11 +473,17 @@ initWorkflow <- function(file, dir = "."){
         if(!(action$id %in% available_action_ids)){
           stop(sprintf("The action '%s' is not among available geoflow actions", action$id))
         }
-        action_to_trigger <- .geoflow$actions[sapply(.geoflow$actions, function(x){x$id==action$id})][[1]]
+        action_to_trigger <- .geoflow$actions[sapply(.geoflow$actions, function(x){x$id==action$id})][[1]]$clone(deep=TRUE)
         
         #check action dependencies
         action_to_trigger$checkPackages()
         
+        #options
+        if(!all(names(action$options) %in% names(action_to_trigger$available_options))){
+          errMsg <- sprintf("Option(s) [%s] invalid for action '%s'", paste0(setdiff(options, available_options), collapse=","), action$id)
+          config$logger.error(errMsg)
+          stop(errMsg)
+        }
         action_to_trigger$options <- action$options
       }else{
         if(config$profile$mode == "entity"){
