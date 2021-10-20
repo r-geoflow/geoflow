@@ -8,7 +8,7 @@
 [![Gitter](https://img.shields.io/badge/chat%20room-for%20users-brown.svg?style=flat-square)](https://gitter.im/geoflow-users/community)
 [![Gitter](https://img.shields.io/badge/chat%20room-for%20developers-brown.svg?style=flat-square)](https://gitter.im/geoflow-developers/community)
 
-**R engine to orchestrate and run geospatial (meta)data workflows**
+**R engine to orchestrate and run (meta)data workflows**
 
 ``geoflow`` provides a R engine to orchestrate and run geospatial (meta)data workflows.
 
