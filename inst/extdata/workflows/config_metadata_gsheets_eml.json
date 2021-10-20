@@ -27,9 +27,6 @@
   "actions": [
     {
       "id": "eml-create-eml",
-      "options" : {
-        "inspire" : true
-      },
       "run": true
     }
   ]
