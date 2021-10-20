@@ -180,7 +180,7 @@ Examples cover both:
 | **Default key (if omitted)** |*Not applicable*|
 | **other keys available**     |``license``  <br /> ``use``  <br /> ``useLimitation``  <br /> ``useConstraint`` <br /> ``accessConstraint`` <br />  ``otherConstraint``|
 | **Examples**                 |               |
-| Simple usage                 |rule:key       |
+| Simple usage                 |key:rule       |
 | Advanced usage               |`useLimitation:Free usage_` <br/> `accessConstraint:otherRestrictions_` <br/> `useConstraint:intellectualPropertyRights_` <br/> `otherConstraint:The supplier is unable to guarantee the accuracy, updating, integrity, completeness of the data`               |
 
 #### Format
