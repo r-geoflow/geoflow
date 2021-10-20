@@ -480,7 +480,7 @@ initWorkflow <- function(file, dir = "."){
         
         #options
         if(length(action$options)>0) if(!all(names(action$options) %in% names(action_to_trigger$available_options))){
-          errMsg <- sprintf("Option(s) [%s] invalid for action '%s'", paste0(setdiff(names(action$options), names(actions$available_options)), collapse=","), action$id)
+          errMsg <- sprintf("Option(s) [%s] invalid for action '%s'", paste0(setdiff(names(action$options), names(action$available_options)), collapse=","), action$id)
           config$logger.error(errMsg)
           stop(errMsg)
         }
