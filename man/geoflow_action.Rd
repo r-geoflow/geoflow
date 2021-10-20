@@ -44,9 +44,10 @@ geoflow_action
    pid_generator = NULL,
    generic_uploader = FALSE,
    fun = function(config, entity){},
-   options = list(
+   available_options = list(
      option_name = list(def = "option description", default = FALSE)
-   )
+   ),
+   options = list(option_name = TRUE)
  )
 }
 

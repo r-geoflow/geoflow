@@ -12,10 +12,10 @@ list_action_options(id, raw)
 \item{raw}{if raw list should be returned}
 }
 \value{
-an object of class \code{data.frame} (or \code{list} if raw is TRUE) listing the action options.
+an object of class \code{data.frame} (or \code{list} if raw is TRUE) listing the available action options.
 }
 \description{
-\code{list_action_options} lists the options of a given action supported by geoflow.
+\code{list_action_options} lists the options available for a given action supported by geoflow.
 }
 \author{
 Emmanuel Blondel, \email{emmanuel.blondel1@gmail.com}
