@@ -42,8 +42,8 @@ If sourced files are in local repertory the complete path of file must be declar
 <u>Access to storage and upload data</u>
 If data must be uploaded, server must be declared in **software** section of json configuration file.
 * **upload**: a boolean argument whether the source data should be uploaded to the software output declared in the geoflow. By default it is `true` to perform upload.
-* **uploadSource**: name to give to upload file. Caution, is a name without extension for a db object but must be a `.zip` file for shp object.Must include extention for file upload (zip,shp, gpkg)
-* **uploadType** extension of the file to upload, must be in list :
+* **uploadSource**: name given to uploaded file. Caution, name must be without extension for a db object and but must be a `.zip` file for shp object. Extention is mandatory for file upload (zip,shp, gpkg).
+* **uploadType** extension of the file to upload, must be one of these values :
 	* *`dbtable`* for Database object
 	* *`dbview`* *deprecated*
 	* *`dbquery`* for executes an SQL statement against a database object
