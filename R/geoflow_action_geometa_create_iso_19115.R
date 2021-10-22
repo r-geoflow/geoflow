@@ -505,13 +505,19 @@ geometa_create_iso_19115 <- function(entity, config, options){
         si <- ISOSRVServiceIdentification$new()
         si$setAttr("id","OGC-WMS")
         #citation
-        #title
-        #date
-        #citedResponsibleParty
+        si$citation <- ISOAttributes$new("gco:nilReason" = "missing")
         #abstract
         si$setAbstract(WMS$getCapabilities()$getServiceIdentification()$getAbstract())
         #extent
-        #keyword
+        si$addExtent(extent)
+        #descriptiveKeywords
+        si$descriptiveKeywords <- ISOAttributes$new("gco:nilReason" = "missing")
+        #resourceConstraints
+        si$resourceConstraints <- ISOAttributes$new("gco:nilReason" = "missing")
+        #aggregationInfo
+        si$aggregationInfo <- ISOAttributes$new("gco:nilReason" = "missing")
+        #servicetype
+        si$setServiceType("OGC:WMS")
         #Fees
         orderProcess <- ISOStandardOrderProcess$new()
         orderProcess$setFees(WMS$getCapabilities()$getServiceIdentification()$getFees())
@@ -527,8 +533,11 @@ geometa_create_iso_19115 <- function(entity, config, options){
         
         for(request in WMS$getCapabilities()$getRequestNames()){
           #add operation metadata 
-          scriptOp <- ISOOperationMetadata$new()
-          scriptOp$setOperationName(request)
+          wmsOp <- ISOOperationMetadata$new()
+          wmsOp$addDCP("WebServices")
+          wmsOp$setOperationName(request)
+          wmsOp$setOperationDescription(request)
+          wmsOp$setInvocationName(request)
           
           if(request=="GetCapabilities"){
             or1 <- ISOOnlineResource$new()
@@ -540,7 +549,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
             or1$setName("OGC:WMS")
             or1$setDescription("Open Geospatial Consortium Web Map Service (WMS)")
             or1$setProtocol("OGC:WMS")
-            scriptOp$addConnectPoint(or1)
+            wmsOp$addConnectPoint(or1)
           }
           
           if(request=="GetMap"){
@@ -552,7 +561,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
               param$setOptionality(FALSE)
               param$setRepeatability(FALSE)
               param$setValueType("xs:string")
-              scriptOp$parameters=c(scriptOp$parameters,param)  
+              wmsOp$parameters=c(wmsOp$parameters,param)  
             }
             if(!is.null(entity$data)) if(entity$data$uploadType == "dbquery" & length(entity$data$parameters)>0){
               param <- ISOParameter$new()
@@ -561,11 +570,14 @@ geometa_create_iso_19115 <- function(entity, config, options){
               param$setOptionality(FALSE)
               param$setRepeatability(FALSE)
               param$setValueType("xs:string")
-              scriptOp$parameters=c(scriptOp$parameters,param)    
+              wmsOp$parameters=c(wmsOp$parameters,param)    
             }
           }
           
-          si$containsOperations = c(si$containsOperations, scriptOp)
+          if(length(wmsOp$parameters)==0) wmsOp$parameters <- ISOAttributes$new("gco:nilReason" = "missing")
+          if(length(wmsOp$connectPoint)==0) wmsOp$connectPoint <- ISOAttributes$new("gco:nilReason" = "missing")
+          
+          si$containsOperations = c(si$containsOperations, wmsOp)
         }
       }
       md$identificationInfo = c(md$identificationInfo,si)
