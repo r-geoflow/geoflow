@@ -26,24 +26,24 @@ As now, three software access are available, a downloadHandler function associat
 
 * **source** : name with extension of files to source. For spatial source, a single source can be used, for other type several files can be declare for a same workflow, they must be on the same extension and separated by a comma (,). 
 If sourced files are in local repertory the complete path of file must be declared too. Also a alias must be declared for your file, for this use the typology `alias@file.ext` 
-*  **sourceType** : extension of the files declared, must be in list :
+*  **sourceType** : extension of the files declared, must be part of the following list :
 	* *`dbtable`* for Database object
 	* *`dbview`* *deprecated*
-	* *`dbquery`* for executes an SQL statement against a database object
+	* *`dbquery`* to execute an SQL statement against a database object
 	* *`shp`* for shapefile object
-	* *`csv`* for CSV table object. If spacialized the current geometry field expression supported are `"the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"`.
+	* *`csv`* for CSV table object. If spatialized, the current geometry field expression supported are `"the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"`.
 	* *`gpkg`* for geopackage object
 	* *`nc`* for netcfd4 object
-	* *`other`* for other type of files
+	* *`other`* for other type of file
 * **sourceSql**: a sql request as source 
-* **sourceZip**: a boolean argument whether if a zipped version of the data file(s) should be created from a source files. Default value is `FALSE`
-* **sourceZipOnly**:a boolean argument whether if a zipped version of the data file(s) only should be created from source files. Default value is `FALSE`
+* **sourceZip**: a boolean argument whether if a zipped version of data file(s) should be created from source files. Default value is `FALSE`
+* **sourceZipOnly**:a boolean argument whether if a zipped version of data file(s) only should be created from source files. Default value is `FALSE`
 
 <u>Access to storage and upload data</u>
-If data must be upload, declare server in **software** section of json configuration file.
-* **upload**: a boolean argument whether the source data should be uploaded to the software output declared in the geoflow. By default is `true` to perform upload.
-* **uploadSource**: name to give to upload file. Caution, is a name without extension for a db object but must be a `.zip` file for shp object.Must include extention for file upload (zip,shp, gpkg)
-* **uploadType** extension of the file to upload, must be in list :
+If data must be uploaded, server must be declared in **software** section of json configuration file.
+* **upload**: a boolean argument whether the source data should be uploaded to the software output declared in the geoflow. By default it is `true` to perform upload.
+* **uploadSource**: name given to uploaded file. Caution, name must be without extension for a db object and but must be a `.zip` file for shp object. Extention is mandatory for file upload (zip,shp, gpkg).
+* **uploadType** extension of the file to upload, must be one of these values :
 	* *`dbtable`* for Database object
 	* *`dbview`* *deprecated*
 	* *`dbquery`* for executes an SQL statement against a database object
