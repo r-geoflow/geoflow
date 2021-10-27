@@ -50,8 +50,9 @@ test_that("execute",{
   entity_dirs <- list.dirs(path = file.path(EXEC, "entities"), full.names = F,recursive = F)
   expect_equal(entity_dirs, c("my-geoflow-record1", "my-geoflow-record2"))
   for(entity_dir in entity_dirs){
-    entity_md <- geonetwork$getMetadataByUUID(entity_dir)
-    expect_is(entity_md, "ISOMetadata")
+    entity_resource_dirs <- list.dirs(path = file.path(EXEC, "entities", entity_dir), full.names = F,recursive = F)
+    expect_equal(entity_resource_dirs, c("data", "metadata"))
+    expect_true(file.exists(file.path(EXEC, "entities", entity_dir, "metadata", paste0(entity_dir,"_ISO-19115.xml"))))
   }
 })
 }
