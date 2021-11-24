@@ -79,9 +79,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           clean <- ZENODO_CONFIG$properties$clean
           if(!is.null(clean)) if(!is.null(clean$run)) if(as.logical(clean$run)){
             config$logger.info("Zenodo action 'clean' activated: deleting deposits prior to new deposits!")
-            if(is.null(clean$query) 
-               & length(clean$doi)==0 
-               & length(clean$community)==0){
+            if(is.null(clean$query) && length(clean$doi)==0 && length(clean$community)==0){
               config$logger.info("Zenodo: no query or list of DOIs specified for cleaning: cleaning all draft deposits")
               config$software$output$zenodo$deleteRecords()
             }else{
