@@ -297,6 +297,8 @@ register_actions <- function(){
       fun = zen4R_deposit_record,
       available_options = list(
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
+        depositDataPattern = list(def = "A regular expression to filter data files to upload in Zenodo", class = "character", default = ""),
+        depositMetadataPattern = list(def = "A regular expression to filter metadata files to upload in Zenodo", class = "character", default = ""),
         publish = list(def = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", class = "logical", default = FALSE),
         strategy = list(def = "Strategy to use when handling published records, either 'newversion' (default) or 'edition'", class = "character", choices = list("newversion", "edition"), default = "newversion"),
         deleteOldFiles = list(def = "Indicates if the action should delete old files prior upload new files", class = "logical", default = TRUE),

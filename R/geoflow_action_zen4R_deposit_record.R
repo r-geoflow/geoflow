@@ -17,6 +17,8 @@ zen4R_deposit_record <- function(entity, config, options){
   
   #options
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
+  depositDataPattern <- if(!is.null(options$depositDataPattern)) options$depositDataPattern else ""
+  depositMetadataPattern <- if(!is.null(options$depositMetadataPattern)) options$depositMetadataPattern else ""
   publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
   strategy <- if(!is.null(options$strategy)) options$strategy else "newversion"
   deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
@@ -35,9 +37,18 @@ zen4R_deposit_record <- function(entity, config, options){
   #e.g. urn:my-metadata-identifier
   deposits <- NULL
   if(!is.null(entity$identifiers[["doi"]])){
+    #TODO review if getting deposit with concept DOI we don't inherit bucket link for doing file upload with new API
     deposit <- try(ZENODO$getDepositionByConceptDOI(entity$identifiers[["doi"]]), silent = TRUE) #try to get latest record with concept DOI
     if(is(deposit, "try-error")) deposit = NULL
     if(is.null(deposit)) deposit <- ZENODO$getDepositionByDOI(entity$identifiers[["doi"]]) #try to get record with specific DOI
+    if(!is.null(deposit)) deposits <- list(deposit)
+  }
+  
+  if(is.null(deposits)){
+    deposit <- NULL
+    if(!is.null(entity$identifiers[["zenodo_doi_to_save"]])){
+      deposit <- ZENODO$getDepositionByDOI(entity$identifiers[["zenodo_doi_to_save"]]) #try to get record with specific DOI
+    }
     if(!is.null(deposit)) deposits <- list(deposit)
   }
   
@@ -73,6 +84,9 @@ zen4R_deposit_record <- function(entity, config, options){
     config$logger.info(sprintf("Zenodo: No existing Zenodo record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
     config$logger.info("Zenodo: creating a new deposit empty record")
     zenodo_metadata <- ZENODO$createEmptyRecord()
+    if("bucket" %in% names(zenodo_metadata$links)){
+      entity$addResource("zenodo_bucket", zenodo_metadata$links$bucket) #attempt to keep bucket since zenodo seems not to retrieve always bucket link
+    }
     zenodo_metadata$addRelatedIdentifier("isIdenticalTo", paste("urn", entity$identifiers[["id"]], sep=":"))
     record_state <- zenodo_metadata$state
   }else{
@@ -87,6 +101,11 @@ zen4R_deposit_record <- function(entity, config, options){
       if(is(unlocked_rec, "ZenodoRecord")){
         zenodo_metadata <- unlocked_rec
       }
+    }
+    
+    #case where bucket is not kept by zenodo we try to get it from added resource
+    if(!"bucket" %in% names(zenodo_metadata$links)) if(!is.null(entity$resources$zenodo_bucket)){
+      zenodo_metadata$links$bucket <- entity$resources$zenodo_bucket
     }
   }
   
@@ -152,7 +171,9 @@ zen4R_deposit_record <- function(entity, config, options){
     #TODO think if correct handle all contacts (whatever roles) as creators (author/co-authors)
     contact_added <- list()
     zenodo_metadata$metadata$creators <- list()
-    for(contact in entity$contacts){
+    contacts <- list()
+    if(length(entity$contacts)>0) contacts <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
+    if(length(contacts)>0) for(contact in contacts){
       
       #manage orcid?
       orcid <- NULL
@@ -163,7 +184,7 @@ zen4R_deposit_record <- function(entity, config, options){
       }
       #add/update creators
       if(!(contact$identifiers[["id"]] %in% contact_added)){
-        if(is.na(contact$firstName) && is.na(contact$lastName)){
+        if(is.na(contact$firstName) || is.na(contact$lastName)){
           zenodo_metadata$addCreator(
             name = contact$organizationName,
             affiliation = contact$organizationName,
@@ -182,16 +203,18 @@ zen4R_deposit_record <- function(entity, config, options){
     }
     
     #Licenses
-    licenses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "license"})]
-    if(length(licenses)>0){
-      license <- licenses[[1]]$value
-      accepted_licenses <- ZENODO$getLicenses()$id
-      if(license%in%accepted_licenses){
-      zenodo_metadata$setLicense(license)
-      }else{
-      config$logger.warn(sprintf("Zenodo :license specified (%s) in entity doesn't match Zenodo accepted list of licenses. license %s ignored!", 
-                                 license,license))
-      }  
+    if(length(entity$rights)>0){
+      licenses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "license"})]
+      if(length(licenses)>0){
+        license <- licenses[[1]]$value
+        accepted_licenses <- ZENODO$getLicenses()$id
+        if(license%in%accepted_licenses){
+        zenodo_metadata$setLicense(license)
+        }else{
+        config$logger.warn(sprintf("Zenodo :license specified (%s) in entity doesn't match Zenodo accepted list of licenses. license %s ignored!", 
+                                   license,license))
+        }  
+      }
     }
     
     #TODO myrec$setAccessRight
@@ -219,20 +242,16 @@ zen4R_deposit_record <- function(entity, config, options){
     }
     config$logger.info("Zenodo: uploading files...")
     #upload data files, if any
-    data_files <- list.files(file.path(getwd(),"data"))
+    data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern)
     if(length(data_files)>0){
-      if(entity$data$upload){
-        config$logger.info("Zenodo: uploading data files...")
-        for(data_file in data_files){
-          config$logger.info(sprintf("Zenodo: uploading data file '%s'", data_file))
-          ZENODO$uploadFile(file.path(getwd(), "data", data_file), record = zenodo_metadata)
-        }
-      }else{
-        config$logger.warn("Zenodo: upload:false, skipping data files upload!")
+      config$logger.info("Zenodo: uploading data files...")
+      for(data_file in data_files){
+        config$logger.info(sprintf("Zenodo: uploading data file '%s'", data_file))
+        ZENODO$uploadFile(file.path(getwd(), "data", data_file), record = zenodo_metadata)
       }
     }
     #upload metadata files, if any
-    metadata_files <- list.files(file.path(getwd(),"metadata"))
+    metadata_files <- list.files(file.path(getwd(),"metadata"), pattern = depositMetadataPattern)
     if(length(metadata_files)>0){
       if(length(metadata_files)>0) metadata_files <- metadata_files[!endsWith(metadata_files, ".rds")]
       if(length(metadata_files)>0){
