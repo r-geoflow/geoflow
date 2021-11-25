@@ -79,10 +79,10 @@ geometa_create_iso_19115 <- function(entity, config, options){
     #no DOI set in initial entity, let's look for a reserved DOI
     if(any(regexpr("zenodo", entity$identifiers)>0)) {
       the_doi <- entity$identifiers[["zenodo_conceptdoi_to_save"]]
-      the_doi <- entity$identifiers[["zenodo_doi_to_save"]]
+      if(is.null(the_doi)) the_doi <- entity$identifiers[["zenodo_doi_to_save"]]
     } else if(any(regexpr("dataverse", entity$identifiers)>0)){
       the_doi <- entity$identifiers[["dataverse_conceptdoi_to_save"]]
-      the_doi <- entity$identifiers[["dataverse_doi_to_save"]]
+      if(is.null(the_doi)) the_doi <- entity$identifiers[["dataverse_doi_to_save"]]
     }
   }
   
