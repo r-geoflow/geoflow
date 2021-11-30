@@ -31,7 +31,6 @@ Imports:
   ows4R
 Remotes:
   eblondel/atom4R,
-  eblondel/ows4R,
   eblondel/d4storagehub4R,
   BigelowLab/thredds,
   ropensci/datapack,
