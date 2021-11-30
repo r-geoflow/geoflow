@@ -230,7 +230,8 @@ geoflow_data <- R6Class("geoflow_data",
         }else{
           self$setUpload(TRUE)
         }
-        if(startsWith(self$uploadType, "db")) self$setUpload(FALSE)
+        #20211130 this prevents from uploading data resources in generic uploaders (eg. zenodo)
+        #if(startsWith(self$uploadType, "db")) self$setUpload(FALSE)
         
         #layername (if any)
         #not mandatory, can be used for subset layers
@@ -370,13 +371,15 @@ geoflow_data <- R6Class("geoflow_data",
             script <- attr(action, "uri")
             
             isSourceUrl <- regexpr('(http|https)[^([:blank:]|\\\'|<|&|#\n\r)]+', script) > 0
-            if(isFALSE(isSourceUrl)){
+            if(!isSourceUrl){
               if(!is_absolute_path(script)){
                 script_to_source<-paste0("file.path(config$session_wd,\"",script,"\")")
               }else{
                 script_to_source<-paste0("\"",script,"\"")
-              }}else{
-              script_to_source<-paste0("\"",script,"\"")}
+              }
+            }else{
+              script_to_source<-paste0("\"",script,"\"")
+            }
               
             desc <- attr(action, "description")
             attributes(action) <- NULL
