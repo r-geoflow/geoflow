@@ -57,12 +57,13 @@ handle_dictionary_df <- function(config, source){
   
   invisible(lapply(as.character(scripts), function(script){
     isSourceUrl <- regexpr('(http|https)[^([:blank:]|\\\'|<|&|#\n\r)]+', script) > 0
-    if(isFALSE(isSourceUrl)){
+    if(!isSourceUrl){
       if(!is_absolute_path(script)){
         script<-file.path(config$session_wd,script)
       }
     }
-    source(script)}))
+    source(script)
+  }))
   
   config$logger.info("Fetching registers from data dictionnary...")
   handlers <- unique(source$RegisterId)
