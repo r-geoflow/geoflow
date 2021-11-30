@@ -244,10 +244,14 @@ zen4R_deposit_record <- function(entity, config, options){
     #upload data files, if any
     data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern)
     if(length(data_files)>0){
-      config$logger.info("Zenodo: uploading data files...")
-      for(data_file in data_files){
-        config$logger.info(sprintf("Zenodo: uploading data file '%s'", data_file))
-        ZENODO$uploadFile(file.path(getwd(), "data", data_file), record = zenodo_metadata)
+      if(entity$data$upload){
+        config$logger.info("Zenodo: uploading data files...")
+        for(data_file in data_files){
+          config$logger.info(sprintf("Zenodo: uploading data file '%s'", data_file))
+          ZENODO$uploadFile(file.path(getwd(), "data", data_file), record = zenodo_metadata)
+        }
+      }else{
+        config$logger.warn("Zenodo: entity data 'upload' is false, skip data files upload...")
       }
     }
     #upload metadata files, if any
@@ -255,10 +259,14 @@ zen4R_deposit_record <- function(entity, config, options){
     if(length(metadata_files)>0){
       if(length(metadata_files)>0) metadata_files <- metadata_files[!endsWith(metadata_files, ".rds")]
       if(length(metadata_files)>0){
-        config$logger.info("Zenodo: uploading metadata files...")
-        for(metadata_file in metadata_files){
-          config$logger.info(sprintf("Zenodo: uploading metadata file '%s'", metadata_file))
-          ZENODO$uploadFile(file.path(getwd(), "metadata",metadata_file), record = zenodo_metadata)
+        if(entity$data$upload){
+          config$logger.info("Zenodo: uploading metadata files...")
+          for(metadata_file in metadata_files){
+            config$logger.info(sprintf("Zenodo: uploading metadata file '%s'", metadata_file))
+            ZENODO$uploadFile(file.path(getwd(), "metadata",metadata_file), record = zenodo_metadata)
+          }
+        }else{
+          config$logger.warn("Zenodo: entity data 'upload' is false, skip metadata files upload...")
         }
       }
     }
