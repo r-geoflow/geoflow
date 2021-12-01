@@ -19,6 +19,7 @@ zen4R_deposit_record <- function(entity, config, options){
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
   depositDataPattern <- if(!is.null(options$depositDataPattern)) options$depositDataPattern else ""
   depositMetadataPattern <- if(!is.null(options$depositMetadataPattern)) options$depositMetadataPattern else ""
+  zipEachDataFile <- if(!is.null(options$zipEachDataFile)) options$zipEachDataFile else FALSE
   publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
   strategy <- if(!is.null(options$strategy)) options$strategy else "newversion"
   deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
@@ -250,6 +251,20 @@ zen4R_deposit_record <- function(entity, config, options){
     data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern)
     if(length(data_files)>0){
       if(entity$data$upload){
+        
+        if(zipEachDataFile){
+          config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
+          data_files <- lapply(data_files, function(data_file){
+            config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
+            fileparts <- unlist(strsplit(data_file, "\\."))
+            if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
+            filename <- paste0(fileparts, collapse = ".")
+            outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
+            zip::zipr(zipfile = outfilename, files = data.file)
+            return(outfilename)
+          })
+        }
+        
         config$logger.info("Zenodo: uploading data files...")
         for(data_file in data_files){
           config$logger.info(sprintf("Zenodo: uploading data file '%s'", data_file))
@@ -303,7 +318,21 @@ zen4R_deposit_record <- function(entity, config, options){
         switch(strategy,
           "edition" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
           "newversion" = {
-            data_files <- list.files(file.path(getwd(),"data"))
+            data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern)
+            
+            if(zipEachDataFile){
+              config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
+              data_files <- lapply(data_files, function(data_file){
+                config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
+                fileparts <- unlist(strsplit(data_file, "\\."))
+                if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
+                filename <- paste0(fileparts, collapse = ".")
+                outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
+                zip::zipr(zipfile = outfilename, files = data.file)
+                return(outfilename)
+              })
+            }
+            
             metadata_files <- list.files(file.path(getwd(),"metadata"))
             files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
             ZENODO$depositRecordVersion(
