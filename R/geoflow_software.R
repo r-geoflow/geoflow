@@ -263,8 +263,12 @@ register_software <- function(){
         onstart_sql = list(def = "An SQL script to be run on workflow start", class = "character"),
         onstart_r = list(def = "R instructions to generate a SQL. It should be made of 2 properties 'script' (name
                          of the R script) that should include a function standardized with parameter config (being the
-                         DBI software config) and will outpout a character representing the SQL. The name of the function 
-                         is to specify in 'fun' property")
+                         DBI software config) and will output a character representing the SQL. The name of the function 
+                         is to specify in 'fun' property."),
+        onend_sql = list(def = "An SQL script to be run on workflow end", class = "character"),
+        onend_r = list(def = "R instructions to generate a SQL. It should be made of 2 properties 'script' (name of the R script) 
+                       that should include a function standardized with parameter config (being the DBI software config) and will output 
+                       a character representing the SQL. The name of the function is to specify in 'fun' property.")
       ),
       actions = list(
         onstart = function(config, software, software_config){
@@ -326,6 +330,67 @@ register_software <- function(){
             config$logger.info(sprintf("DBI [id='%s'] Successful SQL execution!",software_config$id))
           }else{
             config$logger.info(sprintf("DBI [id='%s'] No 'sqlonstart' property. Skipping 'onstart' action",software_config$id))
+          }
+        },
+        onend = function(config, software, software_config){
+          if(!is.null(software_config$properties$onend_sql) || !is.null(software_config$properties$onend_r)){
+            config$logger.info(sprintf("DBI [id='%s'] Execute 'onend' action",software_config$id))
+            
+            sql <- NULL
+            if(!is.null(software_config$properties$onend_sql)){
+              config$logger.info(sprintf("SQL script = %s", software_config$properties$onend_sql))
+              sql <- paste0(readLines(software_config$properties$onend_sql),collapse="\n")
+              
+            }else if(!is.null(software_config$properties$onend_r)){
+              if(is.null(software_config$properties$onend_r$script)){
+                errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Missing 'script'",software_config$id)
+                config$logger.error(errMsg)
+                stop(errMsg)
+              }
+              if(is.null(software_config$properties$onend_r$fun)){
+                errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Missing 'fun'",software_config$id)
+                config$logger.error(errMsg)
+                stop(errMsg)
+              }
+              src <- try(source(software_config$properties$onend_r$script))
+              if(class(src)=="try-error"){
+                errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Error while sourcing script '%s'",
+                                  software_config$id, software_config$properties$onend_r$script)
+                config$logger.error(errMsg)
+                stop(errMsg)
+              }
+              onend_r_fun <- eval(parse(text=software_config$properties$onend_r$fun))
+              print(class(onend_r_fun))
+              sql <- try(onend_r_fun(config, software, software_config))
+              if(class(sql)=="try-error"){
+                errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Error while executing function '%s'",
+                                  software_config$id, software_config$properties$onend_r$fun)
+                config$logger.error(errMsg)
+                stop(errMsg)
+              }
+            }
+            config$logger.info(sprintf("DBI [id='%s'] Executing SQL",software_config$id))
+            config$logger.info(paste0("\n", sql))
+            
+            #write sql to file
+            if (!dir.exists("sql")){
+              config$logger.info(sprintf("Creating 'sql' directory: %s", file.path(getwd(), "sql")))
+              dir.create(file.path(getwd(), "sql"))
+            }
+            sqlfilename <- paste0(software_config$id, "_onend.sql")
+            config$logger.info(sprintf("DBI [id='%s'] Writing SQL file '%s' to job directory",software_config$id, sqlfilename))
+            writeChar(sql, file.path(getwd(), "sql", sqlfilename), eos = NULL)
+            
+            #send sql to dB
+            out <- try(DBI::dbSendQuery(software, sql))
+            if(class(out)=="try-error"){
+              errMsg <- sprintf("DBI [id='%s'] Error while executing SQL",software_config$id)
+              config$logger.error(errMsg)
+              stop(errMsg)
+            }
+            config$logger.info(sprintf("DBI [id='%s'] Successful SQL execution!",software_config$id))
+          }else{
+            config$logger.info(sprintf("DBI [id='%s'] No 'onend_sql' property. Skipping 'onend' action",software_config$id))
           }
         }
       )
