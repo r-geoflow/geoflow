@@ -260,7 +260,7 @@ zen4R_deposit_record <- function(entity, config, options){
             if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
             filename <- paste0(fileparts, collapse = ".")
             outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
-            zip::zipr(zipfile = outfilename, files = data.file)
+            zip::zipr(zipfile = outfilename, files = data_file)
             return(outfilename)
           })
         }
@@ -328,7 +328,7 @@ zen4R_deposit_record <- function(entity, config, options){
                 if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
                 filename <- paste0(fileparts, collapse = ".")
                 outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
-                zip::zipr(zipfile = outfilename, files = data.file)
+                zip::zipr(zipfile = outfilename, files = data_file)
                 return(outfilename)
               })
             }
