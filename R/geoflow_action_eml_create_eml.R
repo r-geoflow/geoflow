@@ -36,7 +36,7 @@ eml_create_eml <- function(entity, config, options){
   #helper functions
   #contactToEML function
   contactToEML <- function(contact){
-    person <- list(id = contact$id)
+    person <- list(id = contact$identifiers$id)
     if(!is.na(contact$firstName)) person$individualName$givenName <- contact$firstName
     if(!is.na(contact$lastName)) person$individualName$surName <- contact$lastName
     if(!is.na(contact$organizationName)) person$organizationName <- contact$organizationName
@@ -53,10 +53,10 @@ eml_create_eml <- function(entity, config, options){
     if(!is.na(contact$email)) person$electronicMailAddress <- contact$email
     if(!is.na(contact$websiteUrl)) person$onlineUrl <- contact$websiteUrl
     if(length(contact$identifiers)>0){
-      for(id in contact$identifiers){
-        switch(id$key,
+      for(idkey in names(contact$identifiers)){
+        switch(idkey,
           "orcid" = {
-            person$id <- sprintf("https://orcid.org/%s", id$value)
+            person$id <- sprintf("https://orcid.org/%s", contact$identifiers[[idkey]])
             person$userId <- list(directory = "https://orcid.org", userId = person$id)
           }       
         )
@@ -168,13 +168,13 @@ eml_create_eml <- function(entity, config, options){
     if(is.null(dataset$coverage)) dataset$coverage <- list()
     if("instant" %in% names(entity$temporal_extent)){
       dataset$coverage$temporalCoverage <- EML::eml$temporalCoverage(
-        singleDateTime = list(calendarDate = as.character(as.Date(entity$temporal_extent$instant)))
+        singleDateTime = list(calendarDate = as.character(entity$temporal_extent$instant))
       )
     }else{
       dataset$coverage$temporalCoverage <- EML::eml$temporalCoverage(
         rangeOfDates = list(
-          beginDate = list(calendarDate = as.character(as.Date(entity$temporal_extent$start))),
-          endDate = list(calendarDate = as.character(as.Date(entity$temporal_extent$end)))
+          beginDate = list(calendarDate = as.character(entity$temporal_extent$start)),
+          endDate = list(calendarDate = as.character(entity$temporal_extent$end))
         )
       )
     }
