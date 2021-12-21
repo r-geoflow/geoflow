@@ -8,7 +8,7 @@ require(testthat)
 
 #execute - with publication & versioning
 test_that("execute - with publication & versioning",{
- 
+  testthat::skip_on_cran()
   cfg_file_full = system.file("extdata/workflows/config_metadata_gsheets_zenodo_full.json", package = "geoflow")
   
   #deposit

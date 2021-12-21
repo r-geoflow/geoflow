@@ -8,6 +8,7 @@ require(testthat)
 
 #init
 test_that("init",{
+  testthat::skip_on_cran()
   cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo.json", package = "geoflow")
   CFG <- geoflow::initWorkflow(cfg_file)
   expect_is(CFG$metadata$content, "list")
@@ -27,6 +28,7 @@ test_that("init",{
 
 #debug
 test_that("debug",{
+  testthat::skip_on_cran()
   cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo.json", package = "geoflow")
   DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = ".")
   expect_equal(names(DEBUG), c("config", "entity"))
@@ -36,6 +38,7 @@ test_that("debug",{
 
 #execute
 test_that("execute",{
+  testthat::skip_on_cran()
   cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo.json", package = "geoflow")
   #deposit
   EXEC <- geoflow::executeWorkflow(cfg_file, dir = ".")
