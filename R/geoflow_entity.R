@@ -658,6 +658,10 @@ geoflow_entity <- R6Class("geoflow_entity",
                  tbl.data <- as.data.frame(readr::read_csv(trgCsv, col_types = tbl.spec))
                  if(is(sf.data,"sf")){
                    sf.data <- st_set_geometry(tbl.data, st_geometry(sf.data))
+                   if(!"geometry" %in% colnames(tbl.data)){
+                     colnames(sf.data)[colnames(sf.data)=="geometry"] <- "geom"
+                     st_geometry(sf.data) <- "geom" #default in spatial DBIs if data imported through sf
+                   }
                  }else{
                    sf.data <- tbl.data
                  }
@@ -687,7 +691,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                  if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                  
                }else{
-                 warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
+                 warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgCsv)
                  config$logger.warn(warnMsg)
                }
              }else{
