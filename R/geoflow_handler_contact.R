@@ -7,6 +7,26 @@ handle_contacts_df <- function(config, source){
     stop(errMsg)
   }
   
+  #validation
+  config$logger.info("Validating contacts")
+  validation_report <- geoflow_validator_contacts$new(source = source)$validate_content()
+  if(is.null(validation_report)){
+    errMsg <- "Error of metadata structure for contacts"
+    config$logger.error(errMsg)
+    stop(errMsg)
+  }
+  if(nrow(validation_report)==0){
+    config$logger.info("No validation issue detected!")
+  }else{
+    config$logger.info("Validation issues -->")
+    print(validation_report)
+    if(any(validation_report$type == "ERROR")){
+      errMsg <- "At least one error of metadata syntax has been detected, aborting..."
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+  }
+  
   contacts <- list()
   rowNum <- nrow(source)
   config$logger.info(sprintf("Parsing %s contacts from tabular source", rowNum))

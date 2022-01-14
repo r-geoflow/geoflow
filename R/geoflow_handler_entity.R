@@ -7,6 +7,26 @@ handle_entities_df <- function(config, source){
     stop(errMsg)
   }
   
+  #validation
+  config$logger.info("Validating entities")
+  validation_report <- geoflow_validator_entities$new(source = source)$validate_content()
+  if(is.null(validation_report)){
+    errMsg <- "Error of metadata structure for entities"
+    config$logger.error(errMsg)
+    stop(errMsg)
+  }
+  if(nrow(validation_report)==0){
+    config$logger.info("No validation issue detected!")
+  }else{
+    config$logger.info("Validation issues -->")
+    print(validation_report)
+    if(any(validation_report$type == "ERROR")){
+      errMsg <- "At least one error of metadata syntax has been detected, aborting..."
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+  }
+  
   entities <- list()
   rowNum <- nrow(source)
   config$logger.info(sprintf("Parsing %s entities from tabular source", rowNum))

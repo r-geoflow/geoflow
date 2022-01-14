@@ -144,6 +144,7 @@ geoflow_entity <- R6Class("geoflow_entity",
   private = list(
     #TODO manage these allowed key values in class definitions (eg. geoflow_format)
     allowedKeyValuesFor = list(
+      identifiers = c("id", "uuid", "doi", "packageId"),
       titles = c("title", "alternative"),
       descriptions = c("abstract", "purpose", "credit", "info", "edition", "status"),
       spatialCoverage = c("ewkt", "wkt", "srid"),
@@ -180,6 +181,10 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #setIdentifier
     setIdentifier = function(key = "id", id){
+      if(!key %in% private$allowedKeyValuesFor$identifiers){
+        stop(sprintf("Identifier Key should be among the following allowed keys",
+                     paste0(private$allowedKeyValuesFor$identifiers, collapse=",")))
+      }
       self$identifiers[[key]] <- id
     },
     
