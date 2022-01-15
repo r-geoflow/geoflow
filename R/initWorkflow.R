@@ -211,7 +211,7 @@ initWorkflow <- function(file, dir = "."){
         config$logger.info(sprintf("Loading data structure definitions from '%s' [with '%s' handler]...", 
                                    x$source, x$handler))
         
-        md_dict_handler <- loadHandler(config, x, type = "dictionary")
+        md_dict_handler <- loadMetadataHandler(config, x, type = "dictionary")
         config$logger.info("Execute handler to load dictionary data structures...")
         dict <- md_dict_handler(config, source = x$source)
         
@@ -326,7 +326,7 @@ initWorkflow <- function(file, dir = "."){
       contacts <- do.call("c", lapply(cfg_md_contacts, function(x){
         config$logger.info(sprintf("Loading metadata contacts from '%s' [with '%s' handler]...", 
                                    x$source, x$handler))
-        md_contact_handler <- loadHandler(config, x, type = "contacts")
+        md_contact_handler <- loadMetadataHandler(config, x, type = "contacts")
         config$logger.info("Execute contact handler to load contacts...")
         contacts <- md_contact_handler(config, source = x$source)
         
@@ -361,7 +361,7 @@ initWorkflow <- function(file, dir = "."){
       entities <- do.call("c", lapply(cfg_md_entities, function(x){
         config$logger.info(sprintf("Loading metadata entities from '%s' [with '%s' handler]...", 
                                    x$source, x$handler))
-        md_entity_handler <- loadHandler(config, x, type = "entities")
+        md_entity_handler <- loadMetadataHandler(config, x, type = "entities")
         config$logger.info("Execute handler to load entities...")
         entities <- md_entity_handler(config, source = x$source)
         
@@ -542,65 +542,4 @@ initWorkflow <- function(file, dir = "."){
   }
 
   return(config)
-}
-
-#loadHandler
-loadHandler <- function(config, element, type){
-  md_handler <- NULL
-  if(is.null(element)) return(md_handler)
-  h <- element$handler
-  if(is.null(h)){
-    errMsg <- "Missing 'handler' (default handler id, or function name from custom script)"
-    config$logger.error(errMsg)
-    stop(errMsg)
-  }
-  
-  #type of handler
-  isHandlerId <- is.null(element$script)
-  if(isHandlerId){
-    config$logger.info("Try to use embedded contacts handler")
-    #in case handler id is specified
-    md_default_handlers <- switch(type,
-      "contacts" = list_contact_handlers(raw=TRUE),
-      "entities" = list_entity_handlers(raw=TRUE),
-      "dictionary" = list_dictionary_handlers(raw=TRUE)
-    )
-    md_default_handler_ids <- sapply(md_default_handlers, function(x){x$id})
-    if(!(h %in% md_default_handler_ids)){
-      errMsg <- sprintf("Unknown handler '%s'. Available handlers are: %s",
-                        h, paste(md_default_handler_ids, collapse=","))
-    }
-    h_src <- element$source
-    if(is.null(h_src)){
-      errMsg <- sprintf("Missing 'source' for handler '%s'", h)
-    }
-    
-    md_handler <- md_default_handlers[sapply(md_default_handlers, function(x){x$id==h})][[1]]$fun
-   
-  }else{
-    #in case handler is a script
-    h_script <- element$script
-    config$logger.info(sprintf("Try to use custom handler '%s' from script '%s'", h, h_script))
-    if(!file.exists(h_script)){
-      errMsg <- sprintf("File '%s' does not exist in current directory!", h_script)
-      config$logger.error(errMsg)
-      stop(errMsg)
-    }
-    source(h_script) #load script
-    md_handler <- try(eval(parse(text = h)))
-    if(class(md_handler)=="try-error"){
-      errMsg <- sprintf("Failed loading function '%s. Please check the script '%s'", h, h_script)
-      config$logger.error(errMsg)
-      stop(errMsg)
-    }
-    
-    #check custom handler arguments
-    args <- names(formals(md_handler))
-    if(!all(c("config", "source") %in% args)){
-      errMsg <- "The handler function should at least include the parameters (arguments) 'config' and 'source'"
-      config$logger.error(errMsg)
-      stop(errMsg)
-    }
-  }
-  return(md_handler)
 }
