@@ -82,10 +82,11 @@ handle_contacts_df <- function(config, source){
 }
 
 #handle_contacts_gsheet
-handle_contacts_gsheet <- function(config, source){
+handle_contacts_gsheet <- function(config, source, handle = TRUE){
   
   #read gsheet URL
   source <- as.data.frame(gsheet::gsheet2tbl(source))
+  if(!handle) return(source)
   
   #apply generic handler
   contacts <- handle_contacts_df(config, source)
@@ -93,10 +94,11 @@ handle_contacts_gsheet <- function(config, source){
 }
 
 #handle_contacts_csv
-handle_contacts_csv <- function(config, source){
+handle_contacts_csv <- function(config, source, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
   source <- read.csv(source)
+  if(!handle) return(source)
   
   #apply generic handler
   contacts <- handle_contacts_df(config, source)
@@ -104,10 +106,11 @@ handle_contacts_csv <- function(config, source){
 }
 
 #handle_contacts_excel
-handle_contacts_excel <- function(config, source){
+handle_contacts_excel <- function(config, source, handle = TRUE){
   
   #read excel TODO -> options management: sep, encoding etc
   source <- as.data.frame(readxl::read_excel(source))
+  if(!handle) return(source)
   
   #apply generic handler
   contacts <- handle_entities_df(config, source)
@@ -115,7 +118,7 @@ handle_contacts_excel <- function(config, source){
 }
 
 #handle_contacts_dbi
-handle_contacts_dbi <- function(config, source){
+handle_contacts_dbi <- function(config, source, handle = TRUE){
   dbi <- config$software$input$dbi
   if(is.null(dbi)){
     stop("There is no database input software configured to handle contacts from DB")
@@ -138,6 +141,7 @@ handle_contacts_dbi <- function(config, source){
       stop(errMsg)
     }
   }
+  if(!handle) return(source)
   
   #apply generic handler
   contacts <- handle_contacts_df(config, source)

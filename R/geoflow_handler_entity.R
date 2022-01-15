@@ -1246,10 +1246,11 @@ handle_entities_thredds_df = function(config, source){
 }
 
 #handle_entities_thredds_gsheets
-handle_entities_thredds_gsheet <- function(config, source){
+handle_entities_thredds_gsheet <- function(config, source, handle = TRUE){
   
   #read gsheet URL
   source <- as.data.frame(gsheet::gsheet2tbl(source))
+  if(!handle) return(source)
   
   #apply generic handler
   entities <- handle_entities_thredds_df(config, source)
@@ -1257,10 +1258,11 @@ handle_entities_thredds_gsheet <- function(config, source){
 }
 
 #handle_entities_thredds_csv
-handle_entities_thredds_csv <- function(config, source){
+handle_entities_thredds_csv <- function(config, source, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
   source <- read.csv(source,stringsAsFactors = F)
+  if(!handle) return(source)
   
   #apply generic handler
   entities <- handle_entities_thredds_df(config, source)
@@ -1268,10 +1270,11 @@ handle_entities_thredds_csv <- function(config, source){
 }
 
 #handle_entities_thredds_excel
-handle_entities_thredds_excel <- function(config, source){
+handle_entities_thredds_excel <- function(config, source, handle = TRUE){
   
   #read excel TODO -> options management: sep, encoding etc
   source <- as.data.frame(readxl::read_excel(source))
+  if(!handle) return(source)
   
   #apply generic handler
   entities <- handle_entities_thredds_df(config, source)

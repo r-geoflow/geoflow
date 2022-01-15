@@ -95,10 +95,11 @@ handle_dictionary_df <- function(config, source){
 }
 
 #handle_dictionary_gsheet
-handle_dictionary_gsheet <- function(config, source){
+handle_dictionary_gsheet <- function(config, source, handle = TRUE){
   
   #read gsheet URL
   source <- read.csv(text = gsheet::gsheet2text(source))
+  if(!handle) return(source)
   
   #apply generic handler
   dictionary <- handle_dictionary_df(config, source)
@@ -106,10 +107,11 @@ handle_dictionary_gsheet <- function(config, source){
 }
 
 #handle_dictionary_csv
-handle_dictionary_csv <- function(config, source){
+handle_dictionary_csv <- function(config, source, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
   source <- read.csv(source)
+  if(!handle) return(source)
   
   #apply generic handler
   dictionary <- handle_dictionary_df(config, source)
@@ -117,10 +119,11 @@ handle_dictionary_csv <- function(config, source){
 }
 
 #handle_dictionary_excel
-handle_dictionary_excel <- function(config, source){
+handle_dictionary_excel <- function(config, source, handle = TRUE){
   
   #read excel TODO -> options management: sep, encoding etc
   source <- as.data.frame(readxl::read_excel(source))
+  if(!handle) return(source)
   
   #apply generic handler
   dictionary <- handle_dictionary_df(config, source)
@@ -128,7 +131,7 @@ handle_dictionary_excel <- function(config, source){
 }
 
 #handle_dictionary_dbi
-handle_dictionary_dbi <- function(config, source){
+handle_dictionary_dbi <- function(config, source, handle = TRUE){
   dbi <- config$software$input$dbi
   if(is.null(dbi)){
     stop("There is no database input software configured to handle dictionary from DB")
@@ -151,6 +154,7 @@ handle_dictionary_dbi <- function(config, source){
       stop(errMsg)
     }
   }
+  if(!handle) return(source)
   
   #apply generic handler
   dictionary <- handle_dictionary_df(config, source)
