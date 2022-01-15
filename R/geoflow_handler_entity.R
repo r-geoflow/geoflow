@@ -345,10 +345,11 @@ handle_entities_df <- function(config, source){
 }
 
 #handle_entities_gsheets
-handle_entities_gsheet <- function(config, source){
+handle_entities_gsheet <- function(config, source, handle = TRUE){
 
   #read gsheet URL
   source <- as.data.frame(gsheet::gsheet2tbl(source))
+  if(!handle) return(source)
   
   #apply generic handler
   entities <- handle_entities_df(config, source)
@@ -356,10 +357,11 @@ handle_entities_gsheet <- function(config, source){
 }
 
 #handle_entities_csv
-handle_entities_csv <- function(config, source){
+handle_entities_csv <- function(config, source, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
   source <- read.csv(source,stringsAsFactors = F)
+  if(!handle) return(source)
   
   #apply generic handler
   entities <- handle_entities_df(config, source)
@@ -367,10 +369,11 @@ handle_entities_csv <- function(config, source){
 }
 
 #handle_entities_excel
-handle_entities_excel <- function(config, source){
+handle_entities_excel <- function(config, source, handle = TRUE){
   
   #read excel TODO -> options management: sep, encoding etc
   source <- as.data.frame(readxl::read_excel(source))
+  if(!handle) return(source)
   
   #apply generic handler
   entities <- handle_entities_df(config, source)
@@ -378,7 +381,7 @@ handle_entities_excel <- function(config, source){
 }
 
 #handle_entities_dbi
-handle_entities_dbi <- function(config, source){
+handle_entities_dbi <- function(config, source, handle = TRUE){
   dbi <- config$software$input$dbi
   if(is.null(dbi)){
     stop("There is no database input software configured to handle entities from DB")
@@ -401,6 +404,7 @@ handle_entities_dbi <- function(config, source){
       stop(errMsg)
     }
   }
+  if(!handle) return(source)
 
   #apply generic handler
   entities <- handle_entities_df(config, source)
@@ -408,7 +412,7 @@ handle_entities_dbi <- function(config, source){
 }
 
 #handle_entities_ncdf
-handle_entities_ncdf <- function(config, source){
+handle_entities_ncdf <- function(config, source, handle = TRUE){
   
   config$logger.info("NCDF Handler")
   if(!requireNamespace("ncdf4", quietly = TRUE)){
@@ -424,6 +428,7 @@ handle_entities_ncdf <- function(config, source){
   entity <- geoflow_entity$new()
   source_name<-source
   source <- ncdf4::nc_open(source)
+  if(!handle) return(source)
   
   #list attributes of source
   attr<-ncdf4::ncatt_get(source,varid=0)
@@ -681,7 +686,7 @@ handle_entities_ncdf <- function(config, source){
 }
 
 #handle_entities_ncml
-handle_entities_ncml <- function(config, source){
+handle_entities_ncml <- function(config, source, handle = TRUE){
   
 config$logger.info("NCML Handle")
   
@@ -761,6 +766,7 @@ config$logger.info("NCML Handle")
   entity <- geoflow_entity$new()
   source_name<-source
   source <- getNCML(source)
+  if(!handle) return(source)
   
   #list attributes of source
   attr<-source$attributes
