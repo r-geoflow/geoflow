@@ -10,20 +10,20 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
     default_key = NULL,
     exclude_http_keys = TRUE,
     multiple = TRUE,
-    i = NA,
-    j = NA,
     str = NA
   ),
   public = list(
+    i = NA,
+    j = NA,
     initialize = function(key_required, valid_keys, default_key, exclude_http_keys, multiple, i, j, str){
       private$key_required <- key_required
       private$valid_keys <- valid_keys
       private$default_key <- default_key
       private$exclude_http_keys <- exclude_http_keys
       private$multiple <- multiple
-      private$i <- i
-      private$j <- j
       private$str <- str
+      self$i <- i
+      self$j <- j
     },
     
     #validate
@@ -405,23 +405,35 @@ geoflow_validator <- R6Class("geoflow_validator",
      },
      
      #validate_content
-     validate_content = function(){
+     validate_content = function(raw = FALSE){
+       content_validation_report <- NULL
        if(!self$validate_structure()) return(NULL)
        source <- self$source[,private$valid_columns]
-       content_validation_report <- do.call("rbind", lapply(1:nrow(source), function(i){
+       cell_reports <- lapply(1:nrow(source), function(i){
          src_obj <- source[i,]
-         out <- do.call("rbind", lapply(colnames(src_obj), function(colname){
+         out_row_report <- lapply(colnames(src_obj), function(colname){
            out_col <- NULL
            col_validator_class <- try(eval(parse(text=paste0("geoflow_validator_", private$model,"_", colname))),silent=T)
            if(is.R6Class(col_validator_class)){
-             out_col <- col_validator_class$new(i, which(colnames(src_obj)==colname), src_obj[,colname])$validate()
-             out_col <- cbind(col = rep(colname,nrow(out_col)), out_col)
+             out_col <- col_validator_class$new(i, which(colnames(src_obj)==colname), src_obj[,colname])
+             if(!raw){
+               out_col <- out_col$validate()
+               out_col <- cbind(col = rep(colname,nrow(out_col)), out_col)
+             }
            }
            out_col
-         }))
-         out <- cbind(row = rep(i,nrow(out)), out)
-         out
-       }))
+         })
+         if(!raw){
+           out_row_report <- do.call("rbind", out_row_report)
+           out_row_report <- cbind(row = rep(i,nrow(out_row_report)), out_row_report)
+         }
+         return(out_row_report)
+       })
+       if(raw){
+         content_validation_report <- do.call("c", cell_reports)
+       }else{
+         content_validation_report <- do.call("rbind", cell_reports)
+       }
        return(content_validation_report)
      }
    )
