@@ -10,6 +10,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   features <- entity$data$features
   
   #options
+  use_uuid <- if(!is.null(options$use_uuid)) options$use_uuid else FALSE
   inspire <- if(!is.null(options$inspire)) options$inspire else FALSE
   logo <- if(!is.null(options$logo)) options$logo else FALSE
   doi <- if(!is.null(options$doi)) options$doi else FALSE
@@ -72,6 +73,12 @@ geometa_create_iso_19115 <- function(entity, config, options){
   # }
   md <- ISOMetadata$new()
   mdId <- entity$identifiers[["id"]]
+  if(use_uuid){
+    if(is.null(entity$identifiers[["uuid"]])){
+      entity$identifiers[["uuid"]] <- uuid::UUIDgenerate()
+    }
+    mdId <- entity$identifiers[["uuid"]]
+  }
   md$setFileIdentifier(mdId)
   
   the_doi <- entity$identifiers[["doi"]]

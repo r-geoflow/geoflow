@@ -211,6 +211,7 @@ register_actions <- function(){
       packages = list("geometa","ows4R"),
       fun = geometa_create_iso_19115,
       available_options = list(
+        use_uuid = list(def = "Use UUID as metadata identifier, if not defined the UUID is pre-generated", class = "logical", default = FALSE),
         doi = list(def = "Add entity DOI - if defined - as metadata identifier and online resource", class = "logical", default = FALSE),
         doi_thumbnail = list(def = "if option 'doi' is true and this option enabled, a DOI thumbnail will be added", class = "logical", default = FALSE),
         inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator", class = "logical", default = FALSE),
