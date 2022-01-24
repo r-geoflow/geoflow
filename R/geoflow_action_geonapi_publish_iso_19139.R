@@ -5,8 +5,16 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
   }
   
   geometa_inspire <- if(!is.null(options$geometa_inspire)) options$geometa_inspire else FALSE
+  INSPIRE_VALIDATOR <- NULL
   if(geometa_inspire){
-    config$logger.info("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its CSW-T publication")
+    #check inspire metadata validator configuration
+    INSPIRE_VALIDATOR <- config$software$output$inspire
+    if(is.null(INSPIRE_VALIDATOR)){
+      errMsg <- "This action requires a INSPIRE metadata validator software to be declared in the configuration"
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+    config$logger.info("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its publication")
   }
   
   #shortcut for gn config
@@ -78,7 +86,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
         if(is.null(metaId)){
           #insert metadata (once inserted only visible to the publisher)
           created = GN$insertMetadata(geometa = md, group = group, category = category,
-                                      geometa_inspire = inspire)
+                                      geometa_inspire = inspire, geometa_inspireValidator = INSPIRE_VALIDATOR)
           #config privileges
           config <- GNPrivConfiguration$new()
           config$setPrivileges("all", privs)
@@ -86,7 +94,7 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
         }else{
           #update a metadata
           updated = GN$updateMetadata(id = metaId, geometa = md,
-                                      geometa_inspire = inspire)
+                                      geometa_inspire = inspire, geometa_inspireValidator = INSPIRE_VALIDATOR)
           
           #config privileges
           gn_config <- GNPrivConfiguration$new()

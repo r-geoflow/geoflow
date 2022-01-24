@@ -21,6 +21,16 @@ geometa_create_iso_19115 <- function(entity, config, options){
   include_coverage_data_dimension_values <- if(!is.null(options$include_coverage_data_dimension_values)) options$include_coverage_data_dimension_values else FALSE
   include_coverage_service_dimension_values <- if(!is.null(options$include_coverage_service_dimension_values)) options$include_coverage_service_dimension_values else FALSE
   
+  #check inspire metadata validator configuration
+  INSPIRE_VALIDATOR <- NULL
+  if(inspire){
+    INSPIRE_VALIDATOR <- config$software$output$inspire
+    if(is.null(INSPIRE_VALIDATOR)){
+      errMsg <- "This action requires a INSPIRE metadata validator software to be declared in the configuration"
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
+  }
   
   createResponsibleParty = function(x, role = NULL){
     if(is.null(role)) role <- x$role 
@@ -828,6 +838,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   
   #we save the metadata
   #saveRDS(md, file.path(getwd(), "metadata", paste0(entity$identifiers[["id"]], ".rds")))
-  md$save(file.path(getwd(), "metadata", paste0(entity$getEntityJobDirname(), "_ISO-19115.xml")), inspire = inspire)
+  md$save(file.path(getwd(), "metadata", paste0(entity$getEntityJobDirname(), "_ISO-19115.xml")), 
+          inspire = inspire, inspireValidator = INSPIRE_VALIDATOR)
   rm(md)
 }

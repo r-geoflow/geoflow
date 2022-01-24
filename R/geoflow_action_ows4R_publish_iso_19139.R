@@ -5,7 +5,15 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
   }
   
   geometa_inspire <- if(!is.null(options$geometa_inspire)) options$geometa_inspire else FALSE
+  INSPIRE_VALIDATOR <- NULL
   if(geometa_inspire){
+    #check inspire metadata validator configuration
+    INSPIRE_VALIDATOR <- config$software$output$inspire
+    if(is.null(INSPIRE_VALIDATOR)){
+      errMsg <- "This action requires a INSPIRE metadata validator software to be declared in the configuration"
+      config$logger.error(errMsg)
+      stop(errMsg)
+    }
     config$logger.info("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its CSW-T publication")
   }
 
@@ -19,17 +27,17 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
   }
   
   #function to publish
-  doPublish <- function(md, inspire){
+  doPublish <- function(md, inspire, inspireValidator = NULL){
     meta_id <- NULL
     if(is(md, "ISOMetadata")) meta_id <- md$fileIdentifier
     if(is(md, "ISOFeatureCatalogue")) meta_id <- md$attrs[["uuid"]]
     meta_dc <- CSW$getRecordById(meta_id)
     if(is.null(meta_dc)){
       config$logger.info(sprintf("Inserting new record with id '%s'", meta_id))
-      CSW$insertRecord(record = md, geometa_inspire = inspire)
+      CSW$insertRecord(record = md, geometa_inspire = inspire, geometa_inspireValidator = inspireValidator)
     }else{
       config$logger.info(sprintf("Updating existing record with id '%s'", meta_id))
-      CSW$updateRecord(record = md, geometa_inspire = inspire)
+      CSW$updateRecord(record = md, geometa_inspire = inspire, geometa_inspireValidator = inspireValidator)
     }
   }
   
@@ -40,7 +48,7 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
   if(!is.null(geometa_iso19115_action)){
     metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_ISO-19115.xml"))
     md <- geometa::readISO19139(metaFile)
-    if(file.exists(metaFile)) doPublish(md, geometa_inspire)
+    if(file.exists(metaFile)) doPublish(md, geometa_inspire, INSPIRE_VALIDATOR)
     rm(md)
   }
   #geometa ISO 19110
@@ -51,7 +59,7 @@ ows4R_publish_iso_19139 <- function(entity, config, options){
     geometa_inspire <- FALSE
     metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_ISO-19110.xml"))
     md <- geometa::readISO19139(metaFile)
-    if(file.exists(metaFile)) doPublish(md, geometa_inspire)
+    if(file.exists(metaFile)) doPublish(md, geometa_inspire, INSPIRE_VALIDATOR)
     rm(md)
   }
   
