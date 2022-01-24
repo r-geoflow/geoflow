@@ -30,7 +30,7 @@ Imports:
   geonapi,
   ows4R
 Remotes:
-  eblondel/atom4R,
+  eblondel/geometa,
   BigelowLab/thredds
 Suggests: 
   testthat,
