@@ -252,21 +252,21 @@ register_software <- function(){
       packages = list("DBI", "RSQLite", "RPostgres"),
       handler = try(DBI::dbConnect, silent = TRUE),
       arguments = list(
-        drv = list(def = "DBI driver name", class = "character", handler = try(DBI::dbDriver, silent = TRUE)),
-        user = list(def = "Username", class = "character"),
-        password = list(def = "Password", class = "character"),
-        host = list(def = "Hostname", class = "character"),
-        port = list(def = "Port number", class = "integer"),
-        dbname = list(def = "Database name", class = "character")
+        drv = list(label = "DBI driver", def = "DBI driver name", class = "character", handler = try(DBI::dbDriver, silent = TRUE)),
+        user = list(label = "Username", def = "Username", class = "character"),
+        password = list(label = "Password", def = "Password", class = "character"),
+        host = list(label = "Hostname", def = "Hostname", class = "character"),
+        port = list(label = "Port number", def = "Port number", class = "integer"),
+        dbname = list(label = "Database name", def = "Database name", class = "character")
       ),
       attributes = list(
-        onstart_sql = list(def = "An SQL script to be run on workflow start", class = "character"),
-        onstart_r = list(def = "R instructions to generate a SQL. It should be made of 2 properties 'script' (name
+        onstart_sql = list(label = "SQL 'on-start' script", def = "An SQL script to be run on workflow start", class = "character"),
+        onstart_r = list(label = "R 'on-start' SQL generating script", def = "R instructions to generate a SQL. It should be made of 2 properties 'script' (name
                          of the R script) that should include a function standardized with parameter config (being the
                          DBI software config) and will output a character representing the SQL. The name of the function 
                          is to specify in 'fun' property."),
-        onend_sql = list(def = "An SQL script to be run on workflow end", class = "character"),
-        onend_r = list(def = "R instructions to generate a SQL. It should be made of 2 properties 'script' (name of the R script) 
+        onend_sql = list(label = "SQL 'on-end' script", def = "An SQL script to be run on workflow end", class = "character"),
+        onend_r = list(label = "R 'on-end' SQL generating script", def = "R instructions to generate a SQL. It should be made of 2 properties 'script' (name of the R script) 
                        that should include a function standardized with parameter config (being the DBI software config) and will output 
                        a character representing the SQL. The name of the function is to specify in 'fun' property.")
       ),
@@ -404,9 +404,9 @@ register_software <- function(){
       packages = list("googledrive"),
       handler = try(googledrive::drive_auth, silent = TRUE),
       arguments = list(
-        email = list(def = "User email to authenticate in Google Drive", class = "character"),
-        path = list(def = "An optional path within the Google drive repository. Default will be the root", class = "character"),
-        token = list(def = "The user authentication token. To get your token in R: gargle::token_fetch()$credentials$access_token", class = "character")
+        email = list(label = "Email", def = "User email to authenticate in Google Drive", class = "character"),
+        path = list(label = "Path", def = "An optional path within the Google drive repository. Default will be the root", class = "character"),
+        token = list(label = "User token", def = "The user authentication token. To get your token in R: gargle::token_fetch()$credentials$access_token", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -418,8 +418,8 @@ register_software <- function(){
       packages = list("geometa"),
       handler = try(geometa::INSPIREMetadataValidator$new, silent = TRUE),
       arguments = list(
-        url = list(def = "URL of the INSPIRE metadata validator instance. By default use 'https://inspire.ec.europa.eu/validator/v2'", class = "character"),
-        apiKey = list(def = "API user key to authenticate to INSPIRE API gateway", class = "character")
+        url = list(label = "INSPIRE Metadata validator URL", def = "URL of the INSPIRE metadata validator instance. By default use 'https://inspire.ec.europa.eu/validator/v2'", class = "character", default = "https://inspire.ec.europa.eu/validator/v2"),
+        apiKey = list(label = "API Key", def = "API user key to authenticate to INSPIRE API gateway", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -431,11 +431,11 @@ register_software <- function(){
       packages = list("ows4R"),
       handler = try(ows4R::CSWClient$new, silent = TRUE),
       arguments = list(
-        url = list(def = "CSW service endpoint URL", class = "character"),
-        serviceVersion = list(def = "CSW service version ('2.0.2' or '3.0')", class = "character"),
-        user = list(def = "Username for CSW authentication", class = "character"),
-        pwd = list(def = "Password for CSW authentication", class = "character"),
-        logger = list(def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)", class = "character", choices = c("INFO", "DEBUG"))
+        url = list(label = "URL", def = "CSW service endpoint URL", class = "character"),
+        serviceVersion = list(label = "Service version", def = "CSW service version ('2.0.2' or '3.0')", class = "character"),
+        user = list(label = "Username", def = "Username for CSW authentication (optional)", class = "character"),
+        pwd = list(label = "Password", def = "Password for CSW authentication (optional)", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)", class = "character", choices = c("INFO", "DEBUG"))
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -447,11 +447,11 @@ register_software <- function(){
       packages = list("ows4R"),
       handler = try(ows4R::WFSClient$new, silent = TRUE),
       arguments = list(
-        url = list(def = "WFS service endpoint URL", class = "character"),
-        serviceVersion = list(def = "WFS service version ('1.0.0', '1.1.1', '2.0')", class = "character"),
-        user = list(def = "Username for WFS authentication", class = "character"),
-        pwd = list(def = "Password for WFS authentication", class = "character"),
-        logger = list(def = "Level for 'ows4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))
+        url = list(label = "URL", def = "WFS service endpoint URL", class = "character"),
+        serviceVersion = list(label = "Service version", def = "WFS service version ('1.0.0', '1.1.1', '2.0')", class = "character"),
+        user = list(label = "Username", def = "Username for WFS authentication (optional)", class = "character"),
+        pwd = list(label = "Password", def = "Password for WFS authentication (optional)", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'ows4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -463,11 +463,11 @@ register_software <- function(){
       packages = list("ows4R"),
       handler = try(ows4R::WPSClient$new, silent = TRUE),
       arguments = list(
-        url = list(def = "WPS service endpoint URL", class = "character"),
-        serviceVersion = list(def = "WPS service version (limited to '1.0.0')", class = "character"),
-        user = list(def = "Username for WPS authentication", class = "character"),
-        pwd = list(def = "Password for WPS authentication", class = "character"),
-        logger = list(def = "Level for 'ows4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))
+        url = list(label = "URL", def = "WPS service endpoint URL", class = "character"),
+        serviceVersion = list(label = "Service version", def = "WPS service version (limited to '1.0.0')", class = "character"),
+        user = list(label = "Username", def = "Username for WPS authentication (optional)", class = "character"),
+        pwd = list(label = "Password", def = "Password for WPS authentication (optional)", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'ows4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -479,11 +479,11 @@ register_software <- function(){
       packages = list("geonapi"),
       handler = try(geonapi::GNManager$new, silent = TRUE),
       arguments = list(
-        url = list(def = "GeoNetwork catalogue URL"),
-        version = list(def = "Geonetwork catalogue version", class = "character"),
-        user = list(def = "Username for GeoNetwork authentication", class = "character"),
-        pwd = list(def = "Password for GeoNetwork authentication", class = "character"),
-        logger = list(def = "Level for 'geonapi' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))
+        url = list(label = "URL", def = "GeoNetwork catalogue URL"),
+        version = list(label = "Geonetwork version", def = "Geonetwork catalogue version", class = "character"),
+        user = list(label = "Username", def = "Username for GeoNetwork authentication", class = "character"),
+        pwd = list(label = "Password", def = "Password for GeoNetwork authentication", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'geonapi' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -495,14 +495,14 @@ register_software <- function(){
       packages = list("geosapi"),
       handler = try(geosapi::GSManager$new, silent = TRUE),
       arguments = list(
-        url = list(def = "GeoServer application URL", class = "character"),
-        user = list(def = "Username for GeoServer authentication", class = "character"),
-        pwd = list(def = "Password for GeoServer authentication", class = "character"),
-        logger = list(def = "Level for 'geosapi' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))    
+        url = list(label = "URL", def = "GeoServer application URL", class = "character"),
+        user = list(label = "Username", def = "Username for GeoServer authentication", class = "character"),
+        pwd = list(label = "Password", def = "Password for GeoServer authentication", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'geosapi' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO", "DEBUG"))    
       ),
       attributes = list(
-        workspace = list(def = "GeoServer workspace name", class = "character"),
-        datastore = list(def = "GeoServer datastore name", class = "character")
+        workspace = list(label = "Workspace", def = "GeoServer workspace name", class = "character"),
+        datastore = list(label = "Datastore", def = "GeoServer datastore name", class = "character")
       ),
       actions = list(
         onstart = function(config, software, software_config){
@@ -530,12 +530,12 @@ register_software <- function(){
       packages = list("zen4R"),
       handler = try(zen4R::ZenodoManager$new, silent = TRUE),
       arguments = list(
-        url = list(def = "Zenodo API URL. For sandbox tests, use 'https://sandbox.zenodo.org/api'", class = "character", choices = c("https://zenodo.org/api","https://sandbox.zenodo.org/api")),
-        token = list(def = "Zenodo user authentication token.", class = "character"),
-        logger = list(def = "Level for 'zen4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO","DEBUG"))
+        url = list(label = "URL", def = "Zenodo API URL. For sandbox tests, use 'https://sandbox.zenodo.org/api'", class = "character", choices = c("https://zenodo.org/api","https://sandbox.zenodo.org/api")),
+        token = list(label = "User token", def = "Zenodo user authentication token.", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'zen4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = c("INFO","DEBUG"))
       ),
       attributes = list(
-        clean = list(def = "An option, to clean draft Zenodo deposits prior to any new deposit. To clean deposits, enable 'run', 
+        clean = list(label = "Clean", def = "An option, to clean draft Zenodo deposits prior to any new deposit. To clean deposits, enable 'run', 
                      and optionally specify either a 'query' (ElasticSearch Zenodo query), a list of 'doi', or 'community' for which
                      you want to restrain the cleaning operation.")
       )
@@ -549,12 +549,12 @@ register_software <- function(){
       packages = list("atom4R"),
       handler = try(atom4R::SwordDataverseClient$new, silent = TRUE),
       arguments = list(
-        hostname = list(def = "Dataverse base URL", class = "character"),
-        token = list(def = "Dataverse user authentication token", class = "character"),
-        logger = list(def = "Level for 'atom4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = list("INFO","DEBUG"))
+        hostname = list(label = "URL", def = "Dataverse base URL", class = "character"),
+        token = list(label = "User token", def = "Dataverse user authentication token", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'atom4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = list("INFO","DEBUG"))
       ),
       attributes = list(
-        dataverse = list(def = "Dataverse id where to deposit/publish records", class = "character")
+        dataverse = list(label = "Dataverse ID", def = "Dataverse id where to deposit/publish records", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -566,9 +566,9 @@ register_software <- function(){
       packages = list("dataone"),
       handler = try(dataone::D1Client, silent = TRUE),
       arguments = list(
-        x = list(def = "Contributing Node URL", handler = try(dataone::CNode, silent = TRUE), class = "character"),
-        y = list(def = "Member Node URL", handler = try(dataone::MNode, silent = TRUE), class = "character"),
-        token = list(def = "Authorization token")
+        x = list(label = "Contributing Node URL", def = "Contributing Node URL", handler = try(dataone::CNode, silent = TRUE), class = "character"),
+        y = list(label = "Member Node URL", def = "Member Node URL", handler = try(dataone::MNode, silent = TRUE), class = "character"),
+        token = list(label = "User token", def = "User Authorization token")
       ),
       attributes = list(),
       actions = list(
@@ -593,11 +593,11 @@ register_software <- function(){
       packages = list("d4storagehub4R"),
       handler = try(d4storagehub4R::StoragehubManager$new, silent = TRUE),
       arguments = list(
-        token = list(def = "D4Science storage hub user authentication token", class = "character"),
-        logger = list(def = "Level for 'd4storagehub4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = list("INFO","DEBUG"))
+        token = list(label = "User token", def = "D4Science storage hub user authentication token", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'd4storagehub4R' logger messages (NULL, 'INFO' or 'DEBUG')", class = "character", choices = list("INFO","DEBUG"))
       ),
       attributes = list(
-        workspace = list(def = "D4Science storage hub workspace name", class = "character")
+        workspace = list(label = "Workspace", def = "D4Science storage hub workspace name", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -609,9 +609,9 @@ register_software <- function(){
       packages = list("rgbif"),
       handler = list,
       arguments = list(
-        user = list(def = "Username for Gbif authentication", class = "character"),
-        pwd = list(def = "Password for Gbif authentication", class = "character"),
-        email = list(def = "Email address for sending notification ", class = "character")
+        user = list(label = "Username", def = "Username for Gbif authentication", class = "character"),
+        pwd = list(label = "Password", def = "Password for Gbif authentication", class = "character"),
+        email = list(label = "Email", def = "Email address for sending notification ", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------
@@ -623,8 +623,8 @@ register_software <- function(){
       packages = list("thredds"),
       handler = try(thredds::CatalogNode$new, silent = TRUE),
       arguments = list(
-        x = list(def = "url of top level catalog request", class = "character"),
-        prefix = list(def = "the namespace to examine", class = "character")
+        x = list(label = "Catalog URL", def = "url of top level catalog request", class = "character"),
+        prefix = list(label = "Namespace", def = "the namespace to examine", class = "character")
       )
     )
   )
@@ -689,12 +689,13 @@ list_software_parameters <- function(software_type, raw = FALSE){
   if(length(software$arguments)>0){
     out <- data.frame(
       name = names(software$arguments),
+      label = sapply(software$arguments, function(x){x$label}),
       definition = sapply(software$arguments, function(x){x$def}),
       stringsAsFactors = FALSE
     )
     row.names(out) <- 1:nrow(out)
   }else{
-    out <- data.frame(name = character(0), definition = character(0))
+    out <- data.frame(name = character(0), label = character(0), definition = character(0))
   }
   return(out)
 }
@@ -723,12 +724,13 @@ list_software_properties <- function(software_type, raw = FALSE){
   if(length(software$attributes)>0){
     out <- data.frame(
       name = names(software$attributes),
+      label = sapply(software$attributes, function(x){x$label}),
       definition = sapply(software$attributes, function(x){x$def}),
       stringsAsFactors = FALSE
     )
     row.names(out) <- 1:nrow(out)
   }else{
-    out <- data.frame(name = character(0), definition = character(0))
+    out <- data.frame(name = character(0), label = character(0), definition = character(0))
   }
   return(out)
 }
