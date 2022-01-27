@@ -1,6 +1,6 @@
 Package: geoflow
 Version: 1.0.0
-Date: 2022-01-24
+Date: 2022-01-27
 Title: Tools to Orchestrate and Run (Meta)Data Management Workflows
 Authors@R: c(
   person("Emmanuel", "Blondel", role = c("aut", "cre"), email = "emmanuel.blondel1@gmail.com", comment = c(ORCID = "0000-0002-5870-5762")),
