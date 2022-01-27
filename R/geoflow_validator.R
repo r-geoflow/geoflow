@@ -415,9 +415,7 @@ geoflow_validator <- R6Class("geoflow_validator",
        source <- self$source[,private$valid_columns]
        cell_reports <- lapply(1:nrow(source), function(i){
          src_obj <- source[i,]
-         print(i)
          out_row_report <- lapply(colnames(src_obj), function(colname){
-           print(colname)
            out_col <- NULL
            col_validator_class <- try(eval(parse(text=paste0("geoflow_validator_", private$model,"_", colname))),silent=T)
            if(is.R6Class(col_validator_class)){
