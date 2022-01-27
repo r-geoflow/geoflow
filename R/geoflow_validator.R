@@ -72,6 +72,27 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
               }
             }
           }
+          
+          if(length(str_keys_m)==1){
+            #additional checks in case of http keys
+            kvp <- try(extract_kvp(str), silent = TRUE)
+            if(kvp$key == "http") for(value in kvp$values){
+              if(!is.null(attr(value,"uri"))){
+                str_http_key_m <- gregexpr("(_http|\nhttp)", attr(value,"uri"))[[1]]
+                str_http_key_m <- str_http_key_m[str_http_key_m > -1]
+                if(length(str_http_key_m) > 0){
+                  for(i in 1:length(str_http_key_m)){
+                    httr_key_m_start <- 1
+                    if(i > 1) httr_key_m_start <- str_http_key_m[i-1]
+                    httr_key_m_end <- str_http_key_m[i]
+                    #error --> possibly missing line splitting for http key
+                    txt_loc <- substr(attr(value,"uri"),httr_key_m_start,httr_key_m_end)
+                    report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Line separator missing at '%s'", txt_loc)))
+                  }
+                }
+              }
+            }
+          }
     
           if(length(str_keys_m)>1){
             for(i in 1:(length(str_keys_m)-1)){
@@ -185,7 +206,7 @@ geoflow_validator_entity_Subject <- R6Class("geoflow_validator_entity_Subject",
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list()
-       super$initialize(TRUE, TRUE, valid_keys, NULL, TRUE, TRUE, i, j, str)
+       super$initialize(TRUE, FALSE, valid_keys, NULL, TRUE, TRUE, i, j, str)
      }
    )
 )
@@ -315,7 +336,14 @@ geoflow_validator_entity_Relation <- R6Class("geoflow_validator_entity_Relation"
     inherit = geoflow_validator_cell,
     public = list(
       initialize = function(i, j, str){
-        valid_keys <- list("thumbnail", "http", "parent", "doi", "wms", "wfs", "wcs", "csw")
+        valid_keys <- list(
+          "ftp", "http",
+          "parent","thumbnail",
+          "csw", "csw202", "csw30",
+          "wcs", "wcs100", "wcs11", "wcs110", "wcs111", "wcs201",
+          "wfs", "wfs100", "wfs110", "wfs200",
+          "wms", "wms110", "wms111", "wms130"
+        )
         super$initialize(TRUE, TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
       }
     )
