@@ -5,6 +5,7 @@
 #' @export
 geoflow_validator_cell <- R6Class("geoflow_validator_cell",
   private = list(
+    na_authorized = FALSE,
     key_required = TRUE,
     valid_keys = list(),
     default_key = NULL,
@@ -15,7 +16,8 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
   public = list(
     i = NA,
     j = NA,
-    initialize = function(key_required, valid_keys, default_key, exclude_http_keys, multiple, i, j, str){
+    initialize = function(na_authorized, key_required, valid_keys, default_key, exclude_http_keys, multiple, i, j, str){
+      private$na_authorized <- na_authorized
       private$key_required <- key_required
       private$valid_keys <- valid_keys
       private$default_key <- default_key
@@ -34,6 +36,8 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
         message = character(0),
         stringsAsFactors = FALSE
       )
+      
+      if(private$na_authorized) if(is.na(private$str)) return(report)
       
       #extract components
       strs <- extract_cell_components(sanitize_str(as(private$str,"character")))
@@ -121,7 +125,7 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list("id", "orcid")
-       super$initialize(TRUE, valid_keys, "id", TRUE, TRUE, i, j, str)
+       super$initialize(FALSE, TRUE, valid_keys, "id", TRUE, TRUE, i, j, str)
      }
    )
 )
@@ -136,7 +140,7 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list("id", "uuid", "doi", "packageId")
-      super$initialize(TRUE, valid_keys, "id", TRUE, TRUE, i, j, str)
+      super$initialize(FALSE, TRUE, valid_keys, "id", TRUE, TRUE, i, j, str)
     }
   )
 )
@@ -151,7 +155,7 @@ geoflow_validator_entity_Title <- R6Class("geoflow_validator_entity_Title",
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list("title", "alternative")
-      super$initialize(TRUE, valid_keys, "title", TRUE, TRUE, i, j, str)
+      super$initialize(FALSE, TRUE, valid_keys, "title", TRUE, TRUE, i, j, str)
     }
   )
 )
@@ -166,7 +170,7 @@ geoflow_validator_entity_Description <- R6Class("geoflow_validator_entity_Descri
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list("abstract", "purpose", "credit", "info", "edition", "status")
-       super$initialize(TRUE, valid_keys, "abstract", TRUE, TRUE, i, j, str)
+       super$initialize(FALSE, TRUE, valid_keys, "abstract", TRUE, TRUE, i, j, str)
      }
    )
 )
@@ -181,7 +185,7 @@ geoflow_validator_entity_Subject <- R6Class("geoflow_validator_entity_Subject",
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list()
-       super$initialize(TRUE, valid_keys, NULL, TRUE, TRUE, i, j, str)
+       super$initialize(TRUE, TRUE, valid_keys, NULL, TRUE, TRUE, i, j, str)
      }
    )
 )
@@ -196,7 +200,7 @@ geoflow_validator_entity_Creator <- R6Class("geoflow_validator_entity_Creator",
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list()
-      super$initialize(TRUE, valid_keys, NULL, TRUE, TRUE, i, j, str)
+      super$initialize(FALSE, TRUE, valid_keys, NULL, TRUE, TRUE, i, j, str)
     }
   )
 )
@@ -211,7 +215,7 @@ geoflow_validator_entity_Date <- R6Class("geoflow_validator_entity_Date",
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list()
-       super$initialize(TRUE, valid_keys, "creation", TRUE, TRUE, i, j, str)
+       super$initialize(TRUE, TRUE, valid_keys, "creation", TRUE, TRUE, i, j, str)
      }
    )
 )
@@ -226,7 +230,7 @@ geoflow_validator_entity_Type <- R6Class("geoflow_validator_entity_Type",
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list()
-      super$initialize(TRUE, valid_keys, "generic", TRUE, TRUE, i, j, str)
+      super$initialize(FALSE, TRUE, valid_keys, "generic", TRUE, TRUE, i, j, str)
     }
   )
 )
@@ -241,7 +245,7 @@ geoflow_validator_entity_Language <- R6Class("geoflow_validator_entity_Language"
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list()
-      super$initialize(FALSE, valid_keys, NULL, TRUE, TRUE, i, j, str)
+      super$initialize(TRUE, FALSE, valid_keys, "eng", TRUE, TRUE, i, j, str)
     },
     validate = function(){
       report = data.frame(
@@ -267,7 +271,7 @@ geoflow_validator_entity_SpatialCoverage <- R6Class("geoflow_validator_entity_Sp
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list("ewkt", "wkt", "srid")
-      super$initialize(TRUE, valid_keys, "ewkt", TRUE, TRUE, i, j, str)
+      super$initialize(TRUE, TRUE, valid_keys, "ewkt", TRUE, TRUE, i, j, str)
     }
   )
 )
@@ -282,7 +286,7 @@ geoflow_validator_entity_TemporalCoverage <- R6Class("geoflow_validator_entity_T
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list()
-       super$initialize(FALSE, valid_keys, NULL, TRUE, TRUE, i, j, str)
+       super$initialize(TRUE, FALSE, valid_keys, NULL, TRUE, TRUE, i, j, str)
      }
    )
 )
@@ -297,7 +301,7 @@ geoflow_validator_entity_Format <- R6Class("geoflow_validator_entity_Format",
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list("resource", "distribution")
-      super$initialize(TRUE, valid_keys, "resource", TRUE, TRUE, i, j, str)
+      super$initialize(TRUE, TRUE, valid_keys, "resource", TRUE, TRUE, i, j, str)
     }
   )
 )
@@ -312,7 +316,7 @@ geoflow_validator_entity_Relation <- R6Class("geoflow_validator_entity_Relation"
     public = list(
       initialize = function(i, j, str){
         valid_keys <- list("thumbnail", "http", "parent", "doi", "wms", "wfs", "wcs", "csw")
-        super$initialize(TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
+        super$initialize(TRUE, TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
       }
     )
 )
@@ -327,7 +331,7 @@ geoflow_validator_entity_Rights <- R6Class("geoflow_validator_entity_Rights",
     public = list(
       initialize = function(i, j, str){
         valid_keys <- list("license","use","useLimitation", "useConstraint", "accessConstraint", "otherConstraint")
-        super$initialize(TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
+        super$initialize(TRUE, TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
       }
     )
 )
@@ -342,7 +346,7 @@ geoflow_validator_entity_Provenance <- R6Class("geoflow_validator_entity_Provena
     public = list(
       initialize = function(i, j, str){
         valid_keys <- list("statement", "process", "processor")
-        super$initialize(TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
+        super$initialize(TRUE, TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
       }
     )
 )
@@ -357,7 +361,7 @@ geoflow_validator_entity_Data <- R6Class("geoflow_validator_entity_Data",
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list()
-      super$initialize(TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
+      super$initialize(TRUE, TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
     }
   )
 )
@@ -411,7 +415,9 @@ geoflow_validator <- R6Class("geoflow_validator",
        source <- self$source[,private$valid_columns]
        cell_reports <- lapply(1:nrow(source), function(i){
          src_obj <- source[i,]
+         print(i)
          out_row_report <- lapply(colnames(src_obj), function(colname){
+           print(colname)
            out_col <- NULL
            col_validator_class <- try(eval(parse(text=paste0("geoflow_validator_", private$model,"_", colname))),silent=T)
            if(is.R6Class(col_validator_class)){
