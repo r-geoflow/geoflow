@@ -664,6 +664,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                  if(is(sf.data,"sf")){
                    sf.data <- st_set_geometry(tbl.data, st_geometry(sf.data))
                    if(!"geometry" %in% colnames(tbl.data)){
+                     if("geom" %in% colnames(sf.data)) sf.data$geom <- NULL
                      colnames(sf.data)[colnames(sf.data)=="geometry"] <- "geom"
                      st_geometry(sf.data) <- "geom" #default in spatial DBIs if data imported through sf
                    }
