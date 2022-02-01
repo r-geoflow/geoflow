@@ -160,7 +160,7 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
   inherit = geoflow_validator_cell,
   public = list(
     initialize = function(i, j, str){
-      valid_keys <- list("id", "uuid", "doi", "packageId")
+      valid_keys <- list("id", "id_version", "uuid", "doi", "packageId")
       super$initialize(FALSE, TRUE, valid_keys, "id", TRUE, TRUE, i, j, str)
     }
   )
