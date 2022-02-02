@@ -39,7 +39,7 @@
   	{
       "id": "inspire",
       "type": "output",
-  		"software_type": "geonetwork",
+  		"software_type": "inspire",
   		"parameters": {
         "url": "{{INSPIRE_API_ENDPOINT}}",
         "apiKey": "{{INSPIRE_API_KEY}}"
