@@ -211,6 +211,7 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
        super$initialize(FALSE, TRUE, TRUE, valid_keys, "id", TRUE, TRUE, TRUE, i, j, str)
      },
      validate = function(){
+       report <- super$validate()
        cids <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
        for(cid in cids){
          cid_kvp <- extract_kvp(cid)
@@ -222,6 +223,7 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
            }
          }
        }
+       return(report)
      }
    )
 )
