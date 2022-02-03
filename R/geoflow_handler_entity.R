@@ -104,7 +104,7 @@ handle_entities_df <- function(config, source){
     #title
     src_title <- sanitize_str(source_entity[,"Title"])
     if(!is.na(src_title)){
-      allowedTitleKeys <- entity$getAllowedKeyValuesFor("titles")
+      allowedTitleKeys <- entity$getAllowedKeyValuesFor("Title")
       hasTitleKey <- any(sapply(allowedTitleKeys, function(x){startsWith(src_title, x)}))
       if(!hasTitleKey) src_title <- paste0("title:", src_title)
     }
@@ -124,7 +124,7 @@ handle_entities_df <- function(config, source){
     #description
     src_description <- sanitize_str(source_entity[,"Description"])
     if(!is.na(src_description)){
-      allowedDescKeys <- entity$getAllowedKeyValuesFor("descriptions")
+      allowedDescKeys <- entity$getAllowedKeyValuesFor("Description")
       hasDescKey <- any(sapply(allowedDescKeys, function(x){startsWith(src_description, x)}))
       if(!hasDescKey) src_description <- paste0("abstract:", src_description)
     }
@@ -154,7 +154,7 @@ handle_entities_df <- function(config, source){
     #formats
     src_format <- sanitize_str(source_entity[,"Format"])
     if(!is.na(src_format)){
-      allowedFormatsKeys <- entity$getAllowedKeyValuesFor("formats")
+      allowedFormatsKeys <- entity$getAllowedKeyValuesFor("Format")
       hasFormatKey <- any(sapply(allowedFormatsKeys, function(x){startsWith(src_format, x)}))
       if(!hasFormatKey) src_format <- paste0("resource:", src_format)
     }
@@ -201,7 +201,7 @@ handle_entities_df <- function(config, source){
     #spatial extent
     spatial_cov <- sanitize_str(source_entity[,"SpatialCoverage"])
     if(!is.na(spatial_cov)){
-      allowedSpatialCoverageKeys <- entity$getAllowedKeyValuesFor("spatialCoverage")
+      allowedSpatialCoverageKeys <- entity$getAllowedKeyValuesFor("SpatialCoverage")
       hasSpatialCoverageKey <- any(sapply(allowedSpatialCoverageKeys, function(x){startsWith(spatial_cov, x)}))
       if(!hasSpatialCoverageKey) spatial_cov <- paste0("ewkt:", spatial_cov)
       spatial_props <- if(!is.na(spatial_cov)) extract_cell_components(spatial_cov) else list()
@@ -215,11 +215,11 @@ handle_entities_df <- function(config, source){
               spatial_cov <- kvps$ewkt$values[[1]]
               if(!is.na(spatial_cov)){
                 if(!startsWith(spatial_cov,"SRID=")){
-                  stop("SRID is missing! The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry")
+                  # stop("SRID is missing! The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry")
                 }
                 spatial_cov <- unlist(strsplit(spatial_cov, ";"))
                 if(length(spatial_cov)!=2){ 
-                  stop("The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry")
+                  # stop("The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry")
                 }
                 spatial_srid <- as.integer(unlist(strsplit(spatial_cov[1],"SRID="))[2])
                 spatial_cov <- spatial_cov[2]
@@ -232,18 +232,18 @@ handle_entities_df <- function(config, source){
               if("srid" %in% names(kvps)){
                 spatial_srid <- as.integer(kvps$srid$values[[1]])
                 if(is.na(spatial_srid)){
-                  stop("The spatial SRID should be an integer.")
+                  # stop("The spatial SRID should be an integer.")
                 }
                 entity$setSpatialExtent(spatial_cov, crs = spatial_srid)
               }else{
-                warning("A WKT geometry is specified but without SRID!")
+                # warning("A WKT geometry is specified but without SRID!")
                 entity$setSpatialExtent(spatial_cov, crs = NA)
               }
             },
             "srid" = {
               spatial_srid <- as.integer(kvps$srid$values[[1]])
               if(is.na(spatial_srid))
-                stop("The spatial SRID should be an integer.")
+                # stop("The spatial SRID should be an integer.")
               entity$setSrid(spatial_srid)
             }
           )
