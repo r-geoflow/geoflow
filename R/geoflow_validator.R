@@ -208,7 +208,7 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list("id", "orcid")
-       super$initialize(FALSE, TRUE, TRUE, valid_keys, "id", TRUE, TRUE, i, j, str)
+       super$initialize(FALSE, TRUE, TRUE, valid_keys, "id", TRUE, TRUE, TRUE, i, j, str)
      },
      validate = function(){
        cids <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
@@ -218,7 +218,7 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
          if(cid_kvp$key=="orchid"){
            isValidOrchid<-grepl(x = cid_kvp$values[[1]], pattern = '^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\s*$',perl = TRUE, ignore.case = TRUE)
            if(!isValidOrchid){
-             report <- rbind(report, data.frame(type = "WARNING", message = springf("ORCHID '%s' is not recognized as valid ORCID id format",cid_kvp$values[[1]])))
+             report <- rbind(report, data.frame(type = "WARNING", message = springf("ORCID '%s' is not recognized as valid ORCID id format",cid_kvp$values[[1]])))
            }
          }
        }
