@@ -260,6 +260,7 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
           }
         }
       }
+      return(report)
     }
   )
 )
