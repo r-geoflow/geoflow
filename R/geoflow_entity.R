@@ -144,7 +144,7 @@ geoflow_entity <- R6Class("geoflow_entity",
   private = list(
     #TODO manage these allowed key values in class definitions (eg. geoflow_format)
     allowedKeyValuesFor = list(
-      identifiers = c("id", "uuid", "doi", "packageId"),
+      identifiers = c("id", "id_version", "uuid", "doi", "packageId"),
       titles = c("title", "alternative"),
       descriptions = c("abstract", "purpose", "credit", "info", "edition", "status"),
       spatialCoverage = c("ewkt", "wkt", "srid"),
@@ -666,6 +666,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                  if(is(sf.data,"sf")){
                    sf.data <- st_set_geometry(tbl.data, st_geometry(sf.data))
                    if(!"geometry" %in% colnames(tbl.data)){
+                     if("geom" %in% colnames(sf.data)) sf.data$geom <- NULL
                      colnames(sf.data)[colnames(sf.data)=="geometry"] <- "geom"
                      st_geometry(sf.data) <- "geom" #default in spatial DBIs if data imported through sf
                    }

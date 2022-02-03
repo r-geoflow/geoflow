@@ -239,7 +239,7 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
       super$initialize(FALSE, TRUE, TRUE, valid_keys, "id",TRUE, TRUE, TRUE, i, j, str)
     },
     validate = function(){
-      #Synthax validation
+      #Syntax validation
       report = super$validate()
       #Business validation
       ids <- if(!is.na(private$str)) extract_cell_components(private$str) else list()

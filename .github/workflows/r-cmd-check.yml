@@ -26,7 +26,9 @@ jobs:
           - {os: ubuntu-20.04, r: 'release'}
     
     env:
-        ZENODO_SANDBOX_TOKEN: ${{ secrets.ZENODO_SANDBOX_TOKEN }}      
+        INSPIRE_API_ENDPOINT: ${{ secrets.INSPIRE_API_ENDPOINT }}
+        INSPIRE_API_KEY: ${{ secrets.INSPIRE_API_KEY }}
+        ZENODO_SANDBOX_TOKEN: ${{ secrets.ZENODO_SANDBOX_TOKEN }}
     
     steps:
       - uses: actions/checkout@v2

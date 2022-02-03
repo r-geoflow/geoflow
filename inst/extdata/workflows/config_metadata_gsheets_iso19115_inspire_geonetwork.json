@@ -23,18 +23,29 @@
       }
     ]
   },
-  "software": [{
-		"id": "my-geonetwork",
-		"type": "output",
-		"software_type": "geonetwork",
-		"parameters": {
-			"url": "http://localhost:8181/geonetwork",
-			"user": "admin",
-			"pwd": "admin",
-			"version": "4.0.5",
-			"logger": "DEBUG"
-		}
-	}],
+  "software": [
+    {
+  		"id": "my-geonetwork",
+  		"type": "output",
+  		"software_type": "geonetwork",
+  		"parameters": {
+  			"url": "http://localhost:8181/geonetwork",
+  			"user": "admin",
+  			"pwd": "admin",
+  			"version": "4.0.5",
+  			"logger": "DEBUG"
+  		}
+  	},
+  	{
+      "id": "inspire",
+      "type": "output",
+  		"software_type": "inspire",
+  		"parameters": {
+        "url": "{{INSPIRE_API_ENDPOINT}}",
+        "apiKey": "{{INSPIRE_API_KEY}}"
+  		}
+    }
+   ],
   "actions": [
     {
       "id": "geometa-create-iso-19115",

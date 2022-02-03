@@ -23,7 +23,17 @@
       }
     ]
   },
-  "software": [],
+  "software": [
+    {
+      "id": "inspire",
+      "type": "output",
+  		"software_type": "inspire",
+  		"parameters": {
+        "url": "{{INSPIRE_API_ENDPOINT}}",
+        "apiKey": "{{INSPIRE_API_KEY}}"
+  		}
+    }
+  ],
   "actions": [
     {
       "id": "geometa-create-iso-19115",
