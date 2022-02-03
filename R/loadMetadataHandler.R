@@ -3,7 +3,7 @@
 #' @title loadMetadataHandler
 #' @description \code{loadMetadataHandler} allows to load a metadata handler
 #'
-#' @usage loadMetadataHandler(config, dir)
+#' @usage loadMetadataHandler(config, element, type)
 #'                 
 #' @param config a geoflow configuration (as list). Only used to write logs, can be NULL.
 #' @param element a geoflow configuration metadata list element

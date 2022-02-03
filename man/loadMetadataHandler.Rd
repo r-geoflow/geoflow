@@ -4,10 +4,10 @@
 \alias{loadMetadataHandler}
 \title{loadMetadataHandler}
 \usage{
-loadMetadataHandler(config, dir)
+loadMetadataHandler(config, element, type)
 }
 \arguments{
-\item{config}{a geoflow configuration (as list)}
+\item{config}{a geoflow configuration (as list). Only used to write logs, can be NULL.}
 
 \item{element}{a geoflow configuration metadata list element}
 
