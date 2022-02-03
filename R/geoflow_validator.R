@@ -245,6 +245,10 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
       report = super$validate()
       #Business validation
       ids <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
+      if(length(ids)==1){
+        hasIdentifierKey <- any(sapply(self$getValidKeys(), function(x){startsWith(ids, x)}))
+        if(!hasIdentifierKey) ids <- paste0(self$getDefaultKey(),":", src_title)
+      }
       for(id in ids){
         id_kvp <- extract_kvp(id)
         #validity of DOI
@@ -518,23 +522,20 @@ geoflow_validator_entity_TemporalCoverage <- R6Class("geoflow_validator_entity_T
        super$initialize(TRUE,FALSE, FALSE, valid_keys, NULL,FALSE, TRUE, TRUE, i, j, str)
      },
      validate = function(){
-       #Not Validate synthax
-       report = data.frame(
-         type = character(0),
-         message = character(0),
-         stringsAsFactors = FALSE
-       )
+       #validate syntax (essentially for NA case)
+       super$validate()
        #Business validation
-       tmp_cov <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
+       tmp_cov <- private$str
        if(length(tmp_cov)!=0){
-        value <- unlist(strsplit(tmp_cov,"/"))
+        value <- tmp_cov
+        if(is(tmp_cov, "character")) value <- unlist(strsplit(tmp_cov,"/"))
           if(length(value)==1){
             #check instant date
             if(is(value, "character")){
               value <- try(sanitize_date(value),silent=T)
-            }
-            if(!(is(value, "Date") | inherits(value, "POSIXt"))){
-              report <- rbind(report, data.frame(type = "ERROR", message = sprintf("instant date value '%s' is not a recognized date format", tmp_cov)))
+              if(!(is(value, "Date") | inherits(value, "POSIXt"))){
+                report <- rbind(report, data.frame(type = "ERROR", message = sprintf("instant date value '%s' is not a recognized date format", tmp_cov)))
+              }
             }
           }else if(length(value)==2){
             #check start date
