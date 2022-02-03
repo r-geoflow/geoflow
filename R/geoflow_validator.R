@@ -6,9 +6,11 @@
 geoflow_validator_cell <- R6Class("geoflow_validator_cell",
   private = list(
     na_authorized = FALSE,
+    use_key_synthax =TRUE,
     key_required = TRUE,
     valid_keys = list(),
     default_key = NULL,
+    error_if_invalid_key = TRUE,
     exclude_http_keys = TRUE,
     multiple = TRUE,
     str = NA
@@ -16,16 +18,58 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
   public = list(
     i = NA,
     j = NA,
-    initialize = function(na_authorized, key_required, valid_keys, default_key, exclude_http_keys, multiple, i, j, str){
+    initialize = function(na_authorized, use_key_synthax, key_required, valid_keys, default_key,error_if_invalid_key, exclude_http_keys, multiple, i, j, str){
       private$na_authorized <- na_authorized
+      private$use_key_synthax <- use_key_synthax
       private$key_required <- key_required
       private$valid_keys <- valid_keys
+      private$error_if_invalid_key <-error_if_invalid_key
       private$default_key <- default_key
       private$exclude_http_keys <- exclude_http_keys
       private$multiple <- multiple
       private$str <- str
       self$i <- i
       self$j <- j
+    },
+    
+    #isNaAuthorized
+    isNaAuthorized = function(){
+      return(private$na_authorized)
+    },
+    
+    #isKeySynthaxUser
+    isKeySynthaxUser = function(){
+      return(private$key_synthax)
+    },
+    
+    #isKeyRequired
+    isKeyRequired = function(){
+      return(private$key_required)
+    },
+    
+    #getValidKeys
+    getValidKeys = function(){
+      return(private$valid_keys)
+    },
+    
+    #isErrorIfInvalidKey
+    isErrorIfInvalidKey = function(){
+      return(private$error_if_invalid_key)
+    },
+    
+    #getDefaultKey
+    getDefaultKey = function(){
+      return(private$default_key)
+    },
+    
+    #isExcludeHttpKeys
+    isExcludeHttpKeys = function(){
+      return(private$exclude_http_keys)
+    },
+    
+    #isMultiple
+    isMultiple = function(){
+      return(private$Multiple)
     },
     
     #validate
@@ -37,7 +81,19 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
         stringsAsFactors = FALSE
       )
       
+      #Check if empty cell is authorized 
+      #If cell is empty and can be empty it's okay, nothing to validate
       if(private$na_authorized) if(is.na(private$str)) return(report)
+      #If cell is empty and should't be empty return a error
+      if(!private$na_authorized) if(is.na(private$str)){
+        report <- data.frame(type = "ERROR", message = "NA is not authorized")
+        return(report)
+      }
+      
+      #If column not use key synthax not proceed to control of the cell content
+      if(!private$use_key_synthax) return(report)
+      
+      #If column use key synthax proceed to control of the cell content
       
       #extract components
       strs <- extract_cell_components(sanitize_str(as(private$str,"character")))
@@ -68,7 +124,13 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
             }else{
               if(!kvp$key %in% private$valid_keys){
                 #warning --> indicate key will be ignored
-                report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Key '%s' is invalid, allowed key values are [%s]", kvp$key, paste0(private$valid_keys, collapse = ","))))
+                if(private$error_if_invalid_key){
+                  report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Key '%s' is invalid, allowed key values are [%s]", kvp$key, paste0(private$valid_keys, collapse = ","))))
+                }else{
+                  if(gregexpr("\\d", text = kvp$key)[[1]][1] != 1){
+                  report <- rbind(report, data.frame(type = "WARNING", message = sprintf("Key '%s' is not a recognised geoflow key [%s]", kvp$key, paste0(private$valid_keys, collapse = ","))))
+                  }
+                }
               }
             }
           }
@@ -146,7 +208,20 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list("id", "orcid")
-       super$initialize(FALSE, TRUE, valid_keys, "id", TRUE, TRUE, i, j, str)
+       super$initialize(FALSE, TRUE, TRUE, valid_keys, "id", TRUE, TRUE, i, j, str)
+     },
+     validate = function(){
+       cids <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
+       for(cid in cids){
+         cid_kvp <- extract_kvp(cid)
+         #validity of ORCID ID
+         if(cid_kvp$key=="orchid"){
+           isValidOrchid<-grepl(x = cid_kvp$values[[1]], pattern = '^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\s*$',perl = TRUE, ignore.case = TRUE)
+           if(!isValidOrchid){
+             report <- rbind(report, data.frame(type = "WARNING", message = springf("ORCHID '%s' is not recognized as valid ORCID id format",cid_kvp$values[[1]])))
+           }
+         }
+       }
      }
    )
 )
@@ -160,8 +235,31 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
   inherit = geoflow_validator_cell,
   public = list(
     initialize = function(i, j, str){
-      valid_keys <- list("id", "uuid", "doi", "packageId")
-      super$initialize(FALSE, TRUE, valid_keys, "id", TRUE, TRUE, i, j, str)
+      valid_keys <- list("id","id_version", "uuid", "doi", "packageId")
+      super$initialize(FALSE, TRUE, TRUE, valid_keys, "id",TRUE, TRUE, TRUE, i, j, str)
+    },
+    validate = function(){
+      #Synthax validation
+      report = super$validate()
+      #Business validation
+      ids <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
+      for(id in ids){
+        id_kvp <- extract_kvp(id)
+        #validity of DOI
+        if(id_kvp$key=="doi"){
+          isValidDoi<-grepl(x = id_kvp$values[[1]], pattern = '^10\\.\\d{4,9}/[-._;()/:A-Z0-9]+$',perl = TRUE, ignore.case = TRUE)
+          if(!isValidDoi){
+            report <- rbind(report, data.frame(type = "WARNING", message = springf("DOI '%s' is not recognized as valid doi format",id_kvp$values[[1]])))
+          }
+        }
+        #validity of UUID
+        if(id_kvp$key=="uuid"){
+          isValidUuid<-grepl(x = id_kvp$values[[1]], pattern = '^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$',perl = TRUE, ignore.case = TRUE)
+          if(!isValidUuid){
+            report <- rbind(report, data.frame(type = "WARNING", message = springf("UUID '%s' is not recognized as valid uuid format",id_kvp$values[[1]])))
+          }
+        }
+      }
     }
   )
 )
@@ -176,7 +274,7 @@ geoflow_validator_entity_Title <- R6Class("geoflow_validator_entity_Title",
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list("title", "alternative")
-      super$initialize(FALSE, TRUE, valid_keys, "title", TRUE, TRUE, i, j, str)
+      super$initialize(FALSE,TRUE, TRUE, valid_keys, "title",TRUE, TRUE, TRUE, i, j, str)
     }
   )
 )
@@ -191,7 +289,7 @@ geoflow_validator_entity_Description <- R6Class("geoflow_validator_entity_Descri
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list("abstract", "purpose", "credit", "info", "edition", "status")
-       super$initialize(FALSE, TRUE, valid_keys, "abstract", TRUE, TRUE, i, j, str)
+       super$initialize(FALSE,TRUE, TRUE, valid_keys, "abstract",TRUE, TRUE, TRUE, i, j, str)
      }
    )
 )
@@ -206,7 +304,27 @@ geoflow_validator_entity_Subject <- R6Class("geoflow_validator_entity_Subject",
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list()
-       super$initialize(TRUE, FALSE, valid_keys, NULL, TRUE, TRUE, i, j, str)
+       super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,FALSE, TRUE, TRUE, i, j, str)
+     },
+     validate = function(){
+      #Synthax validation
+       report <- super$validate()
+      #Business validation
+      #Keyword topics are ISO keyword topics ?
+       
+       subjects <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
+       if(length(subjects)>0){
+          topics<-sapply(subjects, function(subject){
+             return(geoflow_subject$new(str = subject)$key)
+          })
+           
+         for(topic in topics){
+           if(!topic %in% geometa::ISOKeywordType$values()){
+             report <- rbind(report, data.frame(type = "WARNING", message = sprintf("Keyword topic's '%s' is not a recognized ISO keyword topic.", topic)))
+           }
+         }
+       }
+       return(report)
      }
    )
 )
@@ -220,8 +338,8 @@ geoflow_validator_entity_Creator <- R6Class("geoflow_validator_entity_Creator",
   inherit = geoflow_validator_cell,
   public = list(
     initialize = function(i, j, str){
-      valid_keys <- list()
-      super$initialize(FALSE, TRUE, valid_keys, NULL, TRUE, TRUE, i, j, str)
+      valid_keys <- list("owner","publisher","metadata","pointOfContact")
+      super$initialize(FALSE,TRUE, TRUE, valid_keys, NULL,FALSE, TRUE, TRUE, i, j, str)
     }
   )
 )
@@ -235,8 +353,37 @@ geoflow_validator_entity_Date <- R6Class("geoflow_validator_entity_Date",
    inherit = geoflow_validator_cell,
    public = list(
      initialize = function(i, j, str){
-       valid_keys <- list()
-       super$initialize(TRUE, TRUE, valid_keys, "creation", TRUE, TRUE, i, j, str)
+       valid_keys <- list("creation","publication","edition")
+       super$initialize(TRUE,TRUE, TRUE, valid_keys, "creation",FALSE, TRUE, TRUE, i, j, str)
+     },
+     validate = function(){
+     #Synthax validation
+       report = super$validate()
+     #Business validation
+       dates <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
+       if(length(dates)==0){
+     #If no date, inform about added of automatic creation date
+         report <- rbind(report, data.frame(type = "WARNING", message = "Creation date is missing and will be automaticaly completed at present present day and hour"))
+       }else{
+         for(date in dates){
+           date_kvp <- extract_kvp(date)
+         
+     #Check if date key is a ISO key
+         if(!date_kvp$key %in% c("edition",geometa::ISODateType$values())){
+           report <- rbind(report, data.frame(type = "WARNING", message = sprintf("key '%s' is not a recognized ISO date key.", date_kvp$key)))
+         }
+     #Check if date value is an accepted date format
+           for(value in date_kvp$values){
+             if(is(value, "character")){
+               value <- try(sanitize_date(value),silent=T)
+             }
+             if(!(is(value, "Date") | inherits(value, "POSIXt"))){
+               report <- rbind(report, data.frame(type = "ERROR", message = sprintf("date value '%s' is not a recognized date format", value)))
+             }
+           }
+         }
+       }
+       return(report)
      }
    )
 )
@@ -251,7 +398,7 @@ geoflow_validator_entity_Type <- R6Class("geoflow_validator_entity_Type",
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list()
-      super$initialize(FALSE, TRUE, valid_keys, "generic", TRUE, TRUE, i, j, str)
+      super$initialize(FALSE,T, TRUE, valid_keys, "generic",T, TRUE, TRUE, i, j, str)
     }
   )
 )
@@ -266,14 +413,17 @@ geoflow_validator_entity_Language <- R6Class("geoflow_validator_entity_Language"
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list()
-      super$initialize(TRUE, FALSE, valid_keys, "eng", TRUE, TRUE, i, j, str)
+      super$initialize(TRUE,FALSE, FALSE, valid_keys, "eng",TRUE, TRUE, TRUE, i, j, str)
     },
     validate = function(){
+      #Not Validate synthax
       report = data.frame(
         type = character(0),
         message = character(0),
         stringsAsFactors = FALSE
       )
+      #Business validation
+      #language are ISO language ?
       if(!private$str %in% geometa::ISOLanguage$values()){
         report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Language '%s' is not a recognized language ISO3 code.", private$str)))
       }
@@ -292,7 +442,62 @@ geoflow_validator_entity_SpatialCoverage <- R6Class("geoflow_validator_entity_Sp
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list("ewkt", "wkt", "srid")
-      super$initialize(TRUE, TRUE, valid_keys, "ewkt", TRUE, TRUE, i, j, str)
+      super$initialize(TRUE,TRUE, TRUE, valid_keys, "ewkt",TRUE, TRUE, TRUE, i, j, str)
+    },
+    validate = function(){
+    #Synthax validation
+      report <- super$validate()
+    #Business validation
+    #Control validity of wkt and srid format
+      spatial_props <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
+      if(length(spatial_props)>0){
+        kvps <- lapply(spatial_props, extract_kvp)
+        kvps <- lapply(kvps, function(x){out <- x; out$values <- list(paste0(out$values, collapse=",")); return(out)})
+        names(kvps) <- sapply(kvps, function(x){x$key})
+        for(kvpname in names(kvps)){
+          switch(kvpname,
+                 "ewkt" = {
+                   spatial_cov <- kvps$ewkt$values[[1]]
+                   if(!is.na(spatial_cov)){
+                     if(!startsWith(spatial_cov,"SRID=")){
+                       report <- rbind(report, data.frame(type = "ERROR", message = "SRID is missing! The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry"))
+                     }
+                     spatial_cov <- unlist(strsplit(spatial_cov, ";"))
+                     if(length(spatial_cov)!=2){ 
+                       report <- rbind(report, data.frame(type = "ERROR", message = "The spatial coverage should be a valid EWKT string, starting with the SRID definition (e.g. SRID=4326), followed by a semicolon and the WKT geometry"))
+                     }
+                     spatial_srid <- as.integer(unlist(strsplit(spatial_cov[1],"SRID="))[2])
+                     spatial_cov <- spatial_cov[2]
+                     spatial_extent<-try(sf::st_as_sfc(wkt=spatial_cov, crs = spatial_srid))
+                     if(class(spatial_extent)[1]=="try-error"){
+                       report <- rbind(report, data.frame(type = "ERROR", message = "The spatial extent is invalid!"))
+                     }
+                   }
+                 },
+                 "wkt" = {
+                   spatial_cov <- kvps$wkt$values[[1]]
+                   if("srid" %in% names(kvps)){
+                     spatial_srid <- as.integer(kvps$srid$values[[1]])
+                     if(is.na(spatial_srid)){
+                       report <- rbind(report, data.frame(type = "ERROR", message ="The spatial SRID should be an integer."))
+                     }
+                   }else{
+                     report <- rbind(report, data.frame(type = "WARNING", message ="A WKT geometry is specified but without SRID!"))
+                     spatial_extent<-try(sf::st_as_sfc(wkt=spatial_cov, crs = NA))
+                     if(class(spatial_extent)[1]=="try-error"){
+                       report <- rbind(report, data.frame(type = "ERROR", message = "The spatial extent is invalid!"))
+                     }
+                   }
+                 },
+                 "srid" = {
+                   spatial_srid <- as.integer(kvps$srid$values[[1]])
+                   if(is.na(spatial_srid))
+                     report <- rbind(report, data.frame(type = "ERROR", message ="The spatial SRID should be an integer."))
+                 }
+          )
+        }
+      }
+      return(report)
     }
   )
 )
@@ -307,8 +512,51 @@ geoflow_validator_entity_TemporalCoverage <- R6Class("geoflow_validator_entity_T
    public = list(
      initialize = function(i, j, str){
        valid_keys <- list()
-       super$initialize(TRUE, FALSE, valid_keys, NULL, TRUE, TRUE, i, j, str)
+       super$initialize(TRUE,FALSE, FALSE, valid_keys, NULL,FALSE, TRUE, TRUE, i, j, str)
+     },
+     validate = function(){
+       #Not Validate synthax
+       report = data.frame(
+         type = character(0),
+         message = character(0),
+         stringsAsFactors = FALSE
+       )
+       #Business validation
+       tmp_cov <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
+       if(length(tmp_cov)!=0){
+        value <- unlist(strsplit(tmp_cov,"/"))
+          if(length(value)==1){
+            #check instant date
+            if(is(value, "character")){
+              value <- try(sanitize_date(value),silent=T)
+            }
+            if(!(is(value, "Date") | inherits(value, "POSIXt"))){
+              report <- rbind(report, data.frame(type = "ERROR", message = sprintf("instant date value '%s' is not a recognized date format", tmp_cov)))
+            }
+          }else if(length(value)==2){
+            #check start date
+            start<-value[1]
+            if(is(start, "character")){
+               start<- try(sanitize_date(start),silent=T)
+            }
+            if(!(is(start, "Date") | inherits(start, "POSIXt"))){
+              report <- rbind(report, data.frame(type = "ERROR", message = sprintf("start date value '%s' is not a recognized date format", value[1])))
+            }
+            #check end date
+            end<-value[2]
+            if(is(end, "character")){
+              end <- try(sanitize_date(end),silent=T)
+            }
+            if(!(is(end, "Date") | inherits(end, "POSIXt"))){
+              report <- rbind(report, data.frame(type = "ERROR", message = sprintf("end date value '%s' is not a recognized date format", value[2])))
+            }
+          }else{
+            report <- rbind(report, data.frame(type = "ERROR", message = sprintf("spatial extent '%' is not a recognized format",tmp_cov)))
+          }
+        }
+       return(report)
      }
+
    )
 )
 
@@ -322,7 +570,7 @@ geoflow_validator_entity_Format <- R6Class("geoflow_validator_entity_Format",
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list("resource", "distribution")
-      super$initialize(TRUE, TRUE, valid_keys, "resource", TRUE, TRUE, i, j, str)
+      super$initialize(TRUE,TRUE, TRUE, valid_keys, "resource",TRUE, TRUE, TRUE, i, j, str)
     }
   )
 )
@@ -344,7 +592,7 @@ geoflow_validator_entity_Relation <- R6Class("geoflow_validator_entity_Relation"
           "wfs", "wfs100", "wfs110", "wfs200",
           "wms", "wms110", "wms111", "wms130"
         )
-        super$initialize(TRUE, TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
+        super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,TRUE, FALSE, TRUE, i, j, str)
       }
     )
 )
@@ -359,7 +607,7 @@ geoflow_validator_entity_Rights <- R6Class("geoflow_validator_entity_Rights",
     public = list(
       initialize = function(i, j, str){
         valid_keys <- list("license","use","useLimitation", "useConstraint", "accessConstraint", "otherConstraint")
-        super$initialize(TRUE, TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
+        super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,TRUE, FALSE, TRUE, i, j, str)
       }
     )
 )
@@ -374,7 +622,36 @@ geoflow_validator_entity_Provenance <- R6Class("geoflow_validator_entity_Provena
     public = list(
       initialize = function(i, j, str){
         valid_keys <- list("statement", "process", "processor")
-        super$initialize(TRUE, TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
+        super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,TRUE, FALSE, TRUE, i, j, str)
+      },
+      validate = function(){
+        report <- super$validate()
+      #Validity of corresponding number of processors vs. processes   
+        data_props <- extract_cell_components(sanitize_str(private$str))
+        if(length(data_props>0)){
+          state_prop <- data_props[[1]]
+          if(!startsWith(state_prop, "statement")){
+            report <- rbind(report, data.frame(type = "ERROR", message = "The data 'statement' is mandatory"))
+          }
+          state_prop <- unlist(strsplit(state_prop,"statement:"))[2]
+          if(length(data_props)>1){
+            data_props <- data_props[2:length(data_props)]
+            #processes
+            processes <- data_props[sapply(data_props, function(x){startsWith(x, "process:")})]
+            processes <- lapply(processes, function(process){
+              return(extract_kvp(process))
+            })
+            #processors
+            processors <- data_props[sapply(data_props, function(x){startsWith(x,"processor:")})]
+            processors_splits <- unlist(strsplit(processors, ":"))
+            processors <- unlist(strsplit(processors_splits[2],","))
+            #control processors vs. processes
+            if(length(processors)!=length(processes)){
+              report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Number of processors [%s] doesn't match the number of processes [%s]",length(processors), length(processes))))
+            }
+          }
+        }
+        return(report)
       }
     )
 )
@@ -389,7 +666,7 @@ geoflow_validator_entity_Data <- R6Class("geoflow_validator_entity_Data",
   public = list(
     initialize = function(i, j, str){
       valid_keys <- list()
-      super$initialize(TRUE, TRUE, valid_keys, NULL, FALSE, TRUE, i, j, str)
+      super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,FALSE, FALSE, TRUE, i, j, str)
     }
   )
 )
