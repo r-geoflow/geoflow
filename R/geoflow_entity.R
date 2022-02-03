@@ -176,14 +176,16 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #getAllowedKeyValuesFor
     getAllowedKeyValuesFor = function(field){
-      return(private$allowedKeyValuesFor[[field]])
+      clazz <- eval(parse(text = paste0("geoflow_validator_entity_",field)))
+      clazz_obj <- clazz$new(0,0,"")
+      return(clazz_obj$getValidKeys())
     },
     
     #setIdentifier
     setIdentifier = function(key = "id", id){
-      if(!key %in% private$allowedKeyValuesFor$identifiers){
+      if(!key %in% self$getAllowedKeyValuesFor("Identifier")){
         stop(sprintf("Identifier Key should be among the following allowed keys",
-                     paste0(private$allowedKeyValuesFor$identifiers, collapse=",")))
+                     paste0(self$getAllowedKeyValuesFor("Identifier"), collapse=",")))
       }
       self$identifiers[[key]] <- id
     },
@@ -224,18 +226,18 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #setTitle
     setTitle = function(key = "title", title){
-      if(!key %in% private$allowedKeyValuesFor$titles){
+      if(!key %in% self$getAllowedKeyValuesFor("Title")){
         stop(sprintf("Title Key should be among the following allowed keys",
-                     paste0(private$allowedKeyValuesFor$titles, collapse=",")))
+                     paste0(self$getAllowedKeyValuesFor("Title"), collapse=",")))
       }
       self$titles[[key]] <- title
     },
     
     #setDescription
     setDescription = function(key, description){
-      if(!key %in% private$allowedKeyValuesFor$descriptions){
+      if(!key %in% self$getAllowedKeyValuesFor("Description")){
         stop(sprintf("Description Key should be among the following allowed keys",
-                     paste0(private$allowedKeyValuesFor$descriptions, collapse=",")))
+                     paste0(self$getAllowedKeyValuesFor("Description"), collapse=",")))
       }
       self$descriptions[[key]] <- description
     },

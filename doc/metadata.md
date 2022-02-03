@@ -44,7 +44,7 @@ Examples cover both:
 | **Definition**               | Provides the unique unambigous identifier for the dataset metadata, and eventual additional identifiers associated with the *entity* (e.g. DOI). Identifiers are expected to be used by information systems / software tools, etc hence it is recommended to use string concatenation (with no space). The user is free to define how the main identifier is compound to guarantee unicity for datasets, and to define it with semantics to make it self-explaining. A good practice could be to use a doi if existing|
 | **Need**                     | Mandatory                                                    |
 | **Default key (if omitted)** | `id` (unique identifier)                                   |
-| **other keys available**     | `doi`(digital object identifier_geometa_iso19115) <br/> `packageId` (use for publication of eml package) |
+| **other keys available**     | `uuid`(universally unique identifier) <br/>`doi`(digital object identifier_geometa_iso19115) <br/> `packageId` (use for publication of eml package) |
 | **Examples**                 |                                                              |
 | Simple usage                 | A simple string representing a unique *entity* identifier (`id`). `my-metadata-identifier` , equivalent to `id:my-metadata-identifier`. |
 | Advanced usage               | Main identifier + DOI: <br/>`id:my-metadata-identifier_`<br />`doi:10.5281/zenodo.3138920` |
