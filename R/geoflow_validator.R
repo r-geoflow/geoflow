@@ -237,7 +237,12 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
   inherit = geoflow_validator_cell,
   public = list(
     initialize = function(i, j, str){
-      valid_keys <- list("id","id_version", "uuid", "doi", "packageId")
+      valid_keys <- list(
+        "id","id_version", "uuid", "doi",
+        "zenodo_doi_to_save", "zenodo_conceptdoi_to_save",
+        "dataverse_doi_to_save", "dataverse_conceptdoi_to_save",
+        "packageId", "dataone_packageId_to_save"
+      )
       super$initialize(FALSE, TRUE, TRUE, valid_keys, "id",TRUE, TRUE, TRUE, i, j, str)
     },
     validate = function(){
