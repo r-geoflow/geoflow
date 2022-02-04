@@ -247,7 +247,7 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
       ids <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
       if(length(ids)==1){
         hasIdentifierKey <- any(sapply(self$getValidKeys(), function(x){startsWith(ids, x)}))
-        if(!hasIdentifierKey) ids <- paste0(self$getDefaultKey(),":", src_title)
+        if(!hasIdentifierKey) ids <- paste0(self$getDefaultKey(),":", ids)
       }
       for(id in ids){
         id_kvp <- extract_kvp(id)
