@@ -523,7 +523,7 @@ geoflow_validator_entity_TemporalCoverage <- R6Class("geoflow_validator_entity_T
      },
      validate = function(){
        #validate syntax (essentially for NA case)
-       super$validate()
+       report <- super$validate()
        #Business validation
        tmp_cov <- private$str
        if(length(tmp_cov)!=0){
