@@ -81,13 +81,24 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
         stringsAsFactors = FALSE
       )
       
+      print("Str = ")
+      print(private$str)
+      
       #Check if empty cell is authorized 
       #If cell is empty and can be empty it's okay, nothing to validate
       if(private$na_authorized) if(is.na(private$str)) return(report)
       #If cell is empty and should't be empty return a error
-      if(!private$na_authorized) if(is.na(private$str)){
-        report <- data.frame(type = "ERROR", message = "NA is not authorized")
-        return(report)
+      if(!private$na_authorized){
+        raise_na_report <- FALSE
+        if(is.na(private$str)){
+          raise_na_report <- TRUE
+        }else{
+          if(private$str == "") raise_na_report <- TRUE
+        }
+        if(raise_na_report){
+          report <- data.frame(type = "ERROR", message = "NA or empty string is not authorized")
+          return(report)
+        }
       }
       
       #If column not use key synthax not proceed to control of the cell content
