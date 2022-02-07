@@ -2,6 +2,20 @@ Package: geoflow
 Version: 1.0.0
 Date: 2022-01-31
 Title: Tools to Orchestrate and Run (Meta)Data Management Workflows
+Description: Provides an engine to facilitate the orchestration and execution of metadata-driven data management workflows, in compliance with FAIR 
+  (Findable, Accessible, Interoperable and Reusable) data principles. By means of a pivot metadata model, extending on the DublinCore (<https://dublincore.org/>) 
+  standard, a unique source of metadata can then feed multiple and inter-connected data management actions, in particular actions oriented to the publication on 
+  the web of metadata and metadata resources.
+  Its primary focus is to provide turn-key actions to manage geospatial (meta)data using ISO/TC211 (<https://committee.iso.org/home/tc211>) 
+  and OGC (<https://www.ogc.org/standards>) geographic information standards and best practices (eg. INSPIRE), enforcing and simplifying interaction 
+  with known software that compound a Spatial Data Infrastructure (SDI), including spatial databases (eg. PostGIS), metadata catalogues (eg. GeoNetwork, 
+  CSW servers), data servers (eg. GeoServer, Thredds). 
+  It also includes actions for biodiversity (meta)data standard management including handling of EML metadata, and their management with DataOne servers. 
+  Generic (meta)data managers are also included to facilitate the publication to general (meta)data plateforms and portals such as Zenodo (<https://zenodo.org>) 
+  or DataVerse (<https://dataverse.org/>).
+  The execution of several actions will then allow to cross-reference (meta)data resources in each action performed, offering a way to bind resources between each other 
+  (eg. reference 'Zenodo' DOIs in 'GeoNetwork'/'Geoserver' metadata, or vice versa reference 'Geonetwork'/Geoserver' links in 'Zenodo' or EML metadata). The use of
+  standardized configuration files allows fully reproducible workflows to facilitate the work of data and information managers.
 Authors@R: c(
   person("Emmanuel", "Blondel", role = c("aut", "cre"), email = "emmanuel.blondel1@gmail.com", comment = c(ORCID = "0000-0002-5870-5762")),
   person("Julien,", "Barde", role = c("ctb"), comment = c(ORCID = "0000-0002-3519-6141")),
@@ -51,16 +65,6 @@ Suggests:
   atom4R,
   d4storagehub4R,
   rmarkdown
-Description: Provides tools to manage 'Spatial Data Infrastructures' (SDI) and to orchestrate, run and automate geospatial (meta)data workflows 
-  in compliance with international standards (ISO/TC211, OGC, INSPIRE) with a range of actions such as data upload in spatial databases, 
-  publication in 'GeoServer' (<http://geoserver.org>) and metadata publication in 'GeoNetwork' (<https://geonetwork-opensource.org>). It includes actions 
-  to manage domain-specific resources, such as ecological metadata (EML) and data, and publish on tools such as 'DataOne' (<https://www.dataone.org/>). It also allows to
-  publish data on cloud data infrastructures and tools such as 'Zenodo' or 'Dataverse'. Through a pivot metadata model, 'geoflow' allows to manage 
-  a unique source of dataset metadata while offering a way to publish synchronously in various target repositories. The execution of several 
-  actions will then allow to cross-reference (meta)data resources in each action performed, offering a way to bind resources between each other 
-  (eg. reference 'Zenodo' DOIs in 'GeoNetwork'/'Geoserver' metadata, or vice versa reference 'Geonetwork'/Geoserver' links in 'Zenodo' or EML metadata). The use of
-  standardized configuration files allows fully reproducible workflows, in compliance with FAIR (Findable, Accessible, Interoperable, Reusable) 
-  principles.
 License: MIT + file LICENSE
 URL: https://github.com/eblondel/geoflow
 BugReports: https://github.com/eblondel/geoflow
