@@ -81,12 +81,12 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
         stringsAsFactors = FALSE
       )
       
-      print("Str = ")
-      print(private$str)
-      
       #Check if empty cell is authorized 
       #If cell is empty and can be empty it's okay, nothing to validate
-      if(private$na_authorized) if(is.na(private$str)) return(report)
+      if(private$na_authorized){
+        if(is.na(private$str)) return(report)
+        if(private$str == "") return(report)
+      }
       #If cell is empty and should't be empty return a error
       if(!private$na_authorized){
         raise_na_report <- FALSE
@@ -744,10 +744,8 @@ geoflow_validator <- R6Class("geoflow_validator",
        source <- self$source[,private$valid_columns]
        cell_reports <- lapply(1:nrow(source), function(i){
          src_obj <- source[i,]
-         print(i)
          out_row_report <- lapply(colnames(src_obj), function(colname){
            out_col <- NULL
-           print(colname)
            col_validator_class <- try(eval(parse(text=paste0("geoflow_validator_", private$model,"_", colname))),silent=T)
            if(is.R6Class(col_validator_class)){
              out_col <- col_validator_class$new(i, which(colnames(src_obj)==colname), src_obj[,colname])
