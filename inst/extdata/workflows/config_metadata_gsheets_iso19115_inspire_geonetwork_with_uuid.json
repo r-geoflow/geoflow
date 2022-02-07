@@ -50,7 +50,6 @@
     {
       "id": "geometa-create-iso-19115",
       "options" : {
-        "use_uuid": true,
         "inspire" : true
       },
       "run": true
