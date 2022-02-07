@@ -463,6 +463,10 @@ geoflow_validator_entity_SpatialCoverage <- R6Class("geoflow_validator_entity_Sp
     #Control validity of wkt and srid format
       spatial_props <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
       if(length(spatial_props)>0){
+        if(length(spatial_props)==1){
+          hasEWKTKey <- any(sapply(self$getValidKeys(), function(x){startsWith(spatial_props, x)}))
+          if(!hasEWKTKey) spatial_props <- paste0(self$getDefaultKey(),":", spatial_props)
+        }
         kvps <- lapply(spatial_props, extract_kvp)
         kvps <- lapply(kvps, function(x){out <- x; out$values <- list(paste0(out$values, collapse=",")); return(out)})
         names(kvps) <- sapply(kvps, function(x){x$key})
@@ -480,7 +484,7 @@ geoflow_validator_entity_SpatialCoverage <- R6Class("geoflow_validator_entity_Sp
                      }
                      spatial_srid <- as.integer(unlist(strsplit(spatial_cov[1],"SRID="))[2])
                      spatial_cov <- spatial_cov[2]
-                     spatial_extent<-try(sf::st_as_sfc(wkt=spatial_cov, crs = spatial_srid))
+                     spatial_extent<-try(sf::st_as_sfc(x = spatial_cov, crs = spatial_srid))
                      if(class(spatial_extent)[1]=="try-error"){
                        report <- rbind(report, data.frame(type = "ERROR", message = "The spatial extent is invalid!"))
                      }
@@ -729,8 +733,10 @@ geoflow_validator <- R6Class("geoflow_validator",
        source <- self$source[,private$valid_columns]
        cell_reports <- lapply(1:nrow(source), function(i){
          src_obj <- source[i,]
+         print(i)
          out_row_report <- lapply(colnames(src_obj), function(colname){
            out_col <- NULL
+           print(colname)
            col_validator_class <- try(eval(parse(text=paste0("geoflow_validator_", private$model,"_", colname))),silent=T)
            if(is.R6Class(col_validator_class)){
              out_col <- col_validator_class$new(i, which(colnames(src_obj)==colname), src_obj[,colname])
