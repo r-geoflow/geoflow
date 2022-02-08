@@ -16,16 +16,111 @@ This class models a feature type to be executed by geoflow
 \details{
 geoflow_featuretype
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new()}}{
-   This method is used to instantiate a geoflow_featuretype object
- }
-}
-}
-
 \author{
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{contact}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{id}}{feature type ID}
+
+\item{\code{members}}{feature type members}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_featuretype$new()}}
+\item \href{#method-addMember}{\code{geoflow_featuretype$addMember()}}
+\item \href{#method-getMembers}{\code{geoflow_featuretype$getMembers()}}
+\item \href{#method-getMemberById}{\code{geoflow_featuretype$getMemberById()}}
+\item \href{#method-clone}{\code{geoflow_featuretype$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a \link{geoflow_featuretype}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuretype$new(id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{id}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addMember"></a>}}
+\if{latex}{\out{\hypertarget{method-addMember}{}}}
+\subsection{Method \code{addMember()}}{
+Adds a member
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuretype$addMember(fm)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fm}}{object of class \link{geoflow_featuremember}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getMembers"></a>}}
+\if{latex}{\out{\hypertarget{method-getMembers}{}}}
+\subsection{Method \code{getMembers()}}{
+Get members
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuretype$getMembers()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+the list of members, as objects of class \link{geoflow_featuremember}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getMemberById"></a>}}
+\if{latex}{\out{\hypertarget{method-getMemberById}{}}}
+\subsection{Method \code{getMemberById()}}{
+Get member by ID
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuretype$getMemberById(id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{id}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+an object of class \link{geoflow_featuremember}, \code{NULL} otherwise
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuretype$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

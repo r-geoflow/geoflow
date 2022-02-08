@@ -29,67 +29,44 @@
 #'  )
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new(id, type, software_type, definition, handler, arguments, attributes)}}{
-#'    This method is used to instantiate a geoflow_software object
-#'  }
-#'  \item{\code{setId(id)}}{
-#'    Set id
-#'  }
-#'  \item{\code{setType(type)}}{
-#'    Set type, a value of class \code{character} "input" or "output"
-#'  }
-#'  \item{\code{setSoftwareType(software_type)}}{
-#'    Set software type
-#'  }
-#'  \item{\code{setDefinition(definition)}}{
-#'    Set definition
-#'  }
-#'  \item{\code{setAttributes(attributes)}}{
-#'    Set attributes
-#'  }
-#'  \item{\code{setProperties(...)}}{
-#'    Set properties. Function called when setting the software properties
-#'    from the geoflow configuration.
-#'  }
-#'  \item{\code{setArguments(arguments)}}{
-#'    Set arguments
-#'  }
-#'  \item{\code{setParameters(...)}}{
-#'    Set parameters. Function called when setting the software parameters
-#'    from the geoflow configuration.
-#'  }
-#'  \item{\code{setHandler(handler)}}{
-#'    Set handler (a function)
-#'  }
-#'  \item{\code{checkPackages()}}{
-#'    Check that all packages required for the software are available, if yes,
-#'    import them in the R session, and return a \code{data.frame} giving the 
-#'    packages names and version. If one or more packages are unavailable,
-#'    an error is thrown and user informed of the missing packages.
-#'  }
-#'  \item{\code{getHandlerInstance()}}{
-#'    Get an instance of the handler
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_software <- R6Class("geoflow_software",
   inherit = geoflowLogger,
   public = list(
+    #'@field id software id
     id = NULL,
+    #'@field type software I/O type ("input" or "output")
     type = NULL,
+    #'@field software_type type of software
     software_type = NULL,
+    #'@field definition definition
     definition = NULL,
+    #'@field packages list of packages required for the software functioning
     packages = list(),
+    #'@field handler software handler function
     handler = NULL,
+    #'@field arguments software arguments
     arguments = list(),
+    #'@field parameters software parameters
     parameters = list(),
+    #'@field attributes software attributes
     attributes = list(),
+    #'@field properties software properties
     properties = list(),
+    #'@field actions actions associated with the software
     actions = list(),
+    
+    #'@description Initializes a software
+    #'@param id id
+    #'@param type type "input" or "output"
+    #'@param software_type software type
+    #'@param packages list of packages required for the software functioning
+    #'@param definition software definition
+    #'@param handler software handler \code{function}
+    #'@param arguments software handler arguments
+    #'@param attributes software attributes
+    #'@param actions software actions
     initialize = function(id = NULL, type = NULL, software_type, 
                           packages = list(), definition, handler, 
                           arguments, attributes = list(),
@@ -105,12 +82,14 @@ geoflow_software <- R6Class("geoflow_software",
       self$setActions(actions)
     },
     
-    #setId
+    #'@description Sets software ID
+    #'@param id id
     setId = function(id){
       self$id <- id
     },
     
-    #setType
+    #'@description Set type. Either "input" or "output"
+    #'@param type software I/O type
     setType = function(type){
       if(!(type %in% c("input","output"))){
         stop("The type should be either an 'input' or 'output'!")
@@ -118,27 +97,32 @@ geoflow_software <- R6Class("geoflow_software",
       self$type <- type
     },
     
-    #setSoftwareType
+    #'@description Set software type
+    #'@param software_type software type
     setSoftwareType = function(software_type){
       self$software_type <- software_type
     },
     
-    #setPackages
+    #'@description Set software required packages
+    #'@param packages list of package names
     setPackages = function(packages){
       self$packages <- packages
     },
     
-    #setDefinition
+    #'@description Set software definition
+    #'@param definition software definition
     setDefinition = function(definition){
       self$definition <- definition
     },
     
-    #setAttributes
+    #'@description Set attributes. Function to call when creating an instance of \code{geoflow_software}
+    #'@param attributes named list of attributes
     setAttributes = function(attributes){
       self$attributes <- attributes
     },
     
-    #setProperties
+    #'@description Set properties. Function to call to pass argument values for a given \code{geoflow_software}
+    #'@param ... named list of properties
     setProperties = function(...){
       props <- list(...)[[1]]
       propNames <- names(props)
@@ -153,12 +137,14 @@ geoflow_software <- R6Class("geoflow_software",
       }
     },
     
-    #setArguments
+    #'@description Set software arguments. Function to call when creating an instance of \code{geoflow_software}
+    #'@param arguments list of software arguments
     setArguments = function(arguments){
       self$arguments <- arguments
     },
     
-    #setParameters
+    #'@description Set parameters. Function to call to pass argument values for a given \code{geoflow_software}
+    #'@param ... named list of parameters
     setParameters = function(...){
       params <- list(...)[[1]]
       paramNames <- names(params)
@@ -173,17 +159,22 @@ geoflow_software <- R6Class("geoflow_software",
       }
     },
     
-    #setActions
+    #'@description Set software actions
+    #'@param actions a list of \code{geoflow_action}
     setActions = function(actions){
       self$actions <- actions
     },
     
-    #setHandler
+    #'@description Set the software handler function
+    #'@param handler object of class \code{function}
     setHandler = function(handler){
       self$handler <- handler
     },
     
-    #checkPackages
+    #'@description Check that all packages required for the software are available, if yes,
+    #'    import them in the R session, and return a \code{data.frame} giving the 
+    #'    packages names and version. If one or more packages are unavailable,
+    #'    an error is thrown and user informed of the missing packages.
     checkPackages = function(){
       self$INFO(sprintf("Check package dependencies for software '%s' (%s)", self$id, self$software_type))
       out_pkgs <- try(check_packages(self$packages))
@@ -204,7 +195,8 @@ geoflow_software <- R6Class("geoflow_software",
       }
     },
     
-    #getHandlerInstance
+    #'@description Get the software handler instance
+    #'@return an object instance of the software handler
     getHandlerInstance = function(){
       
       #get handler

@@ -21,25 +21,17 @@
 #'   kvp <- geoflow_kvp$new(str = "thekey:thevalue1,thevalue2")
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new(str)}}{
-#'    This method is used to instantiate a geoflow_kvp object
-#'  }
-#'  \item{\code{setKey(key)}}{
-#'    Set the key
-#'  }
-#'  \item{\code{setValue(value)}}{
-#'    Set the value
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_kvp <- R6Class("geoflow_kvp",
   public = list(
+    #'@field key the KVP key
     key = NULL,
+    #'@field value the KVP value
     value = NULL,
+    
+    #'@description Initializes a Key-Value pair (KVP)
+    #'@param str character string to initialize from using key-based syntax
     initialize = function(str = NULL){
       if(!is.null(str)){
         kvp <- unlist(strsplit(str,':\\s*(?=([^"]*"[^"]*")*[^"]*$)', perl = T))
@@ -49,12 +41,14 @@ geoflow_kvp <- R6Class("geoflow_kvp",
       }
     },
     
-    #setKey
+    #'@description Set KVP key
+    #'@param key the key
     setKey = function(key){
       self$key <- key
     },
     
-    #setValue
+    #'@description Set KVP value
+    #'@param value the value
     setValue = function(value){
       self$value <- value
     }

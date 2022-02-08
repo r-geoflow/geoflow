@@ -31,38 +31,55 @@
 #'  )
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new(id, scope, types, target, target_dir, def, fun, script, options)}}{
-#'    This method is used to instantiate a geoflow_action object
-#'  }
-#'  \item{\code{checkPackages()}}{
-#'    Check that all packages required for the action are available, if yes,
-#'    import them in the R session, and return a \code{data.frame} giving the 
-#'    packages names and version. If one or more packages are unavailable,
-#'    an error is thrown and user informed of the missing packages.
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_action <- R6Class("geoflow_action",
   inherit = geoflowLogger,
   public = list(
+    #'@field id action ID
     id = NA,
+    #'@field scope action scope
     scope = NULL,
+    #'@field types types of action
     types = list(),
+    #'@field def the action definition
     def = NA,
+    #'@field target the action target
     target = NA,
+    #'@field target_dir the action target directory
     target_dir = NA,
+    #'@field packages list of packages required to perform the action
     packages = list(),
+    #'@field pid_generator a name referencing the PID generator (if existing)
     pid_generator = NULL,
+    #'@field pid_types types of PIDs to generate
     pid_types = list(),
+    #'@field generic_uploader whether the action is a generic uploader or not.
     generic_uploader = FALSE,
+    #'@field fun a function for the action
     fun = NA,
+    #'@field script a script for the action
     script = NA,
+    #'@field options action options
     options = list(),
+    #'@field available_options a list of available options for the actions
     available_options= list(),
+    
+    #'@description Initialize a \link{geoflow_action}
+    #'@param id action id
+    #'@param scope action scope "global" or "local"
+    #'@param types action types
+    #'@param def action definition
+    #'@param target the action target, e.g. "entity"
+    #'@param target_dir the action target directory
+    #'@param packages list of packages required to perform the action
+    #'@param pid_generator a name referencing the PID generator (if existing)
+    #'@param pid_types types of PIDs to generate by the action 
+    #'@param generic_uploader whether the action is a generic uploader or not.
+    #'@param fun action function
+    #'@param script action script
+    #'@param options action options
+    #'@param available_options available options for the action
     initialize = function(id, scope = "global", types = list(), def = "", 
                           target = NA, target_dir = NA,
                           packages = list(), 
@@ -90,7 +107,10 @@ geoflow_action <- R6Class("geoflow_action",
       self$available_options  <- available_options
     },
     
-    #checkPackages
+    #'@description Check that all packages required for the action are available, if yes,
+    #'    import them in the R session, and return a \code{data.frame} giving the 
+    #'    packages names and version. If one or more packages are unavailable,
+    #'    an error is thrown and user informed of the missing packages.
     checkPackages = function(){
       #check package dependencies
       self$INFO(sprintf("Check package dependencies for action '%s'", self$id))
@@ -109,12 +129,20 @@ geoflow_action <- R6Class("geoflow_action",
       }
     },
     
-    #isPidGenerator
+    #'@description Indicates if the action is PID generator
+    #'@return \code{TRUE} if the action is a PID generator, \code{FALSE} otherwise
     isPIDGenerator = function(){
       return(!is.null(self$pid_generator))
     },
     
-    #exportPIDs
+    #'@description Exports PIDs for the action. This function will export the PIDs in several ways. First, a simple CSV file 
+    #' including the list of PIDs for each entity, and associated status (eg. draft/release) for the given PID resource. In 
+    #' addition, for each metadata entities file, an equivalent metadata table will be produced as CSV to handle entities 
+    #' enriched with the PID (added in the "Identifier" column), ready for use as workflow entities input. In addition, a new
+    #' configuration file will be produced with name "<pid_generator>_geoflow_config_for_publication.json" turned as ready for
+    #' publishing resources with PIDs (eg. publishing deposits in Zenodo).
+    #'@param config a \pkg{geoflow} configuration
+    #'@param entities one or more objects of class \link{geoflow_entity} 
     exportPIDs = function(config, entities){
       if(!self$isPIDGenerator()) return(FALSE);
       config$logger.info(sprintf("Exporting reference list of '%s' DOIs to job directory for action", self$pid_generator))
@@ -178,8 +206,9 @@ geoflow_action <- R6Class("geoflow_action",
         auto_unbox = TRUE, pretty = TRUE
       )
     },
-    
-    #isGenericUploader
+
+    #'@description Indicates if the action is a generic uploader
+    #'@return \code{TRUE} if the action is a generic uploader, \code{FALSE} otherwise
     isGenericUploader = function(){
       return(self$generic_uploader)
     }

@@ -16,21 +16,6 @@ This class models an provenance
 \details{
 geoflow_provenance
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new(str)}}{
-   This method is used to instantiate a geoflow_provenance object
- }
- \item{\code{setStatement(statement)}}{
-   Set statement, object of class \code{character}
- }
- \item{\code{addProcess(process)}}{
-   Adds process, object of class \code{geoflow_process}
- }
-}
-}
-
 \examples{
 \dontrun{
   provenance <- geoflow_provenance$new()
@@ -50,3 +35,90 @@ geoflow_provenance
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{provenance}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{statement}}{provenance statement}
+
+\item{\code{processes}}{list of processes, as objects of class \link{geoflow_process}}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_provenance$new()}}
+\item \href{#method-setStatement}{\code{geoflow_provenance$setStatement()}}
+\item \href{#method-addProcess}{\code{geoflow_provenance$addProcess()}}
+\item \href{#method-clone}{\code{geoflow_provenance$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a \link{geoflow_provenance}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_provenance$new(str = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{str}}{character string to initialize a provenance using key-based syntax}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setStatement"></a>}}
+\if{latex}{\out{\hypertarget{method-setStatement}{}}}
+\subsection{Method \code{setStatement()}}{
+Set process statement
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_provenance$setStatement(statement)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{statement}}{process statement}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addProcess"></a>}}
+\if{latex}{\out{\hypertarget{method-addProcess}{}}}
+\subsection{Method \code{addProcess()}}{
+Adds process
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_provenance$addProcess(process)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{process, }}{object of class \link{geoflow_process}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_provenance$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

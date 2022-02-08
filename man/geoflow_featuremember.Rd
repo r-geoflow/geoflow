@@ -16,16 +16,100 @@ This class models a feature type to be executed by geoflow
 \details{
 geoflow_featuremember
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new()}}{
-   This method is used to instantiate a geoflow_featuremember object
- }
-}
-}
-
 \author{
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{contact}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{id}}{feature member ID}
+
+\item{\code{type}}{feature member type}
+
+\item{\code{code}}{feature member code}
+
+\item{\code{name}}{feature member name}
+
+\item{\code{def}}{feature member definition}
+
+\item{\code{defSource}}{feature member definition source}
+
+\item{\code{minOccurs}}{feature member minOccurs}
+
+\item{\code{maxOccurs}}{feature member maxOccurs}
+
+\item{\code{uom}}{feature member unit of measure (uom)}
+
+\item{\code{registerId}}{feature member register ID}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_featuremember$new()}}
+\item \href{#method-clone}{\code{geoflow_featuremember$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a \link{geoflow_featuremember}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuremember$new(
+  type,
+  code,
+  name,
+  def,
+  defSource = NULL,
+  minOccurs = NULL,
+  maxOccurs = NULL,
+  uom = NULL,
+  registerId = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{type}}{type}
+
+\item{\code{code}}{code}
+
+\item{\code{name}}{name}
+
+\item{\code{def}}{definition}
+
+\item{\code{defSource}}{definition source. Default is \code{NULL}}
+
+\item{\code{minOccurs}}{minOccurs. Default is \code{NULL}}
+
+\item{\code{maxOccurs}}{maxOccurs. Default is \code{NULL}}
+
+\item{\code{uom}}{unit of measure. Default is \code{NULL}}
+
+\item{\code{registerId}}{ID of the register associated to the feature type. Default is \code{NULL}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuremember$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

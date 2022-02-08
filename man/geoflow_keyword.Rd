@@ -16,15 +16,6 @@ This class models a keyword
 \details{
 geoflow_keyword
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new)}}{
-   This method is used to instantiate a geoflow_keyword object
- }
-}
-}
-
 \examples{
 \dontrun{
   kwd <- geoflow_keyword$new()
@@ -37,3 +28,92 @@ geoflow_keyword
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{keyword}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{name}}{keyword}
+
+\item{\code{uri}}{keyword uri}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_keyword$new()}}
+\item \href{#method-setName}{\code{geoflow_keyword$setName()}}
+\item \href{#method-setUri}{\code{geoflow_keyword$setUri()}}
+\item \href{#method-clone}{\code{geoflow_keyword$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a \link{geoflow_keyword}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_keyword$new(name = NULL, uri = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{keyword name}
+
+\item{\code{uri}}{keyword URI}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-setName}{}}}
+\subsection{Method \code{setName()}}{
+Sets keyword
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_keyword$setName(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{keyword name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setUri"></a>}}
+\if{latex}{\out{\hypertarget{method-setUri}{}}}
+\subsection{Method \code{setUri()}}{
+Sets keyword URI
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_keyword$setUri(uri)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{uri}}{keyword URI}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_keyword$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

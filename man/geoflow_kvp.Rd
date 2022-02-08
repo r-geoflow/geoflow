@@ -16,21 +16,6 @@ This class models an kvp (Key Values pair)
 \details{
 geoflow_kvp
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new(str)}}{
-   This method is used to instantiate a geoflow_kvp object
- }
- \item{\code{setKey(key)}}{
-   Set the key
- }
- \item{\code{setValue(value)}}{
-   Set the value
- }
-}
-}
-
 \examples{
 \dontrun{
   #with setters
@@ -46,3 +31,90 @@ geoflow_kvp
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{kvp}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{key}}{the KVP key}
+
+\item{\code{value}}{the KVP value}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_kvp$new()}}
+\item \href{#method-setKey}{\code{geoflow_kvp$setKey()}}
+\item \href{#method-setValue}{\code{geoflow_kvp$setValue()}}
+\item \href{#method-clone}{\code{geoflow_kvp$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a Key-Value pair (KVP)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_kvp$new(str = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{str}}{character string to initialize from using key-based syntax}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\subsection{Method \code{setKey()}}{
+Set KVP key
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_kvp$setKey(key)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{key}}{the key}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setValue"></a>}}
+\if{latex}{\out{\hypertarget{method-setValue}{}}}
+\subsection{Method \code{setValue()}}{
+Set KVP value
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_kvp$setValue(value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{value}}{the value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_kvp$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

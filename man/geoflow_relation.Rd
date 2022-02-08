@@ -16,27 +16,6 @@ This class models an relation
 \details{
 geoflow_relation
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new(str)}}{
-   This method is used to instantiate a geoflow_relation object
- }
- \item{\code{setKey(key)}}{
-   Set relation key
- }
- \item{\code{setLink(link)}}{
-   Set relation link
- }
- \item{\code{setName(name)}}{
-   Set relation name
- }
- \item{\code{setDescription(description)}}{
-  Set relation description
- }
-}
-}
-
 \examples{
 \dontrun{
   relation <- geoflow_relation$new()
@@ -51,3 +30,130 @@ geoflow_relation
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{relation}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{key}}{relation key}
+
+\item{\code{link}}{relation link}
+
+\item{\code{name}}{relation name}
+
+\item{\code{description}}{relation name}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_relation$new()}}
+\item \href{#method-setKey}{\code{geoflow_relation$setKey()}}
+\item \href{#method-setLink}{\code{geoflow_relation$setLink()}}
+\item \href{#method-setName}{\code{geoflow_relation$setName()}}
+\item \href{#method-setDescription}{\code{geoflow_relation$setDescription()}}
+\item \href{#method-clone}{\code{geoflow_relation$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes an object of class \link{geoflow_relation}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$new(str = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{str}}{character string to initialize from using key-based syntax}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\subsection{Method \code{setKey()}}{
+Set key
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setKey(key)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{key}}{key}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setLink"></a>}}
+\if{latex}{\out{\hypertarget{method-setLink}{}}}
+\subsection{Method \code{setLink()}}{
+Set link
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setLink(link)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{link}}{link}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-setName}{}}}
+\subsection{Method \code{setName()}}{
+Set name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setName(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDescription"></a>}}
+\if{latex}{\out{\hypertarget{method-setDescription}{}}}
+\subsection{Method \code{setDescription()}}{
+Set description
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setDescription(description)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{description}}{description}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

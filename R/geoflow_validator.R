@@ -6,7 +6,7 @@
 geoflow_validator_cell <- R6Class("geoflow_validator_cell",
   private = list(
     na_authorized = FALSE,
-    use_key_synthax =TRUE,
+    use_key_syntax =TRUE,
     key_required = TRUE,
     valid_keys = list(),
     default_key = NULL,
@@ -16,11 +16,29 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
     str = NA
   ),
   public = list(
+    #'@field i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
     i = NA,
+    #'@field j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
     j = NA,
-    initialize = function(na_authorized, use_key_synthax, key_required, valid_keys, default_key,error_if_invalid_key, exclude_http_keys, multiple, i, j, str){
+    
+    #'@description Initializes a \link{geoflow_validator_cell}
+    #'@param na_authorized if validator cell authorizes NAs or empty strings. Default is \code{FALSE}
+    #'@param use_key_syntax if validator cell uses key-based syntax. Default is \code{TRUE}
+    #'@param key_required if validator cell has a key required. Default is \code{TRUE}
+    #'@param valid_keys valid keys for the validator cell. Default is an empty list
+    #'@param default_key default_key to use if key is omitted. Default is \code{NULL}
+    #'@param error_if_invalid_key raise an error if key is invalid. Default is \code{TRUE}
+    #'@param exclude_http_keys if 'http' keys have to be excluded from validation checks. Default is \code{TRUE}
+    #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param multiple if cell may contain multiple values. Deprecated
+    #'@param str character string to validate
+    initialize = function(na_authorized, use_key_syntax, key_required, 
+                          valid_keys, default_key,error_if_invalid_key, exclude_http_keys, 
+                          multiple, i, j, str){
+      
       private$na_authorized <- na_authorized
-      private$use_key_synthax <- use_key_synthax
+      private$use_key_syntax <- use_key_syntax
       private$key_required <- key_required
       private$valid_keys <- valid_keys
       private$error_if_invalid_key <-error_if_invalid_key
@@ -32,47 +50,56 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
       self$j <- j
     },
     
-    #isNaAuthorized
+    #'@description Indicates if the validator cell authorizes NAs and empty strings
+    #'@return \code{TRUE} if authorizes NAs and empty strings, \code{FALSE} otherwise
     isNaAuthorized = function(){
       return(private$na_authorized)
     },
     
-    #isKeySynthaxUser
+    #'@description Indicates if the validator cell makes use of key-based syntax
+    #'@return \code{TRUE} if using key-based syntax, \code{FALSE} otherwise
     isKeySynthaxUser = function(){
       return(private$key_synthax)
     },
     
-    #isKeyRequired
+    #'@description Indicates if a key is required for the validator cell
+    #'@return \code{TRUE} if requires a key, \code{FALSE} otherwise
     isKeyRequired = function(){
       return(private$key_required)
     },
     
-    #getValidKeys
+    #'@description Gives the list of valid keys for the validator cell
+    #'@return the list of valid keys
     getValidKeys = function(){
       return(private$valid_keys)
     },
     
-    #isErrorIfInvalidKey
+    #'@description Indicates if a report error will be given in case of invalid key
+    #'@return \code{TRUE} if a report error will be given in case of invalid key, \code{FALSE} otherwise
     isErrorIfInvalidKey = function(){
       return(private$error_if_invalid_key)
     },
     
-    #getDefaultKey
+    #'@description Gets the default key
+    #'@return the default key
     getDefaultKey = function(){
       return(private$default_key)
     },
     
-    #isExcludeHttpKeys
+    #'@description Indicates if 'http' keys are excluded from the validation
+    #'@param \code{TRUE} if 'http' keys are excluded from the validation, \code{FALSE} otherwise
     isExcludeHttpKeys = function(){
       return(private$exclude_http_keys)
     },
     
-    #isMultiple
+    #'@description indicates if multiple key-based components can be used within a same cell
+    #'@return \code{TRUE} if supporting multiple key-based components by cell, \code{FALSE} otherwise
     isMultiple = function(){
       return(private$Multiple)
     },
     
-    #validate
+    #'@description Proceeds with syntactic validation for the cell considered
+    #'@return an object of class \code{data.frame} including possible errors/warnings
     validate = function(){
       
       report = data.frame(
@@ -102,7 +129,7 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
       }
       
       #If column not use key synthax not proceed to control of the cell content
-      if(!private$use_key_synthax) return(report)
+      if(!private$use_key_syntax) return(report)
       
       #If column use key synthax proceed to control of the cell content
       
@@ -217,19 +244,27 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
 geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Identifier",
    inherit = geoflow_validator_cell,
    public = list(
+     
+     #'@description Initializes a contact 'Identifier' cell
+     #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param str string to validate
      initialize = function(i, j, str){
        valid_keys <- list("id", "orcid")
        super$initialize(FALSE, TRUE, TRUE, valid_keys, "id", TRUE, TRUE, TRUE, i, j, str)
      },
+     
+     #'@description Validates a contact identifier. Proceeds with syntactic validation and content (ORCID) validation.
+     #'@return an validation report, as object of class \code{data.frame}
      validate = function(){
        report <- super$validate()
        cids <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
        for(cid in cids){
          cid_kvp <- extract_kvp(cid)
          #validity of ORCID ID
-         if(cid_kvp$key=="orchid"){
-           isValidOrchid<-grepl(x = cid_kvp$values[[1]], pattern = '^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\s*$',perl = TRUE, ignore.case = TRUE)
-           if(!isValidOrchid){
+         if(cid_kvp$key=="orcid"){
+           isValidOrcid<-grepl(x = cid_kvp$values[[1]], pattern = '^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\s*$',perl = TRUE, ignore.case = TRUE)
+           if(!isValidOrcid){
              report <- rbind(report, data.frame(type = "WARNING", message = springf("ORCID '%s' is not recognized as valid ORCID id format",cid_kvp$values[[1]])))
            }
          }
@@ -247,6 +282,11 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
 geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identifier",
   inherit = geoflow_validator_cell,
   public = list(
+    
+    #'@description Initializes an entity 'Identifier' cell
+    #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param str string to validate
     initialize = function(i, j, str){
       valid_keys <- list(
         "id","id_version", "uuid", "doi", "conceptdoi",
@@ -256,6 +296,10 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
       )
       super$initialize(FALSE, TRUE, TRUE, valid_keys, "id",TRUE, TRUE, TRUE, i, j, str)
     },
+    
+    #'@description Validates an entity identifier. Proceeds with syntactic validation and 
+    #' content validation for DOIs and UUIDs.
+    #'@return an validation report, as object of class \code{data.frame}
     validate = function(){
       #Syntax validation
       report = super$validate()
@@ -295,6 +339,11 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
 geoflow_validator_entity_Title <- R6Class("geoflow_validator_entity_Title",
   inherit = geoflow_validator_cell,
   public = list(
+    
+    #'@description Initializes an entity 'Title' cell
+    #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param str string to validate
     initialize = function(i, j, str){
       valid_keys <- list("title", "alternative")
       super$initialize(FALSE,TRUE, TRUE, valid_keys, "title",TRUE, TRUE, TRUE, i, j, str)
@@ -310,6 +359,11 @@ geoflow_validator_entity_Title <- R6Class("geoflow_validator_entity_Title",
 geoflow_validator_entity_Description <- R6Class("geoflow_validator_entity_Description",
    inherit = geoflow_validator_cell,
    public = list(
+     
+     #'@description Initializes an entity 'Description' cell
+     #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param str string to validate
      initialize = function(i, j, str){
        valid_keys <- list("abstract", "purpose", "credit", "info", "edition", "status")
        super$initialize(FALSE,TRUE, TRUE, valid_keys, "abstract",TRUE, TRUE, TRUE, i, j, str)
@@ -325,10 +379,18 @@ geoflow_validator_entity_Description <- R6Class("geoflow_validator_entity_Descri
 geoflow_validator_entity_Subject <- R6Class("geoflow_validator_entity_Subject",
    inherit = geoflow_validator_cell,
    public = list(
+     
+     #'@description Initializes an entity 'Subject' cell
+     #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param str string to validate
      initialize = function(i, j, str){
        valid_keys <- list()
        super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,FALSE, TRUE, TRUE, i, j, str)
      },
+     
+     #'@description Validates a Subject. Proceeds with syntactic validation and content validation.
+     #'@return an validation report, as object of class \code{data.frame}  
      validate = function(){
       #Synthax validation
        report <- super$validate()
@@ -360,8 +422,13 @@ geoflow_validator_entity_Subject <- R6Class("geoflow_validator_entity_Subject",
 geoflow_validator_entity_Creator <- R6Class("geoflow_validator_entity_Creator",
   inherit = geoflow_validator_cell,
   public = list(
+    
+    #'@description Initializes an entity 'Creator' cell
+    #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param str string to validate
     initialize = function(i, j, str){
-      valid_keys <- list("owner","publisher","metadata","pointOfContact")
+      valid_keys <- list("metadata", geometa::ISORole$values())
       super$initialize(FALSE,TRUE, TRUE, valid_keys, NULL,FALSE, TRUE, TRUE, i, j, str)
     }
   )
@@ -375,36 +442,44 @@ geoflow_validator_entity_Creator <- R6Class("geoflow_validator_entity_Creator",
 geoflow_validator_entity_Date <- R6Class("geoflow_validator_entity_Date",
    inherit = geoflow_validator_cell,
    public = list(
+     
+     #'@description Initializes an entity 'Date' cell
+     #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param str string to validate
      initialize = function(i, j, str){
        valid_keys <- list("creation","publication","edition")
        super$initialize(TRUE,TRUE, TRUE, valid_keys, "creation",FALSE, TRUE, TRUE, i, j, str)
      },
+     
+     #'@description Validates a date. Proceeds with syntactic validation and content validation.
+     #'@return an validation report, as object of class \code{data.frame}    
      validate = function(){
-     #Synthax validation
+       #Synthax validation
        report = super$validate()
-     #Business validation
+       #Business validation
        dates <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
        if(length(dates)==0){
-     #If no date, inform about added of automatic creation date
+         #If no date, inform about added of automatic creation date
          report <- rbind(report, data.frame(type = "WARNING", message = "Creation date is missing and will be automaticaly completed at present present day and hour"))
        }else{
          for(date in dates){
            date_kvp <- extract_kvp(date)
          
-     #Check if date key is a ISO key
+         #Check if date key is a ISO key
          if(!date_kvp$key %in% c("edition",geometa::ISODateType$values())){
            report <- rbind(report, data.frame(type = "WARNING", message = sprintf("key '%s' is not a recognized ISO date key.", date_kvp$key)))
          }
-     #Check if date value is an accepted date format
-           for(value in date_kvp$values){
-             if(is(value, "character")){
-               value <- try(sanitize_date(value),silent=T)
-             }
-             if(!(is(value, "Date") | inherits(value, "POSIXt"))){
-               report <- rbind(report, data.frame(type = "ERROR", message = sprintf("date value '%s' is not a recognized date format", value)))
-             }
+         #Check if date value is an accepted date format
+         for(value in date_kvp$values){
+           if(is(value, "character")){
+             value <- try(sanitize_date(value),silent=T)
+           }
+           if(!(is(value, "Date") | inherits(value, "POSIXt"))){
+             report <- rbind(report, data.frame(type = "ERROR", message = sprintf("date value '%s' is not a recognized date format", value)))
            }
          }
+        }
        }
        return(report)
      }
@@ -419,6 +494,11 @@ geoflow_validator_entity_Date <- R6Class("geoflow_validator_entity_Date",
 geoflow_validator_entity_Type <- R6Class("geoflow_validator_entity_Type",
   inherit = geoflow_validator_cell,
   public = list(
+    
+    #'@description Initializes an entity 'Type' cell
+    #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param str string to validate
     initialize = function(i, j, str){
       valid_keys <- list()
       super$initialize(FALSE,T, TRUE, valid_keys, "generic",T, TRUE, TRUE, i, j, str)
@@ -434,12 +514,19 @@ geoflow_validator_entity_Type <- R6Class("geoflow_validator_entity_Type",
 geoflow_validator_entity_Language <- R6Class("geoflow_validator_entity_Language",
   inherit = geoflow_validator_cell,
   public = list(
+    
+    #'@description Initializes an entity 'Language' cell
+    #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param str string to validate
     initialize = function(i, j, str){
       valid_keys <- list()
       super$initialize(TRUE,FALSE, FALSE, valid_keys, "eng",TRUE, TRUE, TRUE, i, j, str)
     },
+    
+    #'@description Validates a language. Proceeds with syntactic validation and language validation.
+    #'@return an validation report, as object of class \code{data.frame}    
     validate = function(){
-      #Not Validate synthax
       report = data.frame(
         type = character(0),
         message = character(0),
@@ -463,15 +550,24 @@ geoflow_validator_entity_Language <- R6Class("geoflow_validator_entity_Language"
 geoflow_validator_entity_SpatialCoverage <- R6Class("geoflow_validator_entity_SpatialCoverage",
   inherit = geoflow_validator_cell,
   public = list(
+    
+    #'@description Initializes an entity 'SpatialCoverage' cell
+    #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param str string to validate
     initialize = function(i, j, str){
       valid_keys <- list("ewkt", "wkt", "srid")
       super$initialize(TRUE,TRUE, TRUE, valid_keys, "ewkt",TRUE, TRUE, TRUE, i, j, str)
     },
+    
+    #'@description Validates a spatial coverage. Proceeds with syntactic validation and 
+    #' spatial coverage validation (including EWKT, WKT and SRID).
+    #'@return an validation report, as object of class \code{data.frame}  
     validate = function(){
-    #Synthax validation
+      #Synthax validation
       report <- super$validate()
-    #Business validation
-    #Control validity of wkt and srid format
+      #Business validation
+      #Control validity of wkt and srid format
       spatial_props <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
       if(length(spatial_props)>0){
         if(length(spatial_props)==1){
@@ -537,10 +633,18 @@ geoflow_validator_entity_SpatialCoverage <- R6Class("geoflow_validator_entity_Sp
 geoflow_validator_entity_TemporalCoverage <- R6Class("geoflow_validator_entity_TemporalCoverage",
    inherit = geoflow_validator_cell,
    public = list(
+     
+     #'@description Initializes an entity 'TemporalCoverage' cell
+     #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param str string to validate
      initialize = function(i, j, str){
        valid_keys <- list()
        super$initialize(TRUE,FALSE, FALSE, valid_keys, NULL,FALSE, TRUE, TRUE, i, j, str)
      },
+     
+     #'@description Validates temporal coverage. Proceeds with syntactic validation and temporal coverage validation.
+     #'@return an validation report, as object of class \code{data.frame}
      validate = function(){
        #validate syntax (essentially for NA case)
        report <- super$validate()
@@ -592,6 +696,11 @@ geoflow_validator_entity_TemporalCoverage <- R6Class("geoflow_validator_entity_T
 geoflow_validator_entity_Format <- R6Class("geoflow_validator_entity_Format",
   inherit = geoflow_validator_cell,
   public = list(
+    
+    #'@description Initializes an entity 'Format' cell
+    #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param str string to validate
     initialize = function(i, j, str){
       valid_keys <- list("resource", "distribution")
       super$initialize(TRUE,TRUE, TRUE, valid_keys, "resource",TRUE, TRUE, TRUE, i, j, str)
@@ -607,6 +716,11 @@ geoflow_validator_entity_Format <- R6Class("geoflow_validator_entity_Format",
 geoflow_validator_entity_Relation <- R6Class("geoflow_validator_entity_Relation",
     inherit = geoflow_validator_cell,
     public = list(
+      
+      #'@description Initializes an entity 'Relation' cell
+      #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+      #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+      #'@param str string to validate
       initialize = function(i, j, str){
         valid_keys <- list(
           "ftp", "http",
@@ -629,6 +743,11 @@ geoflow_validator_entity_Relation <- R6Class("geoflow_validator_entity_Relation"
 geoflow_validator_entity_Rights <- R6Class("geoflow_validator_entity_Rights",
     inherit = geoflow_validator_cell,
     public = list(
+      
+      #'@description Initializes an entity 'Rights' cell
+      #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+      #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+      #'@param str string to validate
       initialize = function(i, j, str){
         valid_keys <- list("license","use","useLimitation", "useConstraint", "accessConstraint", "otherConstraint")
         super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,TRUE, FALSE, TRUE, i, j, str)
@@ -644,13 +763,21 @@ geoflow_validator_entity_Rights <- R6Class("geoflow_validator_entity_Rights",
 geoflow_validator_entity_Provenance <- R6Class("geoflow_validator_entity_Provenance",
     inherit = geoflow_validator_cell,
     public = list(
+      
+      #'@description Initializes an entity 'Provenance' cell
+      #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+      #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+      #'@param str string to validate
       initialize = function(i, j, str){
         valid_keys <- list("statement", "process", "processor")
         super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,TRUE, FALSE, TRUE, i, j, str)
       },
+      
+      #'@description Validates a Provenance. Proceeds with syntactic validation and content validation.
+      #'@return an validation report, as object of class \code{data.frame}  
       validate = function(){
         report <- super$validate()
-      #Validity of corresponding number of processors vs. processes   
+        #Validity of corresponding number of processors vs. processes   
         data_props <- extract_cell_components(sanitize_str(private$str))
         if(length(data_props>0)){
           state_prop <- data_props[[1]]
@@ -688,6 +815,11 @@ geoflow_validator_entity_Provenance <- R6Class("geoflow_validator_entity_Provena
 geoflow_validator_entity_Data <- R6Class("geoflow_validator_entity_Data",
   inherit = geoflow_validator_cell,
   public = list(
+    
+    #'@description Initializes an entity 'Data' cell
+    #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+    #'@param str string to validate
     initialize = function(i, j, str){
       valid_keys <- list()
       super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,FALSE, FALSE, TRUE, i, j, str)
@@ -706,7 +838,13 @@ geoflow_validator <- R6Class("geoflow_validator",
      valid_columns = c()
    ),
    public = list(
+     #'@field source object of class \code{data.frame} handling metadata objects to validate
      source = NULL,
+     
+     #'@description Initializes a table validator for a given metadata model
+     #'@param model the data model name, eg. "entity", "contact"
+     #'@param valid_columns a vector of valid columns for the data model
+     #'@param source an object of class \code{data.frame} handling the contacts
      initialize = function(model, valid_columns, source){
        private$model <- model
        private$valid_columns <- valid_columns
@@ -717,7 +855,8 @@ geoflow_validator <- R6Class("geoflow_validator",
        self$source <- source
      },
      
-     #validate_structure
+     #'@description Validates a source table against a data model structure
+     #'@return \code{TRUE} if valid, \code{FALSE} otherwise.
      validate_structure = function(){
        status <- TRUE
        #check that all columns are available
@@ -737,7 +876,9 @@ geoflow_validator <- R6Class("geoflow_validator",
        return(status)
      },
      
-     #validate_content
+     #'@description Validates a source table using syntactic and content validation rules
+     #'@param raw indicates whether to return a \code{list} of \code{geoflow_validator_cell} objects or a \code{data.frame}
+     #'@return a \code{list} of \code{geoflow_validator_cell} objects, or \code{data.frame} 
      validate_content = function(raw = FALSE){
        content_validation_report <- NULL
        if(!self$validate_structure()) return(NULL)
@@ -781,6 +922,9 @@ geoflow_validator <- R6Class("geoflow_validator",
 geoflow_validator_contacts <- R6Class("geoflow_validator_contacts",
     inherit = geoflow_validator,
     public = list(
+      
+      #'@description Initializes a contacts table validator
+      #'@param source an object of class \code{data.frame} handling the contacts
       initialize = function(source){
         valid_columns <- c("Identifier", "Email", "OrganizationName", "PositionName", "LastName", "FirstName",
                               "PostalAddress", "PostalCode", "City", "Country", "Voice", "Facsimile", "WebsiteUrl", "WebsiteName")
@@ -797,6 +941,9 @@ geoflow_validator_contacts <- R6Class("geoflow_validator_contacts",
 geoflow_validator_entities <- R6Class("geoflow_validator_entities",
   inherit = geoflow_validator,
   public = list(
+    
+    #'@description Initializes an entities table validator
+    #'@param source an object of class \code{data.frame} handling the entities
     initialize = function(source){
       valid_columns <- c("Identifier", "Title", "Description", "Subject", "Creator", "Date", "Type", "Language", 
                             "SpatialCoverage", "TemporalCoverage", "Format", "Relation", "Rights", "Provenance", "Data")

@@ -22,72 +22,61 @@
 #'   dimension$setMaxValue(3)
 #'  }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new)}}{
-#'    This method is used to instantiate a geoflow_dimension object
-#'  }
-#'  \item{\code{setLongName(longName)}}{
-#'    Set longname
-#'  }
-#'  \item{\code{setResolution(uom, value)}}{
-#'    Sets resolution (with step and unit)
-#'  }
-#'  \item{\code{setSize(size)}}{
-#'    Set size 
-#'  }
-#'  \item{\code{setValues(values)}}{
-#'    Sets values
-#'  }
-#'  \item{\code{setMinValue(minValue)}}{
-#'    Set minimal value
-#'  }
-#'  \item{\code{setMaxValue(maxValue)}}{
-#'    Set maximal value
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_dimension <- R6Class("geoflow_dimension",
-                           public = list(
-                             longName = NULL,
-                             resolution = list(),
-                             size = NULL,
-                             values = NULL,
-                             minValue = NULL,
-                             maxValue = NULL,
-                             initialize = function(){},
+ public = list(
+   #'@field longName dimension longName
+   longName = NULL,
+   #'@field resolution dimension resolution
+   resolution = list(),
+   #'@field size dimension size
+   size = NULL,
+   #'@field values dimension values
+   values = NULL,
+   #'@field minValue dimension min value
+   minValue = NULL,
+   #'@field maxValue dimension max value
+   maxValue = NULL,
+   
+   #'@description Initializes the \link{geoflow_dimension}
+   initialize = function(){},
 
-                             #setLongName
-                             setLongName = function(longName){
-                               self$longName <- longName
-                             },
-                             
-                             #setResolution
-                             setResolution = function(uom,value){
-                               self$resolution <- list(uom=uom,value=value)
-                             },
-                                                          
-                             #setSize
-                             setSize = function(size){
-                               self$size <- size
-                             },
-                             
-                             #setValues
-                             setValues = function(values){
-                               self$values <- values
-                             },
-                             
-                             #setMinValue
-                             setMinValue = function(minValue){
-                               self$minValue <- minValue
-                             },
-                             
-                             #setMaxValue
-                             setMaxValue = function(maxValue){
-                               self$maxValue <- maxValue
-                             }
-                           )                                  
+   #'@description Sets the dimension long name
+   #'@param longName dimension long name
+   setLongName = function(longName){
+     self$longName <- longName
+   },
+   
+   #'@description Sets the resolution 
+   #'@param uom unit of measure
+   #'@param value resolution value
+   setResolution = function(uom,value){
+     self$resolution <- list(uom=uom,value=value)
+   },
+                                
+   #'@description Sets the dimension size
+   #'@param size dimension size
+   setSize = function(size){
+     self$size <- size
+   },
+   
+   #'@description Sets dimension values
+   #'@param values dimension values
+   setValues = function(values){
+     self$values <- values
+   },
+   
+   #'@description Sets dimension min value
+   #'@param minValue min value
+   setMinValue = function(minValue){
+     self$minValue <- minValue
+   },
+   
+   #'@description Sets dimension max value
+   #'@param maxValue max value
+   setMaxValue = function(maxValue){
+     self$maxValue <- maxValue
+   }
+ )                                  
 )
-

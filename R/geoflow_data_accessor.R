@@ -18,36 +18,8 @@
 #'    software_type = "some-software",
 #'    definition = "definition",
 #'    packages = list(),
-#'    handler = function(file, path){}
+#'    download = function(file, path){}
 #'  )
-#' }
-#' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new(id, software_type, definition, packages download)}}{
-#'    This method is used to instantiate a geoflow_data_accessor object
-#'  }
-#'  \item{\code{setId(id)}}{
-#'    Set id
-#'  }
-#'  \item{\code{setSoftwareType(software_type)}}{
-#'    Set software type
-#'  }
-#'  \item{\code{setDefinition(definition)}}{
-#'    Set definition
-#'  }
-#'  \item{\code{setPackages(packages)}}{
-#'    Set packages
-#'  }
-#'  \item{\code{setDownload(download)}}{
-#'    Set download handler (a function with arguments \code{file} and \code{path})
-#'  }
-#'  \item{\code{checkPackages()}}{
-#'    Check that all packages required for the software are available, if yes,
-#'    import them in the R session, and return a \code{data.frame} giving the 
-#'    packages names and version. If one or more packages are unavailable,
-#'    an error is thrown and user informed of the missing packages.
-#'  }
 #' }
 #' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
@@ -55,11 +27,23 @@
 geoflow_data_accessor <- R6Class("geoflow_data_accessor",
   inherit = geoflowLogger,
   public = list(
+    #'@field id accessor ID
     id = NULL,
+    #'@field software_type accessor software type
     software_type = NA,
+    #'@field definition accessor definition
     definition = NULL,
+    #'@field packages list of packages required for the accessor
     packages = list(),
+    #'@field download a download function handler
     download = NULL,
+    
+    #'@description Initializes the data ccessor
+    #'@param id accessor ID
+    #'@param software_type accessor software type
+    #'@param definition accessor definition
+    #'@param packages list of packages required for the accessor
+    #'@param download download function handler
     initialize = function(id = NULL, software_type = NULL, definition, 
                           packages = list(), download){
       self$setId(id)
@@ -69,32 +53,40 @@ geoflow_data_accessor <- R6Class("geoflow_data_accessor",
       self$setDownload(download)
     },
     
-    #setId
+    #'@description Sets accessor ID
+    #'@param id accessor ID to set
     setId = function(id){
       self$id <- id
     },
     
-    #setSoftwareType
+    #'@description Sets software type
+    #'@param software_type software type
     setSoftwareType = function(software_type){
       self$software_type <- software_type
     },
     
-    #setPackages
+    #'@description Sets list of packages required for the accessor
+    #'@param packages a vecto of package names
     setPackages = function(packages){
       self$packages <- packages
     },
     
-    #setDefinition
+    #'@description Sets accessor definition
+    #'@param definition accessor definition
     setDefinition = function(definition){
       self$definition <- definition
     },
     
-    #setDownload
+    #'@description Set download handler (a function with arguments \code{file} and \code{path})
+    #'@param download an object of class \code{function}
     setDownload = function(download){
       self$download = download
     },
     
-    #checkPackages
+    #'@description Check that all packages required for the software are available, if yes,
+    #'    import them in the R session, and return a \code{data.frame} giving the 
+    #'    packages names and version. If one or more packages are unavailable,
+    #'    an error is thrown and user informed of the missing packages.
     checkPackages = function(){
       self$INFO(sprintf("Check package dependencies for data accessor '%s'", self$id))
       out_pkgs <- try(check_packages(self$packages))

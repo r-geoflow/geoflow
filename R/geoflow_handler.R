@@ -28,28 +28,27 @@
 #' @note This class is essentially called internally by geoflow to register default handlers
 #' for entities and contacts.
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new(id, def, packages, fun, script)}}{
-#'    This method is used to instantiate a geoflow_handler object
-#'  }
-#'  \item{\code{checkPackages()}}{
-#'    Check that all packages required for the handler are available, if yes,
-#'    import them in the R session, and return a \code{data.frame} giving the 
-#'    packages names and version. If one or more packages are unavailable,
-#'    an error is thrown and user informed of the missing packages.
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_handler <- R6Class("geoflow_handler",
   public = list(
+    #'@field id handler id
     id = NA,
+    #'@field def handler definition
     def = NA,
+    #'@field packages handler packages
     packages = list(),
+    #'@field fun handler function
     fun = NA,
+    #'@field script handler script
     script = NA,
+    
+    #'@description Initializes a \link{geoflow_handler}
+    #'@param id id
+    #'@param def def
+    #'@param packages list of packages required for the handler
+    #'@param fun the handler \code{function} having 2 arguments \code{config} and \code{source}
+    #'@param script a handler script
     initialize = function(id, def = "", packages = list(), fun = NULL, script = NULL){
       self$id <- id
       self$def <- def
@@ -58,7 +57,10 @@ geoflow_handler <- R6Class("geoflow_handler",
       self$script <- script
     },
     
-    #checkPackages
+    #'@description Check that all packages required for the handler are available, if yes,
+    #'    import them in the R session, and return a \code{data.frame} giving the 
+    #'    packages names and version. If one or more packages are unavailable,
+    #'    an error is thrown and user informed of the missing packages.
     checkPackages = function(){
       #check package dependencies
       self$INFO(sprintf("Check package dependencies for handler '%s'", self$id))

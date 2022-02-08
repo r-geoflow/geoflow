@@ -24,21 +24,6 @@ geoflow_handler
 This class is essentially called internally by geoflow to register default handlers
 for entities and contacts.
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new(id, def, packages, fun, script)}}{
-   This method is used to instantiate a geoflow_handler object
- }
- \item{\code{checkPackages()}}{
-   Check that all packages required for the handler are available, if yes,
-   import them in the R session, and return a \code{data.frame} giving the 
-   packages names and version. If one or more packages are unavailable,
-   an error is thrown and user informed of the missing packages.
- }
-}
-}
-
 \examples{
 \dontrun{
   handler <- geoflow_handler$new(
@@ -54,3 +39,82 @@ for entities and contacts.
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{handler}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{id}}{handler id}
+
+\item{\code{def}}{handler definition}
+
+\item{\code{packages}}{handler packages}
+
+\item{\code{fun}}{handler function}
+
+\item{\code{script}}{handler script}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_handler$new()}}
+\item \href{#method-checkPackages}{\code{geoflow_handler$checkPackages()}}
+\item \href{#method-clone}{\code{geoflow_handler$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a \link{geoflow_handler}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$new(id, def = "", packages = list(), fun = NULL, script = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{id}
+
+\item{\code{def}}{def}
+
+\item{\code{packages}}{list of packages required for the handler}
+
+\item{\code{fun}}{the handler \code{function} having 2 arguments \code{config} and \code{source}}
+
+\item{\code{script}}{a handler script}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-checkPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-checkPackages}{}}}
+\subsection{Method \code{checkPackages()}}{
+Check that all packages required for the handler are available, if yes,
+   import them in the R session, and return a \code{data.frame} giving the 
+   packages names and version. If one or more packages are unavailable,
+   an error is thrown and user informed of the missing packages.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$checkPackages()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

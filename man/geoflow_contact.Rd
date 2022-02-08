@@ -16,8 +16,33 @@ This class models a contact to be executed by geoflow
 \details{
 geoflow_contact
 }
-\section{Fields}{
+\examples{
+\dontrun{
+  contact <- geoflow_contact$new()
+  contact$setId("john.doe@nowhere.org")
+  contact$setFirstName("John")
+  contact$setLastName("Doe")
+  contact$setOrganizationName("Nowhere")
+  contact$setPositionName("Wizard")
+  contact$setRole("Manager")
+  contact$setVoice("+9999000000000")
+  contact$setFacsimile("+9999000000001")
+  contact$setEmail("john.doe@nowhere.org")
+  contact$setWebsiteUrl("www.nowhere.org")
+  contact$setWebsiteName("Nowhere Inc.")
+  contact$setPostalAddress("Nowhere street")
+  contact$setPostalCode("Nowhere code")
+  contact$setCity("Nowhere city")
+  contact$setCountry("Nowhere country")
+}
 
+}
+\author{
+Emmanuel Blondel <emmanuel.blondel1@gmail.com>
+}
+\keyword{contact}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
 \describe{
 \item{\code{id}}{contact identifier}
 
@@ -50,87 +75,331 @@ geoflow_contact
 \item{\code{country}}{contact country}
 
 \item{\code{identifiers}}{contact identifiers}
-}}
-
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_contact$new()}}
+\item \href{#method-setIdentifier}{\code{geoflow_contact$setIdentifier()}}
+\item \href{#method-setId}{\code{geoflow_contact$setId()}}
+\item \href{#method-setFirstName}{\code{geoflow_contact$setFirstName()}}
+\item \href{#method-setLastName}{\code{geoflow_contact$setLastName()}}
+\item \href{#method-setOrganizationName}{\code{geoflow_contact$setOrganizationName()}}
+\item \href{#method-setPositionName}{\code{geoflow_contact$setPositionName()}}
+\item \href{#method-setRole}{\code{geoflow_contact$setRole()}}
+\item \href{#method-setVoice}{\code{geoflow_contact$setVoice()}}
+\item \href{#method-setFacsimile}{\code{geoflow_contact$setFacsimile()}}
+\item \href{#method-setEmail}{\code{geoflow_contact$setEmail()}}
+\item \href{#method-setWebsiteUrl}{\code{geoflow_contact$setWebsiteUrl()}}
+\item \href{#method-setWebsiteName}{\code{geoflow_contact$setWebsiteName()}}
+\item \href{#method-setPostalAddress}{\code{geoflow_contact$setPostalAddress()}}
+\item \href{#method-setPostalCode}{\code{geoflow_contact$setPostalCode()}}
+\item \href{#method-setCity}{\code{geoflow_contact$setCity()}}
+\item \href{#method-setCountry}{\code{geoflow_contact$setCountry()}}
+\item \href{#method-clone}{\code{geoflow_contact$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a \link{geoflow_contact} object
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$new()}\if{html}{\out{</div>}}
+}
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setIdentifier"></a>}}
+\if{latex}{\out{\hypertarget{method-setIdentifier}{}}}
+\subsection{Method \code{setIdentifier()}}{
+Sets an identifier by means of key
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setIdentifier(key = "id", id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
 \describe{
- \item{\code{new()}}{
-   This method is used to instantiate a geoflow_contact object
- }
- \item{\code{setId(id)}}{
-   Set a contact id, as object of class \code{character}
- }
- \item{\code{setFirstName(firstName)}}{
-   Set the contact first name
- }
- \item{\code{setLastName(lastName)}}{
-   Set the contact last name
- }
- \item{\code{setOrganizationName(organizationName)}}{
-   Set the organization name
- }
- \item{\code{setPositionName(positionName)}}{
-   Set the position name
- }
- \item{\code{setRole(role)}}{
-   Set the contact role
- }
- \item{\code{setVoice(voice)}}{
-   Set voice (phone number), as object of class \code{character}
- }
- \item{\code{setFacsimile}}{
-   Set facsimile, as object of class \code{character}
- }
- \item{\code{setEmail(email)}}{
-   Set email
- }
- \item{\code{setWebsiteUrl(websiteUrl)}}{
-   Set website URL
- }
- \item{\code{setWebsiteName(websiteName)}}{
-   Set website name
- }
- \item{\code{setPostalAddress(postalAddress)}}{
-   Set postal address
- }
- \item{\code{setPostalCode(postalCode)}}{
-   Set postal code
- }
- \item{\code{setCity(city)}}{
-   Set city
- }
- \item{\code{setCountry(country)}}{
-   Set country
- }
- \item{\code{addIdentifier(identifier)}}{
-   Adds an identifier as object of class \code{geoflow_kvp}
- }
+\item{\code{key}}{an identifier key. Default is "id"}
+
+\item{\code{id}}{the identifier}
 }
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setId"></a>}}
+\if{latex}{\out{\hypertarget{method-setId}{}}}
+\subsection{Method \code{setId()}}{
+Sets an "id" identifier
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setId(id)}\if{html}{\out{</div>}}
 }
 
-\examples{
-\dontrun{
-  contact <- geoflow_contact$new()
-  contact$setId("john.doe@nowhere.org")
-  contact$setFirstName("John")
-  contact$setLastName("Doe")
-  contact$setOrganizationName("Nowhere")
-  contact$setPositionName("Wizard")
-  contact$setRole("Manager")
-  contact$setVoice("+9999000000000")
-  contact$setFacsimile("+9999000000001")
-  contact$setEmail("john.doe@nowhere.org")
-  contact$setWebsiteUrl("www.nowhere.org")
-  contact$setWebsiteName("Nowhere Inc.")
-  contact$setPostalAddress("Nowhere street")
-  contact$setPostalCode("Nowhere code")
-  contact$setCity("Nowhere city")
-  contact$setCountry("Nowhere country")
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{the identifier}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setFirstName"></a>}}
+\if{latex}{\out{\hypertarget{method-setFirstName}{}}}
+\subsection{Method \code{setFirstName()}}{
+Sets contact first name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setFirstName(firstName)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{firstName}}{contact first name}
 }
-\author{
-Emmanuel Blondel <emmanuel.blondel1@gmail.com>
+\if{html}{\out{</div>}}
 }
-\keyword{contact}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setLastName"></a>}}
+\if{latex}{\out{\hypertarget{method-setLastName}{}}}
+\subsection{Method \code{setLastName()}}{
+Sets contact last name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setLastName(lastName)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{lastName}}{contact last name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setOrganizationName"></a>}}
+\if{latex}{\out{\hypertarget{method-setOrganizationName}{}}}
+\subsection{Method \code{setOrganizationName()}}{
+Sets contact organization name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setOrganizationName(organizationName)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{organizationName}}{contact organization name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setPositionName"></a>}}
+\if{latex}{\out{\hypertarget{method-setPositionName}{}}}
+\subsection{Method \code{setPositionName()}}{
+Sets contact position name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setPositionName(positionName)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{positionName}}{contact position name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setRole"></a>}}
+\if{latex}{\out{\hypertarget{method-setRole}{}}}
+\subsection{Method \code{setRole()}}{
+Sets contact role
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setRole(role)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{role}}{the contact role}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setVoice"></a>}}
+\if{latex}{\out{\hypertarget{method-setVoice}{}}}
+\subsection{Method \code{setVoice()}}{
+Sets contact voice (phone number)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setVoice(voice)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{voice}}{contact voice (phone number)}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setFacsimile"></a>}}
+\if{latex}{\out{\hypertarget{method-setFacsimile}{}}}
+\subsection{Method \code{setFacsimile()}}{
+Sets contact facsimile
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setFacsimile(facsimile)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{facsimile}}{contact facsimile}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setEmail"></a>}}
+\if{latex}{\out{\hypertarget{method-setEmail}{}}}
+\subsection{Method \code{setEmail()}}{
+Sets contact email
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setEmail(email)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{email}}{contact email}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setWebsiteUrl"></a>}}
+\if{latex}{\out{\hypertarget{method-setWebsiteUrl}{}}}
+\subsection{Method \code{setWebsiteUrl()}}{
+Sets contact website URL
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setWebsiteUrl(websiteUrl)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{websiteUrl}}{contact website URL}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setWebsiteName"></a>}}
+\if{latex}{\out{\hypertarget{method-setWebsiteName}{}}}
+\subsection{Method \code{setWebsiteName()}}{
+Sets contact website name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setWebsiteName(websiteName)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{websiteName}}{contact website name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setPostalAddress"></a>}}
+\if{latex}{\out{\hypertarget{method-setPostalAddress}{}}}
+\subsection{Method \code{setPostalAddress()}}{
+Sets the contact postal address
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setPostalAddress(postalAddress)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{postalAddress}}{contact postal address}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setPostalCode"></a>}}
+\if{latex}{\out{\hypertarget{method-setPostalCode}{}}}
+\subsection{Method \code{setPostalCode()}}{
+Sets the contact postal code
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setPostalCode(postalCode)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{postalCode}}{contact postalCode}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setCity"></a>}}
+\if{latex}{\out{\hypertarget{method-setCity}{}}}
+\subsection{Method \code{setCity()}}{
+Sets the contact city
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setCity(city)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{city}}{contact city}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setCountry"></a>}}
+\if{latex}{\out{\hypertarget{method-setCountry}{}}}
+\subsection{Method \code{setCountry()}}{
+Sets the contact country
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setCountry(country)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{country}}{contact country}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

@@ -12,6 +12,8 @@ Object of \code{\link{R6Class}} for modelling a simple logger
 }
 \description{
 geoflowLogger
+
+geoflowLogger
 }
 \note{
 Logger class used internally by geoflow
@@ -32,3 +34,92 @@ Logger class used internally by geoflow
 }
 
 \keyword{logger}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-INFO}{\code{geoflowLogger$INFO()}}
+\item \href{#method-WARN}{\code{geoflowLogger$WARN()}}
+\item \href{#method-ERROR}{\code{geoflowLogger$ERROR()}}
+\item \href{#method-new}{\code{geoflowLogger$new()}}
+\item \href{#method-clone}{\code{geoflowLogger$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-INFO"></a>}}
+\if{latex}{\out{\hypertarget{method-INFO}{}}}
+\subsection{Method \code{INFO()}}{
+Prints an INFO logger message
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$INFO(text)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{text}}{logger message}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-WARN"></a>}}
+\if{latex}{\out{\hypertarget{method-WARN}{}}}
+\subsection{Method \code{WARN()}}{
+Prints an WARN logger message
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$WARN(text)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{text}}{logger message}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ERROR"></a>}}
+\if{latex}{\out{\hypertarget{method-ERROR}{}}}
+\subsection{Method \code{ERROR()}}{
+Prints an ERROR logger message
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$ERROR(text)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{text}}{logger message}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes an object of class \link{geoflowLogger}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$new()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

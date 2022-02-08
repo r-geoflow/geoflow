@@ -6,4 +6,219 @@
 \title{geoflow_validator_cell}
 \description{
 geoflow_validator_cell
+
+geoflow_validator_cell
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{i}}{row index (internal index to be used for graphical \pkg{geoflow} validation handlers)}
+
+\item{\code{j}}{col index (internal index to be used for graphical \pkg{geoflow} validation handlers)}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_validator_cell$new()}}
+\item \href{#method-isNaAuthorized}{\code{geoflow_validator_cell$isNaAuthorized()}}
+\item \href{#method-isKeySynthaxUser}{\code{geoflow_validator_cell$isKeySynthaxUser()}}
+\item \href{#method-isKeyRequired}{\code{geoflow_validator_cell$isKeyRequired()}}
+\item \href{#method-getValidKeys}{\code{geoflow_validator_cell$getValidKeys()}}
+\item \href{#method-isErrorIfInvalidKey}{\code{geoflow_validator_cell$isErrorIfInvalidKey()}}
+\item \href{#method-getDefaultKey}{\code{geoflow_validator_cell$getDefaultKey()}}
+\item \href{#method-isExcludeHttpKeys}{\code{geoflow_validator_cell$isExcludeHttpKeys()}}
+\item \href{#method-isMultiple}{\code{geoflow_validator_cell$isMultiple()}}
+\item \href{#method-validate}{\code{geoflow_validator_cell$validate()}}
+\item \href{#method-clone}{\code{geoflow_validator_cell$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a \link{geoflow_validator_cell}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$new(
+  na_authorized,
+  use_key_syntax,
+  key_required,
+  valid_keys,
+  default_key,
+  error_if_invalid_key,
+  exclude_http_keys,
+  multiple,
+  i,
+  j,
+  str
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{na_authorized}}{if validator cell authorizes NAs or empty strings. Default is \code{FALSE}}
+
+\item{\code{use_key_syntax}}{if validator cell uses key-based syntax. Default is \code{TRUE}}
+
+\item{\code{key_required}}{if validator cell has a key required. Default is \code{TRUE}}
+
+\item{\code{valid_keys}}{valid keys for the validator cell. Default is an empty list}
+
+\item{\code{default_key}}{default_key to use if key is omitted. Default is \code{NULL}}
+
+\item{\code{error_if_invalid_key}}{raise an error if key is invalid. Default is \code{TRUE}}
+
+\item{\code{exclude_http_keys}}{if 'http' keys have to be excluded from validation checks. Default is \code{TRUE}}
+
+\item{\code{multiple}}{if cell may contain multiple values. Deprecated}
+
+\item{\code{i}}{row index (internal index to be used for graphical \pkg{geoflow} validation handlers)}
+
+\item{\code{j}}{col index (internal index to be used for graphical \pkg{geoflow} validation handlers)}
+
+\item{\code{str}}{character string to validate}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-isNaAuthorized"></a>}}
+\if{latex}{\out{\hypertarget{method-isNaAuthorized}{}}}
+\subsection{Method \code{isNaAuthorized()}}{
+Indicates if the validator cell authorizes NAs and empty strings
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$isNaAuthorized()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+\code{TRUE} if authorizes NAs and empty strings, \code{FALSE} otherwise
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-isKeySynthaxUser"></a>}}
+\if{latex}{\out{\hypertarget{method-isKeySynthaxUser}{}}}
+\subsection{Method \code{isKeySynthaxUser()}}{
+Indicates if the validator cell makes use of key-based syntax
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$isKeySynthaxUser()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+\code{TRUE} if using key-based syntax, \code{FALSE} otherwise
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-isKeyRequired"></a>}}
+\if{latex}{\out{\hypertarget{method-isKeyRequired}{}}}
+\subsection{Method \code{isKeyRequired()}}{
+Indicates if a key is required for the validator cell
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$isKeyRequired()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+\code{TRUE} if requires a key, \code{FALSE} otherwise
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getValidKeys"></a>}}
+\if{latex}{\out{\hypertarget{method-getValidKeys}{}}}
+\subsection{Method \code{getValidKeys()}}{
+Gives the list of valid keys for the validator cell
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$getValidKeys()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+the list of valid keys
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-isErrorIfInvalidKey"></a>}}
+\if{latex}{\out{\hypertarget{method-isErrorIfInvalidKey}{}}}
+\subsection{Method \code{isErrorIfInvalidKey()}}{
+Indicates if a report error will be given in case of invalid key
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$isErrorIfInvalidKey()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+\code{TRUE} if a report error will be given in case of invalid key, \code{FALSE} otherwise
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getDefaultKey"></a>}}
+\if{latex}{\out{\hypertarget{method-getDefaultKey}{}}}
+\subsection{Method \code{getDefaultKey()}}{
+Gets the default key
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$getDefaultKey()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+the default key
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-isExcludeHttpKeys"></a>}}
+\if{latex}{\out{\hypertarget{method-isExcludeHttpKeys}{}}}
+\subsection{Method \code{isExcludeHttpKeys()}}{
+Indicates if 'http' keys are excluded from the validation
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$isExcludeHttpKeys()}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{\code{TRUE}}}{if 'http' keys are excluded from the validation, \code{FALSE} otherwise}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-isMultiple"></a>}}
+\if{latex}{\out{\hypertarget{method-isMultiple}{}}}
+\subsection{Method \code{isMultiple()}}{
+indicates if multiple key-based components can be used within a same cell
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$isMultiple()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+\code{TRUE} if supporting multiple key-based components by cell, \code{FALSE} otherwise
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-validate"></a>}}
+\if{latex}{\out{\hypertarget{method-validate}{}}}
+\subsection{Method \code{validate()}}{
+Proceeds with syntactic validation for the cell considered
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$validate()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+an object of class \code{data.frame} including possible errors/warnings
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }

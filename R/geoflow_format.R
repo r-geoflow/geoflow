@@ -20,33 +20,21 @@
 #'   format$setDescription("CSV format")
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new)}}{
-#'    This method is used to instantiate a geoflow_format object
-#'  }
-#'  \item{\code{setKey(key)}}{
-#'    Set key
-#'  }
-#'  \item{\code{setName(name)}}{
-#'    Sets name 
-#'  }
-#'  \item{\code{setUri(uri)}}{
-#'    Sets URI
-#'  }
-#'  \item{\code{setDescription(description)}}{
-#'    Sets description
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_format <- R6Class("geoflow_format",
  public = list(
+   #'@field key format key
    key = NULL,
+   #'@field name key name
    name = NULL,
+   #'@field uri key URI
    uri = NULL,
+   #'@field description key description
    description = NULL,
+   
+   #'@description Initializes a \link{geoflow_format}
+   #'@param str character string to initialize object using key-based syntax
    initialize = function(str = NULL){
      if(!is.null(str)){
        format_kvp <- extract_kvp(str)
@@ -63,22 +51,26 @@ geoflow_format <- R6Class("geoflow_format",
      }
    },
    
-   #setKey
+   #'@description Sets format key
+   #'@param key key
    setKey = function(key){
      self$key <- key
    },
    
-   #setName
+   #'@description Sets format name
+   #'@param name name
    setName = function(name){
      self$name <- name
    },
    
-   #setUri
+   #'@description Sets format URI
+   #'@param uri URI
    setUri = function(uri){
      self$uri <- uri
    },
    
-   #setDescription
+   #'@description Sets format description
+   #'@param description description
    setDescription = function(description){
      self$description <- description
    }

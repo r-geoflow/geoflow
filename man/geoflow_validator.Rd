@@ -6,4 +6,94 @@
 \title{geoflow_validator}
 \description{
 geoflow_validator
+
+geoflow_validator
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{source}}{object of class \code{data.frame} handling metadata objects to validate}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_validator$new()}}
+\item \href{#method-validate_structure}{\code{geoflow_validator$validate_structure()}}
+\item \href{#method-validate_content}{\code{geoflow_validator$validate_content()}}
+\item \href{#method-clone}{\code{geoflow_validator$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a table validator for a given metadata model
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator$new(model, valid_columns, source)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{model}}{the data model name, eg. "entity", "contact"}
+
+\item{\code{valid_columns}}{a vector of valid columns for the data model}
+
+\item{\code{source}}{an object of class \code{data.frame} handling the contacts}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-validate_structure"></a>}}
+\if{latex}{\out{\hypertarget{method-validate_structure}{}}}
+\subsection{Method \code{validate_structure()}}{
+Validates a source table against a data model structure
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator$validate_structure()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+\code{TRUE} if valid, \code{FALSE} otherwise.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-validate_content"></a>}}
+\if{latex}{\out{\hypertarget{method-validate_content}{}}}
+\subsection{Method \code{validate_content()}}{
+Validates a source table using syntactic and content validation rules
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator$validate_content(raw = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{raw}}{indicates whether to return a \code{list} of \code{geoflow_validator_cell} objects or a \code{data.frame}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+a \code{list} of \code{geoflow_validator_cell} objects, or \code{data.frame}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }

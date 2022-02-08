@@ -21,69 +21,58 @@
 #'   provfile$addLogo("https://via.placeholder.com/300x150.png/09f/fff?text=geoflow")
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new()}}{
-#'    This method is used to instantiate a geoflow_profile object
-#'  }
-#'  \item{\code{setId(id)}}{
-#'    Set identifier
-#'  }
-#'  \item{\code{setName(name)}}{
-#'    Set name
-#'  }
-#'  \item{\code{setProject(project)}}{
-#'    Set project
-#'  }
-#'  \item{\code{setOrganization(organization)}}{
-#'    Set organization
-#'  }
-#'  \item{\code{addLogo(logo)}}{
-#'    Adds a logo
-#'  }
-#'  \item{\code{setMode(mode)}}{
-#'    Set mode
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_profile <- R6Class("geoflow_profile",
  public = list(
+   #'@field id profile id
    id = NULL,
+   #'@field name profile name
    name = NULL,
+   #'@field project profile project
    project = NULL,
+   #'@field organization profile organization
    organization = NULL,
+   #'@field logos profile logo(s)
    logos = list(),
+   #'@field mode mode of execution (Default is "raw")
    mode = "raw",
+   
+   #'@description Initializes an object of class \link{geoflow_profile}
    initialize = function(){},
    
-   #setId
+   #'@description Sets profile ID
+   #'@param id id
    setId = function(id){
       self$id <- id
    },
    
-   #setName
+   #'@description Sets profile name
+   #'@param name name
    setName = function(name){
       self$name <- name
    },
    
-   #setProject
+   #'@description Sets profile project
+   #'@param project project
    setProject = function(project){
      self$project <- project
    },
    
-   #setOrganization
+   #'@description Sets profile organization
+   #'@param organization organization
    setOrganization = function(organization){
      self$organization <- organization
    },
    
-   #addLogo
+   #'@description Adds a profile organization
+   #'@param logo logo
    addLogo = function(logo){
      self$logos <- c(self$logos, logo) 
    },
    
-   #setMode
+   #'@description Sets profile mode
+   #'@param mode profile mode
    setMode = function(mode){
       self$mode <- mode
    }

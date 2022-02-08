@@ -18,28 +18,20 @@
 #'   date$setValue(Sys.time())
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new()}}{
-#'    This method is used to instantiate a geoflow_date object
-#'  }
-#'  \item{\code{setKey(key)}}{
-#'    Set the key
-#'  }
-#'  \item{\code{setValue(value)}}{
-#'    Set the value
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_date <- R6Class("geoflow_date",
    public = list(
+     #'@field key date key. Default is "creation"
      key = "creation",
+     #'@field value date value. Default is generated with \code{Sys.time()}
      value = Sys.time(),
+     
+     #'@description Initializes a \link{geoflow_date}
      initialize = function(){},
      
-     #setKey
+     #'@description Sets the date key
+     #'@param key date key
      setKey = function(key){
        if(!is(key, "character")){
          stop("The key should be an object of class 'character")
@@ -47,7 +39,8 @@ geoflow_date <- R6Class("geoflow_date",
        self$key <- key
      },
      
-     #setValue
+     #'@description Sets the date value. The method will check validity of date value.
+     #'@param value date value
      setValue = function(value){
        if(is(value, "character")){
          value <- sanitize_date(value)

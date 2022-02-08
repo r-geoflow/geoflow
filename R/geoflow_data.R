@@ -11,108 +11,6 @@
 #' @return Object of \code{\link{R6Class}} for modelling a data object
 #' @format \code{\link{R6Class}} object.
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new(str)}}{
-#'    This method is used to instantiate a geoflow_data object
-#'  }
-#'  \item{\code{getAllowedSourceTypes()}}{
-#'    get the allowed source types
-#'  }
-#'  \item{\code{setSourceType(sourceType)}}{
-#'    The source type is a simplification of the data mime type and is used to identify the type of source
-#'    set for the data object. By default it is assumed to be "other" (undefined). The source types currently
-#'    allowed in geoflow can be listed with \code{$getAllowedSourcedTypes()}. Those are: "other", "shp" (for zipped
-#'    ESRI shapefiles), "dbtable", "dbview", "dbquery".
-#'  }
-#'  \item{\code{setSource(source)}}{
-#'    Set source, object of class \code{"character"} (single source), or \code{list}.
-#'    For spatial source, a single source will be used, while for sources of type 'other'
-#'    (eg PDF files), multiple sources can be specified
-#'  }
-#'  \item{\code{setSourcedZip(sourceZip)}}{
-#'    Sets whether a zipped version of the data file(s) should be created from source files. Default is \code{FALSE}
-#'  }
-#'  \item{\code{setSourceZipOnly(sourceZipOnly)}}{
-#'    Sets whether a zipped version of the data file(s) only should be created from source files. Default is \code{FALSE}
-#'  }
-#'  \item{setUpload(upload)}{
-#'    Set whether the source data should be uploaded to the sofware output declared in the geoflow
-#'    configuration or not. By default it is assumed that upload should be performed (upload \code{TRUE}).
-#'  }
-#'  \item{setUploadSource(uploadSource)}{
-#'    Set the source to upload in output software, alternative to the source. If leave empty, the source will be used
-#'    as uploadSource. A typical use case is when we want to get a CSV source to import in a database, and use the
-#'    dbtable (or view/query) as upload source for publication in software like geoserver.
-#'  }
-#'  \item{\code{getAllowedUploadTypes()}}{
-#'    get the allowed upload types
-#'  }
-#'  \item{\code{setUploadType(uploadType)}}{
-#'    The upload type is a simplification of the data mime type and is used to identify the type of data uploaded. 
-#'    By default it is assumed to be "other" (undefined). The upload types currently allowed in geoflow can be 
-#'    listed with \code{$getAllowedUploadTypes()}. Those are: "other", "shp" (for zipped ESRI shapefiles), "dbtable", 
-#'    "dbview", "dbquery".
-#'  }
-#'  \item{\code{setSql(sql)}}{
-#'    Sets SQL source. This is a convenience method for users that want to specify directly
-#'    a SQL source. This method is called internally when a source SQL file has been set using
-#'    \code{setSource}
-#'  }
-#'  \item{\code{setCqlFilter(cqlfilter)}}{
-#'    Sets a CQL filter. In case of spatial data, once the data is read by geoflow (during initialization phase),
-#'    the CQL filter will be applied to the data.
-#'  }
-#'  \item{\code{setWorkspace(software_type, workspace)}}{
-#'    Sets a workspace name, object of class \code{character}. A workspace must target a valid software type, object of
-#'    class \code{character}, to be declared as first argument of this function, assuming the corresponding software is
-#'    declared in the geoflow configuration.
-#'  }
-#'  \item{\code{setDatastore(datastore)}}{
-#'    Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action.
-#'  }
-#'  \item{\code{setLayername(layername)}}{
-#'    Sets a layername, object of class \code{character}. Used as target layer name for Geoserver action.
-#'  }
-#'  \item{\code{addStyle(style)}}{
-#'    Adds a style name, object of class \code{character}. Used as layer style name(s) for GeoServer action.
-#'  }
-#'  \item{\code{setParameter(name, fieldname, regexp, defaultvalue)}}{
-#'    Set virtual parameter definition for setting virtual SQL view parametized layers in Geoserver, when \code{uploadType} is
-#'    set to \code{dbquery}.The arguments here follow the definition of virtual parameters in GeoServer, ie a name (alias),
-#'    the corresponding field name in the DBMS, a regular expression for validation of parameter values (required to 
-#'    prevent SQL injection risks), and a default value.
-#'  }
-#'  \item{\code{setGeometryField(geometryField)}}{
-#'    Sets the name of the geometry field in the target GeoServer SQL view parametrized layer
-#'  }
-#'  \item{\code{setGeometryType(geometryType)}}{
-#'    Sets the geometry type in the target GeoServer SQL view parametrized layer
-#'  }
-#'  \item{\code{setAttributes(attributes)}}{
-#'    Sets attributes definition.
-#'  }
-#'  \item{\code{setVariables(variables)}}{
-#'    Sets variables definition.
-#'  }
-#'  \item{\code{setOgcDimension(name, values)}}{
-#'    Sets a ogc dimension (name and its values)
-#'  }
-#'  
-#'  \item{\code{addDimension(name, dimension)}}{
-#'    Add a dimension, object of class \code{geoflow_dimension}.
-#'  }
-#'  
-#'  \item{\code{addAction(action)}}{
-#'    Adds an entity local action to be run
-#'  }
-#'  \item{\code{checkSoftwareProperties(config)}}{
-#'    A function triggered when loading a data object to check eventual software dependent properties, to make sure
-#'    the corresponding software are declared in the config.
-#'  }
-#'  
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_data <- R6Class("geoflow_data",
@@ -126,34 +24,65 @@ geoflow_data <- R6Class("geoflow_data",
 
   ),
   public = list(
+    #'@field access accessor key for accessing sources. Default is 'default'
     access = "default",
+    #'@field source source
     source = NULL,
+    #'@field sourceSql sourceSql
     sourceSql = NULL,
+    #'@field sourceType source type
     sourceType = "other",
+    #'@field sourceZip create a zip for the sources
     sourceZip = FALSE,
+    #'@field sourceZipOnly create a zip only for the sources, remove source files
     sourceZipOnly = FALSE,
+    #'@field sql sql
     sql = NULL,
+    #'@field upload upload
     upload = TRUE,
+    #'@field uploadSource upload source name
     uploadSource = NULL,
+    #'@field uploadType upload type
     uploadType = "other",
+    #'@field cqlfilter CQL filter for filtering data
     cqlfilter = NULL,
+    #'@field features features
     features = NULL,
+    #'@field workspaces workspaces
     workspaces = list(),
+    #'@field datastore datastore
     datastore = NULL,
+    #'@field layername layer name
     layername = NULL,
+    #'@field styles styles
     styles = list(),
+    #'@field parameters parameters
     parameters = list(),
+    #'@field geometryField geometry field
     geometryField = NULL,
+    #'@field geometryType geometry type
     geometryType = NULL,
+    #'@field featureType feature type name
     featureType = NULL,
+    #'@field featureTypeObj feature type object
     featureTypeObj = NULL,
+    #'@field attributes attributes
     attributes = NULL,
+    #'@field variables variables
     variables = NULL,
+    #'@field ogc_dimensions OGC dimensions
     ogc_dimensions = list(),
+    #'@field dimensions dimensions
     dimensions = list(),
+    #'@field spatialRepresentationType spatial representation type eg. "vector", "grid"
     spatialRepresentationType = "vector",
+    #'@field actions local actions
     actions = list(),
+    #'@field run whether to run local actions
     run = TRUE,
+    
+    #'@description Initializes an object of class \link{geoflow_data}
+    #'@param str character string to initialize from, using key-based syntax
     initialize = function(str = NULL){
       if(!is.null(str)){
         data_props <-  extract_cell_components(sanitize_str(str))
@@ -400,22 +329,29 @@ geoflow_data <- R6Class("geoflow_data",
       }
     },
     
-    #getAllowedSourceValues
+    #'@description Get allowed source values
+    #'@return a vector of class \code{character}
     getAllowedSourceValues = function(){
       return(private$supportedAccessValues)
     },
     
-    #setAccess
+    #'@description Set accessor id. See \code{list_data_accessors()} for available accessors
+    #'@param access a data data accessor id
     setAccess = function(access){
       self$access <- access
     },
     
-    #getAllowedSourceTypes
+    #'@description Get allowed source types
+    #'@return a vector of class \code{character}
     getAllowedSourceTypes = function(){
       return(private$supportedSourceTypes)
     },
     
-    #setSourceType
+    #'@description Set the source type.
+    #' The source type is a simplification of the data mime type and is used to identify the type of source
+    #' set for the data object. By default it is assumed to be "other" (undefined). The source types currently
+    #' allowed in geoflow can be listed with \code{$getAllowedSourcedTypes()}.
+    #'@param sourceType source type
     setSourceType = function(sourceType){
       if(!(sourceType %in% private$supportedSourceTypes)){
         errMsg <- sprintf("Source type should be among values [%s]", paste0(private$supportedSourceTypes, collapse=","))
@@ -424,53 +360,72 @@ geoflow_data <- R6Class("geoflow_data",
       self$sourceType <- sourceType
     },
     
-    #getAllowedGeomPossibleNames
+    #'@description Get allowed Geometry possible names for coercing data to \pkg{sf} objects
+    #'@param list of geom possible names
     getAllowedGeomPossibleNames = function(){
       return(private$supportedGeomPossibleNames)
     },
     
-    #getAllowedXPossibleNames
+    #'@description Get allowed X possible names for coercing data to \pkg{sf} objects
+    #'@param list of X possible names
     getAllowedXPossibleNames = function(){
       return(private$supportedXPossibleNames)
     },
-    #getAllowedYPossibleNames
+    
+    #'@description Get allowed Y possible names for coercing data to \pkg{sf} objects
+    #'@param list of Y possible names
     getAllowedYPossibleNames = function(){
       return(private$supportedYPossibleNames)
     },
     
-    #setSource
+    #'@description Set source, object of class \code{"character"} (single source), or \code{list}.
+    #'    For spatial source, a single source will be used, while for sources of type 'other'
+    #'    (eg PDF files), multiple sources can be specified
+    #' @param source source
     setSource = function(source){
       if(!is(source, "list")) source <- list(source)
       self$source <- source
     },
     
-    #setSourceSql
+    #'@description This is a convenience method for users that want to specify directly
+    #'    a SQL source. This method is called internally when a source SQL file has been set using
+    #'    \code{setSource}
+    #'@param sourceSql a source SQL query
     setSourceSql = function(sourceSql){
       self$sourceSql <- sourceSql
     },
     
-    #setSourceZip
+    #'@description Sets whether a zipped version of the data file(s) should be created from source files. Default is \code{FALSE}
+    #'@param sourceZip zip sources, object of class \code{logical}
     setSourceZip = function(sourceZip){
       self$sourceZip <- sourceZip
     },
     
-    #setSourceZipOnly
+    #'@description Sets whether a zipped version of the data file(s) only should be created from source files. Default is \code{FALSE}
+    #'@param sourceZipOnly zip sources only, object of class \code{logical}
     setSourceZipOnly = function(sourceZipOnly){
       self$sourceZipOnly <- sourceZipOnly
     },
     
-    #setUploadSource
+    #'@description Set the source to upload in output software, alternative to the source. If leave empty, the source will be used
+    #'    as uploadSource. A typical use case is when we want to get a CSV source to import in a database, and use the
+    #'    dbtable (or view/query) as upload source for publication in software like geoserver.
+    #'@param uploadSource upload source
     setUploadSource = function(uploadSource){
       if(!is(uploadSource, "list")) uploadSource <- list(uploadSource)
       self$uploadSource <- uploadSource
     },
     
-    #getAllowedUploadTypes
+    #'@description Get allowed upload types
+    #'@return the list of allowed upload types
     getAllowedUploadTypes = function(){
       return(private$supportedUploadTypes)
     },
     
-    #setUploadType
+    #'@description The upload type is a simplification of the data mime type and is used to identify the type of data uploaded. 
+    #'    By default it is assumed to be "other" (undefined). The upload types currently allowed in geoflow can be 
+    #'    listed with \code{$getAllowedUploadTypes()}.
+    #'@param uploadType upload type
     setUploadType = function(uploadType){
       if(!(uploadType %in% private$supportedUploadTypes)){
         errMsg <- sprintf("Upload type should be among values [%s]", paste0(private$supportedUploadTypes, collapse=","))
@@ -479,47 +434,67 @@ geoflow_data <- R6Class("geoflow_data",
       self$uploadType <- uploadType
     },
     
-    #setUpload
+    #'@description Set whether the source data should be uploaded to the sofware output declared in the geoflow
+    #'    configuration or not. By default it is assumed that upload should be performed (upload \code{TRUE}).
+    #'@param upload upload
     setUpload = function(upload){
       self$upload <- upload
     },
     
-    #setSql
+    #'@description Sets SQL for publication purpose. 
+    #'@param sql sql
     setSql = function(sql){
       self$sql <- sql
     },
     
-    #setCqlFilter
+    #'@description Sets a CQL filter. In case of spatial data, once the data is read by geoflow (during initialization phase),
+    #' the CQL filter will be applied to the data.
+    #'@param cqlfilter CQL filter
     setCqlFilter = function(cqlfilter){
       self$cqlfilter <- cqlfilter
     },
 
-    #setFeatures
+    #'@description Set data features
+    #'@param features features
     setFeatures = function(features){
       self$features <- features
     },
         
-    #setWorkspace
+    #'@description Sets a workspace name, object of class \code{character}. A workspace must target a valid software type, object of
+    #'    class \code{character}, to be declared as first argument of this function, assuming the corresponding software is
+    #'    declared in the geoflow configuration.
+    #'@param software_type sotware type where the workspace is identifier
+    #'@param workspace workspace name
     setWorkspace = function(software_type, workspace){
       self$workspaces[[software_type]] <- workspace
     },
     
-    #setDatastore
+    #'@description Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action.
+    #'@param datastore datastore
     setDatastore = function(datastore){
       self$datastore <- datastore
     },
     
-    #setLayername
+    #'@description Sets a layername, object of class \code{character}. Used as target layer name for Geoserver action.
+    #'@param layername layername
     setLayername = function(layername){
       self$layername <- layername
     },
     
-    #addStyle
+    #'@description Adds a style name, object of class \code{character}. Used as layer style name(s) for GeoServer action.
+    #'@param style style
     addStyle = function(style){
       self$styles <- c(self$styles, style)
     },
     
-    #setParameter
+    #'@description Set virtual parameter definition for setting virtual SQL view parametized layers in Geoserver, when \code{uploadType} is
+    #'    set to \code{dbquery}.The arguments here follow the definition of virtual parameters in GeoServer, ie a name (alias),
+    #'    the corresponding field name in the DBMS, a regular expression for validation of parameter values (required to 
+    #'    prevent SQL injection risks), and a default value.
+    #'@param name name
+    #'@param fieldname fieldname
+    #'@param regexp regexp
+    #'@param defaultvalue default value
     setParameter = function(name, fieldname, regexp, defaultvalue){
       self$parameters[[name]] <- list(
         name = name,
@@ -529,47 +504,58 @@ geoflow_data <- R6Class("geoflow_data",
       )
     },
     
-    #setGeometryField
+    #'@description Sets the name of the geometry field in the target GeoServer SQL view parametrized layer
+    #'@param geometryField geometry field
     setGeometryField = function(geometryField){
       self$geometryField <- geometryField
     },
     
-    #setGeometryType
+    #'@description Sets the name of the geometry field in the target GeoServer SQL view parametrized layer
+    #'@param geometryType geometry type
     setGeometryType = function(geometryType){
       self$geometryType <- geometryType
     },
     
-    #setFeatureType
+    #'@description Sets a feature type (ID) to link data with a dictionnary
+    #'@param featureType feature type name
     setFeatureType = function(featureType){
       self$featureType = featureType
     },
     
-    #setFeatureTypeObj
+    #'@description Sets a feature type object
+    #'@param featureTypeObj feature type object of class \code{geoflow_featuretype}
     setFeatureTypeObj = function(featureTypeObj){
       self$featureTypeObj = featureTypeObj
     },
     
-    #setAttributes
+    #'@description Set attributes, as simple way to describe attributes without binding to a proper \link{geoflow_dictionnary}.
+    #'@param attributes attributes
     setAttributes = function(attributes){
       self$attributes <- attributes
     },
     
-    #setVariables
+    #'@description Set variables, as simple way to describe variables without binding to a proper \link{geoflow_dictionnary}.
+    #'@param variables variables
     setVariables = function(variables){
       self$variables <- variables
     },
     
-    #addAction
+    #'@description Adds a local action
+    #'@param action object of class \link{geoflow_action}
     addAction = function(action){
       self$actions[[length(self$actions)+1]] <- action
     },
     
-    #setOgcDimensions
+    #'@description Set OGC dimensions
+    #'@param name dimension name
+    #'@param values dimension values
     setOgcDimensions = function(name, values){
       self$ogc_dimensions[[name]] <- values
     },
     
-    #addDimension
+    #'@description Adds a dimension
+    #'@param name dimension name
+    #'@param dimension object of class \link{geoflow_dimension}
     addDimension = function(name,dimension){
       if(!is(dimension, "geoflow_dimension")){
         stop("The argument should be an object of class 'geoflow_dimension'")
@@ -577,12 +563,14 @@ geoflow_data <- R6Class("geoflow_data",
       self$dimensions[[name]] <- dimension
     },
     
-    #getAllowedSpatialRepresentationTypes
+    #'@description Get allowed spatial representation types, typically "vector" and "grid"
+    #'@return an object of class \code{character}
     getAllowedSpatialRepresentationTypes = function(){
       return(private$supportedSpatialRepresentationTypes)
     },
     
-    #setSpatialRepresentationType
+    #'@description Set spatial representation type for the data considered
+    #'@param spatialRepresentationType spatial representation type
     setSpatialRepresentationType = function(spatialRepresentationType){
       if(!(spatialRepresentationType %in% private$supportedSpatialRepresentationTypes)){
         errMsg <- sprintf("Spatial representation type should be among values [%s]", paste0(private$supportedSpatialRepresentationTypes, collapse=","))
@@ -591,7 +579,9 @@ geoflow_data <- R6Class("geoflow_data",
       self$spatialRepresentationType <- spatialRepresentationType
     },
     
-    #checkSoftwareProperties
+    #'@description A function triggered when loading a data object to check eventual software dependent properties, to make sure
+    #'    the corresponding software are declared in the config.
+    #'@param config geoflow config object
     checkSoftwareProperties = function(config){
       
       #check workspace related software

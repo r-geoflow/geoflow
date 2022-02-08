@@ -16,36 +16,6 @@ This class models a data accessor to be used by geoflow
 \details{
 geoflow_data_accessor
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new(id, software_type, definition, packages download)}}{
-   This method is used to instantiate a geoflow_data_accessor object
- }
- \item{\code{setId(id)}}{
-   Set id
- }
- \item{\code{setSoftwareType(software_type)}}{
-   Set software type
- }
- \item{\code{setDefinition(definition)}}{
-   Set definition
- }
- \item{\code{setPackages(packages)}}{
-   Set packages
- }
- \item{\code{setDownload(download)}}{
-   Set download handler (a function with arguments \code{file} and \code{path})
- }
- \item{\code{checkPackages()}}{
-   Check that all packages required for the software are available, if yes,
-   import them in the R session, and return a \code{data.frame} giving the 
-   packages names and version. If one or more packages are unavailable,
-   an error is thrown and user informed of the missing packages.
- }
-}
-}
-
 \examples{
 \dontrun{
   access <- geoflow_data_accessor$new(
@@ -53,7 +23,7 @@ geoflow_data_accessor
    software_type = "some-software",
    definition = "definition",
    packages = list(),
-   handler = function(file, path){}
+   download = function(file, path){}
  )
 }
 
@@ -64,3 +34,190 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \keyword{access}
 \keyword{accessor}
 \keyword{data}
+\section{Super class}{
+\code{\link[geoflow:geoflowLogger]{geoflow::geoflowLogger}} -> \code{geoflow_data_accessor}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{id}}{accessor ID}
+
+\item{\code{software_type}}{accessor software type}
+
+\item{\code{definition}}{accessor definition}
+
+\item{\code{packages}}{list of packages required for the accessor}
+
+\item{\code{download}}{a download function handler}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_data_accessor$new()}}
+\item \href{#method-setId}{\code{geoflow_data_accessor$setId()}}
+\item \href{#method-setSoftwareType}{\code{geoflow_data_accessor$setSoftwareType()}}
+\item \href{#method-setPackages}{\code{geoflow_data_accessor$setPackages()}}
+\item \href{#method-setDefinition}{\code{geoflow_data_accessor$setDefinition()}}
+\item \href{#method-setDownload}{\code{geoflow_data_accessor$setDownload()}}
+\item \href{#method-checkPackages}{\code{geoflow_data_accessor$checkPackages()}}
+\item \href{#method-clone}{\code{geoflow_data_accessor$clone()}}
+}
+}
+\if{html}{
+\out{<details open ><summary>Inherited methods</summary>}
+\itemize{
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="ERROR">}\href{../../geoflow/html/geoflowLogger.html#method-ERROR}{\code{geoflow::geoflowLogger$ERROR()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="INFO">}\href{../../geoflow/html/geoflowLogger.html#method-INFO}{\code{geoflow::geoflowLogger$INFO()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="WARN">}\href{../../geoflow/html/geoflowLogger.html#method-WARN}{\code{geoflow::geoflowLogger$WARN()}}\out{</span>}
+}
+\out{</details>}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes the data ccessor
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$new(
+  id = NULL,
+  software_type = NULL,
+  definition,
+  packages = list(),
+  download
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{accessor ID}
+
+\item{\code{software_type}}{accessor software type}
+
+\item{\code{definition}}{accessor definition}
+
+\item{\code{packages}}{list of packages required for the accessor}
+
+\item{\code{download}}{download function handler}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setId"></a>}}
+\if{latex}{\out{\hypertarget{method-setId}{}}}
+\subsection{Method \code{setId()}}{
+Sets accessor ID
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$setId(id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{accessor ID to set}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSoftwareType"></a>}}
+\if{latex}{\out{\hypertarget{method-setSoftwareType}{}}}
+\subsection{Method \code{setSoftwareType()}}{
+Sets software type
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$setSoftwareType(software_type)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{software_type}}{software type}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-setPackages}{}}}
+\subsection{Method \code{setPackages()}}{
+Sets list of packages required for the accessor
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$setPackages(packages)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{packages}}{a vecto of package names}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDefinition"></a>}}
+\if{latex}{\out{\hypertarget{method-setDefinition}{}}}
+\subsection{Method \code{setDefinition()}}{
+Sets accessor definition
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$setDefinition(definition)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{definition}}{accessor definition}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDownload"></a>}}
+\if{latex}{\out{\hypertarget{method-setDownload}{}}}
+\subsection{Method \code{setDownload()}}{
+Set download handler (a function with arguments \code{file} and \code{path})
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$setDownload(download)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{download}}{an object of class \code{function}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-checkPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-checkPackages}{}}}
+\subsection{Method \code{checkPackages()}}{
+Check that all packages required for the software are available, if yes,
+   import them in the R session, and return a \code{data.frame} giving the 
+   packages names and version. If one or more packages are unavailable,
+   an error is thrown and user informed of the missing packages.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$checkPackages()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

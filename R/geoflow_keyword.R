@@ -18,27 +18,31 @@
 #'   kwd$setUri("http://somelink/keyword")
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new)}}{
-#'    This method is used to instantiate a geoflow_keyword object
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_keyword <- R6Class("geoflow_keyword",
  public = list(
+   #'@field name keyword
    name = NULL,
+   #'@field uri keyword uri
    uri = NULL,
-   initialize = function(){},
    
-   #setName
+   #'@description Initializes a \link{geoflow_keyword}
+   #'@param name keyword name
+   #'@param uri keyword URI
+   initialize = function(name = NULL, uri = NULL){
+      self$name <- name
+      self$uri <- uri
+   },
+   
+   #'@description Sets keyword
+   #'@param name keyword name
    setName = function(name){
      self$name <- name
    },
    
-   #setUri
+   #'@description Sets keyword URI
+   #'@param uri keyword URI
    setUri = function(uri){
      self$uri <- uri
    }

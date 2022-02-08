@@ -16,27 +16,6 @@ This class models a format
 \details{
 geoflow_format
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new)}}{
-   This method is used to instantiate a geoflow_format object
- }
- \item{\code{setKey(key)}}{
-   Set key
- }
- \item{\code{setName(name)}}{
-   Sets name 
- }
- \item{\code{setUri(uri)}}{
-   Sets URI
- }
- \item{\code{setDescription(description)}}{
-   Sets description
- }
-}
-}
-
 \examples{
 \dontrun{
   format <- geoflow_format$new()
@@ -53,3 +32,130 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \keyword{format,}
 \keyword{mime,}
 \keyword{mimetype}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{key}}{format key}
+
+\item{\code{name}}{key name}
+
+\item{\code{uri}}{key URI}
+
+\item{\code{description}}{key description}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_format$new()}}
+\item \href{#method-setKey}{\code{geoflow_format$setKey()}}
+\item \href{#method-setName}{\code{geoflow_format$setName()}}
+\item \href{#method-setUri}{\code{geoflow_format$setUri()}}
+\item \href{#method-setDescription}{\code{geoflow_format$setDescription()}}
+\item \href{#method-clone}{\code{geoflow_format$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a \link{geoflow_format}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$new(str = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{str}}{character string to initialize object using key-based syntax}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\subsection{Method \code{setKey()}}{
+Sets format key
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$setKey(key)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{key}}{key}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-setName}{}}}
+\subsection{Method \code{setName()}}{
+Sets format name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$setName(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setUri"></a>}}
+\if{latex}{\out{\hypertarget{method-setUri}{}}}
+\subsection{Method \code{setUri()}}{
+Sets format URI
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$setUri(uri)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{uri}}{URI}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDescription"></a>}}
+\if{latex}{\out{\hypertarget{method-setDescription}{}}}
+\subsection{Method \code{setDescription()}}{
+Sets format description
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$setDescription(description)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{description}}{description}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

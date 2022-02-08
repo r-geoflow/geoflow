@@ -16,21 +16,6 @@ This class models an action to be executed by geoflow
 \details{
 geoflow_action
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new(id, scope, types, target, target_dir, def, fun, script, options)}}{
-   This method is used to instantiate a geoflow_action object
- }
- \item{\code{checkPackages()}}{
-   Check that all packages required for the action are available, if yes,
-   import them in the R session, and return a \code{data.frame} giving the 
-   packages names and version. If one or more packages are unavailable,
-   an error is thrown and user informed of the missing packages.
- }
-}
-}
-
 \examples{
 \dontrun{
   action <- geoflow_action$new(
@@ -56,3 +41,198 @@ geoflow_action
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{action}
+\section{Super class}{
+\code{\link[geoflow:geoflowLogger]{geoflow::geoflowLogger}} -> \code{geoflow_action}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{id}}{action ID}
+
+\item{\code{scope}}{action scope}
+
+\item{\code{types}}{types of action}
+
+\item{\code{def}}{the action definition}
+
+\item{\code{target}}{the action target}
+
+\item{\code{target_dir}}{the action target directory}
+
+\item{\code{packages}}{list of packages required to perform the action}
+
+\item{\code{pid_generator}}{a name referencing the PID generator (if existing)}
+
+\item{\code{pid_types}}{types of PIDs to generate}
+
+\item{\code{generic_uploader}}{whether the action is a generic uploader or not.}
+
+\item{\code{fun}}{a function for the action}
+
+\item{\code{script}}{a script for the action}
+
+\item{\code{options}}{action options}
+
+\item{\code{available_options}}{a list of available options for the actions}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_action$new()}}
+\item \href{#method-checkPackages}{\code{geoflow_action$checkPackages()}}
+\item \href{#method-isPIDGenerator}{\code{geoflow_action$isPIDGenerator()}}
+\item \href{#method-exportPIDs}{\code{geoflow_action$exportPIDs()}}
+\item \href{#method-isGenericUploader}{\code{geoflow_action$isGenericUploader()}}
+\item \href{#method-clone}{\code{geoflow_action$clone()}}
+}
+}
+\if{html}{
+\out{<details open ><summary>Inherited methods</summary>}
+\itemize{
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="ERROR">}\href{../../geoflow/html/geoflowLogger.html#method-ERROR}{\code{geoflow::geoflowLogger$ERROR()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="INFO">}\href{../../geoflow/html/geoflowLogger.html#method-INFO}{\code{geoflow::geoflowLogger$INFO()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="WARN">}\href{../../geoflow/html/geoflowLogger.html#method-WARN}{\code{geoflow::geoflowLogger$WARN()}}\out{</span>}
+}
+\out{</details>}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initialize a \link{geoflow_action}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$new(
+  id,
+  scope = "global",
+  types = list(),
+  def = "",
+  target = NA,
+  target_dir = NA,
+  packages = list(),
+  pid_generator = NULL,
+  pid_types = list(),
+  generic_uploader = FALSE,
+  fun = NULL,
+  script = NULL,
+  options = list(),
+  available_options = list()
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{action id}
+
+\item{\code{scope}}{action scope "global" or "local"}
+
+\item{\code{types}}{action types}
+
+\item{\code{def}}{action definition}
+
+\item{\code{target}}{the action target, e.g. "entity"}
+
+\item{\code{target_dir}}{the action target directory}
+
+\item{\code{packages}}{list of packages required to perform the action}
+
+\item{\code{pid_generator}}{a name referencing the PID generator (if existing)}
+
+\item{\code{pid_types}}{types of PIDs to generate by the action}
+
+\item{\code{generic_uploader}}{whether the action is a generic uploader or not.}
+
+\item{\code{fun}}{action function}
+
+\item{\code{script}}{action script}
+
+\item{\code{options}}{action options}
+
+\item{\code{available_options}}{available options for the action}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-checkPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-checkPackages}{}}}
+\subsection{Method \code{checkPackages()}}{
+Check that all packages required for the action are available, if yes,
+   import them in the R session, and return a \code{data.frame} giving the 
+   packages names and version. If one or more packages are unavailable,
+   an error is thrown and user informed of the missing packages.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$checkPackages()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-isPIDGenerator"></a>}}
+\if{latex}{\out{\hypertarget{method-isPIDGenerator}{}}}
+\subsection{Method \code{isPIDGenerator()}}{
+Indicates if the action is PID generator
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$isPIDGenerator()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+\code{TRUE} if the action is a PID generator, \code{FALSE} otherwise
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-exportPIDs"></a>}}
+\if{latex}{\out{\hypertarget{method-exportPIDs}{}}}
+\subsection{Method \code{exportPIDs()}}{
+Exports PIDs for the action. This function will export the PIDs in several ways. First, a simple CSV file 
+including the list of PIDs for each entity, and associated status (eg. draft/release) for the given PID resource. In 
+addition, for each metadata entities file, an equivalent metadata table will be produced as CSV to handle entities 
+enriched with the PID (added in the "Identifier" column), ready for use as workflow entities input. In addition, a new
+configuration file will be produced with name "<pid_generator>_geoflow_config_for_publication.json" turned as ready for
+publishing resources with PIDs (eg. publishing deposits in Zenodo).
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$exportPIDs(config, entities)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{a \pkg{geoflow} configuration}
+
+\item{\code{entities}}{one or more objects of class \link{geoflow_entity}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-isGenericUploader"></a>}}
+\if{latex}{\out{\hypertarget{method-isGenericUploader}{}}}
+\subsection{Method \code{isGenericUploader()}}{
+Indicates if the action is a generic uploader
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$isGenericUploader()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+\code{TRUE} if the action is a generic uploader, \code{FALSE} otherwise
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

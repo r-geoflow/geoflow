@@ -20,28 +20,31 @@
 #'   )
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new(id, def, fun)}}{
-#'    This method is used to instantiate a geoflow_register object
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_register <- R6Class("geoflow_register",
   public = list(
+    #'@field id register id
     id = NULL,
+    #'@field def register def
     def = NULL,
+    #'@field fun register function
     fun = NULL,
+    #'@field data register data
     data = NULL,
+    
+    #'@description Initializes an object of class \link{geoflow_register}
+    #'@param id id
+    #'@param def def
+    #'@param fun fun
     initialize = function(id, def, fun){
       self$id <- id
       self$def <- def
       self$fun <- fun
     },
     
-    #check
+    #'@description Fetchs the register data using the register function
+    #'@param config a geoflow config object
     fetch = function(config = NULL){
       fetched <- self$fun(config)
       if(inherits(fetched, "try-error")){
@@ -51,7 +54,10 @@ geoflow_register <- R6Class("geoflow_register",
       self$data <- fetched
     },
     
-    #check
+    #'@description Checks the register data structure. The structure of the \code{data.frame} returned
+    #' by the register function should be of 4 columns including "code", "uri", "label", "definition". 
+    #' In case the data structure is not valid, the function throws an error.
+    #' @param data a register data structure
     check = function(data){
       mandatory_columns <- c("code", "uri", "label", "definition")
       if(!all(mandatory_columns %in% colnames(data))){

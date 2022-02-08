@@ -11,24 +11,23 @@
 #' @return Object of \code{\link{R6Class}} for modelling a dictionary feature type
 #' @format \code{\link{R6Class}} object.
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new()}}{
-#'    This method is used to instantiate a geoflow_featuretype object
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_featuretype <- R6Class("geoflow_featuretype",
   public = list(
+    #'@field id feature type ID
     id = NULL,
+    #'@field members feature type members
     members = list(),
+    
+    #'@description Initializes a \link{geoflow_featuretype}
+    #'@param id id
     initialize = function(id){
       self$id = id
     },
 
-    #addMember
+    #'@description Adds a member
+    #'@param fm object of class \link{geoflow_featuremember}
     addMember = function(fm){
       if(!is(fm, "geoflow_featuremember")){
         stop("The feature member should be an object of class 'geoflow_featuremember'")
@@ -38,12 +37,15 @@ geoflow_featuretype <- R6Class("geoflow_featuretype",
       }
     },
     
-    #getMembers
+    #'@description Get members
+    #'@return the list of members, as objects of class \link{geoflow_featuremember}
     getMembers = function(){
       return(self$members)
     },
     
-    #getMemberById
+    #'@description Get member by ID
+    #'@param id id
+    #'@return an object of class \link{geoflow_featuremember}, \code{NULL} otherwise
     getMemberById = function(id){
       out <- NULL
       if(length(self$members)>0){

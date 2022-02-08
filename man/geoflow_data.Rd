@@ -16,111 +16,755 @@ This class models a data object
 \details{
 geoflow_data
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new(str)}}{
-   This method is used to instantiate a geoflow_data object
- }
- \item{\code{getAllowedSourceTypes()}}{
-   get the allowed source types
- }
- \item{\code{setSourceType(sourceType)}}{
-   The source type is a simplification of the data mime type and is used to identify the type of source
-   set for the data object. By default it is assumed to be "other" (undefined). The source types currently
-   allowed in geoflow can be listed with \code{$getAllowedSourcedTypes()}. Those are: "other", "shp" (for zipped
-   ESRI shapefiles), "dbtable", "dbview", "dbquery".
- }
- \item{\code{setSource(source)}}{
-   Set source, object of class \code{"character"} (single source), or \code{list}.
-   For spatial source, a single source will be used, while for sources of type 'other'
-   (eg PDF files), multiple sources can be specified
- }
- \item{\code{setSourcedZip(sourceZip)}}{
-   Sets whether a zipped version of the data file(s) should be created from source files. Default is \code{FALSE}
- }
- \item{\code{setSourceZipOnly(sourceZipOnly)}}{
-   Sets whether a zipped version of the data file(s) only should be created from source files. Default is \code{FALSE}
- }
- \item{setUpload(upload)}{
-   Set whether the source data should be uploaded to the sofware output declared in the geoflow
-   configuration or not. By default it is assumed that upload should be performed (upload \code{TRUE}).
- }
- \item{setUploadSource(uploadSource)}{
-   Set the source to upload in output software, alternative to the source. If leave empty, the source will be used
-   as uploadSource. A typical use case is when we want to get a CSV source to import in a database, and use the
-   dbtable (or view/query) as upload source for publication in software like geoserver.
- }
- \item{\code{getAllowedUploadTypes()}}{
-   get the allowed upload types
- }
- \item{\code{setUploadType(uploadType)}}{
-   The upload type is a simplification of the data mime type and is used to identify the type of data uploaded. 
-   By default it is assumed to be "other" (undefined). The upload types currently allowed in geoflow can be 
-   listed with \code{$getAllowedUploadTypes()}. Those are: "other", "shp" (for zipped ESRI shapefiles), "dbtable", 
-   "dbview", "dbquery".
- }
- \item{\code{setSql(sql)}}{
-   Sets SQL source. This is a convenience method for users that want to specify directly
-   a SQL source. This method is called internally when a source SQL file has been set using
-   \code{setSource}
- }
- \item{\code{setCqlFilter(cqlfilter)}}{
-   Sets a CQL filter. In case of spatial data, once the data is read by geoflow (during initialization phase),
-   the CQL filter will be applied to the data.
- }
- \item{\code{setWorkspace(software_type, workspace)}}{
-   Sets a workspace name, object of class \code{character}. A workspace must target a valid software type, object of
-   class \code{character}, to be declared as first argument of this function, assuming the corresponding software is
-   declared in the geoflow configuration.
- }
- \item{\code{setDatastore(datastore)}}{
-   Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action.
- }
- \item{\code{setLayername(layername)}}{
-   Sets a layername, object of class \code{character}. Used as target layer name for Geoserver action.
- }
- \item{\code{addStyle(style)}}{
-   Adds a style name, object of class \code{character}. Used as layer style name(s) for GeoServer action.
- }
- \item{\code{setParameter(name, fieldname, regexp, defaultvalue)}}{
-   Set virtual parameter definition for setting virtual SQL view parametized layers in Geoserver, when \code{uploadType} is
-   set to \code{dbquery}.The arguments here follow the definition of virtual parameters in GeoServer, ie a name (alias),
-   the corresponding field name in the DBMS, a regular expression for validation of parameter values (required to 
-   prevent SQL injection risks), and a default value.
- }
- \item{\code{setGeometryField(geometryField)}}{
-   Sets the name of the geometry field in the target GeoServer SQL view parametrized layer
- }
- \item{\code{setGeometryType(geometryType)}}{
-   Sets the geometry type in the target GeoServer SQL view parametrized layer
- }
- \item{\code{setAttributes(attributes)}}{
-   Sets attributes definition.
- }
- \item{\code{setVariables(variables)}}{
-   Sets variables definition.
- }
- \item{\code{setOgcDimension(name, values)}}{
-   Sets a ogc dimension (name and its values)
- }
- 
- \item{\code{addDimension(name, dimension)}}{
-   Add a dimension, object of class \code{geoflow_dimension}.
- }
- 
- \item{\code{addAction(action)}}{
-   Adds an entity local action to be run
- }
- \item{\code{checkSoftwareProperties(config)}}{
-   A function triggered when loading a data object to check eventual software dependent properties, to make sure
-   the corresponding software are declared in the config.
- }
- 
-}
-}
-
 \author{
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{data}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{access}}{accessor key for accessing sources. Default is 'default'}
+
+\item{\code{source}}{source}
+
+\item{\code{sourceSql}}{sourceSql}
+
+\item{\code{sourceType}}{source type}
+
+\item{\code{sourceZip}}{create a zip for the sources}
+
+\item{\code{sourceZipOnly}}{create a zip only for the sources, remove source files}
+
+\item{\code{sql}}{sql}
+
+\item{\code{upload}}{upload}
+
+\item{\code{uploadSource}}{upload source name}
+
+\item{\code{uploadType}}{upload type}
+
+\item{\code{cqlfilter}}{CQL filter for filtering data}
+
+\item{\code{features}}{features}
+
+\item{\code{workspaces}}{workspaces}
+
+\item{\code{datastore}}{datastore}
+
+\item{\code{layername}}{layer name}
+
+\item{\code{styles}}{styles}
+
+\item{\code{parameters}}{parameters}
+
+\item{\code{geometryField}}{geometry field}
+
+\item{\code{geometryType}}{geometry type}
+
+\item{\code{featureType}}{feature type name}
+
+\item{\code{featureTypeObj}}{feature type object}
+
+\item{\code{attributes}}{attributes}
+
+\item{\code{variables}}{variables}
+
+\item{\code{ogc_dimensions}}{OGC dimensions}
+
+\item{\code{dimensions}}{dimensions}
+
+\item{\code{spatialRepresentationType}}{spatial representation type eg. "vector", "grid"}
+
+\item{\code{actions}}{local actions}
+
+\item{\code{run}}{whether to run local actions}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_data$new()}}
+\item \href{#method-getAllowedSourceValues}{\code{geoflow_data$getAllowedSourceValues()}}
+\item \href{#method-setAccess}{\code{geoflow_data$setAccess()}}
+\item \href{#method-getAllowedSourceTypes}{\code{geoflow_data$getAllowedSourceTypes()}}
+\item \href{#method-setSourceType}{\code{geoflow_data$setSourceType()}}
+\item \href{#method-getAllowedGeomPossibleNames}{\code{geoflow_data$getAllowedGeomPossibleNames()}}
+\item \href{#method-getAllowedXPossibleNames}{\code{geoflow_data$getAllowedXPossibleNames()}}
+\item \href{#method-getAllowedYPossibleNames}{\code{geoflow_data$getAllowedYPossibleNames()}}
+\item \href{#method-setSource}{\code{geoflow_data$setSource()}}
+\item \href{#method-setSourceSql}{\code{geoflow_data$setSourceSql()}}
+\item \href{#method-setSourceZip}{\code{geoflow_data$setSourceZip()}}
+\item \href{#method-setSourceZipOnly}{\code{geoflow_data$setSourceZipOnly()}}
+\item \href{#method-setUploadSource}{\code{geoflow_data$setUploadSource()}}
+\item \href{#method-getAllowedUploadTypes}{\code{geoflow_data$getAllowedUploadTypes()}}
+\item \href{#method-setUploadType}{\code{geoflow_data$setUploadType()}}
+\item \href{#method-setUpload}{\code{geoflow_data$setUpload()}}
+\item \href{#method-setSql}{\code{geoflow_data$setSql()}}
+\item \href{#method-setCqlFilter}{\code{geoflow_data$setCqlFilter()}}
+\item \href{#method-setFeatures}{\code{geoflow_data$setFeatures()}}
+\item \href{#method-setWorkspace}{\code{geoflow_data$setWorkspace()}}
+\item \href{#method-setDatastore}{\code{geoflow_data$setDatastore()}}
+\item \href{#method-setLayername}{\code{geoflow_data$setLayername()}}
+\item \href{#method-addStyle}{\code{geoflow_data$addStyle()}}
+\item \href{#method-setParameter}{\code{geoflow_data$setParameter()}}
+\item \href{#method-setGeometryField}{\code{geoflow_data$setGeometryField()}}
+\item \href{#method-setGeometryType}{\code{geoflow_data$setGeometryType()}}
+\item \href{#method-setFeatureType}{\code{geoflow_data$setFeatureType()}}
+\item \href{#method-setFeatureTypeObj}{\code{geoflow_data$setFeatureTypeObj()}}
+\item \href{#method-setAttributes}{\code{geoflow_data$setAttributes()}}
+\item \href{#method-setVariables}{\code{geoflow_data$setVariables()}}
+\item \href{#method-addAction}{\code{geoflow_data$addAction()}}
+\item \href{#method-setOgcDimensions}{\code{geoflow_data$setOgcDimensions()}}
+\item \href{#method-addDimension}{\code{geoflow_data$addDimension()}}
+\item \href{#method-getAllowedSpatialRepresentationTypes}{\code{geoflow_data$getAllowedSpatialRepresentationTypes()}}
+\item \href{#method-setSpatialRepresentationType}{\code{geoflow_data$setSpatialRepresentationType()}}
+\item \href{#method-checkSoftwareProperties}{\code{geoflow_data$checkSoftwareProperties()}}
+\item \href{#method-clone}{\code{geoflow_data$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes an object of class \link{geoflow_data}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$new(str = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{str}}{character string to initialize from, using key-based syntax}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getAllowedSourceValues"></a>}}
+\if{latex}{\out{\hypertarget{method-getAllowedSourceValues}{}}}
+\subsection{Method \code{getAllowedSourceValues()}}{
+Get allowed source values
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getAllowedSourceValues()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+a vector of class \code{character}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setAccess"></a>}}
+\if{latex}{\out{\hypertarget{method-setAccess}{}}}
+\subsection{Method \code{setAccess()}}{
+Set accessor id. See \code{list_data_accessors()} for available accessors
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setAccess(access)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{access}}{a data data accessor id}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getAllowedSourceTypes"></a>}}
+\if{latex}{\out{\hypertarget{method-getAllowedSourceTypes}{}}}
+\subsection{Method \code{getAllowedSourceTypes()}}{
+Get allowed source types
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getAllowedSourceTypes()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+a vector of class \code{character}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSourceType"></a>}}
+\if{latex}{\out{\hypertarget{method-setSourceType}{}}}
+\subsection{Method \code{setSourceType()}}{
+Set the source type.
+The source type is a simplification of the data mime type and is used to identify the type of source
+set for the data object. By default it is assumed to be "other" (undefined). The source types currently
+allowed in geoflow can be listed with \code{$getAllowedSourcedTypes()}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSourceType(sourceType)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sourceType}}{source type}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getAllowedGeomPossibleNames"></a>}}
+\if{latex}{\out{\hypertarget{method-getAllowedGeomPossibleNames}{}}}
+\subsection{Method \code{getAllowedGeomPossibleNames()}}{
+Get allowed Geometry possible names for coercing data to \pkg{sf} objects
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getAllowedGeomPossibleNames()}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{list}}{of geom possible names}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getAllowedXPossibleNames"></a>}}
+\if{latex}{\out{\hypertarget{method-getAllowedXPossibleNames}{}}}
+\subsection{Method \code{getAllowedXPossibleNames()}}{
+Get allowed X possible names for coercing data to \pkg{sf} objects
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getAllowedXPossibleNames()}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{list}}{of X possible names}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getAllowedYPossibleNames"></a>}}
+\if{latex}{\out{\hypertarget{method-getAllowedYPossibleNames}{}}}
+\subsection{Method \code{getAllowedYPossibleNames()}}{
+Get allowed Y possible names for coercing data to \pkg{sf} objects
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getAllowedYPossibleNames()}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{list}}{of Y possible names}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSource"></a>}}
+\if{latex}{\out{\hypertarget{method-setSource}{}}}
+\subsection{Method \code{setSource()}}{
+Set source, object of class \code{"character"} (single source), or \code{list}.
+   For spatial source, a single source will be used, while for sources of type 'other'
+   (eg PDF files), multiple sources can be specified
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSource(source)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{source}}{source}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSourceSql"></a>}}
+\if{latex}{\out{\hypertarget{method-setSourceSql}{}}}
+\subsection{Method \code{setSourceSql()}}{
+This is a convenience method for users that want to specify directly
+   a SQL source. This method is called internally when a source SQL file has been set using
+   \code{setSource}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSourceSql(sourceSql)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sourceSql}}{a source SQL query}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSourceZip"></a>}}
+\if{latex}{\out{\hypertarget{method-setSourceZip}{}}}
+\subsection{Method \code{setSourceZip()}}{
+Sets whether a zipped version of the data file(s) should be created from source files. Default is \code{FALSE}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSourceZip(sourceZip)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sourceZip}}{zip sources, object of class \code{logical}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSourceZipOnly"></a>}}
+\if{latex}{\out{\hypertarget{method-setSourceZipOnly}{}}}
+\subsection{Method \code{setSourceZipOnly()}}{
+Sets whether a zipped version of the data file(s) only should be created from source files. Default is \code{FALSE}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSourceZipOnly(sourceZipOnly)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sourceZipOnly}}{zip sources only, object of class \code{logical}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setUploadSource"></a>}}
+\if{latex}{\out{\hypertarget{method-setUploadSource}{}}}
+\subsection{Method \code{setUploadSource()}}{
+Set the source to upload in output software, alternative to the source. If leave empty, the source will be used
+   as uploadSource. A typical use case is when we want to get a CSV source to import in a database, and use the
+   dbtable (or view/query) as upload source for publication in software like geoserver.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setUploadSource(uploadSource)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{uploadSource}}{upload source}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getAllowedUploadTypes"></a>}}
+\if{latex}{\out{\hypertarget{method-getAllowedUploadTypes}{}}}
+\subsection{Method \code{getAllowedUploadTypes()}}{
+Get allowed upload types
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getAllowedUploadTypes()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+the list of allowed upload types
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setUploadType"></a>}}
+\if{latex}{\out{\hypertarget{method-setUploadType}{}}}
+\subsection{Method \code{setUploadType()}}{
+The upload type is a simplification of the data mime type and is used to identify the type of data uploaded. 
+   By default it is assumed to be "other" (undefined). The upload types currently allowed in geoflow can be 
+   listed with \code{$getAllowedUploadTypes()}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setUploadType(uploadType)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{uploadType}}{upload type}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setUpload"></a>}}
+\if{latex}{\out{\hypertarget{method-setUpload}{}}}
+\subsection{Method \code{setUpload()}}{
+Set whether the source data should be uploaded to the sofware output declared in the geoflow
+   configuration or not. By default it is assumed that upload should be performed (upload \code{TRUE}).
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setUpload(upload)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{upload}}{upload}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSql"></a>}}
+\if{latex}{\out{\hypertarget{method-setSql}{}}}
+\subsection{Method \code{setSql()}}{
+Sets SQL for publication purpose.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSql(sql)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sql}}{sql}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setCqlFilter"></a>}}
+\if{latex}{\out{\hypertarget{method-setCqlFilter}{}}}
+\subsection{Method \code{setCqlFilter()}}{
+Sets a CQL filter. In case of spatial data, once the data is read by geoflow (during initialization phase),
+the CQL filter will be applied to the data.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setCqlFilter(cqlfilter)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{cqlfilter}}{CQL filter}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setFeatures"></a>}}
+\if{latex}{\out{\hypertarget{method-setFeatures}{}}}
+\subsection{Method \code{setFeatures()}}{
+Set data features
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setFeatures(features)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{features}}{features}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setWorkspace"></a>}}
+\if{latex}{\out{\hypertarget{method-setWorkspace}{}}}
+\subsection{Method \code{setWorkspace()}}{
+Sets a workspace name, object of class \code{character}. A workspace must target a valid software type, object of
+   class \code{character}, to be declared as first argument of this function, assuming the corresponding software is
+   declared in the geoflow configuration.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setWorkspace(software_type, workspace)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{software_type}}{sotware type where the workspace is identifier}
+
+\item{\code{workspace}}{workspace name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDatastore"></a>}}
+\if{latex}{\out{\hypertarget{method-setDatastore}{}}}
+\subsection{Method \code{setDatastore()}}{
+Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setDatastore(datastore)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{datastore}}{datastore}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setLayername"></a>}}
+\if{latex}{\out{\hypertarget{method-setLayername}{}}}
+\subsection{Method \code{setLayername()}}{
+Sets a layername, object of class \code{character}. Used as target layer name for Geoserver action.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setLayername(layername)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{layername}}{layername}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addStyle"></a>}}
+\if{latex}{\out{\hypertarget{method-addStyle}{}}}
+\subsection{Method \code{addStyle()}}{
+Adds a style name, object of class \code{character}. Used as layer style name(s) for GeoServer action.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$addStyle(style)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{style}}{style}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setParameter"></a>}}
+\if{latex}{\out{\hypertarget{method-setParameter}{}}}
+\subsection{Method \code{setParameter()}}{
+Set virtual parameter definition for setting virtual SQL view parametized layers in Geoserver, when \code{uploadType} is
+   set to \code{dbquery}.The arguments here follow the definition of virtual parameters in GeoServer, ie a name (alias),
+   the corresponding field name in the DBMS, a regular expression for validation of parameter values (required to 
+   prevent SQL injection risks), and a default value.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setParameter(name, fieldname, regexp, defaultvalue)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+
+\item{\code{fieldname}}{fieldname}
+
+\item{\code{regexp}}{regexp}
+
+\item{\code{defaultvalue}}{default value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setGeometryField"></a>}}
+\if{latex}{\out{\hypertarget{method-setGeometryField}{}}}
+\subsection{Method \code{setGeometryField()}}{
+Sets the name of the geometry field in the target GeoServer SQL view parametrized layer
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setGeometryField(geometryField)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{geometryField}}{geometry field}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setGeometryType"></a>}}
+\if{latex}{\out{\hypertarget{method-setGeometryType}{}}}
+\subsection{Method \code{setGeometryType()}}{
+Sets the name of the geometry field in the target GeoServer SQL view parametrized layer
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setGeometryType(geometryType)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{geometryType}}{geometry type}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setFeatureType"></a>}}
+\if{latex}{\out{\hypertarget{method-setFeatureType}{}}}
+\subsection{Method \code{setFeatureType()}}{
+Sets a feature type (ID) to link data with a dictionnary
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setFeatureType(featureType)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{featureType}}{feature type name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setFeatureTypeObj"></a>}}
+\if{latex}{\out{\hypertarget{method-setFeatureTypeObj}{}}}
+\subsection{Method \code{setFeatureTypeObj()}}{
+Sets a feature type object
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setFeatureTypeObj(featureTypeObj)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{featureTypeObj}}{feature type object of class \code{geoflow_featuretype}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setAttributes"></a>}}
+\if{latex}{\out{\hypertarget{method-setAttributes}{}}}
+\subsection{Method \code{setAttributes()}}{
+Set attributes, as simple way to describe attributes without binding to a proper \link{geoflow_dictionnary}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setAttributes(attributes)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{attributes}}{attributes}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setVariables"></a>}}
+\if{latex}{\out{\hypertarget{method-setVariables}{}}}
+\subsection{Method \code{setVariables()}}{
+Set variables, as simple way to describe variables without binding to a proper \link{geoflow_dictionnary}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setVariables(variables)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{variables}}{variables}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addAction"></a>}}
+\if{latex}{\out{\hypertarget{method-addAction}{}}}
+\subsection{Method \code{addAction()}}{
+Adds a local action
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$addAction(action)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{action}}{object of class \link{geoflow_action}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setOgcDimensions"></a>}}
+\if{latex}{\out{\hypertarget{method-setOgcDimensions}{}}}
+\subsection{Method \code{setOgcDimensions()}}{
+Set OGC dimensions
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setOgcDimensions(name, values)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{dimension name}
+
+\item{\code{values}}{dimension values}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addDimension"></a>}}
+\if{latex}{\out{\hypertarget{method-addDimension}{}}}
+\subsection{Method \code{addDimension()}}{
+Adds a dimension
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$addDimension(name, dimension)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{dimension name}
+
+\item{\code{dimension}}{object of class \link{geoflow_dimension}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getAllowedSpatialRepresentationTypes"></a>}}
+\if{latex}{\out{\hypertarget{method-getAllowedSpatialRepresentationTypes}{}}}
+\subsection{Method \code{getAllowedSpatialRepresentationTypes()}}{
+Get allowed spatial representation types, typically "vector" and "grid"
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getAllowedSpatialRepresentationTypes()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+an object of class \code{character}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSpatialRepresentationType"></a>}}
+\if{latex}{\out{\hypertarget{method-setSpatialRepresentationType}{}}}
+\subsection{Method \code{setSpatialRepresentationType()}}{
+Set spatial representation type for the data considered
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSpatialRepresentationType(spatialRepresentationType)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{spatialRepresentationType}}{spatial representation type}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-checkSoftwareProperties"></a>}}
+\if{latex}{\out{\hypertarget{method-checkSoftwareProperties}{}}}
+\subsection{Method \code{checkSoftwareProperties()}}{
+A function triggered when loading a data object to check eventual software dependent properties, to make sure
+   the corresponding software are declared in the config.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$checkSoftwareProperties(config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

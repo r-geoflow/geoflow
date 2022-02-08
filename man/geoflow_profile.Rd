@@ -16,33 +16,6 @@ This class models an profile
 \details{
 geoflow_profile
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new()}}{
-   This method is used to instantiate a geoflow_profile object
- }
- \item{\code{setId(id)}}{
-   Set identifier
- }
- \item{\code{setName(name)}}{
-   Set name
- }
- \item{\code{setProject(project)}}{
-   Set project
- }
- \item{\code{setOrganization(organization)}}{
-   Set organization
- }
- \item{\code{addLogo(logo)}}{
-   Adds a logo
- }
- \item{\code{setMode(mode)}}{
-   Set mode
- }
-}
-}
-
 \examples{
 \dontrun{
   profile <- geoflow_profile$new()
@@ -58,3 +31,163 @@ geoflow_profile
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{profile}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{id}}{profile id}
+
+\item{\code{name}}{profile name}
+
+\item{\code{project}}{profile project}
+
+\item{\code{organization}}{profile organization}
+
+\item{\code{logos}}{profile logo(s)}
+
+\item{\code{mode}}{mode of execution (Default is "raw")}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_profile$new()}}
+\item \href{#method-setId}{\code{geoflow_profile$setId()}}
+\item \href{#method-setName}{\code{geoflow_profile$setName()}}
+\item \href{#method-setProject}{\code{geoflow_profile$setProject()}}
+\item \href{#method-setOrganization}{\code{geoflow_profile$setOrganization()}}
+\item \href{#method-addLogo}{\code{geoflow_profile$addLogo()}}
+\item \href{#method-setMode}{\code{geoflow_profile$setMode()}}
+\item \href{#method-clone}{\code{geoflow_profile$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes an object of class \link{geoflow_profile}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_profile$new()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setId"></a>}}
+\if{latex}{\out{\hypertarget{method-setId}{}}}
+\subsection{Method \code{setId()}}{
+Sets profile ID
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_profile$setId(id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{id}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-setName}{}}}
+\subsection{Method \code{setName()}}{
+Sets profile name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_profile$setName(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setProject"></a>}}
+\if{latex}{\out{\hypertarget{method-setProject}{}}}
+\subsection{Method \code{setProject()}}{
+Sets profile project
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_profile$setProject(project)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{project}}{project}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setOrganization"></a>}}
+\if{latex}{\out{\hypertarget{method-setOrganization}{}}}
+\subsection{Method \code{setOrganization()}}{
+Sets profile organization
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_profile$setOrganization(organization)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{organization}}{organization}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addLogo"></a>}}
+\if{latex}{\out{\hypertarget{method-addLogo}{}}}
+\subsection{Method \code{addLogo()}}{
+Adds a profile organization
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_profile$addLogo(logo)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{logo}}{logo}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setMode"></a>}}
+\if{latex}{\out{\hypertarget{method-setMode}{}}}
+\subsection{Method \code{setMode()}}{
+Sets profile mode
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_profile$setMode(mode)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{mode}}{profile mode}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_profile$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

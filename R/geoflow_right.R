@@ -18,25 +18,17 @@
 #'   right$setValue("No restrictions")
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new(str)}}{
-#'    This method is used to instantiate a geoflow_right object
-#'  }
-#'  \item{\code{setKey(key)}}{
-#'    Set the key
-#'  }
-#'  \item{\code{setValue(value)}}{
-#'    Set the value
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_right <- R6Class("geoflow_right",
   public = list(
+    #'@field key right key
     key = NULL,
+    #'@field value right value
     value = NULL,
+    
+    #'@description Initializes an object of class \link{geoflow_right}
+    #'@param str character string to initialize from using key-based syntax
     initialize = function(str = NULL){
       if(!is.null(str)){
         right <- extract_kvp(str)
@@ -45,12 +37,14 @@ geoflow_right <- R6Class("geoflow_right",
       }
     },
     
-    #setKey
+    #'@description Sets key
+    #'@param key key
     setKey = function(key){
       self$key <- key
     },
     
-    #setValue
+    #'@description Sets value
+    #'@param value value
     setValue = function(value){
       self$value <- value
     }

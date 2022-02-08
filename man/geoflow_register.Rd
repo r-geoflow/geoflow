@@ -16,15 +16,6 @@ This class models a register to be used by geoflow
 \details{
 geoflow_register
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new(id, def, fun)}}{
-   This method is used to instantiate a geoflow_register object
- }
-}
-}
-
 \examples{
 \dontrun{
   register <- geoflow_register$new(
@@ -39,3 +30,100 @@ geoflow_register
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{registers}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{id}}{register id}
+
+\item{\code{def}}{register def}
+
+\item{\code{fun}}{register function}
+
+\item{\code{data}}{register data}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_register$new()}}
+\item \href{#method-fetch}{\code{geoflow_register$fetch()}}
+\item \href{#method-check}{\code{geoflow_register$check()}}
+\item \href{#method-clone}{\code{geoflow_register$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes an object of class \link{geoflow_register}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_register$new(id, def, fun)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{id}
+
+\item{\code{def}}{def}
+
+\item{\code{fun}}{fun}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-fetch"></a>}}
+\if{latex}{\out{\hypertarget{method-fetch}{}}}
+\subsection{Method \code{fetch()}}{
+Fetchs the register data using the register function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_register$fetch(config = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{a geoflow config object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-check"></a>}}
+\if{latex}{\out{\hypertarget{method-check}{}}}
+\subsection{Method \code{check()}}{
+Checks the register data structure. The structure of the \code{data.frame} returned
+by the register function should be of 4 columns including "code", "uri", "label", "definition". 
+In case the data structure is not valid, the function throws an error.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_register$check(data)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{data}}{a register data structure}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_register$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

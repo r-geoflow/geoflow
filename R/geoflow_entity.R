@@ -11,133 +11,6 @@
 #' @return Object of \code{\link{R6Class}} for modelling a entity object
 #' @format \code{\link{R6Class}} object.
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new()}}{
-#'    This method is used to instantiate a geoflow_entity object
-#'  }
-#'  \item{\code{getAllowedKeyValuesFor(field)}}{
-#'    Utility used internally by \pkg{geoflow} to check eligible key values for a given field.
-#'  }
-#'  \item{\code{setIdentifier(key, id)}}{
-#'    Set an identifier given a key. Default key is "id", but others can be specified, eg "doi".
-#'  }
-#'  \item{\code{addDate(dateType, date)}}{
-#'    Add a date object of class \code{Date} or \code{POSIXt}, with a date type, object of class \code{character}.
-#'  }
-#'  \item{\code{setLanguage(language)}}{
-#'    Set the language used for the entity description (metadata). Default is "eng".
-#'  }
-#'  \item{\code{writeDataResource(obj,type)}}{
-#'    Write sp file in data,zip and load data features.
-#'  }
-#'  \item{\code{setType(key, type)}}{
-#'    Set the type of description. By default a generic type (key = "generic") is defined to "dataset", and
-#'    will be used as default type for actions that perform metadata production / publication.
-#'  }
-#'  \item{\code{setTitle(key, title)}}{
-#'    Set entity title. Allowed key values are 'title', 'alternative'
-#'  }
-#'  \item{\code{setDescription(key, description)}}{
-#'    Set entity description. Allowed key values are 'abstract', 'purpose', 'info', 'project'
-#'  }
-#'  \item{\code{addSubject(subject)}}{
-#'    Add a subject, object of class \code{geoflow_subject}.
-#'  }
-#'  \item{\code{addContact(contact)}}{
-#'    Add a contact, object of class \code{geoflow_contact}
-#'  }
-#'  \item{\code{addRelation(relation)}}{
-#'    Add a relation, object of class \code{geoflow_relation}
-#'  }
-#'  \item{\code{addRight(right)}}{
-#'    Add a right, object of class \code{geoflow_right}
-#'  }
-#'  \item{\code{setSpatialExtent(wkt,bbox,data,crs)}}{
-#'    Set spatial extent. Various ways can be used to set the spatial extent 1) with a WKT string,
-#'    2) with a bbox, object of class \code{matrix}, or 3) specifying a data object (from \pkg{sf}).
-#'    The \code{crs} (coordinate reference system) should be specified with the crs SRID (number).
-#'    The spatial extent is not necessarily a bounding box but can be one or more geometries.
-#'  }
-#'  \item{\code{setSpatialBbox(wkt,bbox,data,crs)}}{
-#'    Set spatial bbox. Various ways can be used to set the spatial extent 1) with a WKT string,
-#'    2) with a bbox, object of class \code{matrix}, or 3) specifying a data object (from \pkg{sf}).
-#'    The \code{crs} (coordinate reference system) should be specified with the crs SRID (number).
-#'  }
-#'  \item{\code{setSrid(srid)}}{
-#'    Set the SRID
-#'  }
-#'  \item{\code{setTemporalExtent(str)}}{
-#'    Set the temporal extent from a string representation (object of class \code{character}) of
-#'    an ISO date / datetime (timestamp) or interval.
-#'  }
-#'  \item{\code{setProvenance(provenance)}}{
-#'    Set the provenance as object of class \code{geoflow_provenance}.
-#'  }
-#'  \item{\code{setData(data)}}{
-#'    Set the related data object of class \code{geoflow_data}
-#'  }
-#'  \item{\code{getEntityJobDirname()}}{
-#'    Get the directory name that will be created for this entity. The name will generally be the same as the
-#'    entity identifier. In case entity is identified with a DOI, '/' (slash) will be replaced by '_' (underscore) to 
-#'    make sure directory is created.
-#'  }
-#'  \item{\code{getEntityJobDirPath(config, jobdir)}}{
-#'    Returns the full path of the entity job directory. In the job directory, all entities subdirs will be created 
-#'    within a 'entities' directory.
-#'  }
-#'  \item{\code{prepareEntityJobDir(config, jobdir)}}{
-#'    Function called internally by \pkg{geoflow} that creates the entity directory and relevant sub-directories.
-#'    The default sub-directories will include 'data' and 'metadata'. Other sub-directories may be created depnding 
-#'    on the actions enabled in the workflow (and if their target directory is different from 'data'/'metadata').
-#'  }
-#'  \item{\code{copyDataToJobDir(config, jobdir)}}{
-#'    This function will look at data object associated to the entity (previously set with \code{setData}),
-#'    and will try to (download)/copy the data source to the geoflow job directory.
-#'  }
-#'  \item{\code{enrichWithFeatures(config)}}{
-#'    This function will enrich the entity with data features, but trying to read the spatial data (eg shapefile,
-#'    sql query - if a database input software is declared in the geoflow config). This method will overwrite 
-#'    spatial metadata such as the bounding box and temporal extent. Note that the user spatial extent is not overwriten
-#'    since it may content finer geometries than a bounding box
-#'  }
-#'  \item{\code{prepareFeaturesToUpload(config)}}{
-#'    This function will 1)cheak (in case of upload is requested) if the type of source and upload are both different and files formats(csv,shp,gpkg). 
-#'    and 2)process automatically to conversion from source to upload type.
-#'  }
-#'  \item{\code{enrichWithRelations(config)}}{
-#'    This function that will enrich the entity with relations. At now this is essentially related to adding 
-#'    relations if a Geoserver (geosapi) publishing action is enabled in which case this function will add 1) 
-#'    a thumbnail link built from OGC WMS service, 2) a WMS protocol relation, 3) WFS data protocols in common 
-#'    formats (GML, GeoJSON, ESRI Shapefile).
-#'  }
-#'  \item{\code{enrichWithSubjects(config)}}{
-#'    This function is expected to enrich entities with subjects. Related to data vocabularies / thesauri / ontologies.
-#'    NOT YET IMPLEMENTED
-#'  }
-#'  \item{\code{enrichWithFormats(config)}}{
-#'    This function is expected to enrich entities with formats. Related to data vocabularies / thesauri / ontologies.
-#'    NOT YET IMPLEMENTED
-#'  }
-#'  \item{\code{getContacts(pretty)}}{
-#'    Get the list of entity contacts. By default, a list of \code{geoflow_contact} will be returned. To
-#'    return the list of entity contacts as \code{data.frame}, set \code{pretty = TRUE}.
-#'  }
-#'  \item{\code{getRelations(pretty)}}{
-#'    Get the list of entity relations. By default, a list of \code{geoflow_relation} will be returned. To
-#'    return the list of entity relations as \code{data.frame}, set \code{pretty = TRUE}.
-#'  }
-#'  \item{\code{getSubjects(pretty)}}{
-#'    Get the list of entity subjects. By default, a list of \code{geoflow_subjects} will be returned. To
-#'    return the list of entity subjects as \code{data.frame}, set \code{pretty = TRUE}.
-#'  }
-#'  \item{\code{setStatus(system, status)}}{
-#'    Set a simple status either "draft" or "published". This method is required to deal with 
-#'    systems that manage DOIs, such as Zenodo (with \pkg{zen4R}) or Dataverse (with \pkg{atom4R})
-#'    publishing actions (Used internally by \pkg{geoflow}).
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_entity <- R6Class("geoflow_entity",
@@ -152,36 +25,61 @@ geoflow_entity <- R6Class("geoflow_entity",
     ) 
   ),
   public = list(
+    #'@field identifiers entity identifiers
     identifiers = list(),
+    #'@field dates entity dates
     dates = list(),
+    #'@field language entity language
     language = "eng",
+    #'@field types entity types
     types = list(generic = "dataset"),
+    #'@field titles entity titles
     titles = list(),
+    #'@field descriptions entity descriptions
     descriptions = list(),
+    #'@field subjects entity subjects
     subjects = list(),
+    #'@field formats entity formats
     formats = list(),
+    #'@field contacts entity contacts
     contacts = list(),
+    #'@field relations entity relations
     relations = list(),
+    #'@field rights entity rights
     rights = list(),
+    #'@field spatial_extent spatial extent
     spatial_extent = NULL,
+    #'@field spatial_bbox spatial bounding box
     spatial_bbox = NULL,
+    #'@field srid entity srid
     srid = NULL,
+    #'@field temporal_extent entity temporal extent
     temporal_extent = NULL,
+    #'@field provenance entity provenance
     provenance = NULL,
+    #'@field data entity data
     data = NULL,
+    #'@field status entity status
     status = list(),
+    #'@field resources entity resources
     resources = list(),
+    
+    #'@description Initializes an object of class \link{geoflow_entity}
     initialize = function(){
     },
     
-    #getAllowedKeyValuesFor
+    #'@description Retrieves keys allowed for a given tabular field name. eg. "Identifier"
+    #'@param field field name
+    #'@return the list of valid keys for the field considered
     getAllowedKeyValuesFor = function(field){
       clazz <- eval(parse(text = paste0("geoflow_validator_entity_",field)))
       clazz_obj <- clazz$new(0,0,"")
       return(clazz_obj$getValidKeys())
     },
     
-    #setIdentifier
+    #'@description Set an identifier given a key. Default key is "id", but others can be specified, eg "doi".
+    #'@param key identifier key. Default is "id"
+    #'@param id identifier value
     setIdentifier = function(key = "id", id){
       if(!key %in% self$getAllowedKeyValuesFor("Identifier")){
         stop(sprintf("Identifier Key should be among the following allowed keys",
@@ -190,7 +88,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$identifiers[[key]] <- id
     },
     
-    #addDate
+    #'@description Adds a date
+    #'@param dateType date type, object of class \code{character}
+    #'@param date date, object of class \code{Date} or \code{POSIXt}
     addDate = function(dateType, date){
       date_obj <- geoflow_date$new()
       date_obj$setKey(dateType)
@@ -198,13 +98,16 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$dates[[length(self$dates)+1]] <- date_obj
     },
     
-    #setLanguage
+    #'@description Set the language used for the entity description (metadata). Default is "eng".
+    #'@param language language
     setLanguage = function(language){
       self$language <- language
     },
     
-    #writeDataResource
-    #TODO to review in line with 'writeWorkflowJobDataResource'
+    #'@description writes a data resource. Deprecrated Note: TODO to review in line with 'writeWorkflowJobDataResource
+    #'@param obj object
+    #'@param resourcename resource name
+    #'@param type type of resosurce
     writeDataResource = function(obj=NULL, resourcename, type="shp"){
       if(is.null(obj)) obj=self$data$features
       resourcename_parts <- unlist(strsplit(resourcename, "\\.(?=[^\\.]+$)", perl=TRUE))
@@ -219,12 +122,17 @@ geoflow_entity <- R6Class("geoflow_entity",
       )
     },
     
-    #setType
+    #'@description Set the type of description. By default a generic type (key = "generic") is defined to "dataset", and
+    #'    will be used as default type for actions that perform metadata production / publication.
+    #'@param key type key. Default is "generic"
+    #'@param type type value
     setType = function(key = "generic", type){
       self$types[[key]] <- type
     },
     
-    #setTitle
+    #'@description Sets title
+    #'@param key title key. Default is "title"
+    #'@param title title value
     setTitle = function(key = "title", title){
       if(!key %in% self$getAllowedKeyValuesFor("Title")){
         stop(sprintf("Title Key should be among the following allowed keys",
@@ -233,7 +141,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$titles[[key]] <- title
     },
     
-    #setDescription
+    #'@description Sets description
+    #'@param key description key. Default is "abstract"
+    #'@param description description value
     setDescription = function(key, description){
       if(!key %in% self$getAllowedKeyValuesFor("Description")){
         stop(sprintf("Description Key should be among the following allowed keys",
@@ -242,7 +152,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$descriptions[[key]] <- description
     },
     
-    #addSubject
+    #'@description Adds a subject
+    #'@param subject object of class \link{geoflow_subject}
     addSubject = function(subject){
       if(!is(subject, "geoflow_subject")){
         stop("The argument should be an object of class 'geoflow_subject'")
@@ -250,7 +161,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$subjects <- c(self$subjects, subject)
     },
     
-    #addFormat
+    #'@description Adds a format
+    #'@param format object of class \link{geoflow_format}
     addFormat = function(format){
       if(!is(format, "geoflow_format")){
         stop("The argument should be an object of class 'geoflow_format'")
@@ -258,7 +170,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$formats <- c(self$formats, format)
     },
     
-    #addContact
+    #'@description Adds a contact
+    #'@param contact object of class \link{geoflow_contact}
     addContact = function(contact){
       if(!is(contact, "geoflow_contact")){
         stop("The argument should be an object of class 'geoflow_contact'")
@@ -266,7 +179,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$contacts <- c(self$contacts, contact)
     },
     
-    #addRelation
+    #'@description Adds a relation
+    #'@param relation object of class \link{geoflow_relation}
     addRelation = function(relation){
       if(!is(relation, "geoflow_relation")){
         stop("The argument should be an object of class 'geoflow_relation'")
@@ -274,7 +188,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$relations <- c(self$relations, relation)
     },
     
-    #addRight
+    #'@description Adds a right
+    #'@param right object of class \link{geoflow_right}
     addRight = function(right){
       if(!is(right, "geoflow_right")){
         stop("The argument should be an object of class 'geoflow_right'")
@@ -282,7 +197,14 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$rights <- c(self$rights, right)
     },
     
-    #setSpatialExtent (method call from handler, but not from enrichWithFeatures)
+    #'@description Set spatial extent. Various ways can be used to set the spatial extent 1) with a WKT string,
+    #'    2) with a bbox, object of class \code{matrix}, or 3) specifying a data object (from \pkg{sf}).
+    #'    The \code{crs} (coordinate reference system) should be specified with the crs SRID (number).
+    #'    The spatial extent is not necessarily a bounding box but can be one or more geometries.
+    #'@param wkt a WKT string
+    #'@param bbox a bbox 
+    #'@param data an object of class \pkg{sf} 
+    #'@param crs crs
     setSpatialExtent = function(wkt = NULL, bbox = NULL, data = NULL, crs = NA){
       if(is.null(wkt) & is.null(bbox) & is.null(data)){
         stop("At least one of the arguments 'wkt' (WKT string) or 'bbox' should be provided!")
@@ -302,7 +224,13 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$setSpatialBbox(wkt, bbox, data, crs)
     },
     
-    #setSpatialBbox  (method call from handler in setSpatialExtent, and from enrichWithFeatures)
+    #'@description Set spatial bbox. Various ways can be used to set the spatial extent 1) with a WKT string,
+    #'    2) with a bbox, object of class \code{matrix}, or 3) specifying a data object (from \pkg{sf}).
+    #'    The \code{crs} (coordinate reference system) should be specified with the crs SRID (number).
+    #'@param wkt a WKT string
+    #'@param bbox a bbox 
+    #'@param data an object of class \pkg{sf} 
+    #'@param crs crs
     setSpatialBbox = function(wkt = NULL, bbox = NULL, data = NULL, crs = NA){
       if(is.null(wkt) & is.null(bbox) & is.null(data)){
         stop("At least one of the arguments 'wkt' (WKT string) or 'bbox' should be provided!")
@@ -324,12 +252,14 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$spatial_bbox <- spatial_bbox
     },
     
-    #setSrid
+    #'@description Sets entity SRID
+    #'@param srid srid
     setSrid = function(srid){
       self$srid <- srid
     },
     
-    #setTemporalExtent
+    #'@description Sets temporal extent. The temporal extent can be a year, date instant or interval
+    #'@param str object of class \code{numeric} (case of year) or \code{character}
     setTemporalExtent = function(str){
       if(is.null(str)){
         self$temporal_extent = NULL
@@ -355,7 +285,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
     },
     
-    #setProvenance
+    #'@description Sets entity provenance
+    #'@param provenance object of class \link{geoflow_provenance}
     setProvenance = function(provenance){
       if(!is(provenance, "geoflow_provenance")){
         stop("The provenance should be an object of class 'geoflow_provenance'")
@@ -363,7 +294,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$provenance <- provenance
     },
     
-    #setData
+    #'@description Sets entity data object
+    #'@param data object of class \link{geoflow_data}
     setData = function(data){
       if(!is(data,"geoflow_data")){
         stop("Data should be an object of class 'geoflow_data'")
@@ -371,21 +303,30 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$data <- data
     },
     
-    #getEntityJobDirname
+    #'@description Gets entity job directory name. In case entity is identified with a DOI, the '/' (slash) 
+    #'will be replaced by '_' (underscore) to make sure directory is created.
+    #'@return get the name of entity job directory that will be created for the entity
     getEntityJobDirname = function(){
       id <- self$identifiers[["id"]]
       id <- gsub("/","_", id)
       return(id)
     },
     
-    #getEntityJobDirPath
+    #'@description Gets entity job directory path. In the job directory, all entities subdirs will be created within a 'entities' directory.
+    #'@param config geoflow configuration object
+    #'@param jobdir relative path of the job directory
+    #'@return the entity job directory path
     getEntityJobDirPath = function(config, jobdir = NULL){
       if(is.null(jobdir)) jobdir <- config$job
       path <- file.path(jobdir, "entities", self$getEntityJobDirname())
       return(path)
     },
     
-    #prepareEntityJobDir
+    #'@description Function called internally by \pkg{geoflow} that creates the entity directory and relevant sub-directories.
+    #'    The default sub-directories will include 'data' and 'metadata'. Other sub-directories may be created depnding 
+    #'    on the actions enabled in the workflow (and if their target directory is different from 'data'/'metadata').
+    #'@param config geoflow config object
+    #'@param jobdir relative path of the job directory
     prepareEntityJobDir = function(config, jobdir = NULL){
       if(is.null(jobdir)) jobdir <- config$job
       #create entity jobdir
@@ -406,7 +347,10 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
     },
     
-    #copyDataToJobDir
+    #'@description This function will look at data object associated to the entity (previously set with \code{setData}),
+    #'    and will try to (download)/copy the data source to the geoflow job directory.
+    #'@param config geoflow config object
+    #'@param jobdir relative path of the job directory
     copyDataToJobDir = function(config, jobdir = NULL){
       
       if(is.null(jobdir)) jobdir <- config$job
@@ -552,7 +496,12 @@ geoflow_entity <- R6Class("geoflow_entity",
       
     },
     
-    #enrichWithFeatures
+    #'@description This function will enrich the entity with data features, but trying to read the spatial data (eg shapefile,
+    #'    sql query - if a database input software is declared in the geoflow config). This method will overwrite 
+    #'    spatial metadata such as the bounding box and temporal extent. Note that the user spatial extent is not overwriten
+    #'    since it may content finer geometries than a bounding box
+    #'@param config geoflow config object
+    #'@param jobdir relative path of the job directory
     enrichWithFeatures = function(config, jobdir = NULL){
       
       if(is.null(jobdir)) jobdir <- config$job
@@ -922,7 +871,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       
     },
     
-    #prepareFeaturesToUpload
+    #'@description This function will 1)cheak (in case of upload is requested) if the type of source and upload are both different 
+    #'and files formats(csv,shp,gpkg) and 2)process automatically to conversion from source to upload type.
+    #'@param config geoflow config object
     prepareFeaturesToUpload = function(config) {
       types_with_file<-c("csv","shp","gpkg")
       
@@ -952,7 +903,11 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
     },
     
-    #enrichWithRelations
+    #'@description This function that will enrich the entity with relations. At now this is essentially related to adding 
+    #'    relations if a Geoserver (geosapi) publishing action is enabled in which case this function will add 1) 
+    #'    a thumbnail link built from OGC WMS service, 2) a WMS protocol relation, 3) WFS data protocols in common 
+    #'    formats (GML, GeoJSON, ESRI Shapefile).
+    #'@param config geoflow config object
     enrichWithRelations = function(config){
       geosapi_action <- NULL
       actions <- list()
@@ -1025,8 +980,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
     },
     
-    #enrichWithSubjects
-    #If no subject specify in Subjects, automatically add keyword from dictionary to 'theme' category
+    #'@description Enrichs the entity with subjects. If no subject specify in Subjects, 
+    #'automatically add keyword from dictionary to 'theme' category
+    #'@param config geoflow config object
     enrichWithSubjects = function(config){
       if(length(self$subjects)==0){
         #List all columns of data features
@@ -1080,7 +1036,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
     },
     
-    #enrichWithFormats
+    #'@description Enrichs the entity with formats
+    #'@param config geoflow config object
     enrichWithFormats = function(config){
       
       formats<-sapply(self$formats, function(x) x$key)
@@ -1103,7 +1060,8 @@ geoflow_entity <- R6Class("geoflow_entity",
         
     },
     
-    #enrichWithMetadata
+    #'@description Enrichs the entity properties with entity metadata from other properties.
+    #'@param config geoflow config object
     enrichWithMetadata = function(config){
       
       #enrich titles
@@ -1128,7 +1086,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       })
     },
     
-    #getContacts
+    #'@description Get the entity contacts
+    #'@param pretty to prettify the output as \code{data.frame}
+    #'@return a list of \code{geoflow_contact} or a \code{data.frame}
     getContacts = function(pretty = FALSE){
       if(pretty){
         out <- do.call("rbind.fill", lapply(self$contacts, function(contact){
@@ -1161,7 +1121,10 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
     },
     
-    #getSubjects
+    #'@description Get the entity subjects
+    #'@param pretty to prettify the output as \code{data.frame}
+    #'@param keywords to add keywords to the output or not. Default is \code{FALSE}
+    #'@return a list of \code{geoflow_subject} or a \code{data.frame}
     getSubjects = function(pretty = FALSE, keywords = FALSE){
       if(pretty){
         out <- do.call("rbind.fill", lapply(self$subjects, function(subject){
@@ -1188,7 +1151,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
     },
     
-    #getRelations
+    #'@description Get the entity relations
+    #'@param pretty to prettify the output as \code{data.frame}
+    #'@return a list of \code{geoflow_relation} or a \code{data.frame}
     getRelations = function(pretty = FALSE){
       if(pretty){
         out <- do.call("rbind.fill", lapply(self$relations, function(relation){
@@ -1207,7 +1172,11 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
     },
     
-    #setStatus
+    #'@description Set a simple status either "draft" or "published". This method is required to deal with 
+    #'    systems that manage DOIs, such as Zenodo (with \pkg{zen4R}) or Dataverse (with \pkg{atom4R})
+    #'    publishing actions (Used internally by \pkg{geoflow}).
+    #'@param system a system name eg. "zenodo", "dataverse"
+    #'@param status a status for entity resource "draft" or "published"
     setStatus = function(system, status){
       if(!(status %in% c("draft", "published"))){
         stop("The status should be either 'draft' or 'published'")
@@ -1215,27 +1184,41 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$status[[system]] <- status
     },
     
-    #getJobResource
+    #'@description Get an entity job resource path
+    #'@param config a geoflow config object
+    #'@param resourceType type of resource, matching a sub-directory within the entity job directory
+    #'@param filename filename
+    #'@return the file path of the job resource
     getJobResource = function(config, resourceType, filename){
       return(file.path(config$job, "entities", self$getEntityJobDirname(), resourceType, filename))
     },
     
-    #getJobDataResource
+    #'@description Get an entity job data resource path
+    #'@param config a geoflow config object
+    #'@param filename filename
+    #'@return the file path of the job data resource
     getJobDataResource = function(config, filename){
       self$getJobResource(config, "data", filename)
     },
     
-    #getJobMetadataResource
+    #'@description Get an entity job metadata resource path
+    #'@param config a geoflow config object
+    #'@param filename filename
+    #'@return the file path of the job metadata resource
     getJobMetadataResource = function(config, filename){
       self$getJobResource(config, "metadata", filename)
     },
     
-    #addResource
+    #'@description Adds a resource to the entity
+    #'@param id id of the resource
+    #'@param resource resource
     addResource = function(id, resource){
       self$resources[[id]] <- resource
     },
     
-    #asDataFrame
+    #'@description Methods to export the \link{geoflow_entity} as \code{data.frame} using key-based syntax.
+    #'@param line_separator a line separator. By default, the default line separator will be used.
+    #'@return an object of class \code{data.frame} giving the entities using key-based syntax
     asDataFrame = function(line_separator = NULL){
       if(is.null(line_separator)) line_separator <- get_line_separator()
       out <- data.frame(

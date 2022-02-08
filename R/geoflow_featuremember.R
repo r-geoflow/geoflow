@@ -11,27 +11,41 @@
 #' @return Object of \code{\link{R6Class}} for modelling a dictionary feature type member
 #' @format \code{\link{R6Class}} object.
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new()}}{
-#'    This method is used to instantiate a geoflow_featuremember object
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_featuremember <- R6Class("geoflow_featuremember",
    public = list(
+     #'@field id feature member ID
      id = NULL,
+     #'@field type feature member type
      type = list(),
+     #'@field code feature member code
      code = NULL,
+     #'@field name feature member name
      name = NULL,
+     #'@field def feature member definition
      def = NULL,
+     #'@field defSource feature member definition source
      defSource = NULL,
+     #'@field minOccurs feature member minOccurs
      minOccurs = NULL,
+     #'@field maxOccurs feature member maxOccurs
      maxOccurs = NULL,
+     #'@field uom feature member unit of measure (uom)
      uom = NULL,
+     #'@field registerId feature member register ID
      registerId = NULL,
+     
+     #'@description Initializes a \link{geoflow_featuremember}
+     #'@param type type
+     #'@param code code
+     #'@param name name
+     #'@param def definition
+     #'@param defSource definition source. Default is \code{NULL}
+     #'@param minOccurs minOccurs. Default is \code{NULL}
+     #'@param maxOccurs maxOccurs. Default is \code{NULL}
+     #'@param uom unit of measure. Default is \code{NULL}
+     #'@param registerId ID of the register associated to the feature type. Default is \code{NULL}
      initialize = function(type, code, name, def, defSource = NULL,
                            minOccurs = NULL, maxOccurs = NULL, uom = NULL,
                            registerId = NULL){

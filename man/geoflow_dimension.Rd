@@ -16,33 +16,6 @@ This class models a dimension
 \details{
 geoflow_dimension
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new)}}{
-   This method is used to instantiate a geoflow_dimension object
- }
- \item{\code{setLongName(longName)}}{
-   Set longname
- }
- \item{\code{setResolution(uom, value)}}{
-   Sets resolution (with step and unit)
- }
- \item{\code{setSize(size)}}{
-   Set size 
- }
- \item{\code{setValues(values)}}{
-   Sets values
- }
- \item{\code{setMinValue(minValue)}}{
-   Set minimal value
- }
- \item{\code{setMaxValue(maxValue)}}{
-   Set maximal value
- }
-}
-}
-
 \examples{
  \dontrun{
   dimension <- geoflow_dimension$new()
@@ -59,3 +32,165 @@ geoflow_dimension
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{dimension}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{longName}}{dimension longName}
+
+\item{\code{resolution}}{dimension resolution}
+
+\item{\code{size}}{dimension size}
+
+\item{\code{values}}{dimension values}
+
+\item{\code{minValue}}{dimension min value}
+
+\item{\code{maxValue}}{dimension max value}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_dimension$new()}}
+\item \href{#method-setLongName}{\code{geoflow_dimension$setLongName()}}
+\item \href{#method-setResolution}{\code{geoflow_dimension$setResolution()}}
+\item \href{#method-setSize}{\code{geoflow_dimension$setSize()}}
+\item \href{#method-setValues}{\code{geoflow_dimension$setValues()}}
+\item \href{#method-setMinValue}{\code{geoflow_dimension$setMinValue()}}
+\item \href{#method-setMaxValue}{\code{geoflow_dimension$setMaxValue()}}
+\item \href{#method-clone}{\code{geoflow_dimension$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes the \link{geoflow_dimension}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dimension$new()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setLongName"></a>}}
+\if{latex}{\out{\hypertarget{method-setLongName}{}}}
+\subsection{Method \code{setLongName()}}{
+Sets the dimension long name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dimension$setLongName(longName)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{longName}}{dimension long name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setResolution"></a>}}
+\if{latex}{\out{\hypertarget{method-setResolution}{}}}
+\subsection{Method \code{setResolution()}}{
+Sets the resolution
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dimension$setResolution(uom, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{uom}}{unit of measure}
+
+\item{\code{value}}{resolution value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSize"></a>}}
+\if{latex}{\out{\hypertarget{method-setSize}{}}}
+\subsection{Method \code{setSize()}}{
+Sets the dimension size
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dimension$setSize(size)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{size}}{dimension size}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setValues"></a>}}
+\if{latex}{\out{\hypertarget{method-setValues}{}}}
+\subsection{Method \code{setValues()}}{
+Sets dimension values
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dimension$setValues(values)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{values}}{dimension values}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setMinValue"></a>}}
+\if{latex}{\out{\hypertarget{method-setMinValue}{}}}
+\subsection{Method \code{setMinValue()}}{
+Sets dimension min value
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dimension$setMinValue(minValue)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{minValue}}{min value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setMaxValue"></a>}}
+\if{latex}{\out{\hypertarget{method-setMaxValue}{}}}
+\subsection{Method \code{setMaxValue()}}{
+Sets dimension max value
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dimension$setMaxValue(maxValue)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{maxValue}}{max value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_dimension$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

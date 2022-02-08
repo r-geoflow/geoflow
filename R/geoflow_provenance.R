@@ -25,25 +25,17 @@
 #'   provenance$addProcess(process2)
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new(str)}}{
-#'    This method is used to instantiate a geoflow_provenance object
-#'  }
-#'  \item{\code{setStatement(statement)}}{
-#'    Set statement, object of class \code{character}
-#'  }
-#'  \item{\code{addProcess(process)}}{
-#'    Adds process, object of class \code{geoflow_process}
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_provenance <- R6Class("geoflow_provenance",
    list(
+     #'@field statement provenance statement
      statement = NULL,
+     #'@field processes list of processes, as objects of class \link{geoflow_process}
      processes = list(),
+     
+     #'@description Initializes a \link{geoflow_provenance}
+     #'@param str character string to initialize a provenance using key-based syntax
      initialize = function(str = NULL){
        if(!is.null(str)){
          data_props <- extract_cell_components(sanitize_str(str))
@@ -88,12 +80,14 @@ geoflow_provenance <- R6Class("geoflow_provenance",
        }
      },
      
-     #setStatement
+     #'@description Set process statement
+     #'@param statement process statement
      setStatement = function(statement){
        self$statement <- statement
      },
      
-     #addProcess
+     #'@description Adds process
+     #'@param process, object of class \link{geoflow_process}
      addProcess = function(process){
        if(!is(process, "geoflow_process")){
          stop("The argument should be an object of class 'geoflow_process'")

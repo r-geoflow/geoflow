@@ -16,136 +16,860 @@ This class models a entity object
 \details{
 geoflow_entity
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new()}}{
-   This method is used to instantiate a geoflow_entity object
- }
- \item{\code{getAllowedKeyValuesFor(field)}}{
-   Utility used internally by \pkg{geoflow} to check eligible key values for a given field.
- }
- \item{\code{setIdentifier(key, id)}}{
-   Set an identifier given a key. Default key is "id", but others can be specified, eg "doi".
- }
- \item{\code{addDate(dateType, date)}}{
-   Add a date object of class \code{Date} or \code{POSIXt}, with a date type, object of class \code{character}.
- }
- \item{\code{setLanguage(language)}}{
-   Set the language used for the entity description (metadata). Default is "eng".
- }
- \item{\code{writeDataResource(obj,type)}}{
-   Write sp file in data,zip and load data features.
- }
- \item{\code{setType(key, type)}}{
-   Set the type of description. By default a generic type (key = "generic") is defined to "dataset", and
-   will be used as default type for actions that perform metadata production / publication.
- }
- \item{\code{setTitle(key, title)}}{
-   Set entity title. Allowed key values are 'title', 'alternative'
- }
- \item{\code{setDescription(key, description)}}{
-   Set entity description. Allowed key values are 'abstract', 'purpose', 'info', 'project'
- }
- \item{\code{addSubject(subject)}}{
-   Add a subject, object of class \code{geoflow_subject}.
- }
- \item{\code{addContact(contact)}}{
-   Add a contact, object of class \code{geoflow_contact}
- }
- \item{\code{addRelation(relation)}}{
-   Add a relation, object of class \code{geoflow_relation}
- }
- \item{\code{addRight(right)}}{
-   Add a right, object of class \code{geoflow_right}
- }
- \item{\code{setSpatialExtent(wkt,bbox,data,crs)}}{
-   Set spatial extent. Various ways can be used to set the spatial extent 1) with a WKT string,
-   2) with a bbox, object of class \code{matrix}, or 3) specifying a data object (from \pkg{sf}).
-   The \code{crs} (coordinate reference system) should be specified with the crs SRID (number).
-   The spatial extent is not necessarily a bounding box but can be one or more geometries.
- }
- \item{\code{setSpatialBbox(wkt,bbox,data,crs)}}{
-   Set spatial bbox. Various ways can be used to set the spatial extent 1) with a WKT string,
-   2) with a bbox, object of class \code{matrix}, or 3) specifying a data object (from \pkg{sf}).
-   The \code{crs} (coordinate reference system) should be specified with the crs SRID (number).
- }
- \item{\code{setSrid(srid)}}{
-   Set the SRID
- }
- \item{\code{setTemporalExtent(str)}}{
-   Set the temporal extent from a string representation (object of class \code{character}) of
-   an ISO date / datetime (timestamp) or interval.
- }
- \item{\code{setProvenance(provenance)}}{
-   Set the provenance as object of class \code{geoflow_provenance}.
- }
- \item{\code{setData(data)}}{
-   Set the related data object of class \code{geoflow_data}
- }
- \item{\code{getEntityJobDirname()}}{
-   Get the directory name that will be created for this entity. The name will generally be the same as the
-   entity identifier. In case entity is identified with a DOI, '/' (slash) will be replaced by '_' (underscore) to 
-   make sure directory is created.
- }
- \item{\code{getEntityJobDirPath(config, jobdir)}}{
-   Returns the full path of the entity job directory. In the job directory, all entities subdirs will be created 
-   within a 'entities' directory.
- }
- \item{\code{prepareEntityJobDir(config, jobdir)}}{
-   Function called internally by \pkg{geoflow} that creates the entity directory and relevant sub-directories.
-   The default sub-directories will include 'data' and 'metadata'. Other sub-directories may be created depnding 
-   on the actions enabled in the workflow (and if their target directory is different from 'data'/'metadata').
- }
- \item{\code{copyDataToJobDir(config, jobdir)}}{
-   This function will look at data object associated to the entity (previously set with \code{setData}),
-   and will try to (download)/copy the data source to the geoflow job directory.
- }
- \item{\code{enrichWithFeatures(config)}}{
-   This function will enrich the entity with data features, but trying to read the spatial data (eg shapefile,
-   sql query - if a database input software is declared in the geoflow config). This method will overwrite 
-   spatial metadata such as the bounding box and temporal extent. Note that the user spatial extent is not overwriten
-   since it may content finer geometries than a bounding box
- }
- \item{\code{prepareFeaturesToUpload(config)}}{
-   This function will 1)cheak (in case of upload is requested) if the type of source and upload are both different and files formats(csv,shp,gpkg). 
-   and 2)process automatically to conversion from source to upload type.
- }
- \item{\code{enrichWithRelations(config)}}{
-   This function that will enrich the entity with relations. At now this is essentially related to adding 
-   relations if a Geoserver (geosapi) publishing action is enabled in which case this function will add 1) 
-   a thumbnail link built from OGC WMS service, 2) a WMS protocol relation, 3) WFS data protocols in common 
-   formats (GML, GeoJSON, ESRI Shapefile).
- }
- \item{\code{enrichWithSubjects(config)}}{
-   This function is expected to enrich entities with subjects. Related to data vocabularies / thesauri / ontologies.
-   NOT YET IMPLEMENTED
- }
- \item{\code{enrichWithFormats(config)}}{
-   This function is expected to enrich entities with formats. Related to data vocabularies / thesauri / ontologies.
-   NOT YET IMPLEMENTED
- }
- \item{\code{getContacts(pretty)}}{
-   Get the list of entity contacts. By default, a list of \code{geoflow_contact} will be returned. To
-   return the list of entity contacts as \code{data.frame}, set \code{pretty = TRUE}.
- }
- \item{\code{getRelations(pretty)}}{
-   Get the list of entity relations. By default, a list of \code{geoflow_relation} will be returned. To
-   return the list of entity relations as \code{data.frame}, set \code{pretty = TRUE}.
- }
- \item{\code{getSubjects(pretty)}}{
-   Get the list of entity subjects. By default, a list of \code{geoflow_subjects} will be returned. To
-   return the list of entity subjects as \code{data.frame}, set \code{pretty = TRUE}.
- }
- \item{\code{setStatus(system, status)}}{
-   Set a simple status either "draft" or "published". This method is required to deal with 
-   systems that manage DOIs, such as Zenodo (with \pkg{zen4R}) or Dataverse (with \pkg{atom4R})
-   publishing actions (Used internally by \pkg{geoflow}).
- }
-}
-}
-
 \author{
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{entity}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{identifiers}}{entity identifiers}
+
+\item{\code{dates}}{entity dates}
+
+\item{\code{language}}{entity language}
+
+\item{\code{types}}{entity types}
+
+\item{\code{titles}}{entity titles}
+
+\item{\code{descriptions}}{entity descriptions}
+
+\item{\code{subjects}}{entity subjects}
+
+\item{\code{formats}}{entity formats}
+
+\item{\code{contacts}}{entity contacts}
+
+\item{\code{relations}}{entity relations}
+
+\item{\code{rights}}{entity rights}
+
+\item{\code{spatial_extent}}{spatial extent}
+
+\item{\code{spatial_bbox}}{spatial bounding box}
+
+\item{\code{srid}}{entity srid}
+
+\item{\code{temporal_extent}}{entity temporal extent}
+
+\item{\code{provenance}}{entity provenance}
+
+\item{\code{data}}{entity data}
+
+\item{\code{status}}{entity status}
+
+\item{\code{resources}}{entity resources}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_entity$new()}}
+\item \href{#method-getAllowedKeyValuesFor}{\code{geoflow_entity$getAllowedKeyValuesFor()}}
+\item \href{#method-setIdentifier}{\code{geoflow_entity$setIdentifier()}}
+\item \href{#method-addDate}{\code{geoflow_entity$addDate()}}
+\item \href{#method-setLanguage}{\code{geoflow_entity$setLanguage()}}
+\item \href{#method-writeDataResource}{\code{geoflow_entity$writeDataResource()}}
+\item \href{#method-setType}{\code{geoflow_entity$setType()}}
+\item \href{#method-setTitle}{\code{geoflow_entity$setTitle()}}
+\item \href{#method-setDescription}{\code{geoflow_entity$setDescription()}}
+\item \href{#method-addSubject}{\code{geoflow_entity$addSubject()}}
+\item \href{#method-addFormat}{\code{geoflow_entity$addFormat()}}
+\item \href{#method-addContact}{\code{geoflow_entity$addContact()}}
+\item \href{#method-addRelation}{\code{geoflow_entity$addRelation()}}
+\item \href{#method-addRight}{\code{geoflow_entity$addRight()}}
+\item \href{#method-setSpatialExtent}{\code{geoflow_entity$setSpatialExtent()}}
+\item \href{#method-setSpatialBbox}{\code{geoflow_entity$setSpatialBbox()}}
+\item \href{#method-setSrid}{\code{geoflow_entity$setSrid()}}
+\item \href{#method-setTemporalExtent}{\code{geoflow_entity$setTemporalExtent()}}
+\item \href{#method-setProvenance}{\code{geoflow_entity$setProvenance()}}
+\item \href{#method-setData}{\code{geoflow_entity$setData()}}
+\item \href{#method-getEntityJobDirname}{\code{geoflow_entity$getEntityJobDirname()}}
+\item \href{#method-getEntityJobDirPath}{\code{geoflow_entity$getEntityJobDirPath()}}
+\item \href{#method-prepareEntityJobDir}{\code{geoflow_entity$prepareEntityJobDir()}}
+\item \href{#method-copyDataToJobDir}{\code{geoflow_entity$copyDataToJobDir()}}
+\item \href{#method-enrichWithFeatures}{\code{geoflow_entity$enrichWithFeatures()}}
+\item \href{#method-prepareFeaturesToUpload}{\code{geoflow_entity$prepareFeaturesToUpload()}}
+\item \href{#method-enrichWithRelations}{\code{geoflow_entity$enrichWithRelations()}}
+\item \href{#method-enrichWithSubjects}{\code{geoflow_entity$enrichWithSubjects()}}
+\item \href{#method-enrichWithFormats}{\code{geoflow_entity$enrichWithFormats()}}
+\item \href{#method-enrichWithMetadata}{\code{geoflow_entity$enrichWithMetadata()}}
+\item \href{#method-getContacts}{\code{geoflow_entity$getContacts()}}
+\item \href{#method-getSubjects}{\code{geoflow_entity$getSubjects()}}
+\item \href{#method-getRelations}{\code{geoflow_entity$getRelations()}}
+\item \href{#method-setStatus}{\code{geoflow_entity$setStatus()}}
+\item \href{#method-getJobResource}{\code{geoflow_entity$getJobResource()}}
+\item \href{#method-getJobDataResource}{\code{geoflow_entity$getJobDataResource()}}
+\item \href{#method-getJobMetadataResource}{\code{geoflow_entity$getJobMetadataResource()}}
+\item \href{#method-addResource}{\code{geoflow_entity$addResource()}}
+\item \href{#method-asDataFrame}{\code{geoflow_entity$asDataFrame()}}
+\item \href{#method-clone}{\code{geoflow_entity$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes an object of class \link{geoflow_entity}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$new()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getAllowedKeyValuesFor"></a>}}
+\if{latex}{\out{\hypertarget{method-getAllowedKeyValuesFor}{}}}
+\subsection{Method \code{getAllowedKeyValuesFor()}}{
+Retrieves keys allowed for a given tabular field name. eg. "Identifier"
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getAllowedKeyValuesFor(field)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{field}}{field name}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the list of valid keys for the field considered
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setIdentifier"></a>}}
+\if{latex}{\out{\hypertarget{method-setIdentifier}{}}}
+\subsection{Method \code{setIdentifier()}}{
+Set an identifier given a key. Default key is "id", but others can be specified, eg "doi".
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setIdentifier(key = "id", id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{key}}{identifier key. Default is "id"}
+
+\item{\code{id}}{identifier value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addDate"></a>}}
+\if{latex}{\out{\hypertarget{method-addDate}{}}}
+\subsection{Method \code{addDate()}}{
+Adds a date
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addDate(dateType, date)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{dateType}}{date type, object of class \code{character}}
+
+\item{\code{date}}{date, object of class \code{Date} or \code{POSIXt}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setLanguage"></a>}}
+\if{latex}{\out{\hypertarget{method-setLanguage}{}}}
+\subsection{Method \code{setLanguage()}}{
+Set the language used for the entity description (metadata). Default is "eng".
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setLanguage(language)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{language}}{language}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-writeDataResource"></a>}}
+\if{latex}{\out{\hypertarget{method-writeDataResource}{}}}
+\subsection{Method \code{writeDataResource()}}{
+writes a data resource. Deprecrated Note: TODO to review in line with 'writeWorkflowJobDataResource
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$writeDataResource(obj = NULL, resourcename, type = "shp")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{obj}}{object}
+
+\item{\code{resourcename}}{resource name}
+
+\item{\code{type}}{type of resosurce}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setType"></a>}}
+\if{latex}{\out{\hypertarget{method-setType}{}}}
+\subsection{Method \code{setType()}}{
+Set the type of description. By default a generic type (key = "generic") is defined to "dataset", and
+   will be used as default type for actions that perform metadata production / publication.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setType(key = "generic", type)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{key}}{type key. Default is "generic"}
+
+\item{\code{type}}{type value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setTitle"></a>}}
+\if{latex}{\out{\hypertarget{method-setTitle}{}}}
+\subsection{Method \code{setTitle()}}{
+Sets title
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setTitle(key = "title", title)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{key}}{title key. Default is "title"}
+
+\item{\code{title}}{title value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDescription"></a>}}
+\if{latex}{\out{\hypertarget{method-setDescription}{}}}
+\subsection{Method \code{setDescription()}}{
+Sets description
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setDescription(key, description)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{key}}{description key. Default is "abstract"}
+
+\item{\code{description}}{description value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addSubject"></a>}}
+\if{latex}{\out{\hypertarget{method-addSubject}{}}}
+\subsection{Method \code{addSubject()}}{
+Adds a subject
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addSubject(subject)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{subject}}{object of class \link{geoflow_subject}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addFormat"></a>}}
+\if{latex}{\out{\hypertarget{method-addFormat}{}}}
+\subsection{Method \code{addFormat()}}{
+Adds a format
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addFormat(format)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{format}}{object of class \link{geoflow_format}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addContact"></a>}}
+\if{latex}{\out{\hypertarget{method-addContact}{}}}
+\subsection{Method \code{addContact()}}{
+Adds a contact
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addContact(contact)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{contact}}{object of class \link{geoflow_contact}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addRelation"></a>}}
+\if{latex}{\out{\hypertarget{method-addRelation}{}}}
+\subsection{Method \code{addRelation()}}{
+Adds a relation
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addRelation(relation)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{relation}}{object of class \link{geoflow_relation}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addRight"></a>}}
+\if{latex}{\out{\hypertarget{method-addRight}{}}}
+\subsection{Method \code{addRight()}}{
+Adds a right
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addRight(right)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{right}}{object of class \link{geoflow_right}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSpatialExtent"></a>}}
+\if{latex}{\out{\hypertarget{method-setSpatialExtent}{}}}
+\subsection{Method \code{setSpatialExtent()}}{
+Set spatial extent. Various ways can be used to set the spatial extent 1) with a WKT string,
+   2) with a bbox, object of class \code{matrix}, or 3) specifying a data object (from \pkg{sf}).
+   The \code{crs} (coordinate reference system) should be specified with the crs SRID (number).
+   The spatial extent is not necessarily a bounding box but can be one or more geometries.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setSpatialExtent(wkt = NULL, bbox = NULL, data = NULL, crs = NA)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{wkt}}{a WKT string}
+
+\item{\code{bbox}}{a bbox}
+
+\item{\code{data}}{an object of class \pkg{sf}}
+
+\item{\code{crs}}{crs}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSpatialBbox"></a>}}
+\if{latex}{\out{\hypertarget{method-setSpatialBbox}{}}}
+\subsection{Method \code{setSpatialBbox()}}{
+Set spatial bbox. Various ways can be used to set the spatial extent 1) with a WKT string,
+   2) with a bbox, object of class \code{matrix}, or 3) specifying a data object (from \pkg{sf}).
+   The \code{crs} (coordinate reference system) should be specified with the crs SRID (number).
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setSpatialBbox(wkt = NULL, bbox = NULL, data = NULL, crs = NA)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{wkt}}{a WKT string}
+
+\item{\code{bbox}}{a bbox}
+
+\item{\code{data}}{an object of class \pkg{sf}}
+
+\item{\code{crs}}{crs}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSrid"></a>}}
+\if{latex}{\out{\hypertarget{method-setSrid}{}}}
+\subsection{Method \code{setSrid()}}{
+Sets entity SRID
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setSrid(srid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{srid}}{srid}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setTemporalExtent"></a>}}
+\if{latex}{\out{\hypertarget{method-setTemporalExtent}{}}}
+\subsection{Method \code{setTemporalExtent()}}{
+Sets temporal extent. The temporal extent can be a year, date instant or interval
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setTemporalExtent(str)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{str}}{object of class \code{numeric} (case of year) or \code{character}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setProvenance"></a>}}
+\if{latex}{\out{\hypertarget{method-setProvenance}{}}}
+\subsection{Method \code{setProvenance()}}{
+Sets entity provenance
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setProvenance(provenance)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{provenance}}{object of class \link{geoflow_provenance}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setData"></a>}}
+\if{latex}{\out{\hypertarget{method-setData}{}}}
+\subsection{Method \code{setData()}}{
+Sets entity data object
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setData(data)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{data}}{object of class \link{geoflow_data}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getEntityJobDirname"></a>}}
+\if{latex}{\out{\hypertarget{method-getEntityJobDirname}{}}}
+\subsection{Method \code{getEntityJobDirname()}}{
+Gets entity job directory name. In case entity is identified with a DOI, the '/' (slash) 
+will be replaced by '_' (underscore) to make sure directory is created.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getEntityJobDirname()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+get the name of entity job directory that will be created for the entity
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getEntityJobDirPath"></a>}}
+\if{latex}{\out{\hypertarget{method-getEntityJobDirPath}{}}}
+\subsection{Method \code{getEntityJobDirPath()}}{
+Gets entity job directory path. In the job directory, all entities subdirs will be created within a 'entities' directory.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getEntityJobDirPath(config, jobdir = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow configuration object}
+
+\item{\code{jobdir}}{relative path of the job directory}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the entity job directory path
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-prepareEntityJobDir"></a>}}
+\if{latex}{\out{\hypertarget{method-prepareEntityJobDir}{}}}
+\subsection{Method \code{prepareEntityJobDir()}}{
+Function called internally by \pkg{geoflow} that creates the entity directory and relevant sub-directories.
+   The default sub-directories will include 'data' and 'metadata'. Other sub-directories may be created depnding 
+   on the actions enabled in the workflow (and if their target directory is different from 'data'/'metadata').
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$prepareEntityJobDir(config, jobdir = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+
+\item{\code{jobdir}}{relative path of the job directory}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-copyDataToJobDir"></a>}}
+\if{latex}{\out{\hypertarget{method-copyDataToJobDir}{}}}
+\subsection{Method \code{copyDataToJobDir()}}{
+This function will look at data object associated to the entity (previously set with \code{setData}),
+   and will try to (download)/copy the data source to the geoflow job directory.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$copyDataToJobDir(config, jobdir = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+
+\item{\code{jobdir}}{relative path of the job directory}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-enrichWithFeatures"></a>}}
+\if{latex}{\out{\hypertarget{method-enrichWithFeatures}{}}}
+\subsection{Method \code{enrichWithFeatures()}}{
+This function will enrich the entity with data features, but trying to read the spatial data (eg shapefile,
+   sql query - if a database input software is declared in the geoflow config). This method will overwrite 
+   spatial metadata such as the bounding box and temporal extent. Note that the user spatial extent is not overwriten
+   since it may content finer geometries than a bounding box
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithFeatures(config, jobdir = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+
+\item{\code{jobdir}}{relative path of the job directory}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-prepareFeaturesToUpload"></a>}}
+\if{latex}{\out{\hypertarget{method-prepareFeaturesToUpload}{}}}
+\subsection{Method \code{prepareFeaturesToUpload()}}{
+This function will 1)cheak (in case of upload is requested) if the type of source and upload are both different 
+and files formats(csv,shp,gpkg) and 2)process automatically to conversion from source to upload type.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$prepareFeaturesToUpload(config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-enrichWithRelations"></a>}}
+\if{latex}{\out{\hypertarget{method-enrichWithRelations}{}}}
+\subsection{Method \code{enrichWithRelations()}}{
+This function that will enrich the entity with relations. At now this is essentially related to adding 
+   relations if a Geoserver (geosapi) publishing action is enabled in which case this function will add 1) 
+   a thumbnail link built from OGC WMS service, 2) a WMS protocol relation, 3) WFS data protocols in common 
+   formats (GML, GeoJSON, ESRI Shapefile).
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithRelations(config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-enrichWithSubjects"></a>}}
+\if{latex}{\out{\hypertarget{method-enrichWithSubjects}{}}}
+\subsection{Method \code{enrichWithSubjects()}}{
+Enrichs the entity with subjects. If no subject specify in Subjects, 
+automatically add keyword from dictionary to 'theme' category
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithSubjects(config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-enrichWithFormats"></a>}}
+\if{latex}{\out{\hypertarget{method-enrichWithFormats}{}}}
+\subsection{Method \code{enrichWithFormats()}}{
+Enrichs the entity with formats
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithFormats(config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-enrichWithMetadata"></a>}}
+\if{latex}{\out{\hypertarget{method-enrichWithMetadata}{}}}
+\subsection{Method \code{enrichWithMetadata()}}{
+Enrichs the entity properties with entity metadata from other properties.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithMetadata(config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getContacts"></a>}}
+\if{latex}{\out{\hypertarget{method-getContacts}{}}}
+\subsection{Method \code{getContacts()}}{
+Get the entity contacts
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getContacts(pretty = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pretty}}{to prettify the output as \code{data.frame}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+a list of \code{geoflow_contact} or a \code{data.frame}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getSubjects"></a>}}
+\if{latex}{\out{\hypertarget{method-getSubjects}{}}}
+\subsection{Method \code{getSubjects()}}{
+Get the entity subjects
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getSubjects(pretty = FALSE, keywords = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pretty}}{to prettify the output as \code{data.frame}}
+
+\item{\code{keywords}}{to add keywords to the output or not. Default is \code{FALSE}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+a list of \code{geoflow_subject} or a \code{data.frame}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getRelations"></a>}}
+\if{latex}{\out{\hypertarget{method-getRelations}{}}}
+\subsection{Method \code{getRelations()}}{
+Get the entity relations
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getRelations(pretty = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pretty}}{to prettify the output as \code{data.frame}}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+a list of \code{geoflow_relation} or a \code{data.frame}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setStatus"></a>}}
+\if{latex}{\out{\hypertarget{method-setStatus}{}}}
+\subsection{Method \code{setStatus()}}{
+Set a simple status either "draft" or "published". This method is required to deal with 
+   systems that manage DOIs, such as Zenodo (with \pkg{zen4R}) or Dataverse (with \pkg{atom4R})
+   publishing actions (Used internally by \pkg{geoflow}).
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setStatus(system, status)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{system}}{a system name eg. "zenodo", "dataverse"}
+
+\item{\code{status}}{a status for entity resource "draft" or "published"}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getJobResource"></a>}}
+\if{latex}{\out{\hypertarget{method-getJobResource}{}}}
+\subsection{Method \code{getJobResource()}}{
+Get an entity job resource path
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getJobResource(config, resourceType, filename)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{a geoflow config object}
+
+\item{\code{resourceType}}{type of resource, matching a sub-directory within the entity job directory}
+
+\item{\code{filename}}{filename}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the file path of the job resource
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getJobDataResource"></a>}}
+\if{latex}{\out{\hypertarget{method-getJobDataResource}{}}}
+\subsection{Method \code{getJobDataResource()}}{
+Get an entity job data resource path
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getJobDataResource(config, filename)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{a geoflow config object}
+
+\item{\code{filename}}{filename}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the file path of the job data resource
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getJobMetadataResource"></a>}}
+\if{latex}{\out{\hypertarget{method-getJobMetadataResource}{}}}
+\subsection{Method \code{getJobMetadataResource()}}{
+Get an entity job metadata resource path
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getJobMetadataResource(config, filename)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{a geoflow config object}
+
+\item{\code{filename}}{filename}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the file path of the job metadata resource
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addResource"></a>}}
+\if{latex}{\out{\hypertarget{method-addResource}{}}}
+\subsection{Method \code{addResource()}}{
+Adds a resource to the entity
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addResource(id, resource)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{id of the resource}
+
+\item{\code{resource}}{resource}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-asDataFrame"></a>}}
+\if{latex}{\out{\hypertarget{method-asDataFrame}{}}}
+\subsection{Method \code{asDataFrame()}}{
+Methods to export the \link{geoflow_entity} as \code{data.frame} using key-based syntax.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$asDataFrame(line_separator = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{line_separator}}{a line separator. By default, the default line separator will be used.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+an object of class \code{data.frame} giving the entities using key-based syntax
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

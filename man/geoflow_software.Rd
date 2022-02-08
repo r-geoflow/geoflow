@@ -16,53 +16,6 @@ This class models a software to be used by geoflow
 \details{
 geoflow_software
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new(id, type, software_type, definition, handler, arguments, attributes)}}{
-   This method is used to instantiate a geoflow_software object
- }
- \item{\code{setId(id)}}{
-   Set id
- }
- \item{\code{setType(type)}}{
-   Set type, a value of class \code{character} "input" or "output"
- }
- \item{\code{setSoftwareType(software_type)}}{
-   Set software type
- }
- \item{\code{setDefinition(definition)}}{
-   Set definition
- }
- \item{\code{setAttributes(attributes)}}{
-   Set attributes
- }
- \item{\code{setProperties(...)}}{
-   Set properties. Function called when setting the software properties
-   from the geoflow configuration.
- }
- \item{\code{setArguments(arguments)}}{
-   Set arguments
- }
- \item{\code{setParameters(...)}}{
-   Set parameters. Function called when setting the software parameters
-   from the geoflow configuration.
- }
- \item{\code{setHandler(handler)}}{
-   Set handler (a function)
- }
- \item{\code{checkPackages()}}{
-   Check that all packages required for the software are available, if yes,
-   import them in the R session, and return a \code{data.frame} giving the 
-   packages names and version. If one or more packages are unavailable,
-   an error is thrown and user informed of the missing packages.
- }
- \item{\code{getHandlerInstance()}}{
-   Get an instance of the handler
- }
-}
-}
-
 \examples{
 \dontrun{
   software<- geoflow_software$new(
@@ -86,3 +39,336 @@ geoflow_software
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{software}
+\section{Super class}{
+\code{\link[geoflow:geoflowLogger]{geoflow::geoflowLogger}} -> \code{geoflow_software}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{id}}{software id}
+
+\item{\code{type}}{software I/O type ("input" or "output")}
+
+\item{\code{software_type}}{type of software}
+
+\item{\code{definition}}{definition}
+
+\item{\code{packages}}{list of packages required for the software functioning}
+
+\item{\code{handler}}{software handler function}
+
+\item{\code{arguments}}{software arguments}
+
+\item{\code{parameters}}{software parameters}
+
+\item{\code{attributes}}{software attributes}
+
+\item{\code{properties}}{software properties}
+
+\item{\code{actions}}{actions associated with the software}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_software$new()}}
+\item \href{#method-setId}{\code{geoflow_software$setId()}}
+\item \href{#method-setType}{\code{geoflow_software$setType()}}
+\item \href{#method-setSoftwareType}{\code{geoflow_software$setSoftwareType()}}
+\item \href{#method-setPackages}{\code{geoflow_software$setPackages()}}
+\item \href{#method-setDefinition}{\code{geoflow_software$setDefinition()}}
+\item \href{#method-setAttributes}{\code{geoflow_software$setAttributes()}}
+\item \href{#method-setProperties}{\code{geoflow_software$setProperties()}}
+\item \href{#method-setArguments}{\code{geoflow_software$setArguments()}}
+\item \href{#method-setParameters}{\code{geoflow_software$setParameters()}}
+\item \href{#method-setActions}{\code{geoflow_software$setActions()}}
+\item \href{#method-setHandler}{\code{geoflow_software$setHandler()}}
+\item \href{#method-checkPackages}{\code{geoflow_software$checkPackages()}}
+\item \href{#method-getHandlerInstance}{\code{geoflow_software$getHandlerInstance()}}
+\item \href{#method-clone}{\code{geoflow_software$clone()}}
+}
+}
+\if{html}{
+\out{<details open ><summary>Inherited methods</summary>}
+\itemize{
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="ERROR">}\href{../../geoflow/html/geoflowLogger.html#method-ERROR}{\code{geoflow::geoflowLogger$ERROR()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="INFO">}\href{../../geoflow/html/geoflowLogger.html#method-INFO}{\code{geoflow::geoflowLogger$INFO()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="WARN">}\href{../../geoflow/html/geoflowLogger.html#method-WARN}{\code{geoflow::geoflowLogger$WARN()}}\out{</span>}
+}
+\out{</details>}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a software
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$new(
+  id = NULL,
+  type = NULL,
+  software_type,
+  packages = list(),
+  definition,
+  handler,
+  arguments,
+  attributes = list(),
+  actions = list()
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{id}
+
+\item{\code{type}}{type "input" or "output"}
+
+\item{\code{software_type}}{software type}
+
+\item{\code{packages}}{list of packages required for the software functioning}
+
+\item{\code{definition}}{software definition}
+
+\item{\code{handler}}{software handler \code{function}}
+
+\item{\code{arguments}}{software handler arguments}
+
+\item{\code{attributes}}{software attributes}
+
+\item{\code{actions}}{software actions}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setId"></a>}}
+\if{latex}{\out{\hypertarget{method-setId}{}}}
+\subsection{Method \code{setId()}}{
+Sets software ID
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setId(id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{id}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setType"></a>}}
+\if{latex}{\out{\hypertarget{method-setType}{}}}
+\subsection{Method \code{setType()}}{
+Set type. Either "input" or "output"
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setType(type)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{type}}{software I/O type}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSoftwareType"></a>}}
+\if{latex}{\out{\hypertarget{method-setSoftwareType}{}}}
+\subsection{Method \code{setSoftwareType()}}{
+Set software type
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setSoftwareType(software_type)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{software_type}}{software type}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-setPackages}{}}}
+\subsection{Method \code{setPackages()}}{
+Set software required packages
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setPackages(packages)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{packages}}{list of package names}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDefinition"></a>}}
+\if{latex}{\out{\hypertarget{method-setDefinition}{}}}
+\subsection{Method \code{setDefinition()}}{
+Set software definition
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setDefinition(definition)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{definition}}{software definition}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setAttributes"></a>}}
+\if{latex}{\out{\hypertarget{method-setAttributes}{}}}
+\subsection{Method \code{setAttributes()}}{
+Set attributes. Function to call when creating an instance of \code{geoflow_software}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setAttributes(attributes)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{attributes}}{named list of attributes}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setProperties"></a>}}
+\if{latex}{\out{\hypertarget{method-setProperties}{}}}
+\subsection{Method \code{setProperties()}}{
+Set properties. Function to call to pass argument values for a given \code{geoflow_software}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setProperties(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{named list of properties}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setArguments"></a>}}
+\if{latex}{\out{\hypertarget{method-setArguments}{}}}
+\subsection{Method \code{setArguments()}}{
+Set software arguments. Function to call when creating an instance of \code{geoflow_software}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setArguments(arguments)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{arguments}}{list of software arguments}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setParameters"></a>}}
+\if{latex}{\out{\hypertarget{method-setParameters}{}}}
+\subsection{Method \code{setParameters()}}{
+Set parameters. Function to call to pass argument values for a given \code{geoflow_software}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setParameters(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{named list of parameters}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setActions"></a>}}
+\if{latex}{\out{\hypertarget{method-setActions}{}}}
+\subsection{Method \code{setActions()}}{
+Set software actions
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setActions(actions)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{actions}}{a list of \code{geoflow_action}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setHandler"></a>}}
+\if{latex}{\out{\hypertarget{method-setHandler}{}}}
+\subsection{Method \code{setHandler()}}{
+Set the software handler function
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setHandler(handler)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{handler}}{object of class \code{function}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-checkPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-checkPackages}{}}}
+\subsection{Method \code{checkPackages()}}{
+Check that all packages required for the software are available, if yes,
+   import them in the R session, and return a \code{data.frame} giving the 
+   packages names and version. If one or more packages are unavailable,
+   an error is thrown and user informed of the missing packages.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$checkPackages()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getHandlerInstance"></a>}}
+\if{latex}{\out{\hypertarget{method-getHandlerInstance}{}}}
+\subsection{Method \code{getHandlerInstance()}}{
+Get the software handler instance
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$getHandlerInstance()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+an object instance of the software handler
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

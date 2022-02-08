@@ -16,24 +16,6 @@ This class models an process
 \details{
 geoflow_process
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new()}}{
-   This method is used to instantiate a geoflow_process object
- }
- \item{\code{setRationale(rationale)}}{
-   Set rationale
- }
- \item{\code{setDescription(description)}}{
-   Set description
- }
- \item{\code{setProcessor(processor)}}{
-   Set processor, object of class \code{geoflow_contact}
- }
-}
-}
-
 \examples{
 \dontrun{
   process <- geoflow_process$new()
@@ -48,3 +30,103 @@ geoflow_process
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{process}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{rationale}}{process rationale}
+
+\item{\code{description}}{process description}
+
+\item{\code{processor}}{object of class \code{geoflow_contact}}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_process$new()}}
+\item \href{#method-setRationale}{\code{geoflow_process$setRationale()}}
+\item \href{#method-setDescription}{\code{geoflow_process$setDescription()}}
+\item \href{#method-setProcessor}{\code{geoflow_process$setProcessor()}}
+\item \href{#method-clone}{\code{geoflow_process$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes the \link{geoflow_process}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_process$new()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setRationale"></a>}}
+\if{latex}{\out{\hypertarget{method-setRationale}{}}}
+\subsection{Method \code{setRationale()}}{
+Set process rationale
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_process$setRationale(rationale)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{rationale}}{the process rationale}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setDescription"></a>}}
+\if{latex}{\out{\hypertarget{method-setDescription}{}}}
+\subsection{Method \code{setDescription()}}{
+Set process description
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_process$setDescription(description)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{description}}{Set the process description}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setProcessor"></a>}}
+\if{latex}{\out{\hypertarget{method-setProcessor}{}}}
+\subsection{Method \code{setProcessor()}}{
+Set processor
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_process$setProcessor(processor)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{processor, }}{object of class \link{geoflow_contact}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_process$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

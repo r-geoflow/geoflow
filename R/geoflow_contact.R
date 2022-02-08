@@ -11,23 +11,6 @@
 #' @return Object of \code{\link{R6Class}} for modelling a contact
 #' @format \code{\link{R6Class}} object.
 #' 
-#' @field id contact identifier
-#' @field firstName contact first name
-#' @field lastName contact lastname
-#' @field organizationName contact organization
-#' @field positionName contact position
-#' @field role contact role
-#' @field voice contact phone number
-#' @field facsimile contact facsimile
-#' @field email contact email
-#' @field websiteUrl contact website URL
-#' @field websiteName contact website name
-#' @field postalAddress contact postal address
-#' @field postalCode contact postal code
-#' @field city contact city
-#' @field country contact country
-#' @field identifiers contact identifiers
-#' 
 #' @examples
 #' \dontrun{
 #'   contact <- geoflow_contact$new()
@@ -48,159 +31,139 @@
 #'   contact$setCountry("Nowhere country")
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new()}}{
-#'    This method is used to instantiate a geoflow_contact object
-#'  }
-#'  \item{\code{setId(id)}}{
-#'    Set a contact id, as object of class \code{character}
-#'  }
-#'  \item{\code{setFirstName(firstName)}}{
-#'    Set the contact first name
-#'  }
-#'  \item{\code{setLastName(lastName)}}{
-#'    Set the contact last name
-#'  }
-#'  \item{\code{setOrganizationName(organizationName)}}{
-#'    Set the organization name
-#'  }
-#'  \item{\code{setPositionName(positionName)}}{
-#'    Set the position name
-#'  }
-#'  \item{\code{setRole(role)}}{
-#'    Set the contact role
-#'  }
-#'  \item{\code{setVoice(voice)}}{
-#'    Set voice (phone number), as object of class \code{character}
-#'  }
-#'  \item{\code{setFacsimile}}{
-#'    Set facsimile, as object of class \code{character}
-#'  }
-#'  \item{\code{setEmail(email)}}{
-#'    Set email
-#'  }
-#'  \item{\code{setWebsiteUrl(websiteUrl)}}{
-#'    Set website URL
-#'  }
-#'  \item{\code{setWebsiteName(websiteName)}}{
-#'    Set website name
-#'  }
-#'  \item{\code{setPostalAddress(postalAddress)}}{
-#'    Set postal address
-#'  }
-#'  \item{\code{setPostalCode(postalCode)}}{
-#'    Set postal code
-#'  }
-#'  \item{\code{setCity(city)}}{
-#'    Set city
-#'  }
-#'  \item{\code{setCountry(country)}}{
-#'    Set country
-#'  }
-#'  \item{\code{addIdentifier(identifier)}}{
-#'    Adds an identifier as object of class \code{geoflow_kvp}
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_contact <- R6Class("geoflow_contact",
   public = list(
+    #' @field id contact identifier
     id = NULL,
+    #' @field firstName contact first name
     firstName = NULL,
+    #' @field lastName contact lastname
     lastName = NULL,
+    #' @field organizationName contact organization
     organizationName = NULL,
+    #' @field positionName contact position
     positionName = NULL,
+    #' @field role contact role
     role = NULL,
+    #' @field voice contact phone number
     voice = NULL,
+    #' @field facsimile contact facsimile
     facsimile = NULL,
+    #' @field email contact email
     email = NULL,
+    #' @field websiteUrl contact website URL
     websiteUrl = NULL,
+    #' @field websiteName contact website name
     websiteName = NULL,
+    #' @field postalAddress contact postal address
     postalAddress = NULL,
+    #' @field postalCode contact postal code
     postalCode = NULL,
+    #' @field city contact city
     city = NULL,
+    #' @field country contact country
     country = NULL,
+    #' @field identifiers contact identifiers
     identifiers = list(),
+ 
+    #'@description Initializes a \link{geoflow_contact} object
     initialize = function(){},
     
-    #setIdentifier
+    #'@description Sets an identifier by means of key
+    #'@param key an identifier key. Default is "id"
+    #'@param id the identifier
     setIdentifier = function(key = "id", id){
       self$identifiers[[key]] <- id
     },
     
-    #setId
+    #'@description Sets an "id" identifier
+    #'@param id the identifier
     setId = function(id){
       self$setIdentifier(key = "id", id)
     },
     
-    #setFirstName
+    #'@description Sets contact first name
+    #'@param firstName contact first name
     setFirstName = function(firstName){
       self$firstName <- firstName
     },
     
-    #setLastName
+    #'@description Sets contact last name
+    #'@param lastName contact last name
     setLastName = function(lastName){
       self$lastName <- lastName
     },
     
-    #setOrganizationName
+    #'@description Sets contact organization name
+    #'@param organizationName contact organization name
     setOrganizationName = function(organizationName){
       self$organizationName <- organizationName
     },
     
-    #setPositionName
+    #'@description Sets contact position name
+    #'@param positionName contact position name
     setPositionName = function(positionName){
       self$positionName <- positionName
     },
     
-    #setRole
+    #'@description Sets contact role
+    #'@param role the contact role
     setRole = function(role){
       self$role <- role
     },
     
-    #setVoice
+    ##'@description Sets contact voice (phone number)
+    ##'@param voice contact voice (phone number)
     setVoice = function(voice){
       self$voice <- voice
     },
     
-    #setFacsimile
+    #'@description Sets contact facsimile
+    #'@param facsimile contact facsimile
     setFacsimile = function(facsimile){
       self$facsimile <- facsimile
     },
     
-    #setEmail
+    #'@description Sets contact email
+    #'@param email contact email
     setEmail = function(email){
       self$email <- email
     },
     
-    #setWebsiteUrl
+    #'@description Sets contact website URL
+    #'@param websiteUrl contact website URL
     setWebsiteUrl = function(websiteUrl){
       self$websiteUrl <- websiteUrl
     },
     
-    #setWebsiteName
+    #'@description Sets contact website name
+    #'@param websiteName contact website name
     setWebsiteName = function(websiteName){
       self$websiteName <- websiteName
     },
     
-    #setPostalAddress
+    ##'@description Sets the contact postal address
+    ##'@param postalAddress contact postal address
     setPostalAddress = function(postalAddress){
       self$postalAddress <- postalAddress
     },
     
-    #setPostalCode
+    #'@description Sets the contact postal code
+    #'@param postalCode contact postalCode
     setPostalCode = function(postalCode){
       self$postalCode <- postalCode
     },
     
-    #setCity
+    #'@description Sets the contact city
+    #'@param city contact city
     setCity = function(city){
       self$city <- city
     },
     
-    #setCountry
+    #'@description Sets the contact country
+    #'@param country contact country
     setCountry = function(country){
       self$country <- country
     }

@@ -16,21 +16,6 @@ This class models an right
 \details{
 geoflow_right
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new(str)}}{
-   This method is used to instantiate a geoflow_right object
- }
- \item{\code{setKey(key)}}{
-   Set the key
- }
- \item{\code{setValue(value)}}{
-   Set the value
- }
-}
-}
-
 \examples{
 \dontrun{
   right <- geoflow_right$new()
@@ -43,3 +28,90 @@ geoflow_right
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{right}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{key}}{right key}
+
+\item{\code{value}}{right value}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_right$new()}}
+\item \href{#method-setKey}{\code{geoflow_right$setKey()}}
+\item \href{#method-setValue}{\code{geoflow_right$setValue()}}
+\item \href{#method-clone}{\code{geoflow_right$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes an object of class \link{geoflow_right}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_right$new(str = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{str}}{character string to initialize from using key-based syntax}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\subsection{Method \code{setKey()}}{
+Sets key
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_right$setKey(key)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{key}}{key}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setValue"></a>}}
+\if{latex}{\out{\hypertarget{method-setValue}{}}}
+\subsection{Method \code{setValue()}}{
+Sets value
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_right$setValue(value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{value}}{value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_right$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

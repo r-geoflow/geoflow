@@ -20,33 +20,21 @@
 #'   relation$setDescription("layer description")
 #' }
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new(str)}}{
-#'    This method is used to instantiate a geoflow_relation object
-#'  }
-#'  \item{\code{setKey(key)}}{
-#'    Set relation key
-#'  }
-#'  \item{\code{setLink(link)}}{
-#'    Set relation link
-#'  }
-#'  \item{\code{setName(name)}}{
-#'    Set relation name
-#'  }
-#'  \item{\code{setDescription(description)}}{
-#'   Set relation description
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_relation <- R6Class("geoflow_relation",
  public = list(
+   #'@field key relation key
    key = NULL,
+   #'@field link relation link
    link = NULL,
+   #'@field name relation name
    name = NULL,
+   #'@field description relation name
    description = NULL,
+   
+   #'@description Initializes an object of class \link{geoflow_relation}
+   #'@param str character string to initialize from using key-based syntax
    initialize = function(str = NULL){
      if(!is.null(str)){
        kvp <- extract_kvp(str)
@@ -62,22 +50,26 @@ geoflow_relation <- R6Class("geoflow_relation",
      }
    },
    
-   #setKey
+   #'@description Set key
+   #'@param key key
    setKey = function(key){
      self$key <- key
    },
    
-   #setLink
+   #'@description Set link
+   #'@param link link
    setLink = function(link){
      self$link <- link
    },
    
-   #setName
+   #'@description Set name
+   #'@param name name
    setName = function(name){
      self$name <- name
    },
    
-   #setDescription
+   #'@description Set description
+   #'@param description description
    setDescription = function(description){
      self$description <- description
    }

@@ -6,4 +6,83 @@
 \title{geoflow_validator_contact_Identifier}
 \description{
 geoflow_validator_contact_Identifier
+
+geoflow_validator_contact_Identifier
+}
+\section{Super class}{
+\code{\link[geoflow:geoflow_validator_cell]{geoflow::geoflow_validator_cell}} -> \code{geoflow_validator_contact_Identifier}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{geoflow_validator_contact_Identifier$new()}}
+\item \href{#method-validate}{\code{geoflow_validator_contact_Identifier$validate()}}
+\item \href{#method-clone}{\code{geoflow_validator_contact_Identifier$clone()}}
+}
+}
+\if{html}{
+\out{<details ><summary>Inherited methods</summary>}
+\itemize{
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="getDefaultKey">}\href{../../geoflow/html/geoflow_validator_cell.html#method-getDefaultKey}{\code{geoflow::geoflow_validator_cell$getDefaultKey()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="getValidKeys">}\href{../../geoflow/html/geoflow_validator_cell.html#method-getValidKeys}{\code{geoflow::geoflow_validator_cell$getValidKeys()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isErrorIfInvalidKey">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isErrorIfInvalidKey}{\code{geoflow::geoflow_validator_cell$isErrorIfInvalidKey()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isExcludeHttpKeys">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isExcludeHttpKeys}{\code{geoflow::geoflow_validator_cell$isExcludeHttpKeys()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isKeyRequired">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isKeyRequired}{\code{geoflow::geoflow_validator_cell$isKeyRequired()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isKeySynthaxUser">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isKeySynthaxUser}{\code{geoflow::geoflow_validator_cell$isKeySynthaxUser()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isMultiple">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isMultiple}{\code{geoflow::geoflow_validator_cell$isMultiple()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isNaAuthorized">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isNaAuthorized}{\code{geoflow::geoflow_validator_cell$isNaAuthorized()}}\out{</span>}
+}
+\out{</details>}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+Initializes a contact 'Identifier' cell
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_contact_Identifier$new(i, j, str)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{i}}{row index (internal index to be used for graphical \pkg{geoflow} validation handlers)}
+
+\item{\code{j}}{col index (internal index to be used for graphical \pkg{geoflow} validation handlers)}
+
+\item{\code{str}}{string to validate}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-validate"></a>}}
+\if{latex}{\out{\hypertarget{method-validate}{}}}
+\subsection{Method \code{validate()}}{
+Validates a contact identifier. Proceeds with syntactic validation and content (ORCID) validation.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_contact_Identifier$validate()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+an validation report, as object of class \code{data.frame}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_contact_Identifier$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }

@@ -22,22 +22,31 @@
 #'
 geoflow_dictionary <- R6Class("geoflow_dictionary",
    public = list(
+     #'@field source dictionary source, object of class \code{data.frame}
      source = NULL,
+     #'@field featuretypes list of objects of class \code{geoflow_featuretype}
      featuretypes = list(),
+     #'@field registers list of objects of class \code{geoflow_register}
      registers = list(),
+     
+     #'@description Initializes a \link{geoflow_dictionnary} object
      initialize = function(){},
      
-     #setSource
+     #'@description Sets dictionnary source
+     #'@param source object of class \code{data.frame}
      setSource = function(source){
        self$source <- source
      },
      
-     #getFeatureTypes
+     #'@description Get the list of \link{geoflow_featuretype} defined in the dictionnary
+     #'@return a \code{list} of \code{geoflow_featuretype}
      getFeatureTypes = function(){
         return(self$featuretypes)
      },
      
-     #getFeatureTypeById
+     #'@description Get an object of class \link{geoflow_featuretype} given an ID
+     #'@param id id
+     #'@return an object of class \link{geoflow_featuretype}, otherwise \code{NULL}
      getFeatureTypeById = function(id){
         out <- NULL
         if(length(self$featuretypes)>0){
@@ -47,7 +56,8 @@ geoflow_dictionary <- R6Class("geoflow_dictionary",
         return(out)
      },
      
-     #addFeatureType
+     #'@description Adds a feature type to the dictionnary
+     #'@param ft object of class \link{geoflow_featuretype}
      addFeatureType = function(ft){
        if(!is(ft, "geoflow_featuretype")){
          stop("The feature type should be an object of class 'geoflow_featuretype'")
@@ -57,12 +67,15 @@ geoflow_dictionary <- R6Class("geoflow_dictionary",
        }
      },
      
-     #getRegisters
+     #'@description Get the list of registers associated with the dictionnary
+     #'@return a list of \link{geoflow_register} objects
      getRegisters = function(){
         return(self$registers)
      },
      
-     #getRegisterById
+     #'@description Get register by ID
+     #'@param id id
+     #'@return an object of class \link{geoflow_register}, otherwise \code{NULL}
      getRegisterById = function(id){
         out <- NULL
         if(length(self$registers)>0){
@@ -72,7 +85,8 @@ geoflow_dictionary <- R6Class("geoflow_dictionary",
         return(out)
      },
      
-     #addRegister
+     #'@description Adds a register to the dictionnary
+     #'@param register object of class \link{geoflow_register}
      addRegister = function(register){
         if(!is(register, "geoflow_register")){
            stop("The argument should be an object of class 'geoflow_register'")
