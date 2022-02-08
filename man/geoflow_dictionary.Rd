@@ -58,7 +58,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
-Initializes a \link{geoflow_dictionnary} object
+Initializes a \link{geoflow_dictionary} object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$new()}\if{html}{\out{</div>}}
 }
@@ -85,7 +85,7 @@ Sets dictionnary source
 \if{html}{\out{<a id="method-getFeatureTypes"></a>}}
 \if{latex}{\out{\hypertarget{method-getFeatureTypes}{}}}
 \subsection{Method \code{getFeatureTypes()}}{
-Get the list of \link{geoflow_featuretype} defined in the dictionnary
+Get the list of \link{geoflow_featuretype} defined in the dictionary
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_dictionary$getFeatureTypes()}\if{html}{\out{</div>}}
 }

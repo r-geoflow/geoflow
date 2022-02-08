@@ -29,7 +29,7 @@ geoflow_dictionary <- R6Class("geoflow_dictionary",
      #'@field registers list of objects of class \code{geoflow_register}
      registers = list(),
      
-     #'@description Initializes a \link{geoflow_dictionnary} object
+     #'@description Initializes a \link{geoflow_dictionary} object
      initialize = function(){},
      
      #'@description Sets dictionnary source
@@ -38,7 +38,7 @@ geoflow_dictionary <- R6Class("geoflow_dictionary",
        self$source <- source
      },
      
-     #'@description Get the list of \link{geoflow_featuretype} defined in the dictionnary
+     #'@description Get the list of \link{geoflow_featuretype} defined in the dictionary
      #'@return a \code{list} of \code{geoflow_featuretype}
      getFeatureTypes = function(){
         return(self$featuretypes)
