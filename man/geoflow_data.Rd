@@ -617,7 +617,7 @@ Sets a feature type object
 \if{html}{\out{<a id="method-setAttributes"></a>}}
 \if{latex}{\out{\hypertarget{method-setAttributes}{}}}
 \subsection{Method \code{setAttributes()}}{
-Set attributes, as simple way to describe attributes without binding to a proper \link{geoflow_dictionnary}.
+Set attributes, as simple way to describe attributes without binding to a proper \link{geoflow_dictionary}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setAttributes(attributes)}\if{html}{\out{</div>}}
 }
@@ -634,7 +634,7 @@ Set attributes, as simple way to describe attributes without binding to a proper
 \if{html}{\out{<a id="method-setVariables"></a>}}
 \if{latex}{\out{\hypertarget{method-setVariables}{}}}
 \subsection{Method \code{setVariables()}}{
-Set variables, as simple way to describe variables without binding to a proper \link{geoflow_dictionnary}.
+Set variables, as simple way to describe variables without binding to a proper \link{geoflow_dictionary}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setVariables(variables)}\if{html}{\out{</div>}}
 }

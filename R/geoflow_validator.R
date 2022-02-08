@@ -87,7 +87,7 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
     },
     
     #'@description Indicates if 'http' keys are excluded from the validation
-    #'@param \code{TRUE} if 'http' keys are excluded from the validation, \code{FALSE} otherwise
+    #'@return \code{TRUE} if 'http' keys are excluded from the validation, \code{FALSE} otherwise
     isExcludeHttpKeys = function(){
       return(private$exclude_http_keys)
     },

@@ -528,13 +528,13 @@ geoflow_data <- R6Class("geoflow_data",
       self$featureTypeObj = featureTypeObj
     },
     
-    #'@description Set attributes, as simple way to describe attributes without binding to a proper \link{geoflow_dictionnary}.
+    #'@description Set attributes, as simple way to describe attributes without binding to a proper \link{geoflow_dictionary}.
     #'@param attributes attributes
     setAttributes = function(attributes){
       self$attributes <- attributes
     },
     
-    #'@description Set variables, as simple way to describe variables without binding to a proper \link{geoflow_dictionnary}.
+    #'@description Set variables, as simple way to describe variables without binding to a proper \link{geoflow_dictionary}.
     #'@param variables variables
     setVariables = function(variables){
       self$variables <- variables

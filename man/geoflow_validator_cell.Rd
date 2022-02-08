@@ -170,12 +170,8 @@ Indicates if 'http' keys are excluded from the validation
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_cell$isExcludeHttpKeys()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{\code{TRUE}}}{if 'http' keys are excluded from the validation, \code{FALSE} otherwise}
-}
-\if{html}{\out{</div>}}
+\subsection{Returns}{
+\code{TRUE} if 'http' keys are excluded from the validation, \code{FALSE} otherwise
 }
 }
 \if{html}{\out{<hr>}}
