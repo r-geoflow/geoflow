@@ -44,7 +44,6 @@ Imports:
   geonapi,
   ows4R
 Remotes:
-  eblondel/geometa,
   BigelowLab/thredds
 Suggests: 
   testthat,
