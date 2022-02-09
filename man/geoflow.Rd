@@ -4,7 +4,7 @@
 \name{geoflow}
 \alias{geoflow}
 \alias{geoflow-package}
-\title{ools to Orchestrate and Run (Meta)Data Management Workflows}
+\title{Tools to Orchestrate and Run (Meta)Data Management Workflows}
 \description{
 Provides an engine to manage Spatial Data Infrastructures (SDI) and to orchestrate, run and automate 
 geospatial (meta)data workflows in compliance with international standards (ISO, OGC, INSPIRE) with a range of actions such as 
