@@ -43,8 +43,6 @@ Imports:
   geosapi,
   geonapi,
   ows4R
-Remotes:
-  BigelowLab/thredds
 Suggests: 
   testthat,
   readxl,
@@ -65,6 +63,7 @@ Suggests:
   zen4R,
   atom4R,
   d4storagehub4R,
+  thredds,
   rmarkdown
 License: MIT + file LICENSE
 URL: https://github.com/eblondel/geoflow
