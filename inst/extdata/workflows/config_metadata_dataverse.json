@@ -13,7 +13,7 @@
     "entities": [
       {
         "handler": "dataverse",
-        "source": "dynafor"
+        "source": "heintz"
       }
     ],
     "contacts" : []
@@ -25,6 +25,9 @@
       "software_type": "dataverse",
       "parameters": {
         "server": "data.inrae.fr"
+      },
+      "properties": {
+        "dataverse": "dynafor"
       }
     }
     ],

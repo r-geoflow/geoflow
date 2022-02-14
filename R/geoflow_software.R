@@ -550,7 +550,7 @@ register_software <- function(){
       )
     ),
     #-------------------------------------------------------------------------------------------------------
-    #DATAVERSE SWORD CLIENT
+    #DATAVERSE NATIVE API CLIENT
     #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(
       software_type = "dataverse",
@@ -559,6 +559,9 @@ register_software <- function(){
       handler = list,
       arguments = list(
         server = list(label = "URL", def = "Dataverse server URL", class = "character")
+      ),
+      attributes = list(
+        dataverse = list(label = "Dataverse ID", def = "Dataverse id where to deposit/publish records", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------

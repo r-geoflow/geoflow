@@ -1298,8 +1298,12 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
   if(is.null(DATAVERSE)){
     stop("There is no dataverse input software configured to handle entities from Dataverse")
   }
+  DATAVERSE_CONFIG <- config$software$input$dataverse_config
   
-  results <- dataverse::dataverse_search("dynafor", server = DATAVERSE$server)
+  results <- dataverse::dataverse_search(
+    source, server = DATAVERSE$server, per_page = 1000,
+    dataverse = DATAVERSE_CONFIG$properties$dataverse
+  )
   results <- results[!is.na(results$global_id),]
   
   entities <- lapply(1:nrow(results), function(i){
@@ -1312,7 +1316,7 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
     #create entity
     entity <- geoflow_entity$new()
     #entity Identifier
-    entity$setIdentifier("id", ds$datasetId)
+    entity$setIdentifier("id", ds_doi)
     entity$setIdentifier("doi", ds_doi)
     #entity Date
     if(!is.null(ds$productionDate)) entity$addDate(dateType = "production", date = str_to_posix(ds$productionDate))
