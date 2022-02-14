@@ -194,6 +194,12 @@ register_entity_handlers <- function(){
       fun = handle_entities_dbi
     ),
     geoflow_handler$new(
+      id = "dataverse",
+      def = "Handle metadata entities built from a Dataverse source",
+      packages = list("dataverse"),
+      fun = handle_entities_dataverse
+    ),
+    geoflow_handler$new(
       id = "ncdf",
       def = "Handle metadata entities from a Netcdf source",
       packages = list("ncdf4"),

@@ -1307,22 +1307,25 @@ geoflow_entity <- R6Class("geoflow_entity",
         }),collapse = line_separator),
         #Provenance
         Provenance = {
-          outprov <- paste0("statement:", self$provenance$statement, line_separator)
-          if(length(self$provenance$processes)>0){
-            processes_str <- paste0(sapply(self$provenance$processes, function(process){
-              rationale <- paste0("\"", process$rationale, "\"")
-              outproc <- paste0("process:", rationale)
-              if(!is.null(process$description)){
-                description <- paste0("\"", process$description, "\"")
-                outproc <- paste0(outproc, "[", description, "]")
-              }
-              return(outproc)
-            }),collapse=line_separator)
-            outprov <- paste0(outprov, processes_str, line_separator)
-            processors_str <- paste0("processor:",paste0(sapply(self$provenance$processes, function(process){
-              return(process$processor$id)
-            }),collapse=","))
-            outprov <- paste0(outprov, processors_str)
+          outprov <- NA
+          if(!is.null(self$provenance)){
+            outprov <- paste0("statement:", self$provenance$statement, line_separator)
+            if(length(self$provenance$processes)>0){
+              processes_str <- paste0(sapply(self$provenance$processes, function(process){
+                rationale <- paste0("\"", process$rationale, "\"")
+                outproc <- paste0("process:", rationale)
+                if(!is.null(process$description)){
+                  description <- paste0("\"", process$description, "\"")
+                  outproc <- paste0(outproc, "[", description, "]")
+                }
+                return(outproc)
+              }),collapse=line_separator)
+              outprov <- paste0(outprov, processes_str, line_separator)
+              processors_str <- paste0("processor:",paste0(sapply(self$provenance$processes, function(process){
+                return(process$processor$id)
+              }),collapse=","))
+              outprov <- paste0(outprov, processors_str)
+            }
           }
           outprov
         },
