@@ -887,14 +887,11 @@ geoflow_validator <- R6Class("geoflow_validator",
      validate_content = function(raw = FALSE){
        content_validation_report <- NULL
        if(!self$validate_structure()) return(NULL)
-       source <- self$source[,private$valid_columns]
+       source <- self$source[,colnames(self$source)[colnames(self$source) %in% private$valid_columns]]
        cell_reports <- lapply(1:nrow(source), function(i){
          src_obj <- source[i,]
-         print(i)
          out_row_report <- lapply(colnames(src_obj), function(colname){
            out_col <- NULL
-           print(colname)
-           print(src_obj[,colname])
            col_validator_class <- try(eval(parse(text=paste0("geoflow_validator_", private$model,"_", colname))),silent=T)
            if(is.R6Class(col_validator_class)){
              out_col <- col_validator_class$new(i, which(colnames(src_obj)==colname), src_obj[,colname])
