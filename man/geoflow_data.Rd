@@ -45,15 +45,21 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{cqlfilter}}{CQL filter for filtering data}
 
-\item{\code{features}}{features}
-
 \item{\code{workspaces}}{workspaces}
 
-\item{\code{datastore}}{datastore}
+\item{\code{store}}{store}
 
 \item{\code{layername}}{layer name}
 
 \item{\code{styles}}{styles}
+
+\item{\code{dimensions}}{dimensions}
+
+\item{\code{spatialRepresentationType}}{spatial representation type eg. "vector", "grid"}
+
+\item{\code{ogc_dimensions}}{OGC dimensions}
+
+\item{\code{features}}{features}
 
 \item{\code{parameters}}{parameters}
 
@@ -69,11 +75,13 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{variables}}{variables}
 
-\item{\code{ogc_dimensions}}{OGC dimensions}
+\item{\code{coverages}}{coverages}
 
-\item{\code{dimensions}}{dimensions}
+\item{\code{envelopeCompositionType}}{envelope composition type (for coverages)}
 
-\item{\code{spatialRepresentationType}}{spatial representation type eg. "vector", "grid"}
+\item{\code{selectedResolution}}{selected resolution (for coverages)}
+
+\item{\code{selectedResolutionIndex}}{selected resolution index (for coverages)}
 
 \item{\code{actions}}{local actions}
 
@@ -102,11 +110,16 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-setUpload}{\code{geoflow_data$setUpload()}}
 \item \href{#method-setSql}{\code{geoflow_data$setSql()}}
 \item \href{#method-setCqlFilter}{\code{geoflow_data$setCqlFilter()}}
-\item \href{#method-setFeatures}{\code{geoflow_data$setFeatures()}}
 \item \href{#method-setWorkspace}{\code{geoflow_data$setWorkspace()}}
+\item \href{#method-setStore}{\code{geoflow_data$setStore()}}
 \item \href{#method-setDatastore}{\code{geoflow_data$setDatastore()}}
 \item \href{#method-setLayername}{\code{geoflow_data$setLayername()}}
 \item \href{#method-addStyle}{\code{geoflow_data$addStyle()}}
+\item \href{#method-addDimension}{\code{geoflow_data$addDimension()}}
+\item \href{#method-getAllowedSpatialRepresentationTypes}{\code{geoflow_data$getAllowedSpatialRepresentationTypes()}}
+\item \href{#method-setSpatialRepresentationType}{\code{geoflow_data$setSpatialRepresentationType()}}
+\item \href{#method-setOgcDimensions}{\code{geoflow_data$setOgcDimensions()}}
+\item \href{#method-setFeatures}{\code{geoflow_data$setFeatures()}}
 \item \href{#method-setParameter}{\code{geoflow_data$setParameter()}}
 \item \href{#method-setGeometryField}{\code{geoflow_data$setGeometryField()}}
 \item \href{#method-setGeometryType}{\code{geoflow_data$setGeometryType()}}
@@ -114,11 +127,13 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-setFeatureTypeObj}{\code{geoflow_data$setFeatureTypeObj()}}
 \item \href{#method-setAttributes}{\code{geoflow_data$setAttributes()}}
 \item \href{#method-setVariables}{\code{geoflow_data$setVariables()}}
+\item \href{#method-setCoverages}{\code{geoflow_data$setCoverages()}}
+\item \href{#method-getAllowedEnvelopeCompositionTypes}{\code{geoflow_data$getAllowedEnvelopeCompositionTypes()}}
+\item \href{#method-setEnvelopeCompositionType}{\code{geoflow_data$setEnvelopeCompositionType()}}
+\item \href{#method-setSelectedResolution}{\code{geoflow_data$setSelectedResolution()}}
+\item \href{#method-setSelectedResolutionIndex}{\code{geoflow_data$setSelectedResolutionIndex()}}
+\item \href{#method-setBand}{\code{geoflow_data$setBand()}}
 \item \href{#method-addAction}{\code{geoflow_data$addAction()}}
-\item \href{#method-setOgcDimensions}{\code{geoflow_data$setOgcDimensions()}}
-\item \href{#method-addDimension}{\code{geoflow_data$addDimension()}}
-\item \href{#method-getAllowedSpatialRepresentationTypes}{\code{geoflow_data$getAllowedSpatialRepresentationTypes()}}
-\item \href{#method-setSpatialRepresentationType}{\code{geoflow_data$setSpatialRepresentationType()}}
 \item \href{#method-checkSoftwareProperties}{\code{geoflow_data$checkSoftwareProperties()}}
 \item \href{#method-clone}{\code{geoflow_data$clone()}}
 }
@@ -431,23 +446,6 @@ the CQL filter will be applied to the data.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setFeatures"></a>}}
-\if{latex}{\out{\hypertarget{method-setFeatures}{}}}
-\subsection{Method \code{setFeatures()}}{
-Set data features
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setFeatures(features)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{features}}{features}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-setWorkspace"></a>}}
 \if{latex}{\out{\hypertarget{method-setWorkspace}{}}}
 \subsection{Method \code{setWorkspace()}}{
@@ -469,10 +467,27 @@ Sets a workspace name, object of class \code{character}. A workspace must target
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setStore"></a>}}
+\if{latex}{\out{\hypertarget{method-setStore}{}}}
+\subsection{Method \code{setStore()}}{
+Sets a data/coverage store name, object of class \code{character}. Used as target data/coverage store name for GeoServer action.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setStore(store)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{store}}{store}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-setDatastore"></a>}}
 \if{latex}{\out{\hypertarget{method-setDatastore}{}}}
 \subsection{Method \code{setDatastore()}}{
-Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action.
+Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action. DEPRECATED, use \code{setStore}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setDatastore(datastore)}\if{html}{\out{</div>}}
 }
@@ -515,6 +530,91 @@ Adds a style name, object of class \code{character}. Used as layer style name(s)
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{style}}{style}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-addDimension"></a>}}
+\if{latex}{\out{\hypertarget{method-addDimension}{}}}
+\subsection{Method \code{addDimension()}}{
+Adds a dimension
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$addDimension(name, dimension)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{dimension name}
+
+\item{\code{dimension}}{object of class \link{geoflow_dimension}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getAllowedSpatialRepresentationTypes"></a>}}
+\if{latex}{\out{\hypertarget{method-getAllowedSpatialRepresentationTypes}{}}}
+\subsection{Method \code{getAllowedSpatialRepresentationTypes()}}{
+Get allowed spatial representation types, typically "vector" and "grid"
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getAllowedSpatialRepresentationTypes()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+an object of class \code{character}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSpatialRepresentationType"></a>}}
+\if{latex}{\out{\hypertarget{method-setSpatialRepresentationType}{}}}
+\subsection{Method \code{setSpatialRepresentationType()}}{
+Set spatial representation type for the data considered
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSpatialRepresentationType(spatialRepresentationType)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{spatialRepresentationType}}{spatial representation type}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setOgcDimensions"></a>}}
+\if{latex}{\out{\hypertarget{method-setOgcDimensions}{}}}
+\subsection{Method \code{setOgcDimensions()}}{
+Set OGC dimensions
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setOgcDimensions(name, values)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{dimension name}
+
+\item{\code{values}}{dimension values}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setFeatures"></a>}}
+\if{latex}{\out{\hypertarget{method-setFeatures}{}}}
+\subsection{Method \code{setFeatures()}}{
+Set data features
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setFeatures(features)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{features}}{features}
 }
 \if{html}{\out{</div>}}
 }
@@ -648,6 +748,97 @@ Set variables, as simple way to describe variables without binding to a proper \
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setCoverages"></a>}}
+\if{latex}{\out{\hypertarget{method-setCoverages}{}}}
+\subsection{Method \code{setCoverages()}}{
+Set coverages
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setCoverages(coverages)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{coverages}}{coverages}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getAllowedEnvelopeCompositionTypes"></a>}}
+\if{latex}{\out{\hypertarget{method-getAllowedEnvelopeCompositionTypes}{}}}
+\subsection{Method \code{getAllowedEnvelopeCompositionTypes()}}{
+Get allowed envelope composition types
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getAllowedEnvelopeCompositionTypes()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+an object of class \code{character}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setEnvelopeCompositionType"></a>}}
+\if{latex}{\out{\hypertarget{method-setEnvelopeCompositionType}{}}}
+\subsection{Method \code{setEnvelopeCompositionType()}}{
+Set envelope composition type
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setEnvelopeCompositionType(envelopeCompositionType)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{envelopeCompositionType}}{envelope composition type, either 'UNION' or 'INTERSECTION'}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSelectedResolution"></a>}}
+\if{latex}{\out{\hypertarget{method-setSelectedResolution}{}}}
+\subsection{Method \code{setSelectedResolution()}}{
+Set selected resolution
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSelectedResolution(selectedResolution)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{selectedResolution}}{selected resolution}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setSelectedResolutionIndex"></a>}}
+\if{latex}{\out{\hypertarget{method-setSelectedResolutionIndex}{}}}
+\subsection{Method \code{setSelectedResolutionIndex()}}{
+Set selected resolution index
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSelectedResolutionIndex(selectedResolutionIndex)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{selectedResolution}}{selected resolution index}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setBand"></a>}}
+\if{latex}{\out{\hypertarget{method-setBand}{}}}
+\subsection{Method \code{setBand()}}{
+Set band
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setBand(name, index)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addAction"></a>}}
 \if{latex}{\out{\hypertarget{method-addAction}{}}}
 \subsection{Method \code{addAction()}}{
@@ -660,74 +851,6 @@ Adds a local action
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{action}}{object of class \link{geoflow_action}}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setOgcDimensions"></a>}}
-\if{latex}{\out{\hypertarget{method-setOgcDimensions}{}}}
-\subsection{Method \code{setOgcDimensions()}}{
-Set OGC dimensions
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setOgcDimensions(name, values)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{dimension name}
-
-\item{\code{values}}{dimension values}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addDimension"></a>}}
-\if{latex}{\out{\hypertarget{method-addDimension}{}}}
-\subsection{Method \code{addDimension()}}{
-Adds a dimension
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$addDimension(name, dimension)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{dimension name}
-
-\item{\code{dimension}}{object of class \link{geoflow_dimension}}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getAllowedSpatialRepresentationTypes"></a>}}
-\if{latex}{\out{\hypertarget{method-getAllowedSpatialRepresentationTypes}{}}}
-\subsection{Method \code{getAllowedSpatialRepresentationTypes()}}{
-Get allowed spatial representation types, typically "vector" and "grid"
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getAllowedSpatialRepresentationTypes()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-an object of class \code{character}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setSpatialRepresentationType"></a>}}
-\if{latex}{\out{\hypertarget{method-setSpatialRepresentationType}{}}}
-\subsection{Method \code{setSpatialRepresentationType()}}{
-Set spatial representation type for the data considered
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSpatialRepresentationType(spatialRepresentationType)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{spatialRepresentationType}}{spatial representation type}
 }
 \if{html}{\out{</div>}}
 }

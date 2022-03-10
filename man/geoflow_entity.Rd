@@ -91,6 +91,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-prepareEntityJobDir}{\code{geoflow_entity$prepareEntityJobDir()}}
 \item \href{#method-copyDataToJobDir}{\code{geoflow_entity$copyDataToJobDir()}}
 \item \href{#method-enrichWithFeatures}{\code{geoflow_entity$enrichWithFeatures()}}
+\item \href{#method-enrichWithCoverages}{\code{geoflow_entity$enrichWithCoverages()}}
 \item \href{#method-prepareFeaturesToUpload}{\code{geoflow_entity$prepareFeaturesToUpload()}}
 \item \href{#method-enrichWithRelations}{\code{geoflow_entity$enrichWithRelations()}}
 \item \href{#method-enrichWithSubjects}{\code{geoflow_entity$enrichWithSubjects()}}
@@ -557,12 +558,33 @@ This function will look at data object associated to the entity (previously set 
 \if{html}{\out{<a id="method-enrichWithFeatures"></a>}}
 \if{latex}{\out{\hypertarget{method-enrichWithFeatures}{}}}
 \subsection{Method \code{enrichWithFeatures()}}{
-This function will enrich the entity with data features, but trying to read the spatial data (eg shapefile,
-   sql query - if a database input software is declared in the geoflow config). This method will overwrite 
-   spatial metadata such as the bounding box and temporal extent. Note that the user spatial extent is not overwriten
-   since it may content finer geometries than a bounding box
+This function will enrich the entity with data features (vector data), trying to read the spatial data 
+(eg shapefile, sql query - if a database input software is declared in the geoflow config). This method will overwrite 
+spatial metadata such as the bounding box. Note that the user spatial extent is not overwriten since it may contain finer 
+geometries than a bounding box.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithFeatures(config, jobdir = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+
+\item{\code{jobdir}}{relative path of the job directory}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-enrichWithCoverages"></a>}}
+\if{latex}{\out{\hypertarget{method-enrichWithCoverages}{}}}
+\subsection{Method \code{enrichWithCoverages()}}{
+This function will enrich the entity with data coverages (grid data), trying to read the spatial data
+(eg. geotiff). This method will overwrite spatial metadata such as the bounding box. Note that the user spatial extent
+is not overwriten since it may contain finer geometries than a bounding box.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithCoverages(config, jobdir = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -579,8 +601,8 @@ This function will enrich the entity with data features, but trying to read the 
 \if{html}{\out{<a id="method-prepareFeaturesToUpload"></a>}}
 \if{latex}{\out{\hypertarget{method-prepareFeaturesToUpload}{}}}
 \subsection{Method \code{prepareFeaturesToUpload()}}{
-This function will 1)cheak (in case of upload is requested) if the type of source and upload are both different 
-and files formats(csv,shp,gpkg) and 2)process automatically to conversion from source to upload type.
+This function will 1) check (in case of upload is requested) if the type of source and upload are both different 
+on files formats(eg. csv,shp,gpkg) and 2) process automatically to conversion from source to upload type.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$prepareFeaturesToUpload(config)}\if{html}{\out{</div>}}
 }
