@@ -242,8 +242,6 @@ handle_entities_df <- function(config, source){
             },
             "srid" = {
               spatial_srid <- as.integer(kvps$srid$values[[1]])
-              if(is.na(spatial_srid))
-                # stop("The spatial SRID should be an integer.")
               entity$setSrid(spatial_srid)
             }
           )

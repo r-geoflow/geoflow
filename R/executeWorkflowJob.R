@@ -121,13 +121,15 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           
           #enrich metadata with dynamic properties
           if(!is.null(entity$data)){
-            #data features
+            #data features/coverages
             if(!skipFileDownload){
               #we copy data to job data dir
               if(!is.null(entity$data$source)) entity$copyDataToJobDir(config, jobdir)
-              #we enrich entity with features
-              #control is added in case of entity already enriched with features (when loaded from custom R entity handlers)
+              #vector data: we enrich entity with features
+              #control is added in case of entity already enriched with features/coverages (when loaded from custom R entity handlers)
               if(is.null(entity$data$features)) entity$enrichWithFeatures(config, jobdir)
+              if(is.null(entity$data$coverages)) entity$enrichWithCoverages(config, jobdir)
+              
               setwd(entity$getEntityJobDirPath(config, jobdir)) #make sure we are in entity jobdir
               #we check if the source and upload are both different file format (csv,shp,gpkg) and process automatically to conversion from source to upload type
               entity$prepareFeaturesToUpload(config)

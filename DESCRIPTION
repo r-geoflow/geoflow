@@ -1,6 +1,6 @@
 Package: geoflow
 Version: 1.0.0
-Date: 2022-01-31
+Date: 2022-03-11
 Title: Tools to Orchestrate and Run (Meta)Data Management Workflows
 Description: Provides an engine to facilitate the orchestration and execution of metadata-driven data management workflows, in compliance with FAIR 
   (Findable, Accessible, Interoperable and Reusable) data principles. By means of a pivot metadata model, extending on the DublinCore (<https://dublincore.org/>) 
@@ -39,6 +39,7 @@ Imports:
   png,
   uuid,
   sf,
+  raster,
   geometa,
   geosapi,
   geonapi,

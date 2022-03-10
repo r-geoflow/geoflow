@@ -483,7 +483,7 @@ geoflow::list_software_properties("geoserver")
 
     ##        name               definition
     ## 1 workspace GeoServer workspace name
-    ## 2 datastore GeoServer datastore name
+    ## 2 store GeoServer store name
 
 ###### JSON
 
@@ -526,7 +526,7 @@ geoflow::list_software_properties("geoserver")
         },
         "properties" : {
             "workspace": "my_geoserver_workspace",
-            "datastore": "my_geoserver_datastore"
+            "store": "my_geoserver_store"
         }
     }
 ```
@@ -574,7 +574,7 @@ Since it is a list of software, the base JSON definition will be an
         },
         "properties" : {
             "workspace": "my_geoserver_workspace",
-            "datastore": "my_geoserver_datastore"
+            "store": "my_geoserver_store"
         }
   }
 ]

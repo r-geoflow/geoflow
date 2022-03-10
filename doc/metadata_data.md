@@ -77,7 +77,7 @@ If data must be uploaded, server must be declared in **software** section of jso
 
 <u>Parameter specific to software - Geoserver</u>
 * **style**: Used as layer style name(s) for GeoServer action.
-* **datastore** : name of target datastore to server declared (can also be specified in json configuration)
+* **store** : name of target store to server declared (can also be specified in json configuration)
 * **layername**: name give to layer if need (db, gpkg and shp object)
 * **for a 'dbquery' upload type**
 	* **sql**: a sql query applicable on sql source to upload.

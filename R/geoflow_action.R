@@ -307,8 +307,8 @@ register_actions <- function(){
       fun = geosapi_publish_ogc_services,
       available_options = list(
         createWorkspace = list(def = "Create workspace if not already existing", class = "logical", default = FALSE),
-        createDatastore = list(def = "Create datastore if not already existing", class = "logical", default = FALSE),
-        datastore_description = list(def = "Specify a decription for the new datastore", class = "character", default = "")
+        createStore = list(def = "Create data/coverage store if not already existing", class = "logical", default = FALSE),
+        store_description = list(def = "Specify a decription for the new data/coverage store", class = "character", default = "")
       )
     ),
     geoflow_action$new(

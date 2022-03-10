@@ -494,7 +494,7 @@ register_software <- function(){
       ),
       attributes = list(
         workspace = list(label = "Workspace", def = "GeoServer workspace name", class = "character"),
-        datastore = list(label = "Datastore", def = "GeoServer datastore name", class = "character")
+        store = list(label = "Store", def = "GeoServer data/coverage store name", class = "character")
       ),
       actions = list(
         onstart = function(config, software, software_config){
@@ -505,7 +505,7 @@ register_software <- function(){
               software$createWorkspace(config$properties$workspace, paste0("http://",config$properties$workspace))
             }
           }
-          #TODO to be completed with datastore creation cases
+          #TODO to be completed with store creation cases
         },
         onend = function(config, software, software_config){
           config$logger.info("Executing GeoServer 'onend' action")

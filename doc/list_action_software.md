@@ -69,8 +69,8 @@ workflows - List of actions and softwares
 | name                   | definition                                 | default |
 | :--------------------- | :----------------------------------------- | :------ |
 | createWorkspace        | Create workspace if not already existing   | FALSE   |
-| createDatastore        | Create datastore if not already existing   | FALSE   |
-| datastore\_description | Specify a decription for the new datastore |         |
+| createStore        | Create store if not already existing   | FALSE   |
+| store\_description | Specify a decription for the new store |         |
 
 ### 1.1.6 List of zen4R-deposit-record options<a name= zen4R-deposit-record />
 
@@ -245,7 +245,7 @@ workflows - List of actions and softwares
 | name      | definition               |
 | :-------- | :----------------------- |
 | workspace | GeoServer workspace name |
-| datastore | GeoServer datastore name |
+| store | GeoServer store name |
 
 ### 2.1.13 List of zenodo parameters<a name= zenodo />
 

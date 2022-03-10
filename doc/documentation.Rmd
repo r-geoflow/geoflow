@@ -395,7 +395,7 @@ geoflow::list_software_properties("geoserver")
 		},
 		"properties" : {
 			"workspace": "my_geoserver_workspace",
-			"datastore": "my_geoserver_datastore"
+			"store": "my_geoserver_store"
 		}
 	}
 ```
@@ -439,7 +439,7 @@ Since it is a list of software, the base JSON definition will be an _array_ (usi
 		},
 		"properties" : {
 			"workspace": "my_geoserver_workspace",
-			"datastore": "my_geoserver_datastore"
+			"store": "my_geoserver_store"
 		}
   }
 ]

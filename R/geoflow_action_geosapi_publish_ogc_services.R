@@ -6,12 +6,9 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   
   #options
   createWorkspace <- if(!is.null(options$createWorkspace)) options$createWorkspace else FALSE
-  createDatastore <- if(!is.null(options$createDatastore)) options$createDatastore else FALSE
-  datastore_description <- if(!is.null(options$datastore_description)) options$datastore_description else ""
-  
-  #for the timebeing, this action targets Vector data (featureType)
-  #Later this action may also target coverage, but it's not yet supported by geosapi
-  
+  createStore <- if(!is.null(options$createStore)) options$createStore else FALSE
+  store_description <- if(!is.null(options$store_description)) options$store_description else ""
+
   #check presence of data
   if(is.null(entity$data)){
     warnMsg <- sprintf("No data object associated to entity '%s'. Skipping data publication!", 
@@ -31,6 +28,11 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     datasource_name <- unlist(strsplit(datasource, "\\."))[1]
     datasource_file <- attr(datasource, "uri")
     attributes(datasource) <- NULL
+  }else{
+    if(entity$data$upload){
+      errMsg <- sprintf("Upload source is missing!")
+      stop(errMsg)
+    }
   }
   
   #layername/sourcename
@@ -53,9 +55,9 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     stop(errMsg)
   }
   
-  datastore <- GS_CONFIG$properties$datastore
-  if(is.null(datastore)){
-    errMsg <- "The geoserver configuration requires a datastore for publishing action"
+  store <- GS_CONFIG$properties$store
+  if(is.null(store)){
+    errMsg <- "The geoserver configuration requires a data/coverage store for publishing action"
     config$logger.error(errMsg)
     stop(errMsg)
   }
@@ -66,79 +68,113 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     return(NULL)
   }
   
-  # Check existence of datastore
-  ns <- GS$getDataStore(workspace, datastore)
-  ds <- NULL
-  # If datastore not exist
-  # Check if createDataspace is TRUE
-  if(length(ns)==0){
-    if(createDatastore){
+  # Check existence of data/coverage store
+  the_store <- switch(entity$data$spatialRepresentationType,
+    "vector" = GS$getDataStore(workspace, store),
+    "grid" = GS$getCoverageStore(workspace, store)
+  )
+  # If store does not exist
+  # Check if createStore is TRUE
+  if(length(the_store)==0){
+    if(createStore){
       switch(entity$data$uploadType,
-        "gpkg"= ds<-GSGeoPackageDataStore$new(dataStore=datastore, description = datastore_description , enabled = TRUE, database = paste0("file://data/",workspace,"/",entity$data$uploadSource,".gpkg")),
+        #vector/features upload types
+        #===========================================================================================
+        #vector/GeoPackage
+        #-------------------------------------------------------------------------------------------
+        "gpkg"= {
+          the_store<-GSGeoPackageDataStore$new(
+            name = store, 
+            description = store_description , 
+            enabled = TRUE, 
+            database = paste0("file://data/",workspace,"/",entity$data$uploadSource,".gpkg")
+          )
+        },
+        #vector/dbtable
+        #-------------------------------------------------------------------------------------------
         "dbtable"= {
           dbi<-config$software$output$dbi_config
           if(is.null(dbi)) dbi<-config$software$output$dbi_config
           if(is.null(dbi)) {
-            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, this datastore type requires a DBI type software declaration in the configuration",datastore)
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, this datastore type requires a DBI type software declaration in the configuration", store)
             config$logger.error(errMsg)
             stop(errMsg)   
           }
-          Postgres<-dbi$parameters$drv=="Postgres"
+          Postgres<-dbi$parameters$drv %in% c("Postgres","PostreSQL")
           if(!Postgres){
-            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, the DBI software declared in the configuration is not a PostGis database",datastore)
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, the DBI software declared in the configuration is not a PostGis database", store)
             config$logger.error(errMsg)
             stop(errMsg)   
           }
-          ds<-GSPostGISDataStore$new(dataStore=datastore, description = datastore_description, enabled = TRUE)
-          ds$setHost(dbi$parameters$host)
-          ds$setPort(dbi$parameters$port)
-          ds$setDatabase(dbi$parameters$dbname)
-          #ds$setSchema()#Not yet implemented in dbi software arguments
-          ds$setUser(dbi$parameters$user)
-          ds$setPassword(dbi$parameters$password)
-          },
+          the_store<-GSPostGISDataStore$new(name=store, description = store_description, enabled = TRUE)
+          the_store$setHost(dbi$parameters$host)
+          the_store$setPort(dbi$parameters$port)
+          the_store$setDatabase(dbi$parameters$dbname)
+          #the_store$setSchema()#Not yet implemented in dbi software arguments
+          the_store$setUser(dbi$parameters$user)
+          the_store$setPassword(dbi$parameters$password)
+        },
+        #vector/dbquery
+        #-------------------------------------------------------------------------------------------
         "dbquery"= {
           dbi<-config$software$output$dbi_config
           if(is.null(dbi)) dbi<-config$software$output$dbi_config
           if(is.null(dbi)) {
-            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, this datastore type requires a DBI type software declaration in the configuration",datastore)
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, this datastore type requires a DBI type software declaration in the configuration", store)
             config$logger.error(errMsg)
             stop(errMsg)   
           }
-          Postgres<-dbi$parameters$drv=="Postgres"
+          Postgres<-dbi$parameters$drv %in% c("Postgres","PostreSQL")
           if(!Postgres){
-            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, the DBI software declared in the configuration is not a PostGis database",datastore)
+            errMsg <- sprintf("Error during Geoserver '%s' datastore creation, the DBI software declared in the configuration is not a PostGis database", store)
             config$logger.error(errMsg)
             stop(errMsg)   
           }
-          ds<-GSPostGISDataStore$new(dataStore=datastore, description = datastore_description, enabled = TRUE)
-          ds$setHost(dbi$parameters$host)
-          ds$setPort(dbi$parameters$port)
-          ds$setDatabase(dbi$parameters$dbname)
-          #ds$setSchema()#Not yet implemented in dbi software arguments
-          ds$setUser(dbi$parameters$user)
-          ds$setPassword(dbi$parameters$password)
+          the_store<-GSPostGISDataStore$new(name=store, description = store_description, enabled = TRUE)
+          the_store$setHost(dbi$parameters$host)
+          the_store$setPort(dbi$parameters$port)
+          the_store$setDatabase(dbi$parameters$dbname)
+          #the_store$setSchema()#Not yet implemented in dbi software arguments
+          the_store$setUser(dbi$parameters$user)
+          the_store$setPassword(dbi$parameters$password)
         },
-        "shp"= ds<-GSShapefileDirectoryDataStore$new(dataStore=datastore, description = datastore_description,enabled = TRUE, url = paste0("file://data","/",workspace))
+        #vector/shapefile (ESRI)
+        #-------------------------------------------------------------------------------------------
+        "shp"= {
+          the_store <- GSShapefileDirectoryDataStore$new(
+            name=store, 
+            description = store_description,
+            enabled = TRUE,
+            url = paste0("file://data","/",workspace)
+          )
+        },
+        #grid/coverages upload types
+        #-----------------------------------------------
+        "geotiff" = {
+          the_store <- GSGeoTIFFCoverageStore$new(name = store, description = store_description, enabled = TRUE)
+        }
       )
-      if(is.null(ds)){
-        errMsg <- sprintf("Error during Geoserver datastore creation, format '%s' not supported. Aborting 'geosapi' action!",entity$data$uploadType)
+      if(is.null(the_store)){
+        errMsg <- sprintf("Error during Geoserver data/coverage store creation, format '%s' not supported. Aborting 'geosapi' action!",entity$data$uploadType)
         config$logger.error(errMsg)
         stop(errMsg)      
       }else{
-        created <- GS$createDataStore(workspace, ds)
+        created <- switch(entity$data$spatialRepresentationType,
+          "vector" = GS$createDataStore(workspace, the_store),
+          "grid" = GS$createCoverageStore(workspace, the_store)
+        )
         if(created){
-          infoMsg <- sprintf("Successful Geoserver '%s' datastore creaction", datastore)
+          infoMsg <- sprintf("Successful Geoserver '%s' data/coverage store creaction", store)
           config$logger.info(infoMsg)
         }else{
-          errMsg <- "Error during Geoserver datastore creation. Aborting 'geosapi' action!"
+          errMsg <- "Error during Geoserver data/coverage store creation. Aborting 'geosapi' action!"
           config$logger.error(errMsg)
           stop(errMsg)
         }
       }
     }else{
-      # If createDatastore is FALSE edit ERROR Message
-      errMsg <- sprintf("Datastore '%s' don't exist and createDatastore option = FALSE, please verify config if datastore already exist or change createDatastore = TRUE to create it",datastore)
+      # If createStore is FALSE edit ERROR Message
+      errMsg <- sprintf("Data/Coverage store '%s' does not exist and 'createStore' option = FALSE, please verify config if data/coverage store already exists or change createStore = TRUE to create it",store)
       config$logger.error(errMsg)
       stop(errMsg)
     }    
@@ -159,10 +195,26 @@ geosapi_publish_ogc_services <- function(entity, config, options){
       config$logger.info(sprintf("File to upload to Geoserver: %s", filepath))
       if(file.exists(filepath)){
         config$logger.info(sprintf("Upload file '%s' [%s] to GeoServer...", filepath, entity$data$uploadType))
-        uploaded <- GS$uploadData(workspace, datastore, endpoint = "file", configure = "none", update = "overwrite",
-                                  filename = filepath, extension = entity$data$uploadType, charset = "UTF-8",
-                                  contentType = if(entity$data$uploadType=="spatialite") "application/x-sqlite3" else "")
-        }else{
+        uploaded <- switch(entity$data$spatialRepresentationType,
+          #vector/features upload
+          "vector" = GS$uploadData(
+            workspace, store, endpoint = "file", configure = "none", update = "overwrite",
+            filename = filepath, extension = entity$data$uploadType, charset = "UTF-8",
+            contentType = if(entity$data$uploadType=="spatialite") "application/x-sqlite3" else ""
+          ),
+          #grid/coverages upload
+          "grid" = GS$uploadCoverage(
+            workspace, store, endpoint = "file", configure = "none", update = "overwrite",
+            filename = filepath, extension = entity$data$uploadType,
+            contentType = switch(entity$data$uploadType,
+              "geotiff" = "text/plain",
+              "arcgrid" = "text/plain",
+              "worldimage" = "application/zip",
+              "imagemosaic" = "application/zip"
+            )
+          )
+        )
+      }else{
           errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", filepath, datasource)
           config$logger.error(errMsg)
           stop(errMsg)
@@ -179,63 +231,38 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     }
   }
   
-  #featuretype/layer publication
+  #featuretype/coverage  +layer publication
   #--------------------------------------------------------------------------------------------------
   
   #variables
   epsgCode <- sprintf("EPSG:%s", entity$srid)
   
-  #build feature type
-  featureType <- GSFeatureType$new()
-  featureType$setName(layername)
+  #build resource (either featuretype or coverage)
+  resource <- switch(entity$data$spatialRepresentationType,
+    "vector" = GSFeatureType$new(),
+    "grid" = GSCoverage$new()
+  )
+  resource$setName(layername)
   nativename <- datasource_name
   if(entity$data$uploadType == "dbquery") nativename <- layername
-  featureType$setNativeName(nativename)
-  featureType$setAbstract(entity$descriptions$abstract)
-  featureType$setTitle(entity$titles[["title"]])
-  featureType$setSrs(epsgCode)
-  featureType$setNativeCRS(epsgCode)
-  featureType$setEnabled(TRUE)
-  featureType$setProjectionPolicy("FORCE_DECLARED")
+  if(entity$data$spatialRepresentationType == "grid") nativename <- store
+  resource$setNativeName(nativename)
+  resource$setAbstract(entity$descriptions$abstract)
+  resource$setTitle(entity$titles[["title"]])
+  resource$setSrs(epsgCode)
+  resource$setNativeCRS(epsgCode)
+  resource$setEnabled(TRUE)
+  resource$setProjectionPolicy("FORCE_DECLARED")
   bbox <- entity$spatial_bbox
-  featureType$setLatLonBoundingBox(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, crs = epsgCode)
-  featureType$setNativeBoundingBox(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, crs = epsgCode) 
+  resource$setNativeBoundingBox(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, crs = epsgCode)
+  sfc_min <- sf::st_sfc(sf::st_point(c(bbox$xmin, bbox$ymin)), crs = epsgCode)
+  sfc_max <- sf::st_sfc(sf::st_point(c(bbox$xmax, bbox$ymax)), crs = epsgCode)
+  sfc_min_ll <- sf::st_bbox(sf::st_transform(sfc_min, crs = 4326))
+  sfc_max_ll <- sf::st_bbox(sf::st_transform(sfc_max, crs = 4326))
+  resource$setLatLonBoundingBox(sfc_min_ll$xmin, sfc_min_ll$ymin, sfc_max_ll$xmax, sfc_max_ll$ymax, crs = 4326)
   for(subject in entity$subjects){
     kwds <- subject$keywords
-    for(kwd in kwds) featureType$addKeyword(kwd$name)
-  }
-  
-  #cql filter?
-  if(!is.null(entity$data$cqlfilter)){
-    featureType$setCqlFilter(entity$data$cqlfilter)
-  }
-  
-  #virtual table?
-  if(entity$data$uploadType == "dbquery"){
-    vt <- GSVirtualTable$new()
-    vt$setName(layername)
-    vt$setSql(entity$data$sql)
-    #if the virtual table is spatialized
-    if(!is.null(entity$data$geometryField) & !is.null(entity$data$geometryType)){
-      vtg <- GSVirtualTableGeometry$new(
-        name = entity$data$geometryField, 
-        type = entity$data$geometryType, 
-        srid = entity$srid
-      )
-      vt$setGeometry(vtg)
-    }
-    #if the virtual table has service parameters
-    if(length(entity$data$parameters)){
-      for(param in entity$data$parameters){
-        vtp <- GSVirtualTableParameter$new(
-          name = param$name, 
-          defaultValue = param$defaultvalue, 
-          regexpValidator = param$regexp
-        )
-        vt$addParameter(vtp)
-      }
-    }
-    featureType$setVirtualTable(vt)
+    for(kwd in kwds) resource$addKeyword(kwd$name)
   }
   
   #add metadata links
@@ -259,33 +286,128 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   }
   if(!is.null(md_link_xml)){
     md_xml <- GSMetadataLink$new(type = "text/xml", metadataType = "ISO19115:2003", content = md_link_xml)
-    featureType$addMetadataLink(md_xml)
+    resource$addMetadataLink(md_xml)
   }
   if(!is.null(md_link_html)){
     md_html <- GSMetadataLink$new(type = "text/html", metadataType = "ISO19115:2003", content = md_link_html)
-    featureType$addMetadataLink(md_html)
+    resource$addMetadataLink(md_html)
   }
   
-  #build layer
-  layer <- GSLayer$new()
-  layer$setName(layername)
-  if(length(entity$data$styles)>0){
-    for(i in 1:length(entity$data$styles)){
-      style <- entity$data$styles[i]
-      if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
+  #resource type specific properties
+  switch(entity$data$spatialRepresentationType,
+    "vector" = {
+      #cql filter?
+      if(!is.null(entity$data$cqlfilter)){
+        resource$setCqlFilter(entity$data$cqlfilter)
+      }
+      
+      #virtual table?
+      if(entity$data$uploadType == "dbquery"){
+        vt <- GSVirtualTable$new()
+        vt$setName(layername)
+        vt$setSql(entity$data$sql)
+        #if the virtual table is spatialized
+        if(!is.null(entity$data$geometryField) & !is.null(entity$data$geometryType)){
+          vtg <- GSVirtualTableGeometry$new(
+            name = entity$data$geometryField, 
+            type = entity$data$geometryType, 
+            srid = entity$srid
+          )
+          vt$setGeometry(vtg)
+        }
+        #if the virtual table has service parameters
+        if(length(entity$data$parameters)>0){
+          for(param in entity$data$parameters){
+            vtp <- GSVirtualTableParameter$new(
+              name = param$name, 
+              defaultValue = param$defaultvalue, 
+              regexpValidator = param$regexp
+            )
+            vt$addParameter(vtp)
+          }
+        }
+        resource$setVirtualTable(vt)
+      }
+    },
+    "grid" = {
+      
+      #coverage view?
+      if(length(entity$data$bands)>0){
+        coview <- GSCoverageView$new()
+        coview$setName(layername)
+        coview$setEnvelopeCompositionType(entity$data$envelopeCompositionType)
+        coview$setSelectedResolution(entity$data$selectedResolution)
+        coview$setSelectedResolutionIndex(entity$data$selectedResolutionIndex)
+        for(band in entity$data$bands){
+          cvb <- GSCoverageBand$new()
+          covname <- if(!is.null(band$name)) band$name else layername
+          cvb$setDefinition(paste0(covname,"@", band$idx))
+          cvb$setIndex(band$index)
+          cvb$addInputBand(GSInputCoverageBand$new( coverageName = covname, band = band$index))
+          coview$addBand(cvb)
+        }
+        resource$setView(coview)
+      }
+      
     }
-  }else{
-    layer$setDefaultStyle("generic")
-  }
-
-  #publish
-  try(GS$unpublishLayer(workspace, datastore, layername))
-  out <- GS$publishLayer(workspace, datastore, featureType, layer)
-  if(!out){
-    errMsg <- sprintf("Error during layer '%s' publication for entity '%s'!",layername, entity$identifiers[["id"]])
-    config$logger.error(errMsg)
-  }else{
-    infoMsg <- sprintf("Successful layer'%s' publication in Geoserver for entity '%s'!", layername, entity$identifiers[["id"]])
-  }
+  )
+  
+  #layer build and publication
+  switch(entity$data$spatialRepresentationType,
+    "vector" = {
+      layer <- GSLayer$new()
+      layer$setName(layername)
+      if(length(entity$data$styles)>0){
+        for(i in 1:length(entity$data$styles)){
+          style <- entity$data$styles[i]
+          if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
+        }
+      }else{
+        layer$setDefaultStyle("generic")
+      }
+      
+      #publish
+      try(GS$unpublishLayer(workspace, store, layername))
+      out <- GS$publishLayer(workspace, store, resource, layer)
+      if(!out){
+        errMsg <- sprintf("Error during layer '%s' publication for entity '%s'!",layername, entity$identifiers[["id"]])
+        config$logger.error(errMsg)
+      }else{
+        infoMsg <- sprintf("Successful layer'%s' publication in Geoserver for entity '%s'!", layername, entity$identifiers[["id"]])
+      }
+    },
+    "grid" = {
+      out <- FALSE
+      cov <- GS$getCoverage(ws = workspace, cs = store, cv = layername)
+      if(is.null(cov)){
+        out <- GS$createCoverage(ws = workspace, cs = store, coverage = resource)
+      }else{
+        out <- GS$updateCoverage(ws = workspace, cs = store, coverage = resource)
+      }
+      #manage coverage styles by updating associated layer object
+      layer <- GS$getLayer(layername)
+      if(is(layer, "GSLayer")){
+        layer$setName(layername)
+        if(length(entity$data$styles)>0){
+          layer$styles <- list()
+          for(i in 1:length(entity$data$styles)){
+            style <- entity$data$styles[i]
+            if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
+          }
+        }else{
+          layer$setDefaultStyle("generic")
+        }
+        GS$updateLayer(layer)  
+      }
+      
+      if(!out){
+        errMsg <- sprintf("Error during layer '%s' publication for entity '%s'!",layername, entity$identifiers[["id"]])
+        config$logger.error(errMsg)
+      }else{
+        infoMsg <- sprintf("Successful layer'%s' publication in Geoserver for entity '%s'!", layername, entity$identifiers[["id"]])
+      }
+    }
+  )
+  
   
 }

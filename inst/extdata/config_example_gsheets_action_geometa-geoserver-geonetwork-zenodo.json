@@ -79,7 +79,7 @@
 		},
 		"properties" : {
 			"workspace": "workspace",
-			"datastore": "datastore"
+			"store": "store"
 		}
 	}
   ],

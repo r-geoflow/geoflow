@@ -239,10 +239,10 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(!is.null(wkt)) spatial_bbox <- sf::st_bbox(sf::st_as_sfc(wkt, crs = crs))
       if(!is.null(bbox)) spatial_bbox <- bbox
       if(!is.null(data)){
-        if(!is(data, "sf")){
-          return(NULL)
-        }else{
+        if(is(data, "sf")|is(data, "RasterLayer")){
           spatial_bbox <- sf::st_bbox(data)
+        }else{
+          return(NULL)
         }
       }
       
@@ -496,10 +496,10 @@ geoflow_entity <- R6Class("geoflow_entity",
       
     },
     
-    #'@description This function will enrich the entity with data features, but trying to read the spatial data (eg shapefile,
-    #'    sql query - if a database input software is declared in the geoflow config). This method will overwrite 
-    #'    spatial metadata such as the bounding box and temporal extent. Note that the user spatial extent is not overwriten
-    #'    since it may content finer geometries than a bounding box
+    #'@description This function will enrich the entity with data features (vector data), trying to read the spatial data 
+    #' (eg shapefile, sql query - if a database input software is declared in the geoflow config). This method will overwrite 
+    #' spatial metadata such as the bounding box. Note that the user spatial extent is not overwriten since it may contain finer 
+    #' geometries than a bounding box.
     #'@param config geoflow config object
     #'@param jobdir relative path of the job directory
     enrichWithFeatures = function(config, jobdir = NULL){
@@ -515,6 +515,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       
       if(self$data$sourceType == "other"){
         config$logger.warn("Metadata dynamic handling based on 'data' not implemented for type 'other'")
+        setwd(wd)
         return(NULL)
       }
       
@@ -799,6 +800,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 if(is.null(self$data$sourceSql)){
                   warnMsg <- sprintf("No SQL file provided as 'source' nor 'sourceSql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
                   config$logger.warn(warnMsg)
+                  setwd(wd)
                   return(FALSE)
                 }
               }
@@ -810,6 +812,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                   if(class(sf.data)[1]=="try-error"){
                     errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", self$data$sourceSql)
                     config$logger.error(errMsg)
+                    setwd(wd)
                     return(FALSE)
                   }
                   #we try to apply the cql filter specified as data property
@@ -867,12 +870,98 @@ geoflow_entity <- R6Class("geoflow_entity",
             }
       )
       
-      setwd("..")
+      setwd(self$getEntityJobDirPath(config, jobdir))
       
     },
     
-    #'@description This function will 1)cheak (in case of upload is requested) if the type of source and upload are both different 
-    #'and files formats(csv,shp,gpkg) and 2)process automatically to conversion from source to upload type.
+   
+    #'@description This function will enrich the entity with data coverages (grid data), trying to read the spatial data
+    #' (eg. geotiff). This method will overwrite spatial metadata such as the bounding box. Note that the user spatial extent
+    #' is not overwriten since it may contain finer geometries than a bounding box.
+    #'@param config geoflow config object
+    #'@param jobdir relative path of the job directory
+    enrichWithCoverages = function(config, jobdir = NULL){
+      
+      if(is.null(jobdir)) jobdir <- config$job
+      wd <- getwd()
+      print(wd)
+      setwd("./data")
+      
+      skipDynamicBbox <- if(!is.null(config$options$skipDynamicBbox)) config$options$skipDynamicBbox else FALSE
+      
+      if(length(self$data$source)>1) 
+        config$logger.warn("More than one data sources, entity metadata enrichment with data based on the first source only!")
+      
+      if(self$data$sourceType == "other"){
+        config$logger.warn("Metadata dynamic handling based on 'data' not implemented for type 'other'")
+        setwd(wd)
+        return(NULL)
+      }
+      
+      datasource <- self$data$source[[1]]
+      datasource_name <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))[1]
+      datasource_file <- attr(datasource, "uri")
+      attributes(datasource) <- NULL
+      if(is.null(datasource_file)) datasource_file <- datasource
+      
+      #if datasource file absent we abort the function enrich With features
+      if(is.null(datasource_file)){
+        warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
+        config$logger.warn(warnMsg)
+        setwd(wd)
+        return(FALSE)
+      }
+      
+      config$logger.info(sprintf("Enriching data with coverages from '%s' (%s) for entity '%s'",
+                                 datasource, datasource_file, self$identifiers$id))
+      
+      #basefilename for the main source
+      basefilename <- datasource_name
+      
+      switch(self$data$sourceType,
+             
+             #geotiff - GeoTIFF
+             #---------------------------------------------------------------------------------
+             "geotiff" = {
+               trgGeotiff <- file.path(getwd(), paste0(basefilename,".tif"))
+               if(file.exists(trgGeotiff)){
+                 #read GeoTIFF
+                 config$logger.info("Read GeoTIFF from geoflow temporary data directory")
+                 cov.data <- raster::raster(trgGeotiff)
+                 if(!is.null(cov)){
+                   self$data$setCoverages(cov.data)
+                   
+                   #dynamic srid
+                   cov.crs <- sf::st_crs(cov.data)
+                   if(!is.na(cov.crs)){
+                     srid <- if(!is.null(self$srid)) self$srid else ""
+                     if(!is.null(cov.crs$epsg)) if(!is.na(cov.crs$epsg)) if(srid != cov.crs$epsg){
+                       config$logger.info(sprintf("Overwriting entity srid [%s] with coverage srid [%s]", srid, cov.crs$epsg)) 
+                       self$setSrid(cov.crs$epsg)
+                     }
+                   }
+                   #dynamic spatial extent
+                   config$logger.info("Overwriting entity bounding box with coverage bounding box")
+                   if(!skipDynamicBbox) self$setSpatialBbox(data = cov.data)
+                   
+                 }else{
+                   warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
+                   config$logger.warn(warnMsg)
+                 }
+               }else{
+                 warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
+                 config$logger.warn(warnMsg)
+               }
+             }
+      )
+      
+      setwd(self$getEntityJobDirPath(config, jobdir))
+      
+    },
+    
+    
+    #'@description This function will 1) check (in case of upload is requested) if the type of source and upload are both different 
+    #'on files formats(eg. csv,shp,gpkg) and 2) process automatically to conversion from source to upload type.
     #'@param config geoflow config object
     prepareFeaturesToUpload = function(config) {
       types_with_file<-c("csv","shp","gpkg")
@@ -1307,22 +1396,25 @@ geoflow_entity <- R6Class("geoflow_entity",
         }),collapse = line_separator),
         #Provenance
         Provenance = {
-          outprov <- paste0("statement:", self$provenance$statement, line_separator)
-          if(length(self$provenance$processes)>0){
-            processes_str <- paste0(sapply(self$provenance$processes, function(process){
-              rationale <- paste0("\"", process$rationale, "\"")
-              outproc <- paste0("process:", rationale)
-              if(!is.null(process$description)){
-                description <- paste0("\"", process$description, "\"")
-                outproc <- paste0(outproc, "[", description, "]")
-              }
-              return(outproc)
-            }),collapse=line_separator)
-            outprov <- paste0(outprov, processes_str, line_separator)
-            processors_str <- paste0("processor:",paste0(sapply(self$provenance$processes, function(process){
-              return(process$processor$id)
-            }),collapse=","))
-            outprov <- paste0(outprov, processors_str)
+          outprov <- NA
+          if(!is.null(self$provenance)){
+            outprov <- paste0("statement:", self$provenance$statement, line_separator)
+            if(length(self$provenance$processes)>0){
+              processes_str <- paste0(sapply(self$provenance$processes, function(process){
+                rationale <- paste0("\"", process$rationale, "\"")
+                outproc <- paste0("process:", rationale)
+                if(!is.null(process$description)){
+                  description <- paste0("\"", process$description, "\"")
+                  outproc <- paste0(outproc, "[", description, "]")
+                }
+                return(outproc)
+              }),collapse=line_separator)
+              outprov <- paste0(outprov, processes_str, line_separator)
+              processors_str <- paste0("processor:",paste0(sapply(self$provenance$processes, function(process){
+                return(process$processor$id)
+              }),collapse=","))
+              outprov <- paste0(outprov, processors_str)
+            }
           }
           outprov
         },
@@ -1373,7 +1465,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           
           if(!is.null(self$data$sql)) outdata <- paste0(outdata, "sql:", self$data$sql, line_separator)
           if(!is.null(self$data$workspace)) outdata <- paste0(outdata, "workspace:", self$data$workspace, line_separator)
-          if(!is.null(self$data$datastore)) outdata <- paste0(outdata, "datastore:", self$data$datastore, line_separator)
+          if(!is.null(self$data$store)) outdata <- paste0(outdata, "store:", self$data$store, line_separator)
           if(!is.null(self$data$layername)) outdata <- paste0(outdata, "layername:", self$data$layername, line_separator)
           if(!is.null(self$data$cqlfilter)) outdata <- paste0(outdata, "cqlfilter:", self$data$cqlfilter, line_separator)
           if(length(self$data$styles)>0){
