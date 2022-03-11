@@ -66,6 +66,8 @@ Suggests:
   d4storagehub4R,
   thredds,
   rmarkdown
+Remotes:
+  eblondel/geosapi
 License: MIT + file LICENSE
 URL: https://github.com/eblondel/geoflow
 BugReports: https://github.com/eblondel/geoflow
