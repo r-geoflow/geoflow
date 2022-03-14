@@ -64,7 +64,6 @@ Suggests:
   zen4R,
   atom4R,
   d4storagehub4R,
-  thredds,
   rmarkdown
 Remotes:
   eblondel/geosapi
