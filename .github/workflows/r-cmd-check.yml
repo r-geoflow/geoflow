@@ -22,8 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          #- {os: ubuntu-20.04, r: 'oldrel'}
-          - {os: ubuntu-20.04, r: 'release'}
+          - {os: ubuntu-20.04, r: 'release',}
     
     env:
         INSPIRE_API_ENDPOINT: ${{ secrets.INSPIRE_API_ENDPOINT }}
@@ -39,7 +38,7 @@ jobs:
         run: |
           docker pull kartoza/postgis
           docker run -d --name="postgis" kartoza/postgis
-          docker run --name "geoserver" --link postgis:postgis -e GEOSERVER_ADMIN_USER=admin -e GEOSERVER_ADMIN_PASSWORD=geoserver -e SAMPLE_DATA=true -p 8080:8080 -d -t kartoza/geoserver:latest
+          docker run --name="geoserver" --link postgis:postgis -d -p 8080:8080 oscarfonts/geoserver:latest
       #Docker GeoNetwork set-up
       - name: Set up GeoNetwork (latest)
         run: |
