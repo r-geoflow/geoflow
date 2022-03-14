@@ -46,6 +46,6 @@ test_that("execute",{
   expect_equal(entity_dirs, c("my-geoflow-coverage-view-record1"))
   config <- geoflow::initWorkflow(cfg_file)
   GS <- config$software$output$geoserver
-  expect_is(GS$getCoverage("sample", "sample", "sample_view"), "GSCoverage")
-  expect_is(GS$getLayer("sample_view"), "GSLayer")
+  expect_is(GS$getCoverage("sample", "sample", "sample"), "GSCoverage")
+  expect_is(GS$getLayer("sample"), "GSLayer")
 })
