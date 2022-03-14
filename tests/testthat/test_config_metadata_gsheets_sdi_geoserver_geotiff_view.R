@@ -1,12 +1,12 @@
-# test_config_metadata_gsheets_geoserver_geotiff.R
+# test_config_metadata_gsheets_geoserver_geotiff_view.R
 # Author: Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 #
-# Description: Integration tests for config_metadata_gsheets_geoserver_geotiff.json workflow
+# Description: Integration tests for config_metadata_gsheets_geoserver_geotiff_view.json workflow
 #=======================
 require(geoflow, quietly = TRUE)
 require(testthat)
 
-cfg_file = system.file("extdata/workflows/config_metadata_gsheets_sdi_geoserver_geotiff.json", package = "geoflow")
+cfg_file = system.file("extdata/workflows/config_metadata_gsheets_sdi_geoserver_geotiff_view.json", package = "geoflow")
 
 #init
 test_that("init",{
@@ -43,9 +43,9 @@ test_that("execute",{
   expect_true(file.exists(file.path(EXEC, "config_copyof_entities_1.csv")))
   expect_true(dir.exists(file.path(EXEC, "entities")))
   entity_dirs <- list.dirs(path = file.path(EXEC, "entities"), full.names = F,recursive = F)
-  expect_equal(entity_dirs, c("my-geoflow-coverage-record1"))
+  expect_equal(entity_dirs, c("my-geoflow-coverage-view-record1"))
   config <- geoflow::initWorkflow(cfg_file)
   GS <- config$software$output$geoserver
-  expect_is(GS$getCoverage("mysf", "mysfdem", "mysfdem"), "GSCoverage")
-  expect_is(GS$getLayer("mysfdem"), "GSLayer")
+  expect_is(GS$getCoverage("sample", "sample", "sample_view"), "GSCoverage")
+  expect_is(GS$getLayer("sample_view"), "GSLayer")
 })

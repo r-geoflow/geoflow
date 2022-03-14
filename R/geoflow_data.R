@@ -120,6 +120,13 @@ geoflow_data <- R6Class("geoflow_data",
         })
         names(data_props) <- sapply(data_props, function(x){x$key})
         
+        #spatialRepresentationType
+        if(!any(sapply(data_props, function(x){x$key=="spatialRepresentationType"}))){
+          self$setSpatialRepresentationType("vector")
+        }else{
+          self$setSpatialRepresentationType(data_props$spatialRepresentationType$values[[1]])
+        }
+        
         #access to use for reaching sources
         if(!is.null(data_props$access)){
           access <- data_props$access$values[[1]]
@@ -267,11 +274,11 @@ geoflow_data <- R6Class("geoflow_data",
           }
           #check and set parameter
           for(band in bands){
-            if(length(param$values) != 2){
-              stop("Band definition should be compound by 2 elements: name (coveragename), index")
+            if(length(band$values) != 2){
+              stop("Band definition should be compound by 2 elements: name (coverage name), index")
             }
-            covname <- param$values[[1]]
-            index <- param$values[[2]]
+            covname <- band$values[[1]]
+            index <- band$values[[2]]
             self$setBand(covname, index)
           }
         }
@@ -321,13 +328,6 @@ geoflow_data <- R6Class("geoflow_data",
           }
         }))
         if(length(get_variables)>0) self$variables <- get_variables
-        
-        #spatialRepresentationType
-        if(!any(sapply(data_props, function(x){x$key=="spatialRepresentationType"}))){
-          self$setSpatialRepresentationType("vector")
-        }else{
-          self$setSpatialRepresentationType(data_props$spatialRepresentationType$values[[1]])
-        }
         
         #run entity actions
         runs <- data_props[sapply(data_props, function(x){x$key=="run"})]
@@ -671,6 +671,7 @@ geoflow_data <- R6Class("geoflow_data",
         errMsg <- sprintf("Envelope composition type should be among values [%s]", paste0(self$getAllowedEnvelopeCompositionTypes(), collapse=","))
         stop(errMsg)
       }
+      self$envelopeCompositionType <- envelopeCompositionType
     },
     
     #'@description Set selected resolution

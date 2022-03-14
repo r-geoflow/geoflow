@@ -341,7 +341,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
         for(band in entity$data$bands){
           cvb <- GSCoverageBand$new()
           covname <- if(!is.null(band$name)) band$name else layername
-          cvb$setDefinition(paste0(covname,"@", band$idx))
+          cvb$setDefinition(paste0(covname,"@", band$index))
           cvb$setIndex(band$index)
           cvb$addInputBand(GSInputCoverageBand$new( coverageName = covname, band = band$index))
           coview$addBand(cvb)
