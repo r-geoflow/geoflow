@@ -33,7 +33,7 @@ initWorkflowJob <- function(config){
     dir.create(jobDirPath)
     setwd(jobDirPath)
   }
-  config$logger.info(sprintf("Workflow job directory:", jobDirPath))
+  config$logger.info(sprintf("Workflow job directory: %s", jobDirPath))
   
   #copy configuration file
   file.copy(from = config_file, to = getwd())
