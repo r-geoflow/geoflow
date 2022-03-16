@@ -66,7 +66,7 @@ Suggests:
   d4storagehub4R,
   rmarkdown
 Remotes:
-  eblondel/geometa
+  eblondel/geometa,
   eblondel/geosapi
 License: MIT + file LICENSE
 URL: https://github.com/eblondel/geoflow
