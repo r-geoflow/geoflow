@@ -1023,7 +1023,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                  #read GeoTIFF
                  config$logger.info("Read GeoTIFF from geoflow temporary data directory")
                  cov.data <- terra::rast(trgGeotiff)
-                 if(!is.null(cov)){
+                 if(!is.null(cov.data)){
                    self$data$setCoverages(cov.data)
                    
                    #dynamic srid
