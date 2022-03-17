@@ -240,7 +240,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(!is.null(bbox)) spatial_bbox <- bbox
       if(!is.null(data)){
         if(is(data, "sf")){
-          #vextor
+          #vector
           spatial_bbox <- sf::st_bbox(data)
         }else if(is(data, "SpatRaster")){
           #grid
@@ -583,9 +583,24 @@ geoflow_entity <- R6Class("geoflow_entity",
                  sf.crs <- sf::st_crs(sf.data)
                  if(!is.na(sf.crs)){
                    srid <- if(!is.null(self$srid)) self$srid else ""
-                   if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
-                    config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, sf.crs$epsg)) 
-                    self$setSrid(sf.crs$epsg)
+                   epsgcode <- sf.crs$epsg
+                   if(!is.null(epsgcode)) {
+                     if(is.na(epsgcode)){
+                       #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                       crs_wkt <- st_crs(sf.data)$wkt
+                       if(nzchar(crs_wkt)){
+                         crs_def <- terra:::.srs_describe(crs_wkt)
+                         if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                           epsgcode <-crs_def$code 
+                         }
+                       }
+                     }
+                     if(!is.na(epsgcode)){
+                       if(srid != epsgcode){
+                         config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, epsgcode)) 
+                         self$setSrid(epsgcode)
+                       }
+                     }
                    }
                  }
                  #dynamic spatial extent
@@ -641,16 +656,31 @@ geoflow_entity <- R6Class("geoflow_entity",
                  if(!is.na(sf.crs)){
                    #in case data features are geo-referenced we check srid consistency and eventually update self$srid
                    srid <- if(!is.null(self$srid)) self$srid else ""
-                   if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
-                     config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, sf.crs$epsg)) 
-                     self$setSrid(sf.crs$epsg)
+                   epsgcode <- sf.crs$epsg
+                   if(!is.null(epsgcode)) {
+                     if(is.na(epsgcode)){
+                       #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                       crs_wkt <- st_crs(sf.data)$wkt
+                       if(nzchar(crs_wkt)){
+                         crs_def <- terra:::.srs_describe(crs_wkt)
+                         if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                           epsgcode <-crs_def$code 
+                         }
+                       }
+                     }
+                     if(!is.na(epsgcode)){
+                       if(srid != epsgcode){
+                         config$logger.info(sprintf("Overwriting entity srid [%s] with CSV srid [%s]", srid, epsgcode)) 
+                         self$setSrid(epsgcode)
+                       }
+                     }
                    }
                  }else{
                    #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
                    if(!is.null(self$srid)) sf::st_crs(self$data$features) <- self$srid 
                  }
                  #dynamic spatial extent
-                 config$logger.info("Overwriting entity bounding box with shapefile bounding box")
+                 config$logger.info("Overwriting entity bounding box with CSV bounding box")
                  if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                  
                }else{
@@ -690,13 +720,28 @@ geoflow_entity <- R6Class("geoflow_entity",
                  sf.crs <- sf::st_crs(sf.data)
                  if(!is.na(sf.crs)){
                    srid <- if(!is.null(self$srid)) self$srid else ""
-                   if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
-                     config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, sf.crs$epsg)) 
-                     self$setSrid(sf.crs$epsg)
+                   epsgcode <- sf.crs$epsg
+                   if(!is.null(epsgcode)) {
+                     if(is.na(epsgcode)){
+                       #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                       crs_wkt <- st_crs(sf.data)$wkt
+                       if(nzchar(crs_wkt)){
+                         crs_def <- terra:::.srs_describe(crs_wkt)
+                         if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                           epsgcode <-crs_def$code 
+                         }
+                       }
+                     }
+                     if(!is.na(epsgcode)){
+                       if(srid != epsgcode){
+                         config$logger.info(sprintf("Overwriting entity srid [%s] with GeoPackage srid [%s]", srid, epsgcode)) 
+                         self$setSrid(epsgcode)
+                       }
+                     }
                    }
                  }
                  #dynamic spatial extent
-                 config$logger.info("Overwriting entity bounding box with shapefile bounding box")
+                 config$logger.info("Overwriting entity bounding box with Geopackage bounding box")
                  if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                  
                }else{
@@ -727,9 +772,24 @@ geoflow_entity <- R6Class("geoflow_entity",
                    sf.crs <- sf::st_crs(sf.data)
                    if(!is.na(sf.crs)){
                      srid <- if(!is.null(self$srid)) self$srid else ""
-                     if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
-                       config$logger.info(sprintf("Overwriting entity srid [%s] with DB spatial table srid [%s]", srid, sf.crs$epsg)) 
-                       self$setSrid(sf.crs$epsg)
+                     epsgcode <- sf.crs$epsg
+                     if(!is.null(epsgcode)) {
+                       if(is.na(epsgcode)){
+                         #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                         crs_wkt <- st_crs(sf.data)$wkt
+                         if(nzchar(crs_wkt)){
+                           crs_def <- terra:::.srs_describe(crs_wkt)
+                           if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                             epsgcode <-crs_def$code 
+                           }
+                         }
+                       }
+                       if(!is.na(epsgcode)){
+                         if(srid != epsgcode){
+                           config$logger.info(sprintf("Overwriting entity srid [%s] with DB spatial table srid [%s]", srid, epsgcode)) 
+                           self$setSrid(epsgcode)
+                         }
+                       }
                      }
                    }
                    #dynamic spatial extent
@@ -768,9 +828,24 @@ geoflow_entity <- R6Class("geoflow_entity",
                    sf.crs <- sf::st_crs(sf.data)
                    if(!is.na(sf.crs)){
                      srid <- if(!is.null(self$srid)) self$srid else ""
-                     if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
-                       config$logger.info(sprintf("Overwriting entity srid [%s] with DB spatial view srid [%s]", srid, sf.crs$epsg)) 
-                       self$setSrid(sf.crs$epsg)
+                     epsgcode <- sf.crs$epsg
+                     if(!is.null(epsgcode)) {
+                       if(is.na(epsgcode)){
+                         #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                         crs_wkt <- st_crs(sf.data)$wkt
+                         if(nzchar(crs_wkt)){
+                           crs_def <- terra:::.srs_describe(crs_wkt)
+                           if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                             epsgcode <-crs_def$code 
+                           }
+                         }
+                       }
+                       if(!is.na(epsgcode)){
+                         if(srid != epsgcode){
+                           config$logger.info(sprintf("Overwriting entity srid [%s] with DB spatial view srid [%s]", srid, epsgcode)) 
+                           self$setSrid(epsgcode)
+                         }
+                       }
                      }
                    }
                    #dynamic spatial extent
@@ -831,9 +906,24 @@ geoflow_entity <- R6Class("geoflow_entity",
                     sf.crs <- sf::st_crs(sf.data)
                     if(!is.na(sf.crs)){
                       srid <- if(!is.null(self$srid)) self$srid else ""
-                      if(!is.null(sf.crs$epsg)) if(!is.na(sf.crs$epsg)) if(srid != sf.crs$epsg){
-                        config$logger.info(sprintf("Overwriting entity srid [%s] with SQL query output srid [%s]", srid, sf.crs$epsg)) 
-                        self$setSrid(sf.crs$epsg)
+                      epsgcode <- sf.crs$epsg
+                      if(!is.null(epsgcode)) {
+                        if(is.na(epsgcode)){
+                          #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                          crs_wkt <- st_crs(sf.data)$wkt
+                          if(nzchar(crs_wkt)){
+                            crs_def <- terra:::.srs_describe(crs_wkt)
+                            if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                              epsgcode <-crs_def$code 
+                            }
+                          }
+                        }
+                        if(!is.na(epsgcode)){
+                          if(srid != epsgcode){
+                            config$logger.info(sprintf("Overwriting entity srid [%s] with SQL query output srid [%s]", srid, epsgcode)) 
+                            self$setSrid(epsgcode)
+                          }
+                        }
                       }
                     }
                     #dynamic spatial extent
