@@ -246,6 +246,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           #grid
           vec = data@ptr$extent$vector
           spatial_bbox <- c(xmin = vec[1], ymin = vec[3], xmax = vec[2], ymax = vec[4])
+          class(spatial_bbox) <- "bbox"
         }else{
           return(NULL)
         }
