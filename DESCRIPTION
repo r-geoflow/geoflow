@@ -39,7 +39,7 @@ Imports:
   png,
   uuid,
   sf,
-  raster,
+  terra,
   geometa,
   geosapi,
   geonapi,

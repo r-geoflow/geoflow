@@ -239,8 +239,13 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(!is.null(wkt)) spatial_bbox <- sf::st_bbox(sf::st_as_sfc(wkt, crs = crs))
       if(!is.null(bbox)) spatial_bbox <- bbox
       if(!is.null(data)){
-        if(is(data, "sf")|is(data, "RasterLayer")){
+        if(is(data, "sf")){
+          #vextor
           spatial_bbox <- sf::st_bbox(data)
+        }else if(is(data, "SpatRaster")){
+          #grid
+          vec = r@ptr$extent$vector
+          spatial_bbox <- c(xmin = vec[1], ymin = vec[3], xmax = vec[2], ymax = vec[4])
         }else{
           return(NULL)
         }
@@ -927,17 +932,17 @@ geoflow_entity <- R6Class("geoflow_entity",
                if(file.exists(trgGeotiff)){
                  #read GeoTIFF
                  config$logger.info("Read GeoTIFF from geoflow temporary data directory")
-                 cov.data <- raster::raster(trgGeotiff)
+                 cov.data <- terra::rast(trgGeotiff)
                  if(!is.null(cov)){
                    self$data$setCoverages(cov.data)
                    
                    #dynamic srid
-                   cov.crs <- sf::st_crs(cov.data)
+                   cov.crs <- terra:::.srs_describe(cov.data@ptr$get_crs("wkt"))
                    if(!is.na(cov.crs)){
                      srid <- if(!is.null(self$srid)) self$srid else ""
-                     if(!is.null(cov.crs$epsg)) if(!is.na(cov.crs$epsg)) if(srid != cov.crs$epsg){
+                     if(!is.null(cov.crs$code)) if(!is.na(cov.crs$code)) if(srid != cov.crs$code){
                        config$logger.info(sprintf("Overwriting entity srid [%s] with coverage srid [%s]", srid, cov.crs$epsg)) 
-                       self$setSrid(cov.crs$epsg)
+                       self$setSrid(cov.crs$code)
                      }
                    }
                    #dynamic spatial extent

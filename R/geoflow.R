@@ -26,7 +26,7 @@
 #' @import plyr
 #' @import readr
 #' @import sf
-#' @importFrom raster raster
+#' @import terra
 #' @import geometa
 #' @import geosapi
 #' @import geonapi
