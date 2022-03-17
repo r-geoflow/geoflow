@@ -1027,16 +1027,13 @@ geoflow_entity <- R6Class("geoflow_entity",
                    self$data$setCoverages(cov.data)
                    
                    #dynamic srid
+                   srid <- if(!is.null(self$srid)) self$srid else ""
                    cov.crs <- terra:::.srs_describe(cov.data@ptr$get_crs("wkt"))
-                   print("Coverage CRS")
-                   print(cov.crs)
-                   if(!is.na(cov.crs)){
-                     srid <- if(!is.null(self$srid)) self$srid else ""
-                     if(!is.null(cov.crs$code)) if(!is.na(cov.crs$code)) if(srid != cov.crs$code){
-                       config$logger.info(sprintf("Overwriting entity srid [%s] with coverage srid [%s]", srid, cov.crs$epsg)) 
-                       self$setSrid(cov.crs$code)
-                     }
+                   if(!is.null(cov.crs$code)) if(!is.na(cov.crs$code)) if(srid != cov.crs$code){
+                     config$logger.info(sprintf("Overwriting entity srid [%s] with coverage srid [%s]", srid, cov.crs$epsg)) 
+                     self$setSrid(cov.crs$code)
                    }
+                   
                    #dynamic spatial extent
                    config$logger.info("Overwriting entity bounding box with coverage bounding box")
                    if(!skipDynamicBbox) self$setSpatialBbox(data = cov.data)
