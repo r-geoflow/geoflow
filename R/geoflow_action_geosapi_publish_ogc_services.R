@@ -347,6 +347,32 @@ geosapi_publish_ogc_services <- function(entity, config, options){
           coview$addBand(cvb)
         }
         resource$setView(coview)
+      }else{
+        #check nb of bands, if > 3 we configure a coverage view
+        bands <- names(entity$data$coverages)
+        if(length(bands)>3){
+          coview <- GSCoverageView$new()
+          coview$setName(layername)
+          ect <- entity$data$envelopeCompositionType
+          if(is.null(ect)) ect <- "INTERSECTION"
+          coview$setEnvelopeCompositionType(ect)
+          sr <- entity$data$selectedResolution
+          if(is.null(sr)) sr <- "BEST"
+          coview$setSelectedResolution(sr)
+          sri <- entity$data$selectedResolutionIndex
+          if(is.null(sri)) sri <- -1
+          coview$setSelectedResolutionIndex(sri)
+          for(i in 1:length(bands)){
+            band <- bands[i]
+            cvb <- GSCoverageBand$new()
+            covname <- layername
+            cvb$setDefinition(paste0(covname,"@", i-1))
+            cvb$setIndex(i-1)
+            cvb$addInputBand(GSInputCoverageBand$new( coverageName = covname, band = i-1))
+            coview$addBand(cvb)
+          }
+          resource$setView(coview)
+        }
       }
       
     }
