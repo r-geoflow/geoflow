@@ -244,7 +244,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           spatial_bbox <- sf::st_bbox(data)
         }else if(is(data, "SpatRaster")){
           #grid
-          vec = r@ptr$extent$vector
+          vec = data@ptr$extent$vector
           spatial_bbox <- c(xmin = vec[1], ymin = vec[3], xmax = vec[2], ymax = vec[4])
         }else{
           return(NULL)
