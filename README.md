@@ -24,7 +24,7 @@ For questions about contributing to geoflow, adding new functions/enhancements o
 Many thanks to the following organizations that have provided fundings for strenghtening the ``geoflow`` package:
 
 <div style="float:left;">
-  <a href="http://www.fao.org"><img height=100 width=100 src="http://www.fao.org/fileadmin/templates/family-farming-decade/images/FAO-IFAD-Logos/FAO-Logo-EN.svg">
+  <a href="https://www.fao.org/home/en/"><img height=100 width=100 src="http://www.fao.org/fileadmin/templates/family-farming-decade/images/FAO-IFAD-Logos/FAO-Logo-EN.svg">
 <a href="https://en.ird.fr/"><img src="https://en.ird.fr/sites/ird_fr/files/2019-08/logo_IRD_2016_BLOC_UK_COUL.png" height=100 width=100/></a>
   <a href="https://www.inrae.fr"><img height=100 width=100 src="https://www.inrae.fr/themes/custom/inrae_socle/logo.svg"></a>
 </div>
@@ -36,7 +36,7 @@ Many thanks to the following organizations that have provided fundings for stren
 
 The following projects have contributed to strenghten ``geoflow``:
 
-<a href="https://www.blue-cloud.org"><img height=50 width=150 src="https://www.blue-cloud.org/sites/all/themes/arcadia/logo.png"/></a>
+<a href="https://blue-cloud.org/"><img height=50 width=150 src="https://blue-cloud.org/sites/all/themes/arcadia/logo.png"/></a>
 
 _Blue-Cloud has received funding from the European Union's Horizon programme call BG-07-2019-2020, topic: [A] 2019 - Blue Cloud services, Grant Agreement No.862409._
 
