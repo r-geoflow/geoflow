@@ -29,8 +29,8 @@ geoflow_format
 \author{
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
-\keyword{format,}
-\keyword{mime,}
+\keyword{format}
+\keyword{mime}
 \keyword{mimetype}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
