@@ -178,7 +178,7 @@ geoflow_software <- R6Class("geoflow_software",
     checkPackages = function(){
       self$INFO(sprintf("Check package dependencies for software '%s' (%s)", self$id, self$software_type))
       out_pkgs <- try(check_packages(self$packages))
-      if(class(out_pkgs)=="try-error"){
+      if(is(out_pkgs,"try-error")){
         errMsg <- sprintf("One or more packages are not imported although required for software '%s' (%s)", 
                           self$id, self$software_type)
         self$ERROR(errMsg)
@@ -284,7 +284,7 @@ register_software <- function(){
                 stop(errMsg)
               }
               src <- try(source(software_config$properties$onstart_r$script))
-              if(class(src)=="try-error"){
+              if(is(src,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Error while sourcing script '%s'",
                                   software_config$id, software_config$properties$onstart_r$script)
                 config$logger.error(errMsg)
@@ -293,7 +293,7 @@ register_software <- function(){
               onstart_r_fun <- eval(parse(text=software_config$properties$onstart_r$fun))
               print(class(onstart_r_fun))
               sql <- try(onstart_r_fun(config, software, software_config))
-              if(class(sql)=="try-error"){
+              if(is(sql,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Error while executing function '%s'",
                                   software_config$id, software_config$properties$onstart_r$fun)
                 config$logger.error(errMsg)
@@ -314,7 +314,7 @@ register_software <- function(){
             
             #send sql to dB
             out <- try(DBI::dbSendQuery(software, sql))
-            if(class(out)=="try-error"){
+            if(is(out,"try-error")){
               errMsg <- sprintf("DBI [id='%s'] Error while executing SQL",software_config$id)
               config$logger.error(errMsg)
               stop(errMsg)
@@ -345,7 +345,7 @@ register_software <- function(){
                 stop(errMsg)
               }
               src <- try(source(software_config$properties$onend_r$script))
-              if(class(src)=="try-error"){
+              if(is(src,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Error while sourcing script '%s'",
                                   software_config$id, software_config$properties$onend_r$script)
                 config$logger.error(errMsg)
@@ -354,7 +354,7 @@ register_software <- function(){
               onend_r_fun <- eval(parse(text=software_config$properties$onend_r$fun))
               print(class(onend_r_fun))
               sql <- try(onend_r_fun(config, software, software_config))
-              if(class(sql)=="try-error"){
+              if(is(sql,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Error while executing function '%s'",
                                   software_config$id, software_config$properties$onend_r$fun)
                 config$logger.error(errMsg)
@@ -375,7 +375,7 @@ register_software <- function(){
             
             #send sql to dB
             out <- try(DBI::dbSendQuery(software, sql))
-            if(class(out)=="try-error"){
+            if(is(out,"try-error")){
               errMsg <- sprintf("DBI [id='%s'] Error while executing SQL",software_config$id)
               config$logger.error(errMsg)
               stop(errMsg)

@@ -167,7 +167,7 @@ initWorkflow <- function(file, dir = "."){
         software$actions <- target_software$actions
       }else{
         client_handler <- eval(parse(text=software$handler))
-        if(class(client_handler)=="try-error"){
+        if(is(client_handler,"try-error")){
           errMsg <- sprintf("Error while evaluating software handler '%s'", software$handler)
           config$logger.error(errMsg)
           stop(errMsg)
@@ -275,12 +275,12 @@ initWorkflow <- function(file, dir = "."){
         }else{
           source(reg$script)
           customfun <- eval(parse(text = reg$id))
-          if(class(customfun)=="try-error"){
+          if(is(customfun,"try-error")){
             errMsg <- sprintf("Error while trying to evaluate custom function '%s", reg$id)
             config$logger.error(errMsg)
             stop(errMsg)
           }
-          if(class(customfun)!="function"){
+          if(!is(customfun,"function")){
             errMsg <- sprintf("'%s' is not a function!", reg$id)
             config$logger.error(errMsg)
             stop(errMsg)
@@ -489,12 +489,12 @@ initWorkflow <- function(file, dir = "."){
         if(config$profile$mode == "entity"){
           source(action$script)
           customfun <- eval(parse(text = action$id))
-          if(class(customfun)=="try-error"){
+          if(is(customfun,"try-error")){
             errMsg <- sprintf("Error while trying to evaluate custom function'%s", action$id)
             config$logger.error(errMsg)
             stop(errMsg)
           }
-          if(class(customfun)!="function"){
+          if(!is(customfun,"function")){
             errMsg <- sprintf("'%s' is not a function!", action$id)
             config$logger.error(errMsg)
             stop(errMsg)

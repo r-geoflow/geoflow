@@ -71,12 +71,12 @@ handle_dictionary_df <- function(config, source){
   for(handler in handlers){
     
     fun <- eval(parse(text = handler))
-    if(class(fun)=="try-error"){
+    if(is(fun,"try-error")){
       errMsg <- sprintf("Error while trying to evaluate function '%s", handler)
       config$logger.error(errMsg)
       stop(errMsg)
     }
-    if(class(fun)!="function"){
+    if(!is(fun,"function")){
       errMsg <- sprintf("'%s' is not a function!", handler)
       config$logger.error(errMsg)
       stop(errMsg)
@@ -141,14 +141,14 @@ handle_dictionary_dbi <- function(config, source, handle = TRUE){
   is_query <- startsWith(tolower(source), "select ")
   if(is_query){
     source <- try(DBI::dbGetQuery(dbi, source))
-    if(class(source)=="try-error"){
+    if(is(source,"try-error")){
       errMsg <- sprintf("Error while trying to execute DB query '%s'.", source)
       config$logger.error(errMsg)
       stop(errMsg)
     }
   }else{
     source <- try(DBI::dbGetQuery(dbi, sprintf("select * from %s", source)))
-    if(class(source)=="try-error"){
+    if(is(source,"try-error")){
       errMsg <- sprintf("Error while trying to read DB table/view '%s'. Check if it exists in DB.", source)
       config$logger.error(errMsg)
       stop(errMsg)
