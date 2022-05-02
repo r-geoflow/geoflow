@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/eblondel/geoflow/actions/workflows/r-cmd-check.yml/badge.svg?branch=master)](https://github.com/eblondel/geoflow/actions/workflows/r-cmd-check.yml)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/geoflow)](https://cran.r-project.org/package=geoflow)
-[![Github_Status_Badge](https://img.shields.io/badge/Github-0.0.20210726-blue.svg)](https://github.com/eblondel/geoflow)
+[![Github_Status_Badge](https://img.shields.io/badge/Github-1.0.0-blue.svg)](https://github.com/eblondel/geoflow)
 [![DOI](https://zenodo.org/badge/DOI//10.5281/zenodo.3138920.svg)](https://doi.org//10.5281/zenodo.3138920)
 
 [![Gitter](https://img.shields.io/badge/chat%20room-for%20users-brown.svg?style=flat-square)](https://gitter.im/geoflow-users/community)
@@ -41,7 +41,7 @@ The following projects have contributed to strenghten ``geoflow``:
 _Blue-Cloud has received funding from the European Union's Horizon programme call BG-07-2019-2020, topic: [A] 2019 - Blue Cloud services, Grant Agreement No.862409._
 
 
-For geoflow sponsoring/funding new developments, enhancements, support requests, please contact me by [e-mail](mailto:emmanuel.blondel1@gmail.com)
+For geoflow sponsoring/funding new developments, enhancements, support requests, please contact me by [e-mail](mailto:eblondel.pro@gmail.com)
 
 ## Citation
 
