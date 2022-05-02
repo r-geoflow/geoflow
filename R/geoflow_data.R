@@ -299,7 +299,9 @@ geoflow_data <- R6Class("geoflow_data",
         styles <- data_props[sapply(data_props, function(x){x$key=="style"})]
         if(length(styles)>0){
           for(style in styles){
-            self$addStyle(style$values[[1]])
+            for(style_val in style$values){
+              self$addStyle(style_val)
+            }
           }
         }
         
