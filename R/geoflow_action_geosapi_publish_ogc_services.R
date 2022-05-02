@@ -403,7 +403,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
       layer$setName(layername)
       if(length(entity$data$styles)>0){
         for(i in 1:length(entity$data$styles)){
-          style <- entity$data$styles[i]
+          style <- entity$data$styles[[i]]
           if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
         }
       }else{
@@ -435,7 +435,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
         if(length(entity$data$styles)>0){
           layer$styles <- list()
           for(i in 1:length(entity$data$styles)){
-            style <- entity$data$styles[i]
+            style <- entity$data$styles[[i]]
             if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
           }
         }else{
