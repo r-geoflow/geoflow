@@ -393,6 +393,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
         }
       }
     }
+    GS$reload()
   }
   
   #layer build and publication
