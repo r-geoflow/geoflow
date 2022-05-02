@@ -61,6 +61,8 @@ geoflow_data <- R6Class("geoflow_data",
     layername = NULL,
     #'@field styles styles
     styles = list(),
+    #'@field styleUpload upload styles
+    styleUpload = TRUE,
     #'@field dimensions dimensions
     dimensions = list(),
     
@@ -197,6 +199,16 @@ geoflow_data <- R6Class("geoflow_data",
         }
         #20211130 this prevents from uploading data resources in generic uploaders (eg. zenodo)
         #if(startsWith(self$uploadType, "db")) self$setUpload(FALSE)
+        
+        #styles upload
+        if(!is.null(data_props$styleUpload)){
+          styleUpload <- as.logical(tolower(data_props$styleUpload$values[[1]]))
+          if(!is.na(styleUpload)){
+            self$setStyleUpload(styleUpload) 
+          }
+        }else{
+          self$setStyleUpload(TRUE)
+        }
         
         #layername (if any)
         #not mandatory, can be used for subset layers
@@ -503,6 +515,12 @@ geoflow_data <- R6Class("geoflow_data",
     #'@param upload upload
     setUpload = function(upload){
       self$upload <- upload
+    },
+    
+    #'@description Set whether styles in source data should be uploaded, by default \code{TRUE}
+    #'@param styleUpload style upload
+    setStyleUpload = function(styleUpload){
+      self$styleUpload <- styleUpload
     },
     
     #'@description Sets SQL for publication purpose. 

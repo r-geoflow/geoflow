@@ -378,6 +378,23 @@ geosapi_publish_ogc_services <- function(entity, config, options){
     }
   )
   
+  #styles publication if needed
+  gs_styles <- GS$getStyleNames()
+  if(entity$data$styleUpload) if(length(entity$data$styles)>0){
+    for(i in 1:length(entity$data$styles)){
+      style <- entity$data$styles[i]
+      #check if any style SLD file is available in source
+      style_sldfile <- paste0(style,".sld")
+      if(!style %in% gs_styles){
+        config$logger.warn(sprintf("No style '%s' in Geoserver", style))
+        if(style_sldfile %in% entity$data$source){
+          config$logger.info(sprintf("Creating GeoServer style '%s' from SLD style file '%s' available as source", style, style_sldfile))
+          GS$createStyle(file = file.path(getwd(), "data", style_sldfile))
+        }
+      }
+    }
+  }
+  
   #layer build and publication
   switch(entity$data$spatialRepresentationType,
     "vector" = {

@@ -46,6 +46,8 @@ test_that("execute",{
   expect_equal(entity_dirs, c("my-geoflow-coverage-record1"))
   config <- geoflow::initWorkflow(cfg_file)
   GS <- config$software$output$geoserver
+  expect_true("sfdem" %in% GS$getStyleNames())
+  expect_true("sfdem2" %in% GS$getStyleNames())
   expect_is(GS$getCoverage("mysf", "mysfdem", "mysfdem"), "GSCoverage")
   expect_is(GS$getLayer("mysfdem"), "GSLayer")
 })
