@@ -18,21 +18,6 @@ geoflowLogger
 \note{
 Logger class used internally by geoflow
 }
-\section{Abstract Methods}{
-
-\describe{
- \item{\code{INFO(text)}}{
-   Logger to report information. Used internally
- }
- \item{\code{WARN(text)}}{
-   Logger to report warnings. Used internally
- }
- \item{\code{ERROR(text)}}{
-   Logger to report errors. Used internally
- }
-}
-}
-
 \keyword{logger}
 \section{Methods}{
 \subsection{Public methods}{

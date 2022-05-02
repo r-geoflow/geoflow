@@ -102,7 +102,7 @@ geoflow_data <- R6Class("geoflow_data",
     selectedResolution = NULL,
     #'@field selectedResolutionIndex selected resolution index (for coverages)
     selectedResolutionIndex = NULL,
-    #'@field bands
+    #'@field bands list of bands
     bands = list(),
     
     #geoflow execution related fields
@@ -701,14 +701,14 @@ geoflow_data <- R6Class("geoflow_data",
     },
     
     #'@description Set selected resolution index
-    #'@param selectedResolution selected resolution index
+    #'@param selectedResolutionIndex selected resolution index
     setSelectedResolutionIndex = function(selectedResolutionIndex){
       self$selectedResolutionIndex <- selectedResolutionIndex
     },
     
     #'@description Set band
-    #'@param name
-    #'@param index
+    #'@param name band name
+    #'@param index band index
     setBand = function(name, index){
       self$bands[[paste0(name,"@",index)]] <- list(
         name = name,

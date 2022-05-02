@@ -16,15 +16,6 @@ This class models a dictionary to be executed by geoflow
 \details{
 geoflow_dictionary
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new()}}{
-   This method is used to instantiate a geoflow_dictionary_element object
- }
-}
-}
-
 \author{
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }

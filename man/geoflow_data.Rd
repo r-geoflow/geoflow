@@ -53,6 +53,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{styles}}{styles}
 
+\item{\code{styleUpload}}{upload styles}
+
 \item{\code{dimensions}}{dimensions}
 
 \item{\code{spatialRepresentationType}}{spatial representation type eg. "vector", "grid"}
@@ -83,6 +85,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{selectedResolutionIndex}}{selected resolution index (for coverages)}
 
+\item{\code{bands}}{list of bands}
+
 \item{\code{actions}}{local actions}
 
 \item{\code{run}}{whether to run local actions}
@@ -108,6 +112,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-getAllowedUploadTypes}{\code{geoflow_data$getAllowedUploadTypes()}}
 \item \href{#method-setUploadType}{\code{geoflow_data$setUploadType()}}
 \item \href{#method-setUpload}{\code{geoflow_data$setUpload()}}
+\item \href{#method-setStyleUpload}{\code{geoflow_data$setStyleUpload()}}
 \item \href{#method-setSql}{\code{geoflow_data$setSql()}}
 \item \href{#method-setCqlFilter}{\code{geoflow_data$setCqlFilter()}}
 \item \href{#method-setWorkspace}{\code{geoflow_data$setWorkspace()}}
@@ -406,6 +411,23 @@ Set whether the source data should be uploaded to the sofware output declared in
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{upload}}{upload}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setStyleUpload"></a>}}
+\if{latex}{\out{\hypertarget{method-setStyleUpload}{}}}
+\subsection{Method \code{setStyleUpload()}}{
+Set whether styles in source data should be uploaded, by default \code{TRUE}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setStyleUpload(styleUpload)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{styleUpload}}{style upload}
 }
 \if{html}{\out{</div>}}
 }
@@ -823,7 +845,7 @@ Set selected resolution index
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{selectedResolution}}{selected resolution index}
+\item{\code{selectedResolutionIndex}}{selected resolution index}
 }
 \if{html}{\out{</div>}}
 }
@@ -837,6 +859,15 @@ Set band
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setBand(name, index)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{band name}
+
+\item{\code{index}}{band index}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-addAction"></a>}}
