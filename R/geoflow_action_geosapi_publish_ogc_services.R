@@ -389,7 +389,8 @@ geosapi_publish_ogc_services <- function(entity, config, options){
         config$logger.warn(sprintf("No style '%s' in Geoserver", style))
         if(style_sldfile %in% entity$data$source){
           config$logger.info(sprintf("Creating GeoServer style '%s' from SLD style file '%s' available as source", style, style_sldfile))
-          GS$createStyle(file = file.path(getwd(), "data", style_sldfile))
+          created <- GS$createStyle(file = file.path(getwd(), "data", style_sldfile), name = style)
+          print(created)
         }
       }
     }
