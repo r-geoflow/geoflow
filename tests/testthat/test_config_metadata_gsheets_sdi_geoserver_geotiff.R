@@ -47,8 +47,8 @@ test_that("execute",{
   config <- geoflow::initWorkflow(cfg_file)
   GS <- config$software$output$geoserver
   expect_is(GS$getWorkspace("mysf"), "GSWorkspace")
-  expect_is(GS$getStore("mysf", "mysfdem1"), "GSDataStore")
-  expect_is(GS$getStore("mysf", "mysfdem2"), "GSDataStore")
+  expect_is(GS$getCoverageStore("mysf", "mysfdem1"), "GSGeoTIFFCoverageStore")
+  expect_is(GS$getCoverageStore("mysf", "mysfdem2"), "GSGeoTIFFCoverageStore")
   expect_true("sfdem" %in% GS$getStyleNames())
   expect_true("sfdem2" %in% GS$getStyleNames())
   expect_is(GS$getCoverage("mysf", "mysfdem1", "mysfdem1"), "GSCoverage")
