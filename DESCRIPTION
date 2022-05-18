@@ -50,6 +50,7 @@ Suggests:
   gsheet,
   googledrive,
   DBI,
+  rapiclient,
   RMariaDB,
   RPostgres,
   RPostgreSQL,
