@@ -39,8 +39,7 @@
 			"logger": "DEBUG"
 		},
 		"properties" : {
-			"workspace": "mysf",
-			"store": "mysfdem"
+			"workspace": "mysf"
 		}
 	}
   ],
