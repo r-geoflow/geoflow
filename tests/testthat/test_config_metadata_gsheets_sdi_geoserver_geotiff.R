@@ -43,7 +43,7 @@ test_that("execute",{
   expect_true(file.exists(file.path(EXEC, "config_copyof_entities_1.csv")))
   expect_true(dir.exists(file.path(EXEC, "entities")))
   entity_dirs <- list.dirs(path = file.path(EXEC, "entities"), full.names = F,recursive = F)
-  expect_true(all(entity_dirs %in% c("my-geoflow-coverage-record1", "my-geoflow-coverage-record1")))
+  expect_true(all(entity_dirs %in% c("my-geoflow-coverage-record1", "my-geoflow-coverage-record2")))
   config <- geoflow::initWorkflow(cfg_file)
   GS <- config$software$output$geoserver
   expect_is(GS$getWorkspace("mysf"), "GSWorkspace")
