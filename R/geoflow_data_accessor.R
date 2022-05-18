@@ -292,6 +292,50 @@ register_data_accessors <- function(){
           if(httr::GET(dataset_uri)$status=="200") download.file(url = dataset_uri, destfile = dataset_dest,mode="wb")
         }
       }
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #OPENAPI
+    #------------------------------------------------------------------------------------------------------- 
+    geoflow_data_accessor$new(
+      id = "openapi",
+      software_type = "openapi",
+      definition = "An OpenAPI data accessor",
+      packages = list("rapiclient"),
+      download = function(resource, file, path, software = NULL){
+        
+        if(is.null(software)){
+          errMsg <- sprintf("[geoflow] OpenAPI data accessor requires a 'openapi' software declaration in the geoflow configuration\n")
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+        openapi_query <- jsonlite::read_json(resource)
+        if(!all(names(openapi_query) %in% c("api_method_name", "api_method_args"))){
+          errMsg <- "[geoflow] OpenAPI data accessor requires a source json file that includes the 'api_method_name' to invoke and the 'api_method_args' to apply to this method"
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+        my_arg_names <- names(openapi_query$api_method_args)
+        api_method_arg_names <- names(formals(software[[openapi_query$api_method_name]]))
+        if(!all(my_arg_names %in% api_method_arg_names)){
+          errMsg <- sprintf("[geoflow] OpenAPI data accessor: arguments [%s] are not valid for method '%'", 
+                            paste0(setdiff(my_arg_names, api_method_arg_names),collapse=","),
+                            openapi_query$api_method_name)
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+        req <- do.call(software[[openapi_query$api_method_name]], openapi_query$api_method_args)
+        if(httr::status_code(req)== 200){
+          writeLines(content(req, type = "text"), path)
+        }else{
+          errMsg <- "[geoflow] OpenAPI data accessor: bad request"
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+      }
     )
   )
   .geoflow$data_accessors <- data_accessors

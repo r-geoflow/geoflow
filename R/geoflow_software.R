@@ -618,6 +618,29 @@ register_software <- function(){
         x = list(label = "Catalog URL", def = "url of top level catalog request", class = "character"),
         prefix = list(label = "Namespace", def = "the namespace to examine", class = "character")
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #OPENAPI CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "openapi",
+      definition = "OpenAPI client powered by 'rapiclient' package",
+      packages = list("rapiclient"),
+      handler = try({
+        openapi_handler <- function(url, api_key_name = "", api_key_value = ""){
+          api <- rapiclient::get_api(url)
+          api_headers <- list()
+          api_headers[[api_key_name]] <- api_key_value
+          api_ops <- rapiclient::get_operations(api, .headers = unlist(api_headers))
+          return(api_ops)
+        }
+        openapi_handler
+      }, silent = TRUE),
+      arguments = list(
+        url = list(label = "OpenAPI URL", def = "url of the OpenAPI JSON definition (now limited to OpenAPI v2)", class = "character"),
+        api_key_name = list(label = "Open API key name", def = "Name of the API key for registered uses", class = "character", default = ""),
+        api_key_value = list(label = "Open API key value", def = "Value of the API key for registered uses (typically a token)", class = "character", default = "")
+      )
     )
   )
   .geoflow$software <- software
