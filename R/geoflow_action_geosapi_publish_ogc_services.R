@@ -245,7 +245,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   resource$setName(layername)
   nativename <- datasource_name
   if(entity$data$uploadType == "dbquery") nativename <- layername
-  if(entity$data$spatialRepresentationType == "grid") nativename <- store
+  #if(entity$data$spatialRepresentationType == "grid") nativename <- store
   resource$setNativeName(nativename)
   resource$setAbstract(entity$descriptions$abstract)
   resource$setTitle(entity$titles[["title"]])
