@@ -56,6 +56,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   }
   
   store <- GS_CONFIG$properties$store
+  if(is.null(store)) if(!is.null(entity$data$store)) store <- entity$data$store
   if(is.null(store)){
     errMsg <- "The geoserver configuration requires a data/coverage store for publishing action"
     config$logger.error(errMsg)
@@ -245,7 +246,7 @@ geosapi_publish_ogc_services <- function(entity, config, options){
   resource$setName(layername)
   nativename <- datasource_name
   if(entity$data$uploadType == "dbquery") nativename <- layername
-  #if(entity$data$spatialRepresentationType == "grid") nativename <- store
+  if(entity$data$spatialRepresentationType == "grid") nativename <- store
   resource$setNativeName(nativename)
   resource$setAbstract(entity$descriptions$abstract)
   resource$setTitle(entity$titles[["title"]])
