@@ -265,7 +265,7 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
          if(cid_kvp$key=="orcid"){
            isValidOrcid<-grepl(x = cid_kvp$values[[1]], pattern = '^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\s*$',perl = TRUE, ignore.case = TRUE)
            if(!isValidOrcid){
-             report <- rbind(report, data.frame(type = "WARNING", message = springf("ORCID '%s' is not recognized as valid ORCID id format",cid_kvp$values[[1]])))
+             report <- rbind(report, data.frame(type = "WARNING", message = sprintf("ORCID '%s' is not recognized as valid ORCID id format",cid_kvp$values[[1]])))
            }
          }
        }
@@ -315,14 +315,14 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
         if(id_kvp$key=="doi"){
           isValidDoi<-grepl(x = id_kvp$values[[1]], pattern = '^10\\.\\d{4,9}/[-._;()/:A-Z0-9]+$',perl = TRUE, ignore.case = TRUE)
           if(!isValidDoi){
-            report <- rbind(report, data.frame(type = "WARNING", message = springf("DOI '%s' is not recognized as valid doi format",id_kvp$values[[1]])))
+            report <- rbind(report, data.frame(type = "WARNING", message = sprintf("DOI '%s' is not recognized as valid doi format",id_kvp$values[[1]])))
           }
         }
         #validity of UUID
         if(id_kvp$key=="uuid"){
           isValidUuid<-grepl(x = id_kvp$values[[1]], pattern = '^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$',perl = TRUE, ignore.case = TRUE)
           if(!isValidUuid){
-            report <- rbind(report, data.frame(type = "WARNING", message = springf("UUID '%s' is not recognized as valid uuid format",id_kvp$values[[1]])))
+            report <- rbind(report, data.frame(type = "WARNING", message = sprintf("UUID '%s' is not recognized as valid uuid format",id_kvp$values[[1]])))
           }
         }
       }
