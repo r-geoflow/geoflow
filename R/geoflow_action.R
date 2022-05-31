@@ -300,7 +300,7 @@ register_actions <- function(){
     geoflow_action$new(
       id = "geosapi-publish-ogc-services",
       types = list("Data upload", "Data publication", "Metadata publication"),
-      def = "Publish vector data to GeoServer OGC web-services (WMS/WFS)",
+      def = "Publish vector data to GeoServer OGC web-services (WMS/WFS/WCS)",
       target = NA,
       target_dir = NA,
       packages = list("geosapi"),
