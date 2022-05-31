@@ -487,8 +487,7 @@ initWorkflow <- function(file, dir = "."){
         action_to_trigger$options <- action$options
       }else{
         if(config$profile$mode == "entity"){
-          source(action$script)
-          customfun <- eval(parse(text = action$id))
+          customfun <- source(action$script)$value
           if(is(customfun,"try-error")){
             errMsg <- sprintf("Error while trying to evaluate custom function'%s", action$id)
             config$logger.error(errMsg)

@@ -389,8 +389,10 @@ geoflow_data <- R6Class("geoflow_data",
               scope = "local",
               types = c("Entity data action"),
               def = desc,
-              fun = eval(expr = parse(text = paste0("function(entity, config, options){
-                source(",script_to_source,", local = TRUE)
+              fun = eval(expr = parse(text = paste0("function(action, entity, config){
+                act_fun <- source(",script_to_source,", local = TRUE)$value
+                if(!is(act_fun, \"function\")) stop(\"Script for entity action ",action," is not a function!\")
+                act_fun(action, entity, config)
               }"))),
               script = script,
               options = action_options

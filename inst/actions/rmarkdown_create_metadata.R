@@ -1,4 +1,4 @@
-create_metadata_Rmd <- function(entity, config, options){
+function(action, entity, config){
   
   if(!requireNamespace("rmarkdown")){
     stop("The action 'create-metadata-rmd' requires the 'rmarkdown' package")
@@ -6,9 +6,10 @@ create_metadata_Rmd <- function(entity, config, options){
   
   config$logger.info('Generate Rmd')
   #options
+  options <- action$otions
   template <- if(!is.null(options$template)) options$template else "generic"
   output_format <- if(!is.null(options$output_format)) options$output_format else "html"
-
+  
   infoMsg <- sprintf("Rmd template use :'%s'", template)
   config$logger.info(infoMsg)
   
@@ -18,9 +19,9 @@ create_metadata_Rmd <- function(entity, config, options){
     template_file<-template
   }else{
     switch(template,
-      "generic" = {template_file<-system.file("extdata/markdown", "generic.Rmd", package="geoflow")
-                   template_name<-"generic"}
-                  
+           "generic" = {template_file<-system.file("extdata/markdown", "generic.Rmd", package="geoflow")
+           template_name<-"generic"}
+           
     )
   }
   infoMsg <- sprintf("Rmd Localisation of template :'%s'", template_file)

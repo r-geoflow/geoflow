@@ -154,7 +154,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
                 for(i in 1:length(entity$data$actions)){
                   entity_action <- entity$data$actions[[i]]
                   config$logger.info(sprintf("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script))
-                  entity_action$fun(entity, config, entity_action$options)
+                  entity_action$run(entity, config)
                   #monitor local action
                   step<-step+inc_step
                   config$logger.info(sprintf("WORKFLOW PROGRESS : ACTION '%s' of ENTITY '%s' ... %s %%",entity_action$id,entity$identifiers[["id"]],step))
@@ -220,7 +220,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           if(length(actions)>0) for(i in 1:length(actions)){
             action <- actions[[i]]
             config$logger.info(sprintf("Executing Action %s: %s - for entity %s", i, action$id, entity$identifiers[["id"]]))
-            action$fun(entity = entity, config = config, options = action$options)
+            action$run(entity = entity, config = config)
             
             #monitor global action
             step<-step+inc_step
@@ -246,7 +246,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
                 #behavior for generic uploaders, we set depositWithFiles = TRUE and proceed with all resource uploads
                 generic_uploader_options <- generic_uploader$options
                 generic_uploader_options$depositWithFiles <- TRUE
-                generic_uploader$fun(entity, config, generic_uploader_options)
+                generic_uploader$run(entity, config)
               }
             }
           }

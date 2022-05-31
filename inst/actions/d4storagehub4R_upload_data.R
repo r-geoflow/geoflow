@@ -1,10 +1,11 @@
-d4storagehub4R_upload_data <- function(entity, config, options){
+function(action, entity, config){
   
   if(!requireNamespace("d4storagehub4R", quietly = TRUE)){
     stop("The 'd4storagehub4R-upload-datas' action requires the 'd4storagehub4R' package")
   }
   
   #options
+  options <- action$options
   depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
   otherUploadFolders <- if(!is.null(options$otherUploadFolders)) options$otherUploadFolders else c()
   
@@ -28,12 +29,12 @@ d4storagehub4R_upload_data <- function(entity, config, options){
   #verify  if folder exist and create it if missing
   #-------------------------------------------------------------------------------------------------  
   workspace<- file.path(workspace,entity$getEntityJobDirname())
-    folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = file.path(workspace,"data"))
-    if (is.null(folderID)) {
-      config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", workspace))
-      D4STORAGE_HUB$createFolder(folderPath = workspace, name="data", description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
-    }
-
+  folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = file.path(workspace,"data"))
+  if (is.null(folderID)) {
+    config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", workspace))
+    D4STORAGE_HUB$createFolder(folderPath = workspace, name="data", description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
+  }
+  
   #upload
   #-------------------------------------------------------------------------------------------------
   if(entity$data$upload){
@@ -50,16 +51,16 @@ d4storagehub4R_upload_data <- function(entity, config, options){
       config$logger.info(sprintf("File %s successfully uploaded to the d4science folder %s", fileName, file.path(workspace, "data")))
     }
   }  
-
+  
   #enrish with relation
   #-------------------------------------------------------------------------------------------------
-    new_d4storagehub_link<- geoflow_relation$new()
-    new_d4storagehub_link$setKey("http")
-    new_d4storagehub_link$setName(fileName)
-    new_d4storagehub_link$setDescription(paste0(entity$titles[['title']]," - D4Science Data Download (",entity$data$uploadType,")"))
-    new_d4storagehub_link$setLink(D4STORAGE_HUB$getPublicFileLink(file.path(workspace, "data",fileName)))
-    
-    entity$addRelation(new_d4storagehub_link)
+  new_d4storagehub_link<- geoflow_relation$new()
+  new_d4storagehub_link$setKey("http")
+  new_d4storagehub_link$setName(fileName)
+  new_d4storagehub_link$setDescription(paste0(entity$titles[['title']]," - D4Science Data Download (",entity$data$uploadType,")"))
+  new_d4storagehub_link$setLink(D4STORAGE_HUB$getPublicFileLink(file.path(workspace, "data",fileName)))
+  
+  entity$addRelation(new_d4storagehub_link)
   
   if(otherUploadFolders>0){
     for (folder in otherUploadFolders){
@@ -102,9 +103,9 @@ d4storagehub4R_upload_data <- function(entity, config, options){
         D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, "data"), file=file.path(getwd(),"data",data_file), description = "", archive = FALSE)
       }
     }else{
-          config$logger.warn("D4storagehub: no other data files to upload")
+      config$logger.warn("D4storagehub: no other data files to upload")
     }
-  
+    
     #check if metadata files exists
     metadata_files <- list.files(file.path(getwd(),"metadata"))
     if(length(metadata_files)>0){
@@ -115,10 +116,10 @@ d4storagehub4R_upload_data <- function(entity, config, options){
         D4STORAGE_HUB$createFolder(folderPath = workspace, name="metadata", description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
       }
       #upload metadata files
-        for(metadata_file in metadata_files){
-          config$logger.info(sprintf("D4storagehub: uploading metadata file '%s'", metadata_file))
-          D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, "metadata"), file=file.path(getwd(),"metadata",metadata_file), description = "", archive = FALSE)
-        }
+      for(metadata_file in metadata_files){
+        config$logger.info(sprintf("D4storagehub: uploading metadata file '%s'", metadata_file))
+        D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, "metadata"), file=file.path(getwd(),"metadata",metadata_file), description = "", archive = FALSE)
+      }
     }else{
       config$logger.warn("D4storagehub: no metadata files to upload")
     }

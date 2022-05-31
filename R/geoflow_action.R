@@ -129,6 +129,13 @@ geoflow_action <- R6Class("geoflow_action",
       }
     },
     
+    #'@description Runs the action
+    #'@param entity entity
+    #'@param config config
+    run = function(entity, config){
+      self$fun(self, entity, config)
+    },
+    
     #'@description Indicates if the action is PID generator
     #'@return \code{TRUE} if the action is a PID generator, \code{FALSE} otherwise
     isPIDGenerator = function(){
@@ -238,7 +245,6 @@ register_actions <- function(){
       target = "entity",
       target_dir = "metadata",
       packages = list("geometa","ows4R"),
-      fun = geometa_create_iso_19115,
       available_options = list(
         use_uuid = list(def = "Use UUID as metadata identifier, if not defined the UUID is pre-generated", class = "logical", default = FALSE),
         doi = list(def = "Add entity DOI - if defined - as metadata identifier and online resource", class = "logical", default = FALSE),
@@ -250,7 +256,8 @@ register_actions <- function(){
         subject_geography = list(def = "Identifier of the subject handling a Geographic coverage.", class = "character", default = "geography"),
         include_coverage_data_dimension_values = list(def = "Include data dimensions's range values to coverage description", class = "logical", default = FALSE),
         include_coverage_service_dimension_values = list(def = "Include ogc dimensions's range values to coverage description", class = "logical", default = FALSE)
-      )
+      ),
+      fun = source(system.file("actions", "geometa_create_iso_19115.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "geometa-create-iso-19110",
@@ -259,7 +266,6 @@ register_actions <- function(){
       target = "entity",
       target_dir = "metadata",
       packages = list("geometa"),
-      fun = geometa_create_iso_19110,
       available_options = list(
         doi = list(def = "Add entity DOI - if defined - as metadata identifier and online resource", class = "logical", default = FALSE),
         exclude_attributes = list(def = "Attributes that should be excluded from the ISO 19110 production", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
@@ -268,7 +274,8 @@ register_actions <- function(){
         extra_attributes = list(def = "Extra attributes to add as feature catalog attributes although not in data", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
         default_min_occurs = list(def = "The default min occurs value for feature attributes cardinality", class = "integer", default = 1L),
         default_max_occurs = list(def = "The default max occurs value for feature attribute cardinality", class = "numeric", default = Inf)
-      )
+      ),
+      fun = source(system.file("actions", "geometa_create_iso_19110.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id="ows4R-publish-iso-19139",
@@ -277,10 +284,10 @@ register_actions <- function(){
       target = NA,
       target_dir = NA,
       packages = list("ows4R"),
-      fun = ows4R_publish_iso_19139,
       available_options = list(
         geometa_inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", class = "logical", default = FALSE)
-      )
+      ),
+      fun = source(system.file("actions", "ows4R_publish_iso_19139.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "geonapi-publish-iso-19139",
@@ -289,13 +296,13 @@ register_actions <- function(){
       target = NA,
       target_dir = NA,
       packages = list("geonapi"),
-      fun = geonapi_publish_iso_19139,
       available_options = list(
         geometa_inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", class = "logical", default = FALSE),
         privileges = list(def = "Geonetwork privileges to set for the metadata to be published", class = "character", choices = c("view","dynamic","featured"), default = c("view","dynamic","featured"), multiple = TRUE),
         group = list(def = "Geonetwork user group to which the metadata should be associated", class = "character", default = "1"),
         category = list(def = "Category of metadata resources to which the metadata record should be associated", class = "character", default = "datasets")
-      )
+      ),
+      fun = source(system.file("actions", "ows4R_publish_iso_19139.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "geosapi-publish-ogc-services",
@@ -304,7 +311,6 @@ register_actions <- function(){
       target = NA,
       target_dir = NA,
       packages = list("geosapi"),
-      fun = geosapi_publish_ogc_services,
       available_options = list(
         createWorkspace = list(def = "Create workspace if not already existing", class = "logical", default = FALSE),
         createStore = list(def = "Create data/coverage store if not already existing", class = "logical", default = FALSE),
@@ -315,7 +321,8 @@ register_actions <- function(){
         enrich_with_relation_wfs = list(def = "When enabled, enrichs entity with a base WFS link relation (applies to 'vector' only)", class = "logical", default = TRUE),
         enrich_with_relation_wfs_download_links = list(def = "When enabled, enrichs entity with WFS format-specific links for download purpose (applies to 'vector' only)", class = "logical", default = TRUE),
         enrich_with_relation_wcs = list(def = "When enabled, enrichs entity with a base WCS link relation (applies to 'grid' only)", class = "logical", default = TRUE)
-      )
+      ),
+      fun = source(system.file("actions", "geosapi_publish_ogc_services.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "zen4R-deposit-record",
@@ -330,7 +337,6 @@ register_actions <- function(){
       ),
       generic_uploader = TRUE,
       packages = list("zen4R"),
-      fun = zen4R_deposit_record,
       available_options = list(
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
         depositDataPattern = list(def = "A regular expression to filter data files to upload in Zenodo", class = "character", default = ""),
@@ -341,7 +347,8 @@ register_actions <- function(){
         update_metadata = list(def = "For an existing deposit, indicates if metadata elements should be updated", class = "logical", default = TRUE),
         update_files = list(def = "For an existing deposit, indicates if files should be updated", class = "logical", default = TRUE),
         communities = list(def = "One or more communities to which the deposit should be associated", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA)
-      )
+      ),
+      fun = source(system.file("actions", "zen4R_deposit_record.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "atom4R-dataverse-deposit-record",
@@ -355,14 +362,14 @@ register_actions <- function(){
       ),
       generic_uploader = TRUE,
       packages = list("atom4R"),
-      fun = atom4R_dataverse_deposit_record,
       available_options = list(
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
         publish = list(def = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", class = "logical", default = FALSE),
         deleteOldFiles = list(def = "Indicates if the action should delete old files prior upload new files", class = "logical", default = TRUE),
         update_metadata = list(def = "For an existing deposit, indicates if metadata elements should be updated", class = "logical", default = TRUE),
         update_files = list(def = "For an existing deposit, indicates if files should be updated", class = "logical", default = TRUE)
-      )
+      ),
+      fun = source(system.file("actions", "atom4R_dataverse_deposit_record.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "dataone-upload-datapackage",
@@ -375,8 +382,8 @@ register_actions <- function(){
         packageId = "PackageId"
       ),
       packages = list("mime", "datapack", "dataone"),
-      fun = dataone_upload_datapackage,
-      available_options = list()
+      available_options = list(),
+      fun = source(system.file("actions", "dataone_upload_datapackage.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "sf-write-generic",
@@ -385,14 +392,14 @@ register_actions <- function(){
       target = "entity",
       target_dir = "data",
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
-      fun = sf_write_generic,
       available_options = list(
         type=list(def = "format to convert", class = "character", choices = c("shp", "dbtable","csv","gpkg"), default = NA),
         createIndexes=list(def = "create indexes for columns", class = "logical", default = FALSE),
         overwrite=list(def = "Overwrite policy", class = "logical", default = TRUE),
         append=list(def = "Append policy", class = "logical", default = FALSE),
         chunk.size=list(def = "Size of DB upload data chunk. Default is 0L, meaning no chunking is operated.", class = "integer", default = 0L)
-      )
+      ),
+      fun = source(system.file("actions", "sf_write_generic.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "sf-write-dbi",
@@ -401,13 +408,13 @@ register_actions <- function(){
       target = NA,
       target_dir = NA,
       packages = list("sf", "DBI", "RSQLite", "RPostgres"),
-      fun = sf_write_dbi,
       available_options = list(
         createIndexes=list(def = "create indexes for columns", class = "logical",  default = FALSE),
         overwrite=list(def = "Overwrite policy", class = "logical",  default = TRUE),
         append=list(def = "Append policy", class = "logical", default = FALSE),
         chunk.size=list(def = "Size of DB upload data chunk. Default is 0L, meaning no chunking is operated.", class = "integer", default = 0L)
-      )
+      ),
+      fun = source(system.file("actions", "sf_write_dbi.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "sf-write-shp",
@@ -416,7 +423,7 @@ register_actions <- function(){
       target = "entity",
       target_dir = "data",
       packages = list("sf"),
-      fun = sf_write_shp
+      fun = source(system.file("actions", "sf_write_shp.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "eml-create-eml",
@@ -425,10 +432,10 @@ register_actions <- function(){
       target = "entity",
       target_dir = "metadata",
       packages = list("EML", "emld"),
-      fun = eml_create_eml,
       available_options = list(
         subject_taxonomy = list(def = "Identifier of the subject handling the Taxonomic coverage.", class = "character", default = "taxonomy")
-      )
+      ),
+      fun = source(system.file("actions", "eml_create_eml.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "d4storagehub4R-upload-data",
@@ -438,11 +445,11 @@ register_actions <- function(){
       target_dir = NA,
       generic_uploader = TRUE,
       packages = list("d4storagehub4R"),
-      fun = d4storagehub4R_upload_data,
       available_options = list(
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
         otherUploadFolders = list(def = "List of Folders (other than 'data' and 'metadata') to upload and which may contain files which should enrich others actions" , class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = c())
-      )
+      ),
+      fun = source(system.file("actions", "d4storagehub4R_upload_data.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "create-metadata-rmd",
@@ -451,11 +458,11 @@ register_actions <- function(){
       target = "entity",
       target_dir = "markdown",
       packages = list("rmarkdown"),
-      fun = create_metadata_Rmd,
       available_options = list(
         template = list(def = "Rmarkdown template", class = "character", default = "generic"),
         output_format = list(def = "output format generate by Rmarkdown template (e.g. 'html','pdf')", class = "character",choices = list("html","pdf","word","odt","rtf","md","github"), add_choices = FALSE, multiple = FALSE, default = "html")
-      )
+      ),
+      fun = source(system.file("actions", "rmarkdown_create_metadata.R", package = "geoflow"))$value
     )    
   )
   .geoflow$actions <- objs

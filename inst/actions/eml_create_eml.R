@@ -1,4 +1,4 @@
-eml_create_eml <- function(entity, config, options){
+function(action, entity, config){
   
   if(!requireNamespace("EML", quietly = TRUE)){
     stop("The EML action requires the 'EML' package")
@@ -8,6 +8,7 @@ eml_create_eml <- function(entity, config, options){
   }
   
   #options
+  options <- action$options
   taxonomySubject <- if(!is.null(options$subject_taxonomy)) options$subject_taxonomy else "taxonomy"
   
   #init dataset
@@ -55,10 +56,10 @@ eml_create_eml <- function(entity, config, options){
     if(length(contact$identifiers)>0){
       for(idkey in names(contact$identifiers)){
         switch(idkey,
-          "orcid" = {
-            person$id <- sprintf("https://orcid.org/%s", contact$identifiers[[idkey]])
-            person$userId <- list(directory = "https://orcid.org", userId = person$id)
-          }       
+               "orcid" = {
+                 person$id <- sprintf("https://orcid.org/%s", contact$identifiers[[idkey]])
+                 person$userId <- list(directory = "https://orcid.org", userId = person$id)
+               }       
         )
       }
     }
@@ -78,7 +79,7 @@ eml_create_eml <- function(entity, config, options){
     })
     return(out_persons)
   }
-
+  
   #creator
   creators <- entity$getContacts()[sapply(entity$getContacts(), function(x){x$role=="owner"})]
   dataset$creator <- contactsToEML(creators)
@@ -137,12 +138,12 @@ eml_create_eml <- function(entity, config, options){
         url = list(
           url = relation$link,
           "function" = switch(relation$key,
-            "thumbnail" = "information",
-            "parent" = "information",
-            "http" = "information",
-            "wms" = "information",
-            "wfs" = "download",
-            "information"
+                              "thumbnail" = "information",
+                              "parent" = "information",
+                              "http" = "information",
+                              "wms" = "information",
+                              "wfs" = "download",
+                              "information"
           )
         )
       )
@@ -233,7 +234,7 @@ eml_create_eml <- function(entity, config, options){
   if(!is.null(entity$descriptions$project)) project <- entity$descriptions$project
   
   #attributes
-    
+  
   #spatialVector
   if(!is.null(entity$data)) if(!is.null(entity$data$features)){
     features = entity$data$features
@@ -316,78 +317,78 @@ eml_create_eml <- function(entity, config, options){
         }
       }
       if(is.null(uom)) uom = "dimensionless"
-
+      
       #measurementScale
       measurementScale <- switch(class(featureAttrValues[1])[1],
-       "integer" = EML::eml$measurementScale(ratio = EML::eml$ratio(
-         unit = EML::eml$unit(standardUnit = uom), 
-         numericDomain = EML::eml$numericDomain(
-           numberType = "integer"
-         ))),
-       "numeric" = EML::eml$measurementScale(ratio = EML::eml$ratio(
-         unit = EML::eml$unit(standardUnit = uom), 
-         numericDomain = EML::eml$numericDomain(
-           numberType = "real"
-         ))),
-       "character" = EML::eml$measurementScale(nominal = EML::eml$nominal(
-         nonNumericDomain = {
-           if (enumerated){
-            EML::eml$nonNumericDomain(
-              enumeratedDomain = EML::eml$enumeratedDomain(
-                codeDefinition = lapply(featureAttrValues, function(featureAttrValue){
-                  print(featureAttrValue)
-                  EML::eml$codeDefinition(
-                    code = featureAttrValue,
-                    definition = {
-                      def = featureAttrValue
-                      reg_item <- fat_attr_register$data[fat_attr_register$data$code == featureAttrValue,]
-                      if(nrow(reg_item)>0){
-                        def = reg_item[1L,"label"]
-                      }
-                      print(def)
-                      def
-                    },
-                    source = {
-                      src = NULL
-                      reg_item <- fat_attr_register$data[fat_attr_register$data$code == featureAttrValue,]
-                      if(nrow(reg_item)>0){
-                        src = reg_item[1L,"uri"]
-                      }
-                      print(src)
-                      src
-                    }
-                  )
-                })
-              )
-            )
-          }else{
-            EML::eml$nonNumericDomain(
-              textDomain = EML::eml$textDomain(
-                definition = "Free text",
-                pattern = "\\w"
-              )
-            )
-          }
-         }
-       )),
-       "logical" = EML::eml$measurementScale(ordinal = EML::eml$ordinal(
-         nonNumericDomain = EML::eml$nonNumericDomain(
-           enumeratedDomain = EML::eml$enumeratedDomain(
-             codeDefinition = list(
-               EML::eml$codeDefinition(code = "TRUE", definition = "TRUE"),
-               EML::eml$codeDefinition(code = "FALSE", definition = "FALSE")
-             )
-           )
-         )
-       )),
-       "Date" = EML::eml$measurementScale(dateTime = EML::eml$dateTime(formatString = "YYYY-MM-DDTHH:mm:ss")),
-       "POSIXct" = EML::eml$measurementScale(dateTime = EML::eml$dateTime(formatString = "YYYY-MM-DD")),
-       "sfc_POINT" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real"))),
-       "sfc_MULTIPOINT" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real"))),
-       "sfc_LINESTRING" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real"))),
-       "sfc_MULTILINESTRING" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real"))),
-       "sfc_POLYGON" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real"))),
-       "sfc_MULTIPOLYGON" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real")))
+                                 "integer" = EML::eml$measurementScale(ratio = EML::eml$ratio(
+                                   unit = EML::eml$unit(standardUnit = uom), 
+                                   numericDomain = EML::eml$numericDomain(
+                                     numberType = "integer"
+                                   ))),
+                                 "numeric" = EML::eml$measurementScale(ratio = EML::eml$ratio(
+                                   unit = EML::eml$unit(standardUnit = uom), 
+                                   numericDomain = EML::eml$numericDomain(
+                                     numberType = "real"
+                                   ))),
+                                 "character" = EML::eml$measurementScale(nominal = EML::eml$nominal(
+                                   nonNumericDomain = {
+                                     if (enumerated){
+                                       EML::eml$nonNumericDomain(
+                                         enumeratedDomain = EML::eml$enumeratedDomain(
+                                           codeDefinition = lapply(featureAttrValues, function(featureAttrValue){
+                                             print(featureAttrValue)
+                                             EML::eml$codeDefinition(
+                                               code = featureAttrValue,
+                                               definition = {
+                                                 def = featureAttrValue
+                                                 reg_item <- fat_attr_register$data[fat_attr_register$data$code == featureAttrValue,]
+                                                 if(nrow(reg_item)>0){
+                                                   def = reg_item[1L,"label"]
+                                                 }
+                                                 print(def)
+                                                 def
+                                               },
+                                               source = {
+                                                 src = NULL
+                                                 reg_item <- fat_attr_register$data[fat_attr_register$data$code == featureAttrValue,]
+                                                 if(nrow(reg_item)>0){
+                                                   src = reg_item[1L,"uri"]
+                                                 }
+                                                 print(src)
+                                                 src
+                                               }
+                                             )
+                                           })
+                                         )
+                                       )
+                                     }else{
+                                       EML::eml$nonNumericDomain(
+                                         textDomain = EML::eml$textDomain(
+                                           definition = "Free text",
+                                           pattern = "\\w"
+                                         )
+                                       )
+                                     }
+                                   }
+                                 )),
+                                 "logical" = EML::eml$measurementScale(ordinal = EML::eml$ordinal(
+                                   nonNumericDomain = EML::eml$nonNumericDomain(
+                                     enumeratedDomain = EML::eml$enumeratedDomain(
+                                       codeDefinition = list(
+                                         EML::eml$codeDefinition(code = "TRUE", definition = "TRUE"),
+                                         EML::eml$codeDefinition(code = "FALSE", definition = "FALSE")
+                                       )
+                                     )
+                                   )
+                                 )),
+                                 "Date" = EML::eml$measurementScale(dateTime = EML::eml$dateTime(formatString = "YYYY-MM-DDTHH:mm:ss")),
+                                 "POSIXct" = EML::eml$measurementScale(dateTime = EML::eml$dateTime(formatString = "YYYY-MM-DD")),
+                                 "sfc_POINT" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real"))),
+                                 "sfc_MULTIPOINT" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real"))),
+                                 "sfc_LINESTRING" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real"))),
+                                 "sfc_MULTILINESTRING" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real"))),
+                                 "sfc_POLYGON" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real"))),
+                                 "sfc_MULTIPOLYGON" = EML::eml$measurementScale(interval = EML::eml$interval(unit = EML::eml$unit(standardUnit = uom), numericDomain = EML::eml$numericDomain(numberType = "real")))
       )
       
       attribute = EML::eml$attribute(
@@ -406,7 +407,7 @@ eml_create_eml <- function(entity, config, options){
       attributeList[[length(attributeList)+1]] <- attribute
       
     }
-      
+    
     if(is(entity$data$features, "sf")){
       #use spatialVector
       config$logger.info("EML: spatial dataset - filling attributeList as 'spatialVector'")
@@ -417,12 +418,12 @@ eml_create_eml <- function(entity, config, options){
         coverage = dataset$coverage,
         attributeList = EML::eml$attributeList(attribute = attributeList),
         geometry = switch(class(sf::st_geometry(entity$data$features))[1],
-          "sfc_POINT" = "Point",
-          "sfc_MULTIPOINT" = "MultiPoint",
-          "sfc_LINESTRING" = "LineString",
-          "sfc_MULTILINESTRING" = "MultiLineString",
-          "sfc_POLYGON" = "Polygon",
-          "sfc_MULTIPOLYGON" = "MultiPolygon"                
+                          "sfc_POINT" = "Point",
+                          "sfc_MULTIPOINT" = "MultiPoint",
+                          "sfc_LINESTRING" = "LineString",
+                          "sfc_MULTILINESTRING" = "MultiLineString",
+                          "sfc_POLYGON" = "Polygon",
+                          "sfc_MULTIPOLYGON" = "MultiPolygon"                
         ),
         geometricObjectCount = nrow(entity$data$features),
         spatialReference = list(horizCoordSysName = {

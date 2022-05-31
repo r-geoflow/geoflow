@@ -1,8 +1,10 @@
-geonapi_publish_iso_19139 <- function(entity, config, options){
+function(action, entity, config){
   
   if(!requireNamespace("geonapi", quietly = TRUE)){
     stop("The 'geonapi-publish-iso-19139' action requires the 'geonapi' package")
   }
+  
+  options <- action$options
   
   geometa_inspire <- if(!is.null(options$geometa_inspire)) options$geometa_inspire else FALSE
   INSPIRE_VALIDATOR <- NULL
@@ -71,37 +73,37 @@ geonapi_publish_iso_19139 <- function(entity, config, options){
     }
     
     switch(GN$getClassName(),
-      "GNOpenAPIManager" = {
-        if(category_match_col=="name"){
-          category <- available_categories[available_categories$name==category,]$id
-        }
-        GN$insertRecord(geometa = md, group = group, category = category,
-                          uuidProcessing = "OVERWRITE", geometa_inspire = inspire)
-      },
-      "GNLegacyAPIManager" = {
-        if(category_match_col=="id"){
-          category <- available_categories[available_categories$id==category,]$name
-        }
-        metaId <- GN$get(mdId, by = "uuid", output = "id")
-        if(is.null(metaId)){
-          #insert metadata (once inserted only visible to the publisher)
-          created = GN$insertMetadata(geometa = md, group = group, category = category,
-                                      geometa_inspire = inspire, geometa_inspireValidator = INSPIRE_VALIDATOR)
-          #config privileges
-          config <- GNPrivConfiguration$new()
-          config$setPrivileges("all", privs)
-          GN$setPrivConfiguration(id = created, config = config)
-        }else{
-          #update a metadata
-          updated = GN$updateMetadata(id = metaId, geometa = md,
-                                      geometa_inspire = inspire, geometa_inspireValidator = INSPIRE_VALIDATOR)
-          
-          #config privileges
-          gn_config <- GNPrivConfiguration$new()
-          gn_config$setPrivileges("all", privs)
-          GN$setPrivConfiguration(id = metaId, config = gn_config)
-        }
-      }
+           "GNOpenAPIManager" = {
+             if(category_match_col=="name"){
+               category <- available_categories[available_categories$name==category,]$id
+             }
+             GN$insertRecord(geometa = md, group = group, category = category,
+                             uuidProcessing = "OVERWRITE", geometa_inspire = inspire)
+           },
+           "GNLegacyAPIManager" = {
+             if(category_match_col=="id"){
+               category <- available_categories[available_categories$id==category,]$name
+             }
+             metaId <- GN$get(mdId, by = "uuid", output = "id")
+             if(is.null(metaId)){
+               #insert metadata (once inserted only visible to the publisher)
+               created = GN$insertMetadata(geometa = md, group = group, category = category,
+                                           geometa_inspire = inspire, geometa_inspireValidator = INSPIRE_VALIDATOR)
+               #config privileges
+               config <- GNPrivConfiguration$new()
+               config$setPrivileges("all", privs)
+               GN$setPrivConfiguration(id = created, config = config)
+             }else{
+               #update a metadata
+               updated = GN$updateMetadata(id = metaId, geometa = md,
+                                           geometa_inspire = inspire, geometa_inspireValidator = INSPIRE_VALIDATOR)
+               
+               #config privileges
+               gn_config <- GNPrivConfiguration$new()
+               gn_config$setPrivileges("all", privs)
+               GN$setPrivConfiguration(id = metaId, config = gn_config)
+             }
+           }
     )
     rm(md)
   }

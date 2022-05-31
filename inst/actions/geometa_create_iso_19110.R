@@ -1,4 +1,4 @@
-geometa_create_iso_19110 <- function(entity, config, options){
+function(action, entity, config){
   
   if(!requireNamespace("geometa", quietly = TRUE)){
     stop("The 'geometa-create-iso-19110' action requires the 'geometa' package")
@@ -15,6 +15,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
   }
   
   #options
+  options <- actions$options
   doi <- if(!is.null(options$doi)) options$doi else FALSE
   exclude_attributes <- if(!is.null(options$exclude_attributes)) options$exclude_attributes else list()
   exclude_attributes_not_in_dictionary <- if(!is.null(options$exclude_attributes_not_in_dictionary)) options$exclude_attributes_not_in_dictionary else FALSE
@@ -133,12 +134,12 @@ geometa_create_iso_19110 <- function(entity, config, options){
   
   columns <- c(colnames(features), unlist(extra_attributes))
   for(featureAttrName in columns){
-
+    
     if(featureAttrName %in% exclude_attributes){
       config$logger.warn(sprintf("Feature Attribute '%s' is listed in 'exclude_attributes'. Discarding it...", featureAttrName)) 
       next
     }
-      
+    
     fat_attr_register <- NULL
     
     #create attribute
@@ -200,8 +201,8 @@ geometa_create_iso_19110 <- function(entity, config, options){
     #add listed values
     if(featureAttrName %in% colnames(features)){
       featureAttrValues <- switch(class(features)[1],
-          "sf" = features[,featureAttrName][[1]],
-          "data.frame" = features[,featureAttrName]
+                                  "sf" = features[,featureAttrName][[1]],
+                                  "data.frame" = features[,featureAttrName]
       )
     }else{
       featureAttrValues <- fat_attr_register$data$code
@@ -248,26 +249,26 @@ geometa_create_iso_19110 <- function(entity, config, options){
     }else{
       config$logger.warn(sprintf("Skip listing values for feature Attribute '%s'...", featureAttrName))
     }
-      
+    
     #add primitive type + data type (attribute or variable) as valueType
     fat_type <- switch(class(featureAttrValues[1])[1],
-      "integer" = "xsd:int",
-      "numeric" = "xsd:decimal",
-      "character" = "xsd:string",
-      "logical" = "xsd:boolean",
-      "Date" = "xsd:date",
-      "POSIXct" = "xsd:datetime",
-      "sfc_POINT" = "gml:PointPropertyType",
-      "sfc_MULTIPOINT" = "gml:MultiPointPropertyType",
-      "sfc_LINESTRING" = "gml:LineStringPropertyType",
-      "sfc_MULTILINESTRING" = "gml:MultiLineStringPropertyType",
-      "sfc_POLYGON" = "gml:PolygonPropertyType",
-      "sfc_MULTIPOLYGON" = "gml:MultiPolygonPropertyType"
+                       "integer" = "xsd:int",
+                       "numeric" = "xsd:decimal",
+                       "character" = "xsd:string",
+                       "logical" = "xsd:boolean",
+                       "Date" = "xsd:date",
+                       "POSIXct" = "xsd:datetime",
+                       "sfc_POINT" = "gml:PointPropertyType",
+                       "sfc_MULTIPOINT" = "gml:MultiPointPropertyType",
+                       "sfc_LINESTRING" = "gml:LineStringPropertyType",
+                       "sfc_MULTILINESTRING" = "gml:MultiLineStringPropertyType",
+                       "sfc_POLYGON" = "gml:PolygonPropertyType",
+                       "sfc_MULTIPOLYGON" = "gml:MultiPolygonPropertyType"
     )
     fat_generic_type <- switch(class(featureAttrValues[1])[1],
-      "integer" = "variable",
-      "numeric" = "variable",
-      "attribute"
+                               "integer" = "variable",
+                               "numeric" = "variable",
+                               "attribute"
     )
     if(!is.null(fat_attr)) fat_generic_type <- fat_attr$type
     fat_type_anchor <- ISOAnchor$new(name = fat_type, href = fat_generic_type)
