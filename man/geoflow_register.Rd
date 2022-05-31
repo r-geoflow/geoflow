@@ -46,15 +46,15 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_register$new()}}
-\item \href{#method-fetch}{\code{geoflow_register$fetch()}}
-\item \href{#method-check}{\code{geoflow_register$check()}}
-\item \href{#method-clone}{\code{geoflow_register$clone()}}
+\item \href{#method-geoflow_register-new}{\code{geoflow_register$new()}}
+\item \href{#method-geoflow_register-fetch}{\code{geoflow_register$fetch()}}
+\item \href{#method-geoflow_register-check}{\code{geoflow_register$check()}}
+\item \href{#method-geoflow_register-clone}{\code{geoflow_register$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_register-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_register-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes an object of class \link{geoflow_register}
 \subsection{Usage}{
@@ -74,8 +74,8 @@ Initializes an object of class \link{geoflow_register}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-fetch"></a>}}
-\if{latex}{\out{\hypertarget{method-fetch}{}}}
+\if{html}{\out{<a id="method-geoflow_register-fetch"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_register-fetch}{}}}
 \subsection{Method \code{fetch()}}{
 Fetchs the register data using the register function
 \subsection{Usage}{
@@ -91,8 +91,8 @@ Fetchs the register data using the register function
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-check"></a>}}
-\if{latex}{\out{\hypertarget{method-check}{}}}
+\if{html}{\out{<a id="method-geoflow_register-check"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_register-check}{}}}
 \subsection{Method \code{check()}}{
 Checks the register data structure. The structure of the \code{data.frame} returned
 by the register function should be of 4 columns including "code", "uri", "label", "definition". 
@@ -110,8 +110,8 @@ In case the data structure is not valid, the function throws an error.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_register-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_register-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

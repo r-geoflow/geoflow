@@ -46,17 +46,17 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_relation$new()}}
-\item \href{#method-setKey}{\code{geoflow_relation$setKey()}}
-\item \href{#method-setLink}{\code{geoflow_relation$setLink()}}
-\item \href{#method-setName}{\code{geoflow_relation$setName()}}
-\item \href{#method-setDescription}{\code{geoflow_relation$setDescription()}}
-\item \href{#method-clone}{\code{geoflow_relation$clone()}}
+\item \href{#method-geoflow_relation-new}{\code{geoflow_relation$new()}}
+\item \href{#method-geoflow_relation-setKey}{\code{geoflow_relation$setKey()}}
+\item \href{#method-geoflow_relation-setLink}{\code{geoflow_relation$setLink()}}
+\item \href{#method-geoflow_relation-setName}{\code{geoflow_relation$setName()}}
+\item \href{#method-geoflow_relation-setDescription}{\code{geoflow_relation$setDescription()}}
+\item \href{#method-geoflow_relation-clone}{\code{geoflow_relation$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_relation-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_relation-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes an object of class \link{geoflow_relation}
 \subsection{Usage}{
@@ -72,8 +72,8 @@ Initializes an object of class \link{geoflow_relation}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setKey"></a>}}
-\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\if{html}{\out{<a id="method-geoflow_relation-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_relation-setKey}{}}}
 \subsection{Method \code{setKey()}}{
 Set key
 \subsection{Usage}{
@@ -89,8 +89,8 @@ Set key
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setLink"></a>}}
-\if{latex}{\out{\hypertarget{method-setLink}{}}}
+\if{html}{\out{<a id="method-geoflow_relation-setLink"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_relation-setLink}{}}}
 \subsection{Method \code{setLink()}}{
 Set link
 \subsection{Usage}{
@@ -106,8 +106,8 @@ Set link
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setName"></a>}}
-\if{latex}{\out{\hypertarget{method-setName}{}}}
+\if{html}{\out{<a id="method-geoflow_relation-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_relation-setName}{}}}
 \subsection{Method \code{setName()}}{
 Set name
 \subsection{Usage}{
@@ -123,8 +123,8 @@ Set name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setDescription"></a>}}
-\if{latex}{\out{\hypertarget{method-setDescription}{}}}
+\if{html}{\out{<a id="method-geoflow_relation-setDescription"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_relation-setDescription}{}}}
 \subsection{Method \code{setDescription()}}{
 Set description
 \subsection{Usage}{
@@ -140,8 +140,8 @@ Set description
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_relation-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_relation-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

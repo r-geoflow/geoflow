@@ -21,22 +21,22 @@ geoflow_validator_cell
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_validator_cell$new()}}
-\item \href{#method-isNaAuthorized}{\code{geoflow_validator_cell$isNaAuthorized()}}
-\item \href{#method-isKeySynthaxUser}{\code{geoflow_validator_cell$isKeySynthaxUser()}}
-\item \href{#method-isKeyRequired}{\code{geoflow_validator_cell$isKeyRequired()}}
-\item \href{#method-getValidKeys}{\code{geoflow_validator_cell$getValidKeys()}}
-\item \href{#method-isErrorIfInvalidKey}{\code{geoflow_validator_cell$isErrorIfInvalidKey()}}
-\item \href{#method-getDefaultKey}{\code{geoflow_validator_cell$getDefaultKey()}}
-\item \href{#method-isExcludeHttpKeys}{\code{geoflow_validator_cell$isExcludeHttpKeys()}}
-\item \href{#method-isMultiple}{\code{geoflow_validator_cell$isMultiple()}}
-\item \href{#method-validate}{\code{geoflow_validator_cell$validate()}}
-\item \href{#method-clone}{\code{geoflow_validator_cell$clone()}}
+\item \href{#method-geoflow_validator_cell-new}{\code{geoflow_validator_cell$new()}}
+\item \href{#method-geoflow_validator_cell-isNaAuthorized}{\code{geoflow_validator_cell$isNaAuthorized()}}
+\item \href{#method-geoflow_validator_cell-isKeySynthaxUser}{\code{geoflow_validator_cell$isKeySynthaxUser()}}
+\item \href{#method-geoflow_validator_cell-isKeyRequired}{\code{geoflow_validator_cell$isKeyRequired()}}
+\item \href{#method-geoflow_validator_cell-getValidKeys}{\code{geoflow_validator_cell$getValidKeys()}}
+\item \href{#method-geoflow_validator_cell-isErrorIfInvalidKey}{\code{geoflow_validator_cell$isErrorIfInvalidKey()}}
+\item \href{#method-geoflow_validator_cell-getDefaultKey}{\code{geoflow_validator_cell$getDefaultKey()}}
+\item \href{#method-geoflow_validator_cell-isExcludeHttpKeys}{\code{geoflow_validator_cell$isExcludeHttpKeys()}}
+\item \href{#method-geoflow_validator_cell-isMultiple}{\code{geoflow_validator_cell$isMultiple()}}
+\item \href{#method-geoflow_validator_cell-validate}{\code{geoflow_validator_cell$validate()}}
+\item \href{#method-geoflow_validator_cell-clone}{\code{geoflow_validator_cell$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_validator_cell}
 \subsection{Usage}{
@@ -84,8 +84,8 @@ Initializes a \link{geoflow_validator_cell}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-isNaAuthorized"></a>}}
-\if{latex}{\out{\hypertarget{method-isNaAuthorized}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-isNaAuthorized"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-isNaAuthorized}{}}}
 \subsection{Method \code{isNaAuthorized()}}{
 Indicates if the validator cell authorizes NAs and empty strings
 \subsection{Usage}{
@@ -97,8 +97,8 @@ Indicates if the validator cell authorizes NAs and empty strings
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-isKeySynthaxUser"></a>}}
-\if{latex}{\out{\hypertarget{method-isKeySynthaxUser}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-isKeySynthaxUser"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-isKeySynthaxUser}{}}}
 \subsection{Method \code{isKeySynthaxUser()}}{
 Indicates if the validator cell makes use of key-based syntax
 \subsection{Usage}{
@@ -110,8 +110,8 @@ Indicates if the validator cell makes use of key-based syntax
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-isKeyRequired"></a>}}
-\if{latex}{\out{\hypertarget{method-isKeyRequired}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-isKeyRequired"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-isKeyRequired}{}}}
 \subsection{Method \code{isKeyRequired()}}{
 Indicates if a key is required for the validator cell
 \subsection{Usage}{
@@ -123,8 +123,8 @@ Indicates if a key is required for the validator cell
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getValidKeys"></a>}}
-\if{latex}{\out{\hypertarget{method-getValidKeys}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-getValidKeys"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-getValidKeys}{}}}
 \subsection{Method \code{getValidKeys()}}{
 Gives the list of valid keys for the validator cell
 \subsection{Usage}{
@@ -136,8 +136,8 @@ the list of valid keys
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-isErrorIfInvalidKey"></a>}}
-\if{latex}{\out{\hypertarget{method-isErrorIfInvalidKey}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-isErrorIfInvalidKey"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-isErrorIfInvalidKey}{}}}
 \subsection{Method \code{isErrorIfInvalidKey()}}{
 Indicates if a report error will be given in case of invalid key
 \subsection{Usage}{
@@ -149,8 +149,8 @@ Indicates if a report error will be given in case of invalid key
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getDefaultKey"></a>}}
-\if{latex}{\out{\hypertarget{method-getDefaultKey}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-getDefaultKey"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-getDefaultKey}{}}}
 \subsection{Method \code{getDefaultKey()}}{
 Gets the default key
 \subsection{Usage}{
@@ -162,8 +162,8 @@ the default key
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-isExcludeHttpKeys"></a>}}
-\if{latex}{\out{\hypertarget{method-isExcludeHttpKeys}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-isExcludeHttpKeys"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-isExcludeHttpKeys}{}}}
 \subsection{Method \code{isExcludeHttpKeys()}}{
 Indicates if 'http' keys are excluded from the validation
 \subsection{Usage}{
@@ -175,8 +175,8 @@ Indicates if 'http' keys are excluded from the validation
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-isMultiple"></a>}}
-\if{latex}{\out{\hypertarget{method-isMultiple}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-isMultiple"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-isMultiple}{}}}
 \subsection{Method \code{isMultiple()}}{
 indicates if multiple key-based components can be used within a same cell
 \subsection{Usage}{
@@ -188,8 +188,8 @@ indicates if multiple key-based components can be used within a same cell
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validate"></a>}}
-\if{latex}{\out{\hypertarget{method-validate}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-validate"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-validate}{}}}
 \subsection{Method \code{validate()}}{
 Proceeds with syntactic validation for the cell considered
 \subsection{Usage}{
@@ -201,8 +201,8 @@ an object of class \code{data.frame} including possible errors/warnings
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_cell-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_cell-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

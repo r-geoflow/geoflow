@@ -57,14 +57,14 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_handler$new()}}
-\item \href{#method-checkPackages}{\code{geoflow_handler$checkPackages()}}
-\item \href{#method-clone}{\code{geoflow_handler$clone()}}
+\item \href{#method-geoflow_handler-new}{\code{geoflow_handler$new()}}
+\item \href{#method-geoflow_handler-checkPackages}{\code{geoflow_handler$checkPackages()}}
+\item \href{#method-geoflow_handler-clone}{\code{geoflow_handler$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_handler-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_handler-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_handler}
 \subsection{Usage}{
@@ -88,8 +88,8 @@ Initializes a \link{geoflow_handler}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-checkPackages"></a>}}
-\if{latex}{\out{\hypertarget{method-checkPackages}{}}}
+\if{html}{\out{<a id="method-geoflow_handler-checkPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_handler-checkPackages}{}}}
 \subsection{Method \code{checkPackages()}}{
 Check that all packages required for the handler are available, if yes,
    import them in the R session, and return a \code{data.frame} giving the 
@@ -101,8 +101,8 @@ Check that all packages required for the handler are available, if yes,
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_handler-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_handler-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

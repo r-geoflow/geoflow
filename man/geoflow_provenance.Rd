@@ -47,15 +47,15 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_provenance$new()}}
-\item \href{#method-setStatement}{\code{geoflow_provenance$setStatement()}}
-\item \href{#method-addProcess}{\code{geoflow_provenance$addProcess()}}
-\item \href{#method-clone}{\code{geoflow_provenance$clone()}}
+\item \href{#method-geoflow_provenance-new}{\code{geoflow_provenance$new()}}
+\item \href{#method-geoflow_provenance-setStatement}{\code{geoflow_provenance$setStatement()}}
+\item \href{#method-geoflow_provenance-addProcess}{\code{geoflow_provenance$addProcess()}}
+\item \href{#method-geoflow_provenance-clone}{\code{geoflow_provenance$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_provenance-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_provenance-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_provenance}
 \subsection{Usage}{
@@ -71,8 +71,8 @@ Initializes a \link{geoflow_provenance}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setStatement"></a>}}
-\if{latex}{\out{\hypertarget{method-setStatement}{}}}
+\if{html}{\out{<a id="method-geoflow_provenance-setStatement"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_provenance-setStatement}{}}}
 \subsection{Method \code{setStatement()}}{
 Set process statement
 \subsection{Usage}{
@@ -88,8 +88,8 @@ Set process statement
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addProcess"></a>}}
-\if{latex}{\out{\hypertarget{method-addProcess}{}}}
+\if{html}{\out{<a id="method-geoflow_provenance-addProcess"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_provenance-addProcess}{}}}
 \subsection{Method \code{addProcess()}}{
 Adds process
 \subsection{Usage}{
@@ -105,8 +105,8 @@ Adds process
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_provenance-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_provenance-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

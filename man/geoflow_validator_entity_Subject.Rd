@@ -15,28 +15,28 @@ geoflow_validator_entity_Subject
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_validator_entity_Subject$new()}}
-\item \href{#method-validate}{\code{geoflow_validator_entity_Subject$validate()}}
-\item \href{#method-clone}{\code{geoflow_validator_entity_Subject$clone()}}
+\item \href{#method-geoflow_validator_entity_Subject-new}{\code{geoflow_validator_entity_Subject$new()}}
+\item \href{#method-geoflow_validator_entity_Subject-validate}{\code{geoflow_validator_entity_Subject$validate()}}
+\item \href{#method-geoflow_validator_entity_Subject-clone}{\code{geoflow_validator_entity_Subject$clone()}}
 }
 }
-\if{html}{
-\out{<details ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="getDefaultKey">}\href{../../geoflow/html/geoflow_validator_cell.html#method-getDefaultKey}{\code{geoflow::geoflow_validator_cell$getDefaultKey()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="getValidKeys">}\href{../../geoflow/html/geoflow_validator_cell.html#method-getValidKeys}{\code{geoflow::geoflow_validator_cell$getValidKeys()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isErrorIfInvalidKey">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isErrorIfInvalidKey}{\code{geoflow::geoflow_validator_cell$isErrorIfInvalidKey()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isExcludeHttpKeys">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isExcludeHttpKeys}{\code{geoflow::geoflow_validator_cell$isExcludeHttpKeys()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isKeyRequired">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isKeyRequired}{\code{geoflow::geoflow_validator_cell$isKeyRequired()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isKeySynthaxUser">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isKeySynthaxUser}{\code{geoflow::geoflow_validator_cell$isKeySynthaxUser()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isMultiple">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isMultiple}{\code{geoflow::geoflow_validator_cell$isMultiple()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isNaAuthorized">}\href{../../geoflow/html/geoflow_validator_cell.html#method-isNaAuthorized}{\code{geoflow::geoflow_validator_cell$isNaAuthorized()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="getDefaultKey"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-getDefaultKey'><code>geoflow::geoflow_validator_cell$getDefaultKey()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="getValidKeys"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-getValidKeys'><code>geoflow::geoflow_validator_cell$getValidKeys()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isErrorIfInvalidKey"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-isErrorIfInvalidKey'><code>geoflow::geoflow_validator_cell$isErrorIfInvalidKey()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isExcludeHttpKeys"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-isExcludeHttpKeys'><code>geoflow::geoflow_validator_cell$isExcludeHttpKeys()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isKeyRequired"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-isKeyRequired'><code>geoflow::geoflow_validator_cell$isKeyRequired()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isKeySynthaxUser"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-isKeySynthaxUser'><code>geoflow::geoflow_validator_cell$isKeySynthaxUser()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isMultiple"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-isMultiple'><code>geoflow::geoflow_validator_cell$isMultiple()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isNaAuthorized"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-isNaAuthorized'><code>geoflow::geoflow_validator_cell$isNaAuthorized()</code></a></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_entity_Subject-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_entity_Subject-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes an entity 'Subject' cell
 \subsection{Usage}{
@@ -56,8 +56,8 @@ Initializes an entity 'Subject' cell
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validate"></a>}}
-\if{latex}{\out{\hypertarget{method-validate}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_entity_Subject-validate"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_entity_Subject-validate}{}}}
 \subsection{Method \code{validate()}}{
 Validates a Subject. Proceeds with syntactic validation and content validation.
 \subsection{Usage}{
@@ -69,8 +69,8 @@ an validation report, as object of class \code{data.frame}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_entity_Subject-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_entity_Subject-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

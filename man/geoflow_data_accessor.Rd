@@ -55,28 +55,28 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_data_accessor$new()}}
-\item \href{#method-setId}{\code{geoflow_data_accessor$setId()}}
-\item \href{#method-setSoftwareType}{\code{geoflow_data_accessor$setSoftwareType()}}
-\item \href{#method-setPackages}{\code{geoflow_data_accessor$setPackages()}}
-\item \href{#method-setDefinition}{\code{geoflow_data_accessor$setDefinition()}}
-\item \href{#method-setDownload}{\code{geoflow_data_accessor$setDownload()}}
-\item \href{#method-checkPackages}{\code{geoflow_data_accessor$checkPackages()}}
-\item \href{#method-clone}{\code{geoflow_data_accessor$clone()}}
+\item \href{#method-geoflow_data_accessor-new}{\code{geoflow_data_accessor$new()}}
+\item \href{#method-geoflow_data_accessor-setId}{\code{geoflow_data_accessor$setId()}}
+\item \href{#method-geoflow_data_accessor-setSoftwareType}{\code{geoflow_data_accessor$setSoftwareType()}}
+\item \href{#method-geoflow_data_accessor-setPackages}{\code{geoflow_data_accessor$setPackages()}}
+\item \href{#method-geoflow_data_accessor-setDefinition}{\code{geoflow_data_accessor$setDefinition()}}
+\item \href{#method-geoflow_data_accessor-setDownload}{\code{geoflow_data_accessor$setDownload()}}
+\item \href{#method-geoflow_data_accessor-checkPackages}{\code{geoflow_data_accessor$checkPackages()}}
+\item \href{#method-geoflow_data_accessor-clone}{\code{geoflow_data_accessor$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="ERROR">}\href{../../geoflow/html/geoflowLogger.html#method-ERROR}{\code{geoflow::geoflowLogger$ERROR()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="INFO">}\href{../../geoflow/html/geoflowLogger.html#method-INFO}{\code{geoflow::geoflowLogger$INFO()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="WARN">}\href{../../geoflow/html/geoflowLogger.html#method-WARN}{\code{geoflow::geoflowLogger$WARN()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="ERROR"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-ERROR'><code>geoflow::geoflowLogger$ERROR()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="INFO"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-INFO'><code>geoflow::geoflowLogger$INFO()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="WARN"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-WARN'><code>geoflow::geoflowLogger$WARN()</code></a></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_data_accessor-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data_accessor-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes the data ccessor
 \subsection{Usage}{
@@ -106,8 +106,8 @@ Initializes the data ccessor
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setId"></a>}}
-\if{latex}{\out{\hypertarget{method-setId}{}}}
+\if{html}{\out{<a id="method-geoflow_data_accessor-setId"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data_accessor-setId}{}}}
 \subsection{Method \code{setId()}}{
 Sets accessor ID
 \subsection{Usage}{
@@ -123,8 +123,8 @@ Sets accessor ID
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setSoftwareType"></a>}}
-\if{latex}{\out{\hypertarget{method-setSoftwareType}{}}}
+\if{html}{\out{<a id="method-geoflow_data_accessor-setSoftwareType"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data_accessor-setSoftwareType}{}}}
 \subsection{Method \code{setSoftwareType()}}{
 Sets software type
 \subsection{Usage}{
@@ -140,8 +140,8 @@ Sets software type
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setPackages"></a>}}
-\if{latex}{\out{\hypertarget{method-setPackages}{}}}
+\if{html}{\out{<a id="method-geoflow_data_accessor-setPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data_accessor-setPackages}{}}}
 \subsection{Method \code{setPackages()}}{
 Sets list of packages required for the accessor
 \subsection{Usage}{
@@ -157,8 +157,8 @@ Sets list of packages required for the accessor
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setDefinition"></a>}}
-\if{latex}{\out{\hypertarget{method-setDefinition}{}}}
+\if{html}{\out{<a id="method-geoflow_data_accessor-setDefinition"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data_accessor-setDefinition}{}}}
 \subsection{Method \code{setDefinition()}}{
 Sets accessor definition
 \subsection{Usage}{
@@ -174,8 +174,8 @@ Sets accessor definition
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setDownload"></a>}}
-\if{latex}{\out{\hypertarget{method-setDownload}{}}}
+\if{html}{\out{<a id="method-geoflow_data_accessor-setDownload"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data_accessor-setDownload}{}}}
 \subsection{Method \code{setDownload()}}{
 Set download handler (a function with arguments \code{file} and \code{path})
 \subsection{Usage}{
@@ -191,8 +191,8 @@ Set download handler (a function with arguments \code{file} and \code{path})
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-checkPackages"></a>}}
-\if{latex}{\out{\hypertarget{method-checkPackages}{}}}
+\if{html}{\out{<a id="method-geoflow_data_accessor-checkPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data_accessor-checkPackages}{}}}
 \subsection{Method \code{checkPackages()}}{
 Check that all packages required for the software are available, if yes,
    import them in the R session, and return a \code{data.frame} giving the 
@@ -204,8 +204,8 @@ Check that all packages required for the software are available, if yes,
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_data_accessor-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data_accessor-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

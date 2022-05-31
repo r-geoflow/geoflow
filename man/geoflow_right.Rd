@@ -40,15 +40,15 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_right$new()}}
-\item \href{#method-setKey}{\code{geoflow_right$setKey()}}
-\item \href{#method-setValue}{\code{geoflow_right$setValue()}}
-\item \href{#method-clone}{\code{geoflow_right$clone()}}
+\item \href{#method-geoflow_right-new}{\code{geoflow_right$new()}}
+\item \href{#method-geoflow_right-setKey}{\code{geoflow_right$setKey()}}
+\item \href{#method-geoflow_right-setValue}{\code{geoflow_right$setValue()}}
+\item \href{#method-geoflow_right-clone}{\code{geoflow_right$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_right-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_right-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes an object of class \link{geoflow_right}
 \subsection{Usage}{
@@ -64,8 +64,8 @@ Initializes an object of class \link{geoflow_right}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setKey"></a>}}
-\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\if{html}{\out{<a id="method-geoflow_right-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_right-setKey}{}}}
 \subsection{Method \code{setKey()}}{
 Sets key
 \subsection{Usage}{
@@ -81,8 +81,8 @@ Sets key
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setValue"></a>}}
-\if{latex}{\out{\hypertarget{method-setValue}{}}}
+\if{html}{\out{<a id="method-geoflow_right-setValue"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_right-setValue}{}}}
 \subsection{Method \code{setValue()}}{
 Sets value
 \subsection{Usage}{
@@ -98,8 +98,8 @@ Sets value
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_right-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_right-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

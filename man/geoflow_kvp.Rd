@@ -43,15 +43,15 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_kvp$new()}}
-\item \href{#method-setKey}{\code{geoflow_kvp$setKey()}}
-\item \href{#method-setValue}{\code{geoflow_kvp$setValue()}}
-\item \href{#method-clone}{\code{geoflow_kvp$clone()}}
+\item \href{#method-geoflow_kvp-new}{\code{geoflow_kvp$new()}}
+\item \href{#method-geoflow_kvp-setKey}{\code{geoflow_kvp$setKey()}}
+\item \href{#method-geoflow_kvp-setValue}{\code{geoflow_kvp$setValue()}}
+\item \href{#method-geoflow_kvp-clone}{\code{geoflow_kvp$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_kvp-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_kvp-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a Key-Value pair (KVP)
 \subsection{Usage}{
@@ -67,8 +67,8 @@ Initializes a Key-Value pair (KVP)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setKey"></a>}}
-\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\if{html}{\out{<a id="method-geoflow_kvp-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_kvp-setKey}{}}}
 \subsection{Method \code{setKey()}}{
 Set KVP key
 \subsection{Usage}{
@@ -84,8 +84,8 @@ Set KVP key
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setValue"></a>}}
-\if{latex}{\out{\hypertarget{method-setValue}{}}}
+\if{html}{\out{<a id="method-geoflow_kvp-setValue"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_kvp-setValue}{}}}
 \subsection{Method \code{setValue()}}{
 Set KVP value
 \subsection{Usage}{
@@ -101,8 +101,8 @@ Set KVP value
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_kvp-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_kvp-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

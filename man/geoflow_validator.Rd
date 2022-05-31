@@ -19,15 +19,15 @@ geoflow_validator
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_validator$new()}}
-\item \href{#method-validate_structure}{\code{geoflow_validator$validate_structure()}}
-\item \href{#method-validate_content}{\code{geoflow_validator$validate_content()}}
-\item \href{#method-clone}{\code{geoflow_validator$clone()}}
+\item \href{#method-geoflow_validator-new}{\code{geoflow_validator$new()}}
+\item \href{#method-geoflow_validator-validate_structure}{\code{geoflow_validator$validate_structure()}}
+\item \href{#method-geoflow_validator-validate_content}{\code{geoflow_validator$validate_content()}}
+\item \href{#method-geoflow_validator-clone}{\code{geoflow_validator$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_validator-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a table validator for a given metadata model
 \subsection{Usage}{
@@ -47,8 +47,8 @@ Initializes a table validator for a given metadata model
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validate_structure"></a>}}
-\if{latex}{\out{\hypertarget{method-validate_structure}{}}}
+\if{html}{\out{<a id="method-geoflow_validator-validate_structure"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator-validate_structure}{}}}
 \subsection{Method \code{validate_structure()}}{
 Validates a source table against a data model structure
 \subsection{Usage}{
@@ -60,8 +60,8 @@ Validates a source table against a data model structure
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validate_content"></a>}}
-\if{latex}{\out{\hypertarget{method-validate_content}{}}}
+\if{html}{\out{<a id="method-geoflow_validator-validate_content"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator-validate_content}{}}}
 \subsection{Method \code{validate_content()}}{
 Validates a source table using syntactic and content validation rules
 \subsection{Usage}{
@@ -80,8 +80,8 @@ a \code{list} of \code{geoflow_validator_cell} objects, or \code{data.frame}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_validator-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

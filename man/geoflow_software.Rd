@@ -72,35 +72,35 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_software$new()}}
-\item \href{#method-setId}{\code{geoflow_software$setId()}}
-\item \href{#method-setType}{\code{geoflow_software$setType()}}
-\item \href{#method-setSoftwareType}{\code{geoflow_software$setSoftwareType()}}
-\item \href{#method-setPackages}{\code{geoflow_software$setPackages()}}
-\item \href{#method-setDefinition}{\code{geoflow_software$setDefinition()}}
-\item \href{#method-setAttributes}{\code{geoflow_software$setAttributes()}}
-\item \href{#method-setProperties}{\code{geoflow_software$setProperties()}}
-\item \href{#method-setArguments}{\code{geoflow_software$setArguments()}}
-\item \href{#method-setParameters}{\code{geoflow_software$setParameters()}}
-\item \href{#method-setActions}{\code{geoflow_software$setActions()}}
-\item \href{#method-setHandler}{\code{geoflow_software$setHandler()}}
-\item \href{#method-checkPackages}{\code{geoflow_software$checkPackages()}}
-\item \href{#method-getHandlerInstance}{\code{geoflow_software$getHandlerInstance()}}
-\item \href{#method-clone}{\code{geoflow_software$clone()}}
+\item \href{#method-geoflow_software-new}{\code{geoflow_software$new()}}
+\item \href{#method-geoflow_software-setId}{\code{geoflow_software$setId()}}
+\item \href{#method-geoflow_software-setType}{\code{geoflow_software$setType()}}
+\item \href{#method-geoflow_software-setSoftwareType}{\code{geoflow_software$setSoftwareType()}}
+\item \href{#method-geoflow_software-setPackages}{\code{geoflow_software$setPackages()}}
+\item \href{#method-geoflow_software-setDefinition}{\code{geoflow_software$setDefinition()}}
+\item \href{#method-geoflow_software-setAttributes}{\code{geoflow_software$setAttributes()}}
+\item \href{#method-geoflow_software-setProperties}{\code{geoflow_software$setProperties()}}
+\item \href{#method-geoflow_software-setArguments}{\code{geoflow_software$setArguments()}}
+\item \href{#method-geoflow_software-setParameters}{\code{geoflow_software$setParameters()}}
+\item \href{#method-geoflow_software-setActions}{\code{geoflow_software$setActions()}}
+\item \href{#method-geoflow_software-setHandler}{\code{geoflow_software$setHandler()}}
+\item \href{#method-geoflow_software-checkPackages}{\code{geoflow_software$checkPackages()}}
+\item \href{#method-geoflow_software-getHandlerInstance}{\code{geoflow_software$getHandlerInstance()}}
+\item \href{#method-geoflow_software-clone}{\code{geoflow_software$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="ERROR">}\href{../../geoflow/html/geoflowLogger.html#method-ERROR}{\code{geoflow::geoflowLogger$ERROR()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="INFO">}\href{../../geoflow/html/geoflowLogger.html#method-INFO}{\code{geoflow::geoflowLogger$INFO()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="WARN">}\href{../../geoflow/html/geoflowLogger.html#method-WARN}{\code{geoflow::geoflowLogger$WARN()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="ERROR"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-ERROR'><code>geoflow::geoflowLogger$ERROR()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="INFO"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-INFO'><code>geoflow::geoflowLogger$INFO()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="WARN"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-WARN'><code>geoflow::geoflowLogger$WARN()</code></a></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_software-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a software
 \subsection{Usage}{
@@ -142,8 +142,8 @@ Initializes a software
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setId"></a>}}
-\if{latex}{\out{\hypertarget{method-setId}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setId"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setId}{}}}
 \subsection{Method \code{setId()}}{
 Sets software ID
 \subsection{Usage}{
@@ -159,8 +159,8 @@ Sets software ID
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setType"></a>}}
-\if{latex}{\out{\hypertarget{method-setType}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setType"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setType}{}}}
 \subsection{Method \code{setType()}}{
 Set type. Either "input" or "output"
 \subsection{Usage}{
@@ -176,8 +176,8 @@ Set type. Either "input" or "output"
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setSoftwareType"></a>}}
-\if{latex}{\out{\hypertarget{method-setSoftwareType}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setSoftwareType"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setSoftwareType}{}}}
 \subsection{Method \code{setSoftwareType()}}{
 Set software type
 \subsection{Usage}{
@@ -193,8 +193,8 @@ Set software type
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setPackages"></a>}}
-\if{latex}{\out{\hypertarget{method-setPackages}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setPackages}{}}}
 \subsection{Method \code{setPackages()}}{
 Set software required packages
 \subsection{Usage}{
@@ -210,8 +210,8 @@ Set software required packages
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setDefinition"></a>}}
-\if{latex}{\out{\hypertarget{method-setDefinition}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setDefinition"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setDefinition}{}}}
 \subsection{Method \code{setDefinition()}}{
 Set software definition
 \subsection{Usage}{
@@ -227,8 +227,8 @@ Set software definition
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setAttributes"></a>}}
-\if{latex}{\out{\hypertarget{method-setAttributes}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setAttributes"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setAttributes}{}}}
 \subsection{Method \code{setAttributes()}}{
 Set attributes. Function to call when creating an instance of \code{geoflow_software}
 \subsection{Usage}{
@@ -244,8 +244,8 @@ Set attributes. Function to call when creating an instance of \code{geoflow_soft
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setProperties"></a>}}
-\if{latex}{\out{\hypertarget{method-setProperties}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setProperties"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setProperties}{}}}
 \subsection{Method \code{setProperties()}}{
 Set properties. Function to call to pass argument values for a given \code{geoflow_software}
 \subsection{Usage}{
@@ -261,8 +261,8 @@ Set properties. Function to call to pass argument values for a given \code{geofl
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setArguments"></a>}}
-\if{latex}{\out{\hypertarget{method-setArguments}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setArguments"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setArguments}{}}}
 \subsection{Method \code{setArguments()}}{
 Set software arguments. Function to call when creating an instance of \code{geoflow_software}
 \subsection{Usage}{
@@ -278,8 +278,8 @@ Set software arguments. Function to call when creating an instance of \code{geof
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setParameters"></a>}}
-\if{latex}{\out{\hypertarget{method-setParameters}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setParameters"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setParameters}{}}}
 \subsection{Method \code{setParameters()}}{
 Set parameters. Function to call to pass argument values for a given \code{geoflow_software}
 \subsection{Usage}{
@@ -295,8 +295,8 @@ Set parameters. Function to call to pass argument values for a given \code{geofl
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setActions"></a>}}
-\if{latex}{\out{\hypertarget{method-setActions}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setActions"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setActions}{}}}
 \subsection{Method \code{setActions()}}{
 Set software actions
 \subsection{Usage}{
@@ -312,8 +312,8 @@ Set software actions
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setHandler"></a>}}
-\if{latex}{\out{\hypertarget{method-setHandler}{}}}
+\if{html}{\out{<a id="method-geoflow_software-setHandler"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-setHandler}{}}}
 \subsection{Method \code{setHandler()}}{
 Set the software handler function
 \subsection{Usage}{
@@ -329,8 +329,8 @@ Set the software handler function
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-checkPackages"></a>}}
-\if{latex}{\out{\hypertarget{method-checkPackages}{}}}
+\if{html}{\out{<a id="method-geoflow_software-checkPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-checkPackages}{}}}
 \subsection{Method \code{checkPackages()}}{
 Check that all packages required for the software are available, if yes,
    import them in the R session, and return a \code{data.frame} giving the 
@@ -342,8 +342,8 @@ Check that all packages required for the software are available, if yes,
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getHandlerInstance"></a>}}
-\if{latex}{\out{\hypertarget{method-getHandlerInstance}{}}}
+\if{html}{\out{<a id="method-geoflow_software-getHandlerInstance"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-getHandlerInstance}{}}}
 \subsection{Method \code{getHandlerInstance()}}{
 Get the software handler instance
 \subsection{Usage}{
@@ -355,8 +355,8 @@ an object instance of the software handler
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_software-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_software-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

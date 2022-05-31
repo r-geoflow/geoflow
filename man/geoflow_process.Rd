@@ -44,16 +44,16 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_process$new()}}
-\item \href{#method-setRationale}{\code{geoflow_process$setRationale()}}
-\item \href{#method-setDescription}{\code{geoflow_process$setDescription()}}
-\item \href{#method-setProcessor}{\code{geoflow_process$setProcessor()}}
-\item \href{#method-clone}{\code{geoflow_process$clone()}}
+\item \href{#method-geoflow_process-new}{\code{geoflow_process$new()}}
+\item \href{#method-geoflow_process-setRationale}{\code{geoflow_process$setRationale()}}
+\item \href{#method-geoflow_process-setDescription}{\code{geoflow_process$setDescription()}}
+\item \href{#method-geoflow_process-setProcessor}{\code{geoflow_process$setProcessor()}}
+\item \href{#method-geoflow_process-clone}{\code{geoflow_process$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_process-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_process-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes the \link{geoflow_process}
 \subsection{Usage}{
@@ -62,8 +62,8 @@ Initializes the \link{geoflow_process}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setRationale"></a>}}
-\if{latex}{\out{\hypertarget{method-setRationale}{}}}
+\if{html}{\out{<a id="method-geoflow_process-setRationale"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_process-setRationale}{}}}
 \subsection{Method \code{setRationale()}}{
 Set process rationale
 \subsection{Usage}{
@@ -79,8 +79,8 @@ Set process rationale
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setDescription"></a>}}
-\if{latex}{\out{\hypertarget{method-setDescription}{}}}
+\if{html}{\out{<a id="method-geoflow_process-setDescription"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_process-setDescription}{}}}
 \subsection{Method \code{setDescription()}}{
 Set process description
 \subsection{Usage}{
@@ -96,8 +96,8 @@ Set process description
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setProcessor"></a>}}
-\if{latex}{\out{\hypertarget{method-setProcessor}{}}}
+\if{html}{\out{<a id="method-geoflow_process-setProcessor"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_process-setProcessor}{}}}
 \subsection{Method \code{setProcessor()}}{
 Set processor
 \subsection{Usage}{
@@ -113,8 +113,8 @@ Set processor
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_process-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_process-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
