@@ -308,7 +308,13 @@ register_actions <- function(){
       available_options = list(
         createWorkspace = list(def = "Create workspace if not already existing", class = "logical", default = FALSE),
         createStore = list(def = "Create data/coverage store if not already existing", class = "logical", default = FALSE),
-        store_description = list(def = "Specify a decription for the new data/coverage store", class = "character", default = "")
+        store_description = list(def = "Specify a decription for the new data/coverage store", class = "character", default = ""),
+        enrich_with_relations = list(def = "When enabled, enrichs entity with OGC relations", class = "logical", default = TRUE),
+        enrich_with_relation_wms = list(def = "When enabled, enrichs entity with a base WMS link relation", class = "logical", default = TRUE),
+        enrich_with_relation_wms_thumbnail = list(def = "When enabled, enrichs entity with a WMS-based thumbnail relation", class = "logical", default = TRUE),
+        enrich_with_relation_wfs = list(def = "When enabled, enrichs entity with a base WFS link relation (applies to 'vector' only)", class = "logical", default = TRUE),
+        enrich_with_relation_wfs_download_links = list(def = "When enabled, enrichs entity with WFS format-specific links for download purpose (applies to 'vector' only)", class = "logical", default = TRUE),
+        enrich_with_relation_wcs = list(def = "When enabled, enrichs entity with a base WCS link relation (applies to 'grid' only)", class = "logical", default = TRUE)
       )
     ),
     geoflow_action$new(
