@@ -220,6 +220,7 @@ geometa_create_iso_19110 <- function(entity, config, options){
       }
     }
     if(addValues){
+      config$logger.info(sprintf("Listing values for feature Attribute '%s'...", featureAttrName)) 
       featureAttrValues <- unique(featureAttrValues)
       featureAttrValues <- featureAttrValues[order(featureAttrValues)]
       for(featureAttrValue in featureAttrValues){
@@ -244,6 +245,8 @@ geometa_create_iso_19110 <- function(entity, config, options){
           fat$listedValue <- c(fat$listedValue, val)
         }
       }
+    }else{
+      config$logger.warn(sprintf("Skip listing values for feature Attribute '%s'...", featureAttrName))
     }
       
     #add primitive type + data type (attribute or variable) as valueType
