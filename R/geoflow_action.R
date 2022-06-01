@@ -302,7 +302,7 @@ register_actions <- function(){
         group = list(def = "Geonetwork user group to which the metadata should be associated", class = "character", default = "1"),
         category = list(def = "Category of metadata resources to which the metadata record should be associated", class = "character", default = "datasets")
       ),
-      fun = source(system.file("actions", "ows4R_publish_iso_19139.R", package = "geoflow"))$value
+      fun = source(system.file("actions", "geonapi_publish_iso_19139.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "geosapi-publish-ogc-services",
