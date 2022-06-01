@@ -332,7 +332,7 @@ register_actions <- function(){
         enrich_with_relation_wfs = list(def = "When enabled, enrichs entity with a base WFS link relation (applies to 'vector' only)", class = "logical", default = TRUE),
         enrich_with_relation_wfs_download_links = list(def = "When enabled, enrichs entity with WFS format-specific (GML, GeoJSON, SHAPE-ZIP, CSV) links for download purpose (applies to 'vector' only).", class = "logical", default = TRUE),
         enrich_with_relation_wcs = list(def = "When enabled, enrichs entity with a base WCS link relation (applies to 'grid' only)", class = "logical", default = TRUE),
-        enrich_with_relation_wcs_download_links = list(def = "When enabled, enrichs entity with WCS format-specific links for download purpose (applies to 'vector' only). Only GeoTIFF at now.", class = "logical", default = TRUE)
+        enrich_with_relation_wcs_download_links = list(def = "When enabled, enrichs entity with WCS format-specific links for download purpose (applies to 'grid' only). Only GeoTIFF at now.", class = "logical", default = TRUE)
       ),
       fun = source(system.file("actions", "geosapi_publish_ogc_services.R", package = "geoflow"))$value
     ),
