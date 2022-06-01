@@ -11,16 +11,17 @@ function(action, entity, config){
   
   #options
   options <- action$options
-  use_uuid <- if(!is.null(options$use_uuid)) options$use_uuid else FALSE
-  inspire <- if(!is.null(options$inspire)) options$inspire else FALSE
-  logo <- if(!is.null(options$logo)) options$logo else FALSE
-  doi <- if(!is.null(options$doi)) options$doi else FALSE
-  doi_thumbnail <- if(!is.null(options$doi_thumbnail)) options$doi_thumbnail else FALSE
-  addfeatures <- if(!is.null(options$addfeatures)) options$addfeatures else FALSE
-  featureid <- if(!is.null(options$featureid)){ options$featureid } else { if(!is.null(features)) colnames(features)[1] else NULL} 
-  geographySubject <- if(!is.null(options$subject_geography)) options$subject_geography else "geography"
-  include_coverage_data_dimension_values <- if(!is.null(options$include_coverage_data_dimension_values)) options$include_coverage_data_dimension_values else FALSE
-  include_coverage_service_dimension_values <- if(!is.null(options$include_coverage_service_dimension_values)) options$include_coverage_service_dimension_values else FALSE
+  use_uuid <- action$getOption("use_uuid")
+  inspire <- action$getOption("inspire")
+  logo <- action$getOption("logo")
+  doi <- action$getOption("doi")
+  doi_thumbnail <- action$getOption("doi_thumbnail")
+  addfeatures <- action$getOption("addfeatures")
+  featureid <- action$getOption("featureid")
+  if(!is.null(features)) featureid = colnames(features)[1]
+  geographySubject <- action$getOption("subject_geography")
+  include_coverage_data_dimension_values <- action$getOption("include_coverage_data_dimension_values")
+  include_coverage_service_dimension_values <- action$getOption("include_coverage_service_dimension_values")
   
   #check inspire metadata validator configuration
   INSPIRE_VALIDATOR <- NULL
