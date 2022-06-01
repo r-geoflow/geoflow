@@ -25,7 +25,7 @@ function(action, entity, config){
   deleteOldFiles <- action$getOption("deleteOldFiles")
   update_metadata <- action$getOption("update_metadata")
   update_files <- action$getOption("update_files")
-  communities <- action$getOption("community")
+  communities <- action$getOption("communities")
   
   #zenodo object
   zenodo_metadata <- NULL
