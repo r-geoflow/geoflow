@@ -15,7 +15,7 @@ function(action, entity, config){
   }
   
   #options
-  options <- actions$options
+  options <- action$options
   doi <- if(!is.null(options$doi)) options$doi else FALSE
   exclude_attributes <- if(!is.null(options$exclude_attributes)) options$exclude_attributes else list()
   exclude_attributes_not_in_dictionary <- if(!is.null(options$exclude_attributes_not_in_dictionary)) options$exclude_attributes_not_in_dictionary else FALSE
