@@ -136,6 +136,16 @@ geoflow_action <- R6Class("geoflow_action",
       self$fun(self, entity, config)
     },
     
+    #'@description Get action option value
+    #'@param option option id
+    #'@return the option value, either specified through a workflow, or the default value
+    getOption = function(option){
+      option_value <- self$options[[option]]
+      if(is.null(option_value)){
+        option_value <- self$available_options[[option]]$default
+      }
+    },
+    
     #'@description Indicates if the action is PID generator
     #'@return \code{TRUE} if the action is a PID generator, \code{FALSE} otherwise
     isPIDGenerator = function(){

@@ -83,6 +83,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_action-new}{\code{geoflow_action$new()}}
 \item \href{#method-geoflow_action-checkPackages}{\code{geoflow_action$checkPackages()}}
 \item \href{#method-geoflow_action-run}{\code{geoflow_action$run()}}
+\item \href{#method-geoflow_action-getOption}{\code{geoflow_action$getOption()}}
 \item \href{#method-geoflow_action-isPIDGenerator}{\code{geoflow_action$isPIDGenerator()}}
 \item \href{#method-geoflow_action-exportPIDs}{\code{geoflow_action$exportPIDs()}}
 \item \href{#method-geoflow_action-isGenericUploader}{\code{geoflow_action$isGenericUploader()}}
@@ -175,7 +176,7 @@ Check that all packages required for the action are available, if yes,
 \subsection{Method \code{run()}}{
 Runs the action
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$run(entity, config, options)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$run(entity, config)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -184,10 +185,28 @@ Runs the action
 \item{\code{entity}}{entity}
 
 \item{\code{config}}{config}
-
-\item{\code{options}}{options}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_action-getOption"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_action-getOption}{}}}
+\subsection{Method \code{getOption()}}{
+Get action option value
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$getOption(option)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{option}}{option id}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the option value, either specified through a workflow, or the default value
 }
 }
 \if{html}{\out{<hr>}}
