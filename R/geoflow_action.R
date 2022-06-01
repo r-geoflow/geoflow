@@ -283,7 +283,7 @@ register_actions <- function(){
         exclude_attributes_not_in_dictionary = list(def = "Enable to exclude all attributes/variables not referenced as dictionary/featuretype", class="logical", default = FALSE),
         exclude_values_for_attributes = list(def = "Attribute names for which listed values should not be produced", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
         extra_attributes = list(def = "Extra attributes to add as feature catalog attributes although not in data", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
-        default_min_occurs = list(def = "The default min occurs value for feature attributes cardinality", class = "integer", default = 1L),
+        default_min_occurs = list(def = "The default min occurs value for feature attributes cardinality", class = "integer", default = 0L),
         default_max_occurs = list(def = "The default max occurs value for feature attribute cardinality", class = "numeric", default = Inf)
       ),
       fun = source(system.file("actions", "geometa_create_iso_19110.R", package = "geoflow"))$value
