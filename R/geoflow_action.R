@@ -144,6 +144,7 @@ geoflow_action <- R6Class("geoflow_action",
       if(is.null(option_value)){
         option_value <- self$available_options[[option]]$default
       }
+      return(option_value)
     },
     
     #'@description Indicates if the action is PID generator
