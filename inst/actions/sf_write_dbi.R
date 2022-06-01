@@ -1,10 +1,9 @@
 function(action, entity, config){
   #options
-  options <- action$options
-  createIndexes <- ifelse(!is.null(options$createIndexes), options$createIndexes, FALSE)
-  overwrite <- ifelse(!is.null(options$overwrite), options$overwrite, TRUE)
-  append <- ifelse(!is.null(options$append), options$append, FALSE)
-  chunk.size <- ifelse(!is.null(options$chunk.size), options$chunk.size, 0L)
+  createIndexes <- action$getOption("createIndexes")
+  overwrite <- action$getOption("overwrite")
+  append <- action$getOption("append")
+  chunk.size <- action$getOption("chunk.size")
   #function
   writeWorkflowJobDataResource(
     entity = entity,

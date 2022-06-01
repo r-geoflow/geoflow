@@ -16,17 +16,16 @@ function(action, entity, config){
   skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
   
   #options
-  options <- action$options
-  depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
-  depositDataPattern <- if(!is.null(options$depositDataPattern)) options$depositDataPattern else ""
-  depositMetadataPattern <- if(!is.null(options$depositMetadataPattern)) options$depositMetadataPattern else ""
-  zipEachDataFile <- if(!is.null(options$zipEachDataFile)) options$zipEachDataFile else FALSE
-  publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
-  strategy <- if(!is.null(options$strategy)) options$strategy else "newversion"
-  deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
-  update_metadata <- if(!is.null(options$update_metadata)) options$update_metadata else TRUE
-  update_files <- if(!is.null(options$update_files)) options$update_files else TRUE
-  communities <- if(!is.null(options$community)) options$community else NA
+  depositWithFiles <- action$getOption("depositWithFiles")
+  depositDataPattern <- action$getOption("depositDataPattern")
+  depositMetadataPattern <- action$getOption("depositMetadataPattern")
+  zipEachDataFile <- action$getOption("zipEachDataFile")
+  publish <- action$getOption("publish")
+  strategy <- action$getOption("strategy")
+  deleteOldFiles <- action$getOption("deleteOldFiles")
+  update_metadata <- action$getOption("update_metadata")
+  update_files <- action$getOption("update_files")
+  communities <- action$getOption("community")
   
   #zenodo object
   zenodo_metadata <- NULL

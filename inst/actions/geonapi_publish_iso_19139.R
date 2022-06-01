@@ -4,9 +4,7 @@ function(action, entity, config){
     stop("The 'geonapi-publish-iso-19139' action requires the 'geonapi' package")
   }
   
-  options <- action$options
-  
-  geometa_inspire <- if(!is.null(options$geometa_inspire)) options$geometa_inspire else FALSE
+  geometa_inspire <- action$getOption("geometa_inspire")
   INSPIRE_VALIDATOR <- NULL
   if(geometa_inspire){
     #check inspire metadata validator configuration
@@ -34,7 +32,7 @@ function(action, entity, config){
   #function doPublish
   doPublish <- function(mdfile, inspire){
     
-    privileges <- if(!is.null(options$privileges)) options$privileges else  c("view","dynamic","featured")
+    privileges <- action$getOption("privileges")
     mdId <- NULL
     md <- readISO19139(metaFile)
     privs <- privileges
@@ -48,7 +46,7 @@ function(action, entity, config){
     }
     
     #group
-    group <- if(!is.null(options$group)) options$group else "2" #2 = sample (provided by default GN installation)
+    group <- action$getOption("group") #2 = sample (provided by default GN installation)
     group_match_col<-if(!grepl("\\D", group)){"id"}else{"name"}
     available_groups <- GN$getGroups()
     if(!group %in% available_groups[[group_match_col]]){
@@ -62,7 +60,7 @@ function(action, entity, config){
       }
     }
     #category
-    category <- if(!is.null(options$category)) options$category else "datasets"
+    category <- action$getOption("category")
     category_match_col<-if(!grepl("\\D", category)){"id"}else{"name"}
     available_categories <- GN$getCategories()
     if(!category %in% available_categories[[category_match_col]]){

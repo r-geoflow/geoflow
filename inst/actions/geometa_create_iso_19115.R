@@ -10,7 +10,6 @@ function(action, entity, config){
   features <- entity$data$features
   
   #options
-  options <- action$options
   use_uuid <- action$getOption("use_uuid")
   inspire <- action$getOption("inspire")
   logo <- action$getOption("logo")
@@ -18,7 +17,7 @@ function(action, entity, config){
   doi_thumbnail <- action$getOption("doi_thumbnail")
   addfeatures <- action$getOption("addfeatures")
   featureid <- action$getOption("featureid")
-  if(!is.null(features)) featureid = colnames(features)[1]
+  if(is.na(featureid)) if(!is.null(features)) featureid = colnames(features)[1]
   geographySubject <- action$getOption("subject_geography")
   include_coverage_data_dimension_values <- action$getOption("include_coverage_data_dimension_values")
   include_coverage_service_dimension_values <- action$getOption("include_coverage_service_dimension_values")

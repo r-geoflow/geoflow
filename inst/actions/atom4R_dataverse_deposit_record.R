@@ -8,12 +8,11 @@ function(action, entity, config){
   skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
   
   #options
-  options <- action$options
-  depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
-  publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
-  deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
-  update_metadata <- if(!is.null(options$update_metadata)) options$update_metadata else TRUE
-  update_files <- if(!is.null(options$update_files)) options$update_files else TRUE
+  depositWithFiles <- action$getOption("depositWithFiles")
+  publish <- action$getOption("publish")
+  deleteOldFiles <- action$getOption("deleteOldFiles")
+  update_metadata <- action$getOption("update_metadata")
+  update_files <- action$getOption("update_files")
   
   #Sword API
   SWORD <- config$software$output$sword_for_dataverse

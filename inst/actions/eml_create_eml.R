@@ -8,8 +8,7 @@ function(action, entity, config){
   }
   
   #options
-  options <- action$options
-  taxonomySubject <- if(!is.null(options$subject_taxonomy)) options$subject_taxonomy else "taxonomy"
+  taxonomySubject <- action$getOption("subject_taxonomy")
   
   #init dataset
   dataset <- EML::eml$dataset()

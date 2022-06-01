@@ -4,9 +4,7 @@ function(action, entity, config){
     stop("The 'ows4R-publish-iso-19139' action requires the 'ows4R' package")
   }
   
-  options <- action$options
-  
-  geometa_inspire <- if(!is.null(options$geometa_inspire)) options$geometa_inspire else FALSE
+  geometa_inspire <- action$getOption("geometa_inspire")
   INSPIRE_VALIDATOR <- NULL
   if(geometa_inspire){
     #check inspire metadata validator configuration

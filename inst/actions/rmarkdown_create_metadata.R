@@ -6,9 +6,8 @@ function(action, entity, config){
   
   config$logger.info('Generate Rmd')
   #options
-  options <- action$options
-  template <- if(!is.null(options$template)) options$template else "generic"
-  output_format <- if(!is.null(options$output_format)) options$output_format else "html"
+  template <- action$getOption("template")
+  output_format <- action$getOption("html")
   
   infoMsg <- sprintf("Rmd template use :'%s'", template)
   config$logger.info(infoMsg)

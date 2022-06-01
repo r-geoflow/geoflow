@@ -15,7 +15,6 @@ function(action, entity, config){
   }
   
   #options
-  options <- action$options
   doi <- action$getOption("doi")
   exclude_attributes <- action$getOption("exclude_attributes")
   exclude_attributes_not_in_dictionary <- action$getOption("exclude_attributes_not_in_dictionary")

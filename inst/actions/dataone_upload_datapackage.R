@@ -14,7 +14,6 @@ function(action, entity, config){
   }
   
   #options
-  options <- action$options
   publish <- TRUE #see https://github.com/DataONEorg/rdataone/issues/262
   accessRules <- NA
   

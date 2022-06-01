@@ -263,7 +263,7 @@ register_actions <- function(){
         inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator", class = "logical", default = FALSE),
         logo = list(def = "Add configure profile logo(s) - if defined - as metadata thumbnail(s)", class = "logical", default = FALSE),
         addfeatures = list(def = "Add entity data features - if defined - as metadata bounding polygon(s)", class = "logical", default = FALSE),
-        featureId = list(def = "ID of entity data features used to identify bounding polygon(s) with option 'addfeatures'", class = "character", default = NA),
+        featureid = list(def = "ID of entity data features used to identify bounding polygon(s) with option 'addfeatures'", class = "character", default = NA),
         subject_geography = list(def = "Identifier of the subject handling a Geographic coverage.", class = "character", default = "geography"),
         include_coverage_data_dimension_values = list(def = "Include data dimensions's range values to coverage description", class = "logical", default = FALSE),
         include_coverage_service_dimension_values = list(def = "Include ogc dimensions's range values to coverage description", class = "logical", default = FALSE)
@@ -279,10 +279,10 @@ register_actions <- function(){
       packages = list("geometa"),
       available_options = list(
         doi = list(def = "Add entity DOI - if defined - as metadata identifier and online resource", class = "logical", default = FALSE),
-        exclude_attributes = list(def = "Attributes that should be excluded from the ISO 19110 production", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
+        exclude_attributes = list(def = "Attributes that should be excluded from the ISO 19110 production", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = c()),
         exclude_attributes_not_in_dictionary = list(def = "Enable to exclude all attributes/variables not referenced as dictionary/featuretype", class="logical", default = FALSE),
-        exclude_values_for_attributes = list(def = "Attribute names for which listed values should not be produced", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
-        extra_attributes = list(def = "Extra attributes to add as feature catalog attributes although not in data", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = NA),
+        exclude_values_for_attributes = list(def = "Attribute names for which listed values should not be produced", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = c()),
+        extra_attributes = list(def = "Extra attributes to add as feature catalog attributes although not in data", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = c()),
         default_min_occurs = list(def = "The default min occurs value for feature attributes cardinality", class = "integer", default = 0L),
         default_max_occurs = list(def = "The default max occurs value for feature attribute cardinality", class = "numeric", default = Inf)
       ),
@@ -310,7 +310,7 @@ register_actions <- function(){
       available_options = list(
         geometa_inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", class = "logical", default = FALSE),
         privileges = list(def = "Geonetwork privileges to set for the metadata to be published", class = "character", choices = c("view","dynamic","featured"), default = c("view","dynamic","featured"), multiple = TRUE),
-        group = list(def = "Geonetwork user group to which the metadata should be associated", class = "character", default = "1"),
+        group = list(def = "Geonetwork user group to which the metadata should be associated", class = "character", default = "2"),
         category = list(def = "Category of metadata resources to which the metadata record should be associated", class = "character", default = "datasets")
       ),
       fun = source(system.file("actions", "geonapi_publish_iso_19139.R", package = "geoflow"))$value
@@ -352,6 +352,7 @@ register_actions <- function(){
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = FALSE),
         depositDataPattern = list(def = "A regular expression to filter data files to upload in Zenodo", class = "character", default = ""),
         depositMetadataPattern = list(def = "A regular expression to filter metadata files to upload in Zenodo", class = "character", default = ""),
+        zipEachDataFile = list(def = "Indicates if each data file should be zipped (to be used in case of large data files", class = "logical", default = FALSE),
         publish = list(def = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", class = "logical", default = FALSE),
         strategy = list(def = "Strategy to use when handling published records, either 'newversion' (default) or 'edition'", class = "character", choices = list("newversion", "edition"), default = "newversion"),
         deleteOldFiles = list(def = "Indicates if the action should delete old files prior upload new files", class = "logical", default = TRUE),

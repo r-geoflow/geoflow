@@ -5,9 +5,8 @@ function(action, entity, config){
   }
   
   #options
-  options <- action$options
-  depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
-  otherUploadFolders <- if(!is.null(options$otherUploadFolders)) options$otherUploadFolders else c()
+  depositWithFiles <- action$getOption("depositWithFiles")
+  otherUploadFolders <- action$getOption("otherUploadFolders")
   
   #verify existing of software and workspace property
   #------------------------------------------------------------------------------------------------- 
@@ -29,7 +28,7 @@ function(action, entity, config){
   #verify  if folder exist and create it if missing
   #-------------------------------------------------------------------------------------------------  
   workspace<- file.path(workspace,entity$getEntityJobDirname())
-  folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = file.path(workspace,"data"))
+  folderID <- D4STORAGE_HUB$searchWSItemID(itemPath = file.path(workspace,"data"))
   if (is.null(folderID)) {
     config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", workspace))
     D4STORAGE_HUB$createFolder(folderPath = workspace, name="data", description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
@@ -64,7 +63,7 @@ function(action, entity, config){
   
   if(otherUploadFolders>0){
     for (folder in otherUploadFolders){
-      other_folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = file.path(workspace,folder))
+      other_folderID <- D4STORAGE_HUB$searchWSItemID(itemPath = file.path(workspace,folder))
       #check if folder exists
       if (is.null(other_folderID)) {
         config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", file.path(workspace,folder)))
@@ -109,7 +108,7 @@ function(action, entity, config){
     #check if metadata files exists
     metadata_files <- list.files(file.path(getwd(),"metadata"))
     if(length(metadata_files)>0){
-      metadata_folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = file.path(workspace,"metadata"))
+      metadata_folderID <- D4STORAGE_HUB$searchWSItemID(itemPath = file.path(workspace,"metadata"))
       #check if metadata folder exists
       if (is.null(metadata_folderID)) {
         config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", file.path(workspace,"metadata")))
@@ -128,7 +127,7 @@ function(action, entity, config){
     
     if(length(other_folders)>0){
       for (folder in other_folders){
-        other_folderID <- D4STORAGE_HUB$searchWSFolderID(folderPath = file.path(workspace,folder))
+        other_folderID <- D4STORAGE_HUB$searchWSItemID(itemPath = file.path(workspace,folder))
         #check if folder exists
         if (is.null(other_folderID)) {
           config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", file.path(workspace,folder)))
