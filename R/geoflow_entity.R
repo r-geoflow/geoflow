@@ -1190,7 +1190,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           }
         }
         #OGC WCS relations in case of spatialRepresentationType = 'grid'
-        if(entity$data$spatialRepresentationType == 'grid'){
+        if(self$data$spatialRepresentationType == 'grid'){
           #WCS base URL
           if(geosapi$getOption("enrich_with_relation_wcs")){
             new_wcs <- geoflow_relation$new()
