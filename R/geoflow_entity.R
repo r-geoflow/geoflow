@@ -1088,9 +1088,15 @@ geoflow_entity <- R6Class("geoflow_entity",
     },
     
     #'@description This function that will enrich the entity with relations. At now this is essentially related to adding 
-    #'    relations if a Geoserver (geosapi) publishing action is enabled in which case this function will add 1) 
-    #'    a thumbnail link built from OGC WMS service, 2) a WMS protocol relation, 3) WFS data protocols in common 
-    #'    formats (GML, GeoJSON, ESRI Shapefile).
+    #'    relations if a Geoserver (geosapi) publishing action is enabled. Relations added will depend on the 
+    #'    \code{enrich_with_relation_*} options set in the geosapi action, ie. 
+    #'    1) add WMS auto-generated thumbnail (if option \code{enrich_with_relation_wms_thumbnail} is \code{TRUE})
+    #'    2) add WMS base URL relation (if option \code{enrich_with_relation_wms} is \code{TRUE})
+    #'    3) for vector spatial representation type:
+    #'      - add WFS base URL relation (if option \code{enrich_with_relation_wfs} is \code{TRUE})
+    #'      - add WFS auto-generated links as convenience for data download links (if option \code{enrich_with_relation_wfs_download_links} is \code{TRUE})
+    #'    4) for grid spatial representation type:
+    #'      - add WCS base URL relation (if option \code{enrich_with_relation_wcs} is \code{TRUE})
     #'@param config geoflow config object
     enrichWithRelations = function(config){
       geosapi_action <- NULL
@@ -1098,69 +1104,120 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geosapi",x$id)>0})]
       if(length(actions)>0) geosapi_action <- actions[[1]]
       #dynamic relations related to OGC services (only executed if geosapi action is handled and enabled in workflow)
-      if(!is.null(geosapi_action)) if(!is.null(self$data)){
+      if(!is.null(geosapi_action)) if(geosapi_action$getOption("enrich_with_relations")) if(!is.null(self$data)){
         
         layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
         
         #Thumbnail
-        new_thumbnail <- geoflow_relation$new()
-        new_thumbnail$setKey("thumbnail")
-        new_thumbnail$setName(layername)
-        new_thumbnail$setDescription("Map overview")
-        new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
-                                      config$software$output$geoserver_config$parameters$url, 
-                                      config$software$output$geoserver_config$properties$workspace,
-                                      layername, paste(self$spatial_bbox,collapse=","),self$srid))
-        self$relations <- c(self$relations, new_thumbnail)
-        #WMS
-        new_wms <- geoflow_relation$new()
-        new_wms$setKey("wms")
-        new_wms$setName(layername)
-        new_wms$setDescription("Map access - OGC Web Map Service (WMS)")
-        new_wms$setLink(sprintf("%s/%s/ows?service=WMS", 
-                                config$software$output$geoserver_config$parameters$url, 
-                                config$software$output$geoserver_config$properties$workspace))
-        self$addRelation(new_wms)
-        #wfs (GML)
-        new_wfs_gml <- geoflow_relation$new()
-        new_wfs_gml$setKey("wfs")
-        new_wfs_gml$setName(layername)
-        new_wfs_gml$setDescription("Data access - OGC Web Feature Service (WFS) - GML format")
-        new_wfs_gml$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s", 
+        if(geosapi_action$getOption("enrich_with_relation_wms_thumbnail")){
+          new_thumbnail <- geoflow_relation$new()
+          new_thumbnail$setKey("thumbnail")
+          new_thumbnail$setName(layername)
+          new_thumbnail$setDescription("Map overview")
+          new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
+                                        config$software$output$geoserver_config$parameters$url, 
+                                        config$software$output$geoserver_config$properties$workspace,
+                                        layername, paste(self$spatial_bbox,collapse=","),self$srid))
+          self$relations <- c(self$relations, new_thumbnail)
+        }
+        #WMS base URL
+        if(geosapi_action$getOption("enrich_with_relation_wms")){
+          new_wms <- geoflow_relation$new()
+          new_wms$setKey("wms")
+          new_wms$setName(layername)
+          new_wms$setDescription("Map access - OGC Web Map Service (WMS)")
+          new_wms$setLink(sprintf("%s/%s/ows?service=WMS", 
+                                  config$software$output$geoserver_config$parameters$url, 
+                                  config$software$output$geoserver_config$properties$workspace))
+          self$addRelation(new_wms)
+        }
+        
+        #OGC WFS relations in case of spatialRepresentationType = 'vector'
+        if(self$data$spatialRepresentationType == "vector"){
+          #WFS base URL
+          if(geosapi_action$getOption("enrich_with_relation_wfs")){
+            new_wfs <- geoflow_relation$new()
+            new_wfs$setKey("wfs")
+            new_wfs$setName(layername)
+            new_wfs$setDescription("Data (features) access - OGC Web Feature Service (WFS)")
+            new_wfs$setLink(sprintf("%s/%s/ows?service=WFS", 
                                     config$software$output$geoserver_config$parameters$url, 
-                                    config$software$output$geoserver_config$properties$workspace,
-                                    layername))
-        self$addRelation(new_wfs_gml)
-        #wfs (GeoJSON)
-        new_wfs_geojson <- geoflow_relation$new()
-        new_wfs_geojson$setKey("wfs")
-        new_wfs_geojson$setName(layername)
-        new_wfs_geojson$setDescription("Data access - OGC Web Feature Service (WFS) - GeoJSON format")
-        new_wfs_geojson$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=json", 
+                                    config$software$output$geoserver_config$properties$workspace))
+            self$addRelation(new_wfs)
+          }
+          #WFS download links
+          if(geosapi_action$getOption("enrich_with_relation_wfs_download_links")){
+            #wfs (GML)
+            new_wfs_gml <- geoflow_relation$new()
+            new_wfs_gml$setKey("download")
+            new_wfs_gml$setName(layername)
+            new_wfs_gml$setDescription("Data download - OGC Web Feature Service (WFS) - GML format")
+            new_wfs_gml$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s", 
                                         config$software$output$geoserver_config$parameters$url, 
                                         config$software$output$geoserver_config$properties$workspace,
                                         layername))
-        self$addRelation(new_wfs_geojson)
-        #wfs (ESRI Shapefile)
-        new_wfs_shp <- geoflow_relation$new()
-        new_wfs_shp$setKey("wfs")
-        new_wfs_shp$setName(layername)
-        new_wfs_shp$setDescription("Data access - OGC Web Feature Service (WFS) - ESRI Shapefile format")
-        new_wfs_shp$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=SHAPE-ZIP", 
+            self$addRelation(new_wfs_gml)
+            #wfs (GeoJSON)
+            new_wfs_geojson <- geoflow_relation$new()
+            new_wfs_geojson$setKey("download")
+            new_wfs_geojson$setName(layername)
+            new_wfs_geojson$setDescription("Data download - OGC Web Feature Service (WFS) - GeoJSON format")
+            new_wfs_geojson$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=json", 
+                                            config$software$output$geoserver_config$parameters$url, 
+                                            config$software$output$geoserver_config$properties$workspace,
+                                            layername))
+            self$addRelation(new_wfs_geojson)
+            #wfs (ESRI Shapefile)
+            new_wfs_shp <- geoflow_relation$new()
+            new_wfs_shp$setKey("download")
+            new_wfs_shp$setName(layername)
+            new_wfs_shp$setDescription("Data download - OGC Web Feature Service (WFS) - ESRI Shapefile format")
+            new_wfs_shp$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=SHAPE-ZIP", 
+                                        config$software$output$geoserver_config$parameters$url, 
+                                        config$software$output$geoserver_config$properties$workspace,
+                                        layername))
+            self$addRelation(new_wfs_shp)
+            #CSV
+            new_wfs_csv <- geoflow_relation$new()
+            new_wfs_csv$setKey("download")
+            new_wfs_csv$setName(layername)
+            new_wfs_csv$setDescription("Data download - OGC Web Feature Service (WFS) - CSV format")
+            new_wfs_csv$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=CSV", 
+                                        config$software$output$geoserver_config$parameters$url, 
+                                        config$software$output$geoserver_config$properties$workspace,
+                                        layername))
+            self$addRelation(new_wfs_csv)
+          }
+        }
+        #OGC WCS relations in case of spatialRepresentationType = 'grid'
+        if(entity$data$spatialRepresentationType == 'grid'){
+          #WCS base URL
+          if(geosapi$getOption("enrich_with_relation_wcs")){
+            new_wcs <- geoflow_relation$new()
+            new_wcs$setKey("wcs")
+            new_wcs$setName(layername)
+            new_wcs$setDescription("Data (Coverage) access - OGC Web Coverage Service (WCS)")
+            new_wcs$setLink(sprintf("%s/%s/ows?service=WCS", 
                                     config$software$output$geoserver_config$parameters$url, 
-                                    config$software$output$geoserver_config$properties$workspace,
-                                    layername))
-        self$addRelation(new_wfs_shp)
-        #CSV
-        new_wfs_csv <- geoflow_relation$new()
-        new_wfs_csv$setKey("wfs")
-        new_wfs_csv$setName(layername)
-        new_wfs_csv$setDescription("Data access - OGC Web Feature Service (WFS) - CSV format")
-        new_wfs_csv$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=CSV", 
-                                    config$software$output$geoserver_config$parameters$url, 
-                                    config$software$output$geoserver_config$properties$workspace,
-                                    layername))
-        self$addRelation(new_wfs_csv)
+                                    config$software$output$geoserver_config$properties$workspace))
+            self$addRelation(new_wcs)
+          }
+          
+          #WCS download links
+          if(geosapi_action$getOption("enrich_with_relation_wcs_download_links")){
+            #wcs (image/geotiff)
+            new_wcs_geotiff <- geoflow_relation$new()
+            new_wcs_geotiff$setKey("download")
+            new_wcs_geotiff$setName(layername)
+            new_wcs_geotiff$setDescription("Data download - OGC Web Coverage Service (WCS) - GeoTIFF format")
+            new_wcs_geotiff$setLink(sprintf("%s/%s/ows?service=WCS&request=GetCoverage&version=2.0.1&CoverageId=%s&format=image/geotiff", 
+                                        config$software$output$geoserver_config$parameters$url, 
+                                        config$software$output$geoserver_config$properties$workspace,
+                                        layername))
+            self$addRelation(new_wcs_geotiff)
+          }
+        }
+        
       }
     },
     

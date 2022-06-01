@@ -746,10 +746,22 @@ function(action, entity, config){
       or$setDescription(http_relation$description)
       protocol <- switch(http_relation$key,
                          "http" = "WWW:LINK-1.0-http--link",
-                         "wms" = "OGC:WMS-1.1.0-http-get-map", #defaut
+                         "download" = "WWW:DOWNLOAD-1.0-http--download",
+                         "wms" = "OGC:WMS", #defaut
                          "wms110" = "OGC:WMS-1.1.0-http-get-map",
                          "wms111" = "OGC:WMS-1.1.1-http-get-map",
                          "wms130" = "OGC:WMS-1.3.0-http-get-map",
+                         "wfs" = "OGC:WFS",
+                         "wfs100" = "OGC:WFS-1.0.0-http-get-feature",
+                         "wfs110" = "OGC:WFS-1.1.0-http-get-feature",
+                         "wfs200" = "OGC:WFS-2.0.0-http-get-feature",
+                         "wcs" = "OGC:WCS",
+                         "wcs100" = "OGC:WCS-1.0.0-http-get-coverage",
+                         "wcs11"  = "OGC:WCS-1.1-http-get-coverage",
+                         "wcs110" = "OGC:WCS-1.1.0-http-get-coverage",
+                         "wcs111" = "OGC:WCS-1.1.1-http-get-coverage",
+                         "wcs201" = "OGC:WCS-2.0.1-http-get-coverage",
+                         "wcs210" = "OGC:WCS-2.1.0-http-get-coverage", 
                          "WWW:LINK-1.0-http--link"
       )
       or$setProtocol(protocol)
