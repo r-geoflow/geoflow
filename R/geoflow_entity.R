@@ -563,6 +563,14 @@ geoflow_entity <- R6Class("geoflow_entity",
            #---------------------------------------------------------------------------------
            "shp" = {
              trgShp <- file.path(getwd(), paste0(basefilename,".shp"))
+             if(!file.exists(trgShp)){
+               shps <- list.files(path = getwd(), pattern = ".shp", full.names = T)
+               if(length(shps)==0){
+                 warnMsg <- "No readable Shapefile source"
+                 config$logger.warn(warnMsg)
+               }
+               trgShp <- shps[1]
+             }
              if(file.exists(trgShp)){
                #read shapefile
                config$logger.info("Read Shapefiles from geoflow temporary data directory")
