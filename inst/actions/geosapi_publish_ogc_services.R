@@ -89,7 +89,7 @@ function(action, entity, config){
                  name = store, 
                  description = store_description , 
                  enabled = TRUE, 
-                 database = paste0("file://data/",workspace,"/",entity$data$uploadSource,".gpkg")
+                 database = paste0("file://data/",workspace,"/",datasource_name,".gpkg")
                )
              },
              #vector/dbtable
@@ -199,10 +199,15 @@ function(action, entity, config){
         config$logger.info(sprintf("Upload file '%s' [%s] to GeoServer...", filepath, entity$data$uploadType))
         uploaded <- switch(entity$data$spatialRepresentationType,
                            #vector/features upload
-                           "vector" = GS$uploadData(
-                             workspace, store, endpoint = "file", configure = "none", update = "overwrite",
-                             filename = filepath, extension = entity$data$uploadType, charset = "UTF-8",
-                             contentType = if(entity$data$uploadType=="spatialite") "application/x-sqlite3" else ""
+                           "vector" = switch(entity$data$uploadType,
+                              "shp" = GS$uploadShapefile(
+                                workspace, store, endpoint = "file", configure = "none", update = "overwrite",
+                                filename = filepath, charset = "UTF-8"
+                              ),
+                              "gpkg" = GS$uploadGeoPackage(
+                                workspace, store, endpoint = "file", configure = "none", update = "overwrite",
+                                filename = filepath, charset = "UTF-8"
+                              )
                            ),
                            #grid/coverages upload
                            "grid" = GS$uploadCoverage(
