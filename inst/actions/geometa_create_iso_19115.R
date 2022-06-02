@@ -737,7 +737,7 @@ function(action, entity, config){
   #add online resource for each relation
   if(length(entity$relations)>0){
     http_relations <- entity$relations[sapply(entity$relations, function(x){
-      x$key %in% c("ftp","http", "wfs", "wms", "wms110", "wms111", "wms130", "wcs", "csw")
+      x$key %in% c("ftp","http", "download", "wfs", "wms", "wms110", "wms111", "wms130", "wcs", "csw")
     })]
     for(http_relation in http_relations){
       or <- ISOOnlineResource$new()
