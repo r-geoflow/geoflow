@@ -4,5 +4,6 @@ config_metadata_gsheets_eml.json, Load metadata entities/contacts from Google Sp
 config_metadata_gsheets_iso19115_inspire.json,Load metadata entities/contacts from Google Spreadsheets and generate ISO 19115/19139 metadata (with INSPIRE validation)
 config_metadata_gsheets_iso19115_inspire_geonetwork.json,Load metadata entities/contacts from Google Spreadsheet; generate ISO 19115/19139 metadata (with INSPIRE validation) and publish them in GeoNetwork (using the GeoNetwork API)
 config_metadata_gsheets_zenodo.json,Load metadata entities/contacts from Google Spreadsheets and deposit records on Zenodo
+config_metadata_gsheets_sdi_geoserver_shp,Load metadata entities/contacts from Google Spreadsheets and publish ESRI shapefile based layer on GeoServer
 config_metadata_gsheets_sdi_geoserver_geotiff,Load metadata entities/contacts from Google Spreadsheets and publish GeoTIFF based layer on GeoServer
 config_metadata_gsheets_sdi_geoserver_geotiff_view,Load metadata entities/contacts from Google Spreadsheets and publish GeoTIFF based view layer on GeoServer
