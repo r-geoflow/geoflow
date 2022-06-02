@@ -1105,11 +1105,12 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(length(actions)>0) geosapi_action <- actions[[1]]
       #dynamic relations related to OGC services (only executed if geosapi action is handled and enabled in workflow)
       if(!is.null(geosapi_action)) if(geosapi_action$getOption("enrich_with_relations")) if(!is.null(self$data)){
-        
+        config$logger.info("Enrich entity with OGC relations")
         layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
         
         #Thumbnail
         if(geosapi_action$getOption("enrich_with_relation_wms_thumbnail")){
+          config$logger.info("Enrich entity with OGC WMS thumbnail")
           new_thumbnail <- geoflow_relation$new()
           new_thumbnail$setKey("thumbnail")
           new_thumbnail$setName(layername)
@@ -1119,9 +1120,12 @@ geoflow_entity <- R6Class("geoflow_entity",
                                         config$software$output$geoserver_config$properties$workspace,
                                         layername, paste(self$spatial_bbox,collapse=","),self$srid))
           self$relations <- c(self$relations, new_thumbnail)
+        }else{
+          config$logger.warn("Skip enriching entity with OGC WMS thumbnail")
         }
         #WMS base URL
         if(geosapi_action$getOption("enrich_with_relation_wms")){
+          config$logger.info("Enrich entity with OGC WMS base URL")
           new_wms <- geoflow_relation$new()
           new_wms$setKey("wms")
           new_wms$setName(layername)
@@ -1130,12 +1134,15 @@ geoflow_entity <- R6Class("geoflow_entity",
                                   config$software$output$geoserver_config$parameters$url, 
                                   config$software$output$geoserver_config$properties$workspace))
           self$addRelation(new_wms)
+        }else{
+          config$logger.warn("Skip enriching entity with OGC WMS base URL")
         }
         
         #OGC WFS relations in case of spatialRepresentationType = 'vector'
         if(self$data$spatialRepresentationType == "vector"){
           #WFS base URL
           if(geosapi_action$getOption("enrich_with_relation_wfs")){
+            config$logger.info("Enrich entity with OGC WFS base URL")
             new_wfs <- geoflow_relation$new()
             new_wfs$setKey("wfs")
             new_wfs$setName(layername)
@@ -1144,9 +1151,12 @@ geoflow_entity <- R6Class("geoflow_entity",
                                     config$software$output$geoserver_config$parameters$url, 
                                     config$software$output$geoserver_config$properties$workspace))
             self$addRelation(new_wfs)
+          }else{
+            config$logger.warn("Skip enriching entity with OGC WFS base URL")
           }
           #WFS download links
           if(geosapi_action$getOption("enrich_with_relation_wfs_download_links")){
+            config$logger.info("Enrich entity with OGC WFS download links")
             #wfs (GML)
             new_wfs_gml <- geoflow_relation$new()
             new_wfs_gml$setKey("download")
@@ -1187,12 +1197,15 @@ geoflow_entity <- R6Class("geoflow_entity",
                                         config$software$output$geoserver_config$properties$workspace,
                                         layername))
             self$addRelation(new_wfs_csv)
+          }else{
+            config$logger.warn("Skip enriching entity with OGC WFS download links")
           }
         }
         #OGC WCS relations in case of spatialRepresentationType = 'grid'
         if(self$data$spatialRepresentationType == 'grid'){
           #WCS base URL
           if(geosapi_action$getOption("enrich_with_relation_wcs")){
+            config$logger.info("Enrich entity with OGC WCS base URL")
             new_wcs <- geoflow_relation$new()
             new_wcs$setKey("wcs")
             new_wcs$setName(layername)
@@ -1201,10 +1214,13 @@ geoflow_entity <- R6Class("geoflow_entity",
                                     config$software$output$geoserver_config$parameters$url, 
                                     config$software$output$geoserver_config$properties$workspace))
             self$addRelation(new_wcs)
+          }else{
+            config$logger.warn("Skip enriching entity with OGC WCS base URL")
           }
           
           #WCS download links
           if(geosapi_action$getOption("enrich_with_relation_wcs_download_links")){
+            config$logger.info("Enrich entity with OGC WCS download links")
             #wcs (image/geotiff)
             new_wcs_geotiff <- geoflow_relation$new()
             new_wcs_geotiff$setKey("download")
@@ -1215,6 +1231,8 @@ geoflow_entity <- R6Class("geoflow_entity",
                                         config$software$output$geoserver_config$properties$workspace,
                                         layername))
             self$addRelation(new_wcs_geotiff)
+          }else{
+            config$logger.warn("Skip enriching entity with OGC WCS download links")
           }
         }
         
