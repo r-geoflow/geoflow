@@ -446,7 +446,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               }
             }
           }else{
-            errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", srcFilename, datasource_name)
+            errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", datasource_uri, datasource_name)
             config$logger.error(errMsg)
             stop(errMsg)
           }
