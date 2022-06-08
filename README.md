@@ -5,9 +5,6 @@
 [![Github_Status_Badge](https://img.shields.io/badge/Github-1.0.0-blue.svg)](https://github.com/eblondel/geoflow)
 [![DOI](https://zenodo.org/badge/DOI//10.5281/zenodo.3138920.svg)](https://doi.org//10.5281/zenodo.3138920)
 
-[![Gitter](https://img.shields.io/badge/chat%20room-for%20users-brown.svg?style=flat-square)](https://gitter.im/geoflow-users/community)
-[![Gitter](https://img.shields.io/badge/chat%20room-for%20developers-brown.svg?style=flat-square)](https://gitter.im/geoflow-developers/community)
-
 **R engine to orchestrate and run (meta)data workflows**
 
 ``geoflow`` provides a R engine to orchestrate and run geospatial (meta)data workflows.
