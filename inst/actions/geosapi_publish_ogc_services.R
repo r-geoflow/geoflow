@@ -6,9 +6,9 @@ function(action, entity, config){
   
   #options
   options <- action$options
-  createWorkspace <- if(!is.null(options$createWorkspace)) options$createWorkspace else FALSE
-  createStore <- if(!is.null(options$createStore)) options$createStore else FALSE
-  store_description <- if(!is.null(options$store_description)) options$store_description else ""
+  createWorkspace <- action$getOption("createWorkspace")
+  createStore <- action$getOption("createStore")
+  store_description <- action$getOption("store_description")
   
   #check presence of data
   if(is.null(entity$data)){
