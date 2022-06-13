@@ -173,9 +173,8 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           withGeosapi <- any(geosapi)
           
           if(withGeosapi){
-            createWorkspace<-actions[geosapi][[1]]$options$createWorkspace
-            createWorkspace <- if(!is.null(actions[geosapi][[1]]$options$createWorkspace)) actions[geosapi][[1]]$options$createWorkspace else FALSE  
-            
+            createWorkspace<-actions[geosapi][[1]]$getOption("createWorkspace")
+    
             GS <- config$software$output$geoserver
             if(is.null(GS)){
               errMsg <- "This action requires a GeoServer software to be declared in the configuration"
