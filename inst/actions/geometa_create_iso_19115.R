@@ -168,7 +168,7 @@ function(action, entity, config){
         if(!is.null(features)){
           #support vector spatial representation
           if(is(features, "sf")){
-            geomtypes <- as.list(table(st_geometry_type(features)))
+            geomtypes <- as.list(table(sf::st_geometry_type(features)))
             geomtypes <- geomtypes[geomtypes > 0]
             if(length(geomtypes)>0){
               #spatialRepresentationType <- "vector"
@@ -188,7 +188,7 @@ function(action, entity, config){
                                         "POLYHEDRALSURFACE" = "solid"
                   )
                   geomObject$setGeometricObjectType(isoGeomType)
-                  geomObject$setGeometricObjectCount(nrow(features[st_geometry_type(features)==geomtype,]))
+                  geomObject$setGeometricObjectCount(nrow(features[sf::st_geometry_type(features)==geomtype,]))
                   vsr$setGeometricObjects(geomObject)
                 }
                 md$addSpatialRepresentationInfo(vsr)
