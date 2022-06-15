@@ -728,7 +728,7 @@ geoflow_validator_entity_Relation <- R6Class("geoflow_validator_entity_Relation"
       #'@param str string to validate
       initialize = function(i, j, str){
         valid_keys <- list(
-          "ftp", "http",
+          "ftp", "http", "download",
           "parent","thumbnail",
           "csw", "csw202", "csw30",
           "wcs", "wcs100", "wcs11", "wcs110", "wcs111", "wcs201",
@@ -782,6 +782,7 @@ geoflow_validator_entity_Provenance <- R6Class("geoflow_validator_entity_Provena
       #'@return an validation report, as object of class \code{data.frame}  
       validate = function(){
         report <- super$validate()
+        if(is.na(private$str)) return(report)
         #Validity of corresponding number of processors vs. processes   
         data_props <- extract_cell_components(sanitize_str(private$str))
         if(length(data_props>0)){
