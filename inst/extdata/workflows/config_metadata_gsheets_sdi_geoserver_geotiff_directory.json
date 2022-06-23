@@ -10,7 +10,8 @@
 	  ],
 	  "mode": "entity",
 	  "options": {
-	    "line_separator": "_\n"
+	    "line_separator": "_\n",
+	    "enrichDataStrategy": "union"
     }
   },
   "metadata": {
