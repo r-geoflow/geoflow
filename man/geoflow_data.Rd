@@ -23,6 +23,10 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
+\item{\code{dir}}{an object of class \code{character} giving a data directory}
+
+\item{\code{data}}{list of object of class \link{geoflow_data} in case we point to a data directory}
+
 \item{\code{access}}{accessor key for accessing sources. Default is 'default'}
 
 \item{\code{source}}{source}
@@ -97,6 +101,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-geoflow_data-new}{\code{geoflow_data$new()}}
+\item \href{#method-geoflow_data-getDir}{\code{geoflow_data$getDir()}}
+\item \href{#method-geoflow_data-getData}{\code{geoflow_data$getData()}}
 \item \href{#method-geoflow_data-getAllowedSourceValues}{\code{geoflow_data$getAllowedSourceValues()}}
 \item \href{#method-geoflow_data-setAccess}{\code{geoflow_data$setAccess()}}
 \item \href{#method-geoflow_data-getAllowedSourceTypes}{\code{geoflow_data$getAllowedSourceTypes()}}
@@ -149,15 +155,43 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Method \code{new()}}{
 Initializes an object of class \link{geoflow_data}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$new(str = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$new(str = NULL, config = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{str}}{character string to initialize from, using key-based syntax}
+
+\item{\code{config}}{a geoflow config, if available and needed}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_data-getDir"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data-getDir}{}}}
+\subsection{Method \code{getDir()}}{
+Get data directory where datasets are scanned to build \code{geoflow_data} objects
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getDir()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+an object of class \code{character}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_data-getData"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data-getData}{}}}
+\subsection{Method \code{getData()}}{
+Get a lis tof \code{geoflow_data} objects built from a directory
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$getData()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+a list of objects of class \code{geoflow_data}
 }
 }
 \if{html}{\out{<hr>}}

@@ -45,6 +45,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item{\code{logos}}{profile logo(s)}
 
 \item{\code{mode}}{mode of execution (Default is "raw")}
+
+\item{\code{options}}{global config options}
 }
 \if{html}{\out{</div>}}
 }
@@ -58,6 +60,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_profile-setOrganization}{\code{geoflow_profile$setOrganization()}}
 \item \href{#method-geoflow_profile-addLogo}{\code{geoflow_profile$addLogo()}}
 \item \href{#method-geoflow_profile-setMode}{\code{geoflow_profile$setMode()}}
+\item \href{#method-geoflow_profile-setOption}{\code{geoflow_profile$setOption()}}
 \item \href{#method-geoflow_profile-clone}{\code{geoflow_profile$clone()}}
 }
 }
@@ -169,6 +172,25 @@ Sets profile mode
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{mode}}{profile mode}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_profile-setOption"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_profile-setOption}{}}}
+\subsection{Method \code{setOption()}}{
+Set global config option
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_profile$setOption(name, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{option name}
+
+\item{\code{value}}{option value}
 }
 \if{html}{\out{</div>}}
 }

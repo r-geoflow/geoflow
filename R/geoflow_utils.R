@@ -385,3 +385,33 @@ eval_variable_expressions <- function(str){
 is_absolute_path <- function(path) {
   grepl("^(/|[A-Za-z]:|\\\\|~)", path)
 }
+
+#'@name get_union_bbox
+#'@aliases get_union_bbox
+#'@title get_union_bbox
+#'@description \code{get_union_bbox} will build a unified bounding box from a list of \code{geoflow_data} objects
+#'
+#'@usage get_union_bbox(data_objects)
+#'
+#'@param data_objects list of \code{geoflow_data} objects
+#'
+#'@author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#'@export
+get_union_bbox <- function(data_objects){
+  
+  bbox.df <- as.data.frame(do.call("rbind", lapply(data_objects, function(data_object){
+    data_object.bbox <- NULL
+    if(!is.null(data_object$features)){
+      data_object.bbox <- sf::st_bbox(data_object$features)
+    }else if(!is.null(data_object$coverages)){
+      vec = data_object$coverages@ptr$extent$vector
+      data_object.bbox <- c(xmin = vec[1], ymin = vec[3], xmax = vec[2], ymax = vec[4])
+      class(data_object.bbox) <- "bbox"
+    }
+    return(data_object.bbox)
+  })))
+  
+  union.bbox <- c(xmin = min(bbox.df[,1]), ymin = min(bbox.df[,2]), xmax = max(bbox.df[,3]), ymax = max(bbox.df[,4]))
+  class(union.bbox) <- "bbox"
+  return(union.bbox)
+}

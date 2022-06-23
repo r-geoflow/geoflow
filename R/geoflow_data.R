@@ -26,6 +26,11 @@ geoflow_data <- R6Class("geoflow_data",
   ),
   public = list(
     
+    #'@field dir an object of class \code{character} giving a data directory
+    dir = NULL,
+    #'@field data list of object of class \link{geoflow_data} in case we point to a data directory
+    data = list(),
+    
     #ACCESS / SOURCE related fields
     #----------------------------------------------------------------------------
     #'@field access accessor key for accessing sources. Default is 'default'
@@ -114,7 +119,8 @@ geoflow_data <- R6Class("geoflow_data",
     
     #'@description Initializes an object of class \link{geoflow_data}
     #'@param str character string to initialize from, using key-based syntax
-    initialize = function(str = NULL){
+    #'@param config a geoflow config, if available and needed
+    initialize = function(str = NULL, config = NULL){
       if(!is.null(str)){
         data_props <-  extract_cell_components(sanitize_str(str))
         data_props <- lapply(data_props, function(data_prop){
@@ -140,7 +146,7 @@ geoflow_data <- R6Class("geoflow_data",
         }
         
         #source
-        if(!any(sapply(data_props, function(x){x$key=="source"}))){
+        if(!any(sapply(data_props, function(x){x$key=="source"})) && !any(sapply(data_props, function(x){x$key=="dir"}))){
           stop("The data 'source' is mandatory")
         }
         self$setSource(data_props$source$values)
@@ -400,7 +406,85 @@ geoflow_data <- R6Class("geoflow_data",
             self$addAction(entity_action)
           }
         }
+        
+        #datadir
+        if(any(sapply(data_props, function(x){x$key=="dir"}))){
+          data_dir <- data_props$dir$values[[1]]
+          self$dir <- data_dir
+          if(!is_absolute_path(data_dir) && !is.null(config)) data_dir <- file.path(config$session_wd, datasource_uri)
+          if(!dir.exists(data_dir)){
+            config$logger.error("Data dir doesn't exist!")
+          }
+          #data_dir <- "D:/sandbox-geoflow/testdir
+          ext_data_files <- list()
+          if(!is.null(self$sourceType) && self$sourceType != "other"){
+            ext <- switch(self$sourceType,
+              "shp" = "zip",
+              "gpkg" = "gpkg",
+              "geotiff" = "tif",
+              self$sourceType
+            )
+            ext_data_files <- list.files(data_dir, pattern = paste0(".", ext), full.names = T)
+          }else{
+            ext_data_files <- list.files(data_dir, full.names = T)
+            ext_data_files <- ext_data_files[!endsWith(ext_data_files,".sld")]
+          }
+          print(ext_data_files)
+          if(length(ext_data_files)>0){
+            self$data <- lapply(ext_data_files, function(data_file){
+              ext_data <- self$clone(deep = TRUE) #clone parent geoflow_data to inherit all needed properties
+              ext_data$dir <- NULL
+              ext_data_src <- basename(data_file)
+              ext_data_name <- unlist(strsplit(ext_data_src, "\\."))[1]
+              ext_data_extension <- unlist(strsplit(ext_data_src, "\\."))[2]
+              attr(ext_data_src, "uri") <- data_file
+              ext_data$setSource(ext_data_src)
+              ext_data$setUploadSource(basename(data_file))
+              sourceType <- self$sourceType
+              if(is.null(self$sourceType) || self$sourceType == "other"){
+                sourceType <- switch(ext_data_extension,
+                  "zip" = "shp",
+                  "gpkg" = "gpkg",
+                  "tif" = "geotiff",
+                  "csv" = "csv"
+                )
+              }
+              if(!is.null(sourceType)){
+                ext_data$setSourceType(sourceType)
+              }
+              if((is.null(self$uploadType) || self$uploadType == "other") && !is.null(sourceType)){
+                ext_data$setUploadType(sourceType)
+                if(ext_data$uploadType == "geotiff") ext_data$setSpatialRepresentationType("grid")
+              }
+              ext_data$setStore(ext_data_name)
+              ext_data$setLayername(ext_data_name)
+              if(self$styleUpload){
+                ext_data_style_path <- file.path(data_dir, paste0(ext_data_name, ".sld"), full.names = T)
+                if(file.exists(ext_data_style_path)){
+                  ext_data_style <- basename(ext_data_style_path)
+                  attr(ext_data_style, "uri") <- ext_data_style_path
+                  ext_data$addStyle(ext_data_style)
+                }
+              }
+              
+              return(ext_data)
+            })
+          }
+        }
+        
       }
+    },
+    
+    #'@description Get data directory where datasets are scanned to build \code{geoflow_data} objects
+    #'@return an object of class \code{character}
+    getDir = function(){
+      return(self$dir)
+    },
+    
+    #'@description Get a lis tof \code{geoflow_data} objects built from a directory
+    #'@return a list of objects of class \code{geoflow_data}
+    getData = function(){
+      return(self$data)
     },
     
     #ACCESS / SOURCE related methods

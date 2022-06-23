@@ -91,14 +91,10 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
 
   #enrich metadata with dynamic properties
   if(!is.null(entity$data)){
-    #data features
-    if(is.null(entity$data$features) & !skipFileDownload) {
-      entity$enrichWithFeatures(config, jobdir)
+    #data features/coverages
+    if(!skipFileDownload) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
+      entity$enrichWithData(config, jobdir)
       entity$prepareFeaturesToUpload(config)
-    }
-    #data coverages
-    if(is.null(entity$data$coverages) & !skipFileDownload){
-      entity$enrichWithCoverages(config, jobdir)
     }
     #data relations (eg. geosapi & OGC data protocol online resources)
     entity$enrichWithRelations(config)

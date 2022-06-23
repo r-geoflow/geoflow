@@ -309,6 +309,15 @@ geoflow_entity <- R6Class("geoflow_entity",
       self$data <- data
     },
     
+    #'@description Adds entity data object
+    #'@param data object of class \link{geoflow_data}
+    addData = function(data){
+      if(!is(data,"geoflow_data")){
+        stop("Data should be an object of class 'geoflow_data'")
+      }
+      self$data <- c(self$data, data)
+    },
+    
     #'@description Gets entity job directory name. In case entity is identified with a DOI, the '/' (slash) 
     #'will be replaced by '_' (underscore) to make sure directory is created.
     #'@return get the name of entity job directory that will be created for the entity
@@ -353,8 +362,9 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
     },
     
-    #'@description This function will look at data object associated to the entity (previously set with \code{setData}),
-    #'    and will try to (download)/copy the data source to the geoflow job directory.
+    #'@description This function will look at data object(s) associated to the entity (previously set with 
+    #' \code{setData} or added with \code{addData}), and will try to (download)/copy the data source to the 
+    #' geoflow job directory.
     #'@param config geoflow config object
     #'@param jobdir relative path of the job directory
     copyDataToJobDir = function(config, jobdir = NULL){
@@ -365,687 +375,398 @@ geoflow_entity <- R6Class("geoflow_entity",
       
       #get accessors
       accessors <- list_data_accessors(raw = TRUE)
-      accessor <- accessors[sapply(accessors, function(x){x$id == self$data$access})][[1]]
       
-      config$logger.info(sprintf("Copying data to entity job data directory '%s'", getwd()))
+      data_objects <- list()
+      if(is.null(self$data$dir)){
+        data_objects <- list(self$data)
+      }else{
+        data_objects <- self$data$getData()
+      }
+      if(length(data_objects)>0) for(k in 1:length(data_objects)){
+        
+        data_object <- data_objects[[k]]
       
-      if(!self$data$sourceType %in% c("dbtable", "dbview")) for(i in 1:length(self$data$source)){
+        accessor <- accessors[sapply(accessors, function(x){x$id == data_object$access})][[1]]
       
-        datasource <- self$data$source[[i]]
-        datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
-        if(length(datasource_parts)<2)if(self$data$sourceType[[i]]!="nc") stop("Source data file should include a file extension")
-        datasource_name <- datasource_parts[1]
-        datasource_ext <- datasource_parts[2]
-        datasource_uri <- attr(datasource, "uri")
-        attributes(datasource) <- NULL
-        if(is.null(datasource_uri)) datasource_uri <- datasource
+        config$logger.info(sprintf("Copying data to entity job data directory '%s'", getwd()))
         
-        #in case of a datasource type requiring a file we check its presence
-        #if absent we abort the function enrich With features
-        types_without_file <- c("dbtable","dbview","dbquery")
-        datasource_file_needed <- !(self$data$sourceType %in% types_without_file)
-        if(datasource_file_needed && is.null(datasource_uri)){
-          warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
-          config$logger.warn(warnMsg)
-          setwd(wd)
-          return(FALSE)
-        }
+        if(!data_object$sourceType %in% c("dbtable", "dbview")) for(i in 1:length(data_object$source)){
         
-        config$logger.info(sprintf("Copying data source %s '%s' (%s) to entity job data directory '%s'",
-                                   i, datasource, datasource_uri, getwd()))
+          datasource <- data_object$source[[i]]
+          datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
+          if(length(datasource_parts)<2)if(data_object$sourceType[[i]]!="nc") stop("Source data file should include a file extension")
+          datasource_name <- datasource_parts[1]
+          datasource_ext <- datasource_parts[2]
+          datasource_uri <- attr(datasource, "uri")
+          attributes(datasource) <- NULL
+          if(is.null(datasource_uri)) datasource_uri <- datasource
+          
+          #in case of a datasource type requiring a file we check its presence
+          #if absent we abort the function enrich With features
+          types_without_file <- c("dbtable","dbview","dbquery")
+          datasource_file_needed <- !(data_object$sourceType %in% types_without_file)
+          if(datasource_file_needed && is.null(datasource_uri)){
+            warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
+            config$logger.warn(warnMsg)
+            setwd(wd)
+            return(FALSE)
+          }
+          
+          config$logger.info(sprintf("Copying data source %s '%s' (%s) to entity job data directory '%s'",
+                                     i, datasource, datasource_uri, getwd()))
+          
+          #basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
+          basefilename <- datasource_name
         
-        #basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
-        basefilename <- datasource_name
-        
-        #here either we only pickup zipped files and re-distribute them in job data directory
-        #or we write it from entity$data$features if the latter is not NULL and if writer available (for now only shp)
-        #The latter allows to push features filtered by cqlfilter (matching an eventual geoserver layer) to Zenodo
-        #instead of the complete dataset
+          #here either we only pickup zipped files and re-distribute them in job data directory
+          #or we write it from data_object$features if the latter is not NULL and if writer available (for now only shp)
+          #The latter allows to push features filtered by cqlfilter (matching an eventual geoserver layer) to Zenodo
+          #instead of the complete dataset
       
-        #copy data
-        isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_uri) > 0
-        if(isSourceUrl || accessor$id != "default"){
-          #case where data is remote and there was no data enrichment in initWorkflow
-          config$logger.info(sprintf("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id))
-          access_software <- NULL
-          if(!is.na(accessor$software_type)){
-            config$logger.info(sprintf("Accessor '%s' seems to require a software. Try to locate 'input' software", accessor$id))
-            accessor_software <- config$software$input[[accessor$software_type]]
-            if(is.null(accessor_software)){
-              config$logger.info(sprintf("Accessor '%s' doesn't seem to have the required 'input' software. Try to locate 'output' software", accessor$id))
-              accessor_software <- config$software$output[[accessor$software_type]]
+          #copy data
+          isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_uri) > 0
+          if(isSourceUrl || accessor$id != "default"){
+            #case where data is remote and there was no data enrichment in initWorkflow
+            config$logger.info(sprintf("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id))
+            access_software <- NULL
+            if(!is.na(accessor$software_type)){
+              config$logger.info(sprintf("Accessor '%s' seems to require a software. Try to locate 'input' software", accessor$id))
+              accessor_software <- config$software$input[[accessor$software_type]]
+              if(is.null(accessor_software)){
+                config$logger.info(sprintf("Accessor '%s' doesn't seem to have the required 'input' software. Try to locate 'output' software", accessor$id))
+                accessor_software <- config$software$output[[accessor$software_type]]
+              }
+            }
+            accessor$download(
+              resource = datasource_uri,
+              file = datasource, 
+              path = file.path(getwd(), paste(basefilename, datasource_ext, sep=".")),
+              software = accessor_software
+            )
+          }else{
+            if(!is.null(datasource_uri)){
+              if(!is_absolute_path(datasource_uri)) datasource_uri <- file.path(config$session_wd,datasource_uri)
+            }
+            config$logger.info("Copying data to Job data directory from local file(s)")
+            data.files <- list.files(path = dirname(datasource_uri), pattern = datasource_name)
+            if(length(data.files)>0){
+              isZipped <- any(sapply(data.files, endsWith, ".zip"))
+              if(!isZipped){
+                config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
+                for(data.file in data.files){
+                  file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
+                }
+                config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
+                data.files <- list.files(pattern = basefilename)
+                if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
+              }else{
+                config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
+                data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
+                if(length(data.files)>0) for(data.file in data.files){
+                  file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
+                }
+              }
+            }else{
+              errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", datasource_uri, datasource_name)
+              config$logger.error(errMsg)
+              stop(errMsg)
             }
           }
-          accessor$download(
-            resource = datasource_uri,
-            file = datasource, 
-            path = file.path(getwd(), paste(basefilename, datasource_ext, sep=".")),
-            software = accessor_software
-          )
-        }else{
-          if(!is.null(datasource_uri)){
-            if(!is_absolute_path(datasource_uri)) datasource_uri <- file.path(config$session_wd,datasource_uri)
-          }
-          config$logger.info("Copying data to Job data directory from local file(s)")
-          data.files <- list.files(path = dirname(datasource_uri), pattern = datasource_name)
-          if(length(data.files)>0){
-            isZipped <- any(sapply(data.files, endsWith, ".zip"))
-            if(!isZipped){
-              config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
-              for(data.file in data.files){
-                file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
-              }
-              config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
-              data.files <- list.files(pattern = basefilename)
-              if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
-            }else{
-              config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
-              data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
-              if(length(data.files)>0) for(data.file in data.files){
-                file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
-              }
+        
+          #rename unzipped files (generic behavior)
+          #data.files <- list.files(path = getwd(), pattern = datasource_name)
+          #data.files <- data.files[!endsWith(data.files, ".zip")]
+          #if(length(data.files)>0){
+          #  for(data.file in data.files){
+          #    if(data.file %in% list.dirs(getwd(), recursive = F, full.names = F)) next
+          #    fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
+          #    fileext <- fileparts[length(fileparts)]
+          #    file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
+          #  }
+          #  unlink(paste0(basefilename, ".zip"))
+          #  data.files <- list.files(pattern = basefilename)
+          #  if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
+          #}
+          #special case of shapefile (we keep the source naming)
+          #if(data_object$sourceType == "shp"){
+          #  data.files <- list.files(path = getwd(), pattern = datasource_name)
+          #  data.files <- data.files[!endsWith(data.files, "zip")]
+          #  if(length(data.files)>0) for(data.file in data.files){
+          #    fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
+          #    fileext <- fileparts[length(fileparts)]
+          #    file.copy(from = file.path(dirname(data.file), data.file), to = file.path(getwd(), paste0(datasource_name, ".", fileext)))
+          #  }
+          #  data.files <- list.files(path = getwd(), pattern = paste0("^",datasource_name))
+          #  if(length(data.files)>0) zip::zipr(zipfile = paste0(datasource_name,".zip"), files = data.files)
+          #}
+        }
+      
+        #special case of other types to zip all into a single file
+        if(data_object$sourceType == "other" & data_object$sourceZip){
+          config$logger.info("sourceZip = TRUE: Zip sources into single data file")
+          data.files <- list.files()
+          print(data.files)
+          zip::zipr(zipfile = paste0(self$identifiers$id, "_files_for_source_", k, ".zip"), files = data.files)
+          if(data_object$sourceZipOnly){
+            config$logger.info("sourceZipOnly = TRUE: deleting zipped, they will not be uploaded")
+            for(data.file in data.files){
+              unlink(data.file, force = TRUE)
             }
           }else{
-            errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", datasource_uri, datasource_name)
-            config$logger.error(errMsg)
-            stop(errMsg)
-          }
-        }
-        
-        #rename unzipped files (generic behavior)
-        #data.files <- list.files(path = getwd(), pattern = datasource_name)
-        #data.files <- data.files[!endsWith(data.files, ".zip")]
-        #if(length(data.files)>0){
-        #  for(data.file in data.files){
-        #    if(data.file %in% list.dirs(getwd(), recursive = F, full.names = F)) next
-        #    fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
-        #    fileext <- fileparts[length(fileparts)]
-        #    file.rename(from = data.file, to = paste0(basefilename, ".", fileext))
-        #  }
-        #  unlink(paste0(basefilename, ".zip"))
-        #  data.files <- list.files(pattern = basefilename)
-        #  if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
-        #}
-        #special case of shapefile (we keep the source naming)
-        #if(self$data$sourceType == "shp"){
-        #  data.files <- list.files(path = getwd(), pattern = datasource_name)
-        #  data.files <- data.files[!endsWith(data.files, "zip")]
-        #  if(length(data.files)>0) for(data.file in data.files){
-        #    fileparts <- unlist(strsplit(data.file,"\\.(?=[^\\.]+$)", perl=TRUE))
-        #    fileext <- fileparts[length(fileparts)]
-        #    file.copy(from = file.path(dirname(data.file), data.file), to = file.path(getwd(), paste0(datasource_name, ".", fileext)))
-        #  }
-        #  data.files <- list.files(path = getwd(), pattern = paste0("^",datasource_name))
-        #  if(length(data.files)>0) zip::zipr(zipfile = paste0(datasource_name,".zip"), files = data.files)
-        #}
-      }
-      
-      #special case of other types to zip all into a single file
-      if(self$data$sourceType == "other" & self$data$sourceZip){
-        config$logger.info("sourceZip = TRUE: Zip sources into single data file")
-        data.files <- list.files()
-        print(data.files)
-        zip::zipr(zipfile = paste0(self$identifiers$id, "_files", ".zip"), files = data.files)
-        if(self$data$sourceZipOnly){
-          config$logger.info("sourceZipOnly = TRUE: deleting zipped, they will not be uploaded")
-          for(data.file in data.files){
-            unlink(data.file, force = TRUE)
+            config$logger.info("sourceZipOnly = FALSE: both zip and zipped files will be uploaded")
           }
         }else{
-          config$logger.info("sourceZipOnly = FALSE: both zip and zipped files will be uploaded")
+          config$logger.info("sourceZip = FALSE: source files will be uploaded")
         }
-      }else{
-        config$logger.info("sourceZip = FALSE: source files will be uploaded")
       }
       
       setwd("..")
       
     },
     
-    #'@description This function will enrich the entity with data features (vector data), trying to read the spatial data 
-    #' (eg shapefile, sql query - if a database input software is declared in the geoflow config). This method will overwrite 
-    #' spatial metadata such as the bounding box. Note that the user spatial extent is not overwriten since it may contain finer 
-    #' geometries than a bounding box.
+    #'@description This function will enrich the entity data objects with data features (vector data) or coverages (grid data). This method will overwrite 
+    #' spatial metadata such as the bounding box (unless global option \code{skipDynamicBbox} is enabled). Note that the user spatial extent is not overwriten 
+    #' since it may contain finer geometries than a bounding box.
     #'@param config geoflow config object
     #'@param jobdir relative path of the job directory
-    enrichWithFeatures = function(config, jobdir = NULL){
+    enrichWithData = function(config, jobdir = NULL){
       
       if(is.null(jobdir)) jobdir <- config$job
       wd <- getwd()
       setwd("./data")
       
-      skipDynamicBbox <- if(!is.null(config$options$skipDynamicBbox)) config$options$skipDynamicBbox else FALSE
+      skipDynamicBbox <- if(!is.null(config$profile$options$skipDynamicBbox)) config$profile$options$skipDynamicBbox else FALSE
+      enrichDataStrategy <- if(!is.null(config$profile$options$enrichDataStrategy)) config$profile$options$enrichDataStrategy else "first"
+      #TODO enrichDataSourceStrategy <- if(!is.null(config$profile$options$enrichDataSourceStrategy)) config$profile$options$enrichDataSourceStrategy else "first"
       
-      if(length(self$data$source)>1) 
-        config$logger.warn("More than one data sources, entity metadata enrichment with data based on the first source only!")
-      
-      if(self$data$sourceType == "other"){
-        config$logger.warn("Metadata dynamic handling based on 'data' not implemented for type 'other'")
-        setwd(wd)
-        return(NULL)
+      data_objects <- list()
+      if(is.null(self$data$dir)){
+        data_objects <- list(self$data)
+      }else{
+        data_objects <- self$data$getData()
       }
       
-      datasource <- self$data$source[[1]]
-      datasource_name <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))[1]
-      datasource_file <- attr(datasource, "uri")
-      attributes(datasource) <- NULL
-      if(is.null(datasource_file)) datasource_file <- datasource
+      srid <- if(!is.null(self$srid)) self$srid else ""
+      data_srids <- c()
       
-      #in case of a datasource type requiring a file we check its presence
-      #if absent we abort the function enrich With features
-      types_without_file <- c("dbtable","dbview","dbquery")
-      datasource_file_needed <- !(self$data$sourceType %in% types_without_file)
-      if(datasource_file_needed && is.null(datasource_file)){
-        warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
-        config$logger.warn(warnMsg)
-        setwd(wd)
-        return(FALSE)
-      }
+      if(length(data_objects)>0){
+        
+        data_objects <- lapply(1:length(data_objects), function(k){
       
-      config$logger.info(sprintf("Enriching data with features from '%s' (%s) for entity '%s'",
-                                 datasource, datasource_file, self$identifiers$id))
-      
-      #basefilename for the main source
-      #basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
-      basefilename <- datasource_name
-      
-      #encoding mappings
-      st_encoding <- switch(options("encoding")[[1]],
-        "UTF-8" = "UTF-8",
-        "latin1" = "WINDOWS-1252",
-        "native.enc" = "WINDOWS-1252",
-        "UTF-8"
-      )
-      
-      switch(self$data$sourceType,
-             
-           #shp - ESRI Shapefile (if remote, shapefiles should be zipped)
-           #---------------------------------------------------------------------------------
-           "shp" = {
-             trgShp <- file.path(getwd(), paste0(basefilename,".shp"))
-             if(!file.exists(trgShp)){
-               shps <- list.files(path = getwd(), pattern = ".shp", full.names = T)
-               if(length(shps)==0){
-                 warnMsg <- "No readable Shapefile source"
-                 config$logger.warn(warnMsg)
-               }
-               trgShp <- shps[1]
-             }
-             if(file.exists(trgShp)){
-               #read shapefile
-               config$logger.info("Read Shapefiles from geoflow temporary data directory")
-               sf.data <- sf::st_read(trgShp, options = sprintf("ENCODING=%s",st_encoding))
-               if(!is.null(sf.data)){
-                 #we try to apply the cql filter specified as data property
-                 #TODO cqlfilter to dismiss in favour of a sourceFilter property
-                 if(!is.null(self$data$cqlfilter)){
-                   sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
-                 }
-                 if(attr(sf.data, "sf_column")== "geometry"){
-                   sf.data$the_geom <- st_geometry(sf.data)
-                   attr(sf.data, "sf_column") <- "the_geom"
-                   sf.data$geometry <- NULL
-                 }
-                 self$data$setFeatures(sf.data)
-                 
-                 #dynamic srid
-                 sf.crs <- sf::st_crs(sf.data)
-                 if(!is.na(sf.crs)){
-                   srid <- if(!is.null(self$srid)) self$srid else ""
-                   epsgcode <- sf.crs$epsg
-                   if(!is.null(epsgcode)) {
-                     if(is.na(epsgcode)){
-                       #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                       crs_wkt <- sf.crs$wkt
-                       if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                         crs_def <- terra:::.srs_describe(crs_wkt)
-                         if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                           epsgcode <-crs_def$code 
-                         }
-                       }
-                     }
-                     if(!is.na(epsgcode)){
-                       if(srid != epsgcode){
-                         config$logger.info(sprintf("Overwriting entity srid [%s] with shapefile srid [%s]", srid, epsgcode)) 
-                         self$setSrid(epsgcode)
-                       }
-                     }
-                   }
-                 }
-                 #dynamic spatial extent
-                 config$logger.info("Overwriting entity bounding box with shapefile bounding box")
-                 if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
-                   
-               }else{
-                 warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
-                 config$logger.warn(warnMsg)
-               }
-             }else{
-               warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
-               config$logger.warn(warnMsg)
-             }
-           },
-           #csv - CSV file - operated through 
-           # * sf package / OGR CSV driver https://gdal.org/drivers/vector/csv.html) for geometry guess/fetch
-           # * combined with readr for a proper guess of column definitions
-           #---------------------------------------------------------------------------------
-           "csv" = {
-             trgCsv <- file.path(getwd(), paste0(basefilename,".csv"))
-             if(file.exists(trgCsv)){
-               #read CSV
-               config$logger.info("Read CSV file from geoflow temporary data directory")
+          data_object = data_objects[[k]]
+        
+          datasource <- data_object$source[[1]] #TODO we still look at first source
+          datasource_name <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))[1]
+          datasource_file <- attr(datasource, "uri")
+          attributes(datasource) <- NULL
+          if(is.null(datasource_file)) datasource_file <- datasource
+          
+          if(data_object$sourceType == "other"){
+            config$logger.warn("Metadata dynamic handling based on 'data' not implemented for source type 'other'")
+            #setwd(wd)
+            #return(NULL)
+          }
+        
+          #in case of a datasource type requiring a file we check its presence
+          #if absent we abort the function enrich With features
+          types_without_file <- c("dbtable","dbview","dbquery")
+          datasource_file_needed <- !(data_object$sourceType %in% types_without_file)
+          if(datasource_file_needed && is.null(datasource_file)){
+            warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
+            config$logger.warn(warnMsg)
+            #setwd(wd)
+            #return(NULL)
+          }
+        
+          #config$logger.info(sprintf("Enriching data with features from '%s' (%s) for entity '%s'",
+          #                         datasource, datasource_file, self$identifiers$id))
+        
+          #basefilename for the main source
+          #basefilename <- paste0(self$identifiers$id, "_", data_object$sourceType,"_",datasource_name)
+          basefilename <- datasource_name
+          
+          #encoding mappings
+          st_encoding <- switch(options("encoding")[[1]],
+            "UTF-8" = "UTF-8",
+            "latin1" = "WINDOWS-1252",
+            "native.enc" = "WINDOWS-1252",
+            "UTF-8"
+          )
+        
+          switch(data_object$sourceType,
                
-               sf.data <- sf::st_read(trgCsv, options = c(sprintf("GEOM_POSSIBLE_NAMES=%s", paste0(self$data$getAllowedGeomPossibleNames(),collapse=",")),
-                                                          sprintf("X_POSSIBLE_NAMES=%s", paste0(self$data$getAllowedXPossibleNames(),collapse=",")),
-                                                          sprintf("Y_POSSIBLE_NAMES=%s", paste0(self$data$getAllowedYPossibleNames(),collapse=","))))
-               if(!is.null(sf.data)){
-                 tbl.spec <- readr::spec_csv(trgCsv)
-                 tbl.spec[1]$cols = sapply(tbl.spec[1]$cols, function(x){spec = x;if(is(x, "collector_logical")){spec = readr::col_character()}; return(spec)})
-                 tbl.data <- as.data.frame(readr::read_csv(trgCsv, col_types = tbl.spec))
-                 if(is(sf.data,"sf")){
-                   sf.data <- st_set_geometry(tbl.data, st_geometry(sf.data))
-                   if(!"geometry" %in% colnames(tbl.data)){
-                     if("geom" %in% colnames(sf.data)) sf.data$geom <- NULL
-                     colnames(sf.data)[colnames(sf.data)=="geometry"] <- "geom"
-                     st_geometry(sf.data) <- "geom" #default in spatial DBIs if data imported through sf
-                   }
-                 }else{
-                   sf.data <- tbl.data
-                 }
-                 
-                 #we try to apply the cql filter specified as data property
-                 #TODO cqlfilter to dismiss in favour of a sourceFilter property
-                 if(!is.null(self$data$cqlfilter)){
-                   sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
-                 }
-                 self$data$setFeatures(sf.data)
-                 
-                 #dynamic srid
-                 sf.crs <- sf::st_crs(sf.data)
-                 if(!is.na(sf.crs)){
-                   #in case data features are geo-referenced we check srid consistency and eventually update self$srid
-                   srid <- if(!is.null(self$srid)) self$srid else ""
-                   epsgcode <- sf.crs$epsg
-                   if(!is.null(epsgcode)) {
-                     if(is.na(epsgcode)){
-                       #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                       crs_wkt <- st_crs(sf.data)$wkt
-                       if(nzchar(crs_wkt)){
-                         crs_def <- terra:::.srs_describe(crs_wkt)
-                         if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                           epsgcode <-crs_def$code 
-                         }
-                       }
-                     }
-                     if(!is.na(epsgcode)){
-                       if(srid != epsgcode){
-                         config$logger.info(sprintf("Overwriting entity srid [%s] with CSV srid [%s]", srid, epsgcode)) 
-                         self$setSrid(epsgcode)
-                       }
-                     }
-                   }
-                 }else{
-                   #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
-                   if(!is.null(self$srid)) sf::st_crs(self$data$features) <- self$srid 
-                 }
-                 #dynamic spatial extent
-                 config$logger.info("Overwriting entity bounding box with CSV bounding box")
-                 if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
-                 
-               }else{
-                 warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgCsv)
-                 config$logger.warn(warnMsg)
-               }
-             }else{
-               warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
-               config$logger.warn(warnMsg)
-             }
-             
-           },
-           #gpkg - GeoPackage file - operated through sf package
-           #---------------------------------------------------------------------------------
-           "gpkg" = {
-             trgGpkg <- file.path(getwd(), paste0(basefilename,".gpkg"))
-             if(file.exists(trgGpkg)){
-               #read CSV
-               config$logger.info("Read GPKG file from geoflow temporary data directory")
-               
-               if(!is.null(self$data$sourceSql)){
-                 sf.data <- sf::st_read(trgGpkg, query = self$data$sourceSql)
-               }else{
-                 sf.data <- sf::st_read(trgGpkg)
-               }
-               
-               if(!is.null(sf.data)){
-                 
-                 #we try to apply the cql filter specified as data property
-                 #TODO cqlfilter to dismiss in favour of a sourceFilter property
-                 if(!is.null(self$data$cqlfilter)){
-                   sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
-                 }
-                 self$data$setFeatures(sf.data)
-                 
-                 #dynamic srid
-                 sf.crs <- sf::st_crs(sf.data)
-                 if(!is.na(sf.crs)){
-                   srid <- if(!is.null(self$srid)) self$srid else ""
-                   epsgcode <- sf.crs$epsg
-                   if(!is.null(epsgcode)) {
-                     if(is.na(epsgcode)){
-                       #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                       crs_wkt <- sf.crs$wkt
-                       if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                         crs_def <- terra:::.srs_describe(crs_wkt)
-                         if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                           epsgcode <-crs_def$code 
-                         }
-                       }
-                     }
-                     if(!is.na(epsgcode)){
-                       if(srid != epsgcode){
-                         config$logger.info(sprintf("Overwriting entity srid [%s] with GeoPackage srid [%s]", srid, epsgcode)) 
-                         self$setSrid(epsgcode)
-                       }
-                     }
-                   }
-                 }
-                 #dynamic spatial extent
-                 config$logger.info("Overwriting entity bounding box with Geopackage bounding box")
-                 if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
-                 
-               }else{
-                 warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
-                 config$logger.warn(warnMsg)
-               }
-             }else{
-               warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
-               config$logger.warn(warnMsg)
-             }
-             
-           },
-           #dbtable - A DB table
-           #---------------------------------------------------------------------------------
-           "dbtable" = {
-             DBI <- config$software$input$dbi
-             if(!is.null(DBI)){
-               sf.data <- sf::st_read(DBI, datasource_name)
-               if(!is.null(sf.data)){
-                 #we try to apply the cql filter specified as data property
-                 #TODO cqlfilter to dismiss in favour of a sourceFilter property
-                 if(!is.null(self$data$cqlfilter)){
-                   sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
-                 }
-                 self$data$setFeatures(sf.data)
-                 if(is(sf.data, "sf")){
-                   #dynamic srid
-                   sf.crs <- sf::st_crs(sf.data)
-                   if(!is.na(sf.crs)){
-                     srid <- if(!is.null(self$srid)) self$srid else ""
-                     epsgcode <- sf.crs$epsg
-                     if(!is.null(epsgcode)) {
-                       if(is.na(epsgcode)){
-                         #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                         crs_wkt <- sf.crs$wkt
-                         if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                           crs_def <- terra:::.srs_describe(crs_wkt)
-                           if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                             epsgcode <-crs_def$code 
-                           }
-                         }
-                       }
-                       if(!is.na(epsgcode)){
-                         if(srid != epsgcode){
-                           config$logger.info(sprintf("Overwriting entity srid [%s] with DB spatial table srid [%s]", srid, epsgcode)) 
-                           self$setSrid(epsgcode)
-                         }
-                       }
-                     }
-                   }
-                   #dynamic spatial extent
-                   config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
-                   if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
-                 }else{
-                   warnMsg <- sprintf("DB table '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
-                   config$logger.warn(warnMsg)
-                 }
-                 
-               }else{
-                 warnMsg <- sprintf("Cannot get results from DB table '%s'. Dynamic metadata computation aborted!", datasource_name)
-                 config$logger.warn(warnMsg)
-               }
-               
-             }else{
-               warnMsg <- sprintf("No database configured to read DB table '%s'. Dynamic metadata computation aborted!", datasource_name)
-               config$logger.warn(warnMsg)
-             }
-           },
-           #dbview
-           #---------------------------------------------------------------------------------
-           "dbview" = {
-             DBI <- config$software$input$dbi
-             if(!is.null(DBI)){
-               sf.data <- sf::st_read(DBI, datasource_name)
-               if(!is.null(sf.data)){
-                 #we try to apply the cql filter specified as data property
-                 #TODO cqlfilter to dismiss in favour of a sourceFilter property
-                 if(!is.null(self$data$cqlfilter)){
-                   sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
-                 }
-                 self$data$setFeatures(sf.data)
-                 if(is(sf.data, "sf")){
-                   #dynamic srid
-                   sf.crs <- sf::st_crs(sf.data)
-                   if(!is.na(sf.crs)){
-                     srid <- if(!is.null(self$srid)) self$srid else ""
-                     epsgcode <- sf.crs$epsg
-                     if(!is.null(epsgcode)) {
-                       if(is.na(epsgcode)){
-                         #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                         crs_wkt <- sf.crs$wkt
-                         if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                           crs_def <- terra:::.srs_describe(crs_wkt)
-                           if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                             epsgcode <-crs_def$code 
-                           }
-                         }
-                       }
-                       if(!is.na(epsgcode)){
-                         if(srid != epsgcode){
-                           config$logger.info(sprintf("Overwriting entity srid [%s] with DB spatial view srid [%s]", srid, epsgcode)) 
-                           self$setSrid(epsgcode)
-                         }
-                       }
-                     }
-                   }
-                   #dynamic spatial extent
-                   config$logger.info("Overwriting entity bounding box with DB spatial view bounding box")
-                   if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
-                 }else{
-                   warnMsg <- sprintf("DB view '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
-                   config$logger.warn(warnMsg)
-                 }
-                 
-               }else{
-                 warnMsg <- sprintf("Cannot get results from DB view '%s'. Dynamic metadata computation aborted!", datasource_name)
-                 config$logger.warn(warnMsg)
-               }
-               
-             }else{
-               warnMsg <- sprintf("No database configured to read DB view '%s'. Dynamic metadata computation aborted!", datasource_name)
-               config$logger.warn(warnMsg)
-             }
-           },
-           #dbquery
-           #---------------------------------------------------------------------------------
-           "dbquery" = {
-             
-              sqlfile <- file.path(getwd(), paste0(basefilename,".sql"))
-              if(file.exists(sqlfile)){
-                config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
-                sql <- paste(readLines(sqlfile), collapse="")
-                config$logger.info(sql)
-                self$data$setSourceSql(sql)
-              }else{
-                if(is.null(self$data$sourceSql)){
-                  warnMsg <- sprintf("No SQL file provided as 'source' nor 'sourceSql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
-                  config$logger.warn(warnMsg)
-                  setwd(wd)
-                  return(FALSE)
-                }
-              }
-              
-              DBI <- config$software$input$dbi
-              if(!is.null(DBI)){
-                sf.data <- try(sf::st_read(DBI, query = self$data$sourceSql))
-                if(!is.null(sf.data)){
-                  if(class(sf.data)[1]=="try-error"){
-                    errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", self$data$sourceSql)
-                    config$logger.error(errMsg)
-                    setwd(wd)
-                    return(FALSE)
-                  }
-                  #we try to apply the cql filter specified as data property
-                  #TODO cqlfilter to dismiss in favour of a sourceFilter property
-                  if(!is.null(self$data$cqlfilter)){
-                    sf.data <- filter_sf_by_cqlfilter(sf.data, self$data$cqlfilter)
-                  }
-                  self$data$setFeatures(sf.data)
-                  if(is(sf.data, "sf")){
-                    #dynamic srid
-                    sf.crs <- sf::st_crs(sf.data)
-                    if(!is.na(sf.crs)){
-                      srid <- if(!is.null(self$srid)) self$srid else ""
-                      epsgcode <- sf.crs$epsg
-                      if(!is.null(epsgcode)) {
-                        if(is.na(epsgcode)){
-                          #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                          crs_wkt <- sf.crs$wkt
-                          if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                            crs_def <- terra:::.srs_describe(crs_wkt)
-                            if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                              epsgcode <-crs_def$code 
-                            }
-                          }
-                        }
-                        if(!is.na(epsgcode)){
-                          if(srid != epsgcode){
-                            config$logger.info(sprintf("Overwriting entity srid [%s] with SQL query output srid [%s]", srid, epsgcode)) 
-                            self$setSrid(epsgcode)
-                          }
-                        }
-                      }
-                    }
-                    #dynamic spatial extent
-                    config$logger.info("Overwriting entity bounding box with SQL query output bounding box")
-                    if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
-                    #dynamic view properties required
-                    
-                    geomtype <- as.character(unique(sf::st_geometry_type(sf.data))[1])
-                    gsGeomType <- switch(geomtype,
-                      "GEOMETRY" = "Geometry", "GEOMETRYCOLLECTION" = "GeometryCollection",
-                      "POINT" = "Point", "MULTIPOINT" = "MultiPoint", 
-                      "LINESTRING" = "LineString", "MULTILINESTRING" = "MultiLineString",
-                      "POLYGON" = "Polygon", "MULTIPOLYGON" = "MultiPolygon"
-                    )
-                    config$logger.info(sprintf("Setting entity geometry type '%s'", gsGeomType))
-                    self$data$setGeometryType(gsGeomType)
-                    geomField <- colnames(sf.data)[sapply(colnames(sf.data), function(x){(is(sf.data[[x]],"sfc"))})][1]
-                    config$logger.info(sprintf("Setting entity geometry field '%s'",geomField))
-                    self$data$setGeometryField(geomField)
-                  }else{
-                    warnMsg <- sprintf("Result of SQL query file '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_file)
-                    config$logger.warn(warnMsg)
-                  }
-                  
-                }else{
-                  warnMsg <- sprintf("Cannot get results from SQL query file '%s'. Dynamic metadata computation aborted!", datasource_file)
-                  config$logger.warn(warnMsg)
-                }
-                
-              }else{
-                warnMsg <- sprintf("No database configured to execute SQL query file '%s'. Dynamic metadata computation aborted!", datasource_file)
-                config$logger.warn(warnMsg)
-              }
-              
-            },
-            #other format handlers to come
-            {
-              config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", self$data$sourceType))
-            }
-      )
-      
-      setwd(self$getEntityJobDirPath(config, jobdir))
-      
-    },
-    
-   
-    #'@description This function will enrich the entity with data coverages (grid data), trying to read the spatial data
-    #' (eg. geotiff). This method will overwrite spatial metadata such as the bounding box. Note that the user spatial extent
-    #' is not overwriten since it may contain finer geometries than a bounding box.
-    #'@param config geoflow config object
-    #'@param jobdir relative path of the job directory
-    enrichWithCoverages = function(config, jobdir = NULL){
-      
-      if(is.null(jobdir)) jobdir <- config$job
-      wd <- getwd()
-      print(wd)
-      setwd("./data")
-      
-      skipDynamicBbox <- if(!is.null(config$options$skipDynamicBbox)) config$options$skipDynamicBbox else FALSE
-      
-      if(length(self$data$source)>1) 
-        config$logger.warn("More than one data sources, entity metadata enrichment with data based on the first source only!")
-      
-      if(self$data$sourceType == "other"){
-        config$logger.warn("Metadata dynamic handling based on 'data' not implemented for type 'other'")
-        setwd(wd)
-        return(NULL)
-      }
-      
-      datasource <- self$data$source[[1]]
-      datasource_name <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))[1]
-      datasource_file <- attr(datasource, "uri")
-      attributes(datasource) <- NULL
-      if(is.null(datasource_file)) datasource_file <- datasource
-      
-      #if datasource file absent we abort the function enrich With features
-      if(is.null(datasource_file)){
-        warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
-        config$logger.warn(warnMsg)
-        setwd(wd)
-        return(FALSE)
-      }
-      
-      config$logger.info(sprintf("Enriching data with coverages from '%s' (%s) for entity '%s'",
-                                 datasource, datasource_file, self$identifiers$id))
-      
-      #basefilename for the main source
-      basefilename <- datasource_name
-      
-      switch(self$data$sourceType,
-             
-             #geotiff - GeoTIFF
+             #shp - ESRI Shapefile (if remote, shapefiles should be zipped)
              #---------------------------------------------------------------------------------
-             "geotiff" = {
-               trgGeotiff <- file.path(getwd(), paste0(basefilename,".tif"))
-               if(file.exists(trgGeotiff)){
-                 #read GeoTIFF
-                 config$logger.info("Read GeoTIFF from geoflow temporary data directory")
-                 cov.data <- terra::rast(trgGeotiff)
-                 if(!is.null(cov.data)){
-                   self$data$setCoverages(cov.data)
+             "shp" = {
+               trgShp <- file.path(getwd(), paste0(basefilename,".shp"))
+               if(!file.exists(trgShp)){
+                 shps <- list.files(path = getwd(), pattern = ".shp", full.names = T)
+                 if(length(shps)==0){
+                   warnMsg <- "No readable Shapefile source"
+                   config$logger.warn(warnMsg)
+                 }
+                 trgShp <- shps[1]
+               }
+               if(file.exists(trgShp)){
+                 #read shapefile
+                 config$logger.info("Read Shapefiles from geoflow temporary data directory")
+                 sf.data <- sf::st_read(trgShp, options = sprintf("ENCODING=%s",st_encoding))
+                 if(!is.null(sf.data)){
+                   #we try to apply the cql filter specified as data property
+                   #TODO cqlfilter to dismiss in favour of a sourceFilter property
+                   if(!is.null(data_object$cqlfilter)){
+                     sf.data <- filter_sf_by_cqlfilter(sf.data, data_object$cqlfilter)
+                   }
+                   if(attr(sf.data, "sf_column")== "geometry"){
+                     sf.data$the_geom <- st_geometry(sf.data)
+                     attr(sf.data, "sf_column") <- "the_geom"
+                     sf.data$geometry <- NULL
+                   }
+                   data_object$setFeatures(sf.data)
                    
                    #dynamic srid
-                   srid <- if(!is.null(self$srid)) self$srid else ""
-                   cov.crs <- terra:::.srs_describe(cov.data@ptr$get_crs("wkt"))
-                   if(!is.null(cov.crs$code)) if(!is.na(cov.crs$code)) if(srid != cov.crs$code){
-                     config$logger.info(sprintf("Overwriting entity srid [%s] with coverage srid [%s]", srid, cov.crs$epsg)) 
-                     self$setSrid(cov.crs$code)
+                   sf.crs <- sf::st_crs(sf.data)
+                   if(!is.na(sf.crs)){
+                     epsgcode <- sf.crs$epsg
+                     if(!is.null(epsgcode)) {
+                       if(is.na(epsgcode)){
+                         #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                         crs_wkt <- sf.crs$wkt
+                         if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
+                           crs_def <- terra:::.srs_describe(crs_wkt)
+                           if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                             epsgcode <-crs_def$code 
+                           }
+                         }
+                       }
+                       if(!is.na(epsgcode)){
+                         data_srids <<- c(data_srids, as.integer(epsgcode))
+                       }
+                     }
+                   }
+                     
+                 }else{
+                   warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
+                   config$logger.warn(warnMsg)
+                 }
+               }else{
+                 warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
+                 config$logger.warn(warnMsg)
+               }
+             },
+             #csv - CSV file - operated through 
+             # * sf package / OGR CSV driver https://gdal.org/drivers/vector/csv.html) for geometry guess/fetch
+             # * combined with readr for a proper guess of column definitions
+             #---------------------------------------------------------------------------------
+             "csv" = {
+               trgCsv <- file.path(getwd(), paste0(basefilename,".csv"))
+               if(file.exists(trgCsv)){
+                 #read CSV
+                 config$logger.info("Read CSV file from geoflow temporary data directory")
+                 
+                 sf.data <- sf::st_read(trgCsv, options = c(sprintf("GEOM_POSSIBLE_NAMES=%s", paste0(data_object$getAllowedGeomPossibleNames(),collapse=",")),
+                                                            sprintf("X_POSSIBLE_NAMES=%s", paste0(data_object$getAllowedXPossibleNames(),collapse=",")),
+                                                            sprintf("Y_POSSIBLE_NAMES=%s", paste0(data_object$getAllowedYPossibleNames(),collapse=","))))
+                 if(!is.null(sf.data)){
+                   tbl.spec <- readr::spec_csv(trgCsv)
+                   tbl.spec[1]$cols = sapply(tbl.spec[1]$cols, function(x){spec = x;if(is(x, "collector_logical")){spec = readr::col_character()}; return(spec)})
+                   tbl.data <- as.data.frame(readr::read_csv(trgCsv, col_types = tbl.spec))
+                   if(is(sf.data,"sf")){
+                     sf.data <- st_set_geometry(tbl.data, st_geometry(sf.data))
+                     if(!"geometry" %in% colnames(tbl.data)){
+                       if("geom" %in% colnames(sf.data)) sf.data$geom <- NULL
+                       colnames(sf.data)[colnames(sf.data)=="geometry"] <- "geom"
+                       st_geometry(sf.data) <- "geom" #default in spatial DBIs if data imported through sf
+                     }
+                   }else{
+                     sf.data <- tbl.data
                    }
                    
-                   #dynamic spatial extent
-                   config$logger.info("Overwriting entity bounding box with coverage bounding box")
-                   if(!skipDynamicBbox) self$setSpatialBbox(data = cov.data)
+                   #we try to apply the cql filter specified as data property
+                   #TODO cqlfilter to dismiss in favour of a sourceFilter property
+                   if(!is.null(data_object$cqlfilter)){
+                     sf.data <- filter_sf_by_cqlfilter(sf.data, data_object$cqlfilter)
+                   }
+                   data_object$setFeatures(sf.data)
+                   
+                   #dynamic srid
+                   sf.crs <- sf::st_crs(sf.data)
+                   if(!is.na(sf.crs)){
+                     #in case data features are geo-referenced we check srid consistency and eventually update self$srid
+                     epsgcode <- sf.crs$epsg
+                     if(!is.null(epsgcode)) {
+                       if(is.na(epsgcode)){
+                         #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                         crs_wkt <- st_crs(sf.data)$wkt
+                         if(nzchar(crs_wkt)){
+                           crs_def <- terra:::.srs_describe(crs_wkt)
+                           if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                             epsgcode <-crs_def$code 
+                           }
+                         }
+                       }
+                       if(!is.na(epsgcode)){
+                          data_srids <<- c(data_srids, as.integer(epsgcode))
+                       }
+                     }
+                   }else{
+                     #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
+                     if(!is.null(self$srid)) sf::st_crs(data_object$features) <- self$srid 
+                   }
+                   
+                 }else{
+                   warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgCsv)
+                   config$logger.warn(warnMsg)
+                 }
+               }else{
+                 warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
+                 config$logger.warn(warnMsg)
+               }
+               
+             },
+             #gpkg - GeoPackage file - operated through sf package
+             #---------------------------------------------------------------------------------
+             "gpkg" = {
+               trgGpkg <- file.path(getwd(), paste0(basefilename,".gpkg"))
+               if(file.exists(trgGpkg)){
+                 #read CSV
+                 config$logger.info("Read GPKG file from geoflow temporary data directory")
+                 
+                 if(!is.null(data_object$sourceSql)){
+                   sf.data <- sf::st_read(trgGpkg, query = data_object$sourceSql)
+                 }else{
+                   sf.data <- sf::st_read(trgGpkg)
+                 }
+                 
+                 if(!is.null(sf.data)){
+                   
+                   #we try to apply the cql filter specified as data property
+                   #TODO cqlfilter to dismiss in favour of a sourceFilter property
+                   if(!is.null(data_object$cqlfilter)){
+                     sf.data <- filter_sf_by_cqlfilter(sf.data, data_object$cqlfilter)
+                   }
+                   data_object$setFeatures(sf.data)
+                   
+                   #dynamic srid
+                   sf.crs <- sf::st_crs(sf.data)
+                   if(!is.na(sf.crs)){
+                     epsgcode <- sf.crs$epsg
+                     if(!is.null(epsgcode)) {
+                       if(is.na(epsgcode)){
+                         #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                         crs_wkt <- sf.crs$wkt
+                         if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
+                           crs_def <- terra:::.srs_describe(crs_wkt)
+                           if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                             epsgcode <-crs_def$code 
+                           }
+                         }
+                       }
+                       if(!is.na(epsgcode)){
+                         data_srids <<- c(data_srids, as.integer(epsgcode))
+                       }
+                     }
+                   }
                    
                  }else{
                    warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
@@ -1055,13 +776,298 @@ geoflow_entity <- R6Class("geoflow_entity",
                  warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
                  config$logger.warn(warnMsg)
                }
-             }
-      )
+               
+             },
+             #dbtable - A DB table
+             #---------------------------------------------------------------------------------
+             "dbtable" = {
+               DBI <- config$software$input$dbi
+               if(!is.null(DBI)){
+                 sf.data <- sf::st_read(DBI, datasource_name)
+                 if(!is.null(sf.data)){
+                   #we try to apply the cql filter specified as data property
+                   #TODO cqlfilter to dismiss in favour of a sourceFilter property
+                   if(!is.null(data_object$cqlfilter)){
+                     sf.data <- filter_sf_by_cqlfilter(sf.data, data_object$cqlfilter)
+                   }
+                   data_object$setFeatures(sf.data)
+                   if(is(sf.data, "sf")){
+                     #dynamic srid
+                     sf.crs <- sf::st_crs(sf.data)
+                     if(!is.na(sf.crs)){
+                       epsgcode <- sf.crs$epsg
+                       if(!is.null(epsgcode)) {
+                         if(is.na(epsgcode)){
+                           #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                           crs_wkt <- sf.crs$wkt
+                           if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
+                             crs_def <- terra:::.srs_describe(crs_wkt)
+                             if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                               epsgcode <-crs_def$code 
+                             }
+                           }
+                         }
+                         if(!is.na(epsgcode)){
+                           data_srids <<- c(data_srids, as.integer(epsgcode))
+                         }
+                       }
+                     }
+                     #dynamic spatial extent
+                     config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
+                     if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
+                   }else{
+                     warnMsg <- sprintf("DB table '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
+                     config$logger.warn(warnMsg)
+                   }
+                   
+                 }else{
+                   warnMsg <- sprintf("Cannot get results from DB table '%s'. Dynamic metadata computation aborted!", datasource_name)
+                   config$logger.warn(warnMsg)
+                 }
+                 
+               }else{
+                 warnMsg <- sprintf("No database configured to read DB table '%s'. Dynamic metadata computation aborted!", datasource_name)
+                 config$logger.warn(warnMsg)
+               }
+             },
+             #dbview
+             #---------------------------------------------------------------------------------
+             "dbview" = {
+               DBI <- config$software$input$dbi
+               if(!is.null(DBI)){
+                 sf.data <- sf::st_read(DBI, datasource_name)
+                 if(!is.null(sf.data)){
+                   #we try to apply the cql filter specified as data property
+                   #TODO cqlfilter to dismiss in favour of a sourceFilter property
+                   if(!is.null(data_object$cqlfilter)){
+                     sf.data <- filter_sf_by_cqlfilter(sf.data, data_object$cqlfilter)
+                   }
+                   data_object$setFeatures(sf.data)
+                   if(is(sf.data, "sf")){
+                     #dynamic srid
+                     sf.crs <- sf::st_crs(sf.data)
+                     if(!is.na(sf.crs)){
+                       epsgcode <- sf.crs$epsg
+                       if(!is.null(epsgcode)) {
+                         if(is.na(epsgcode)){
+                           #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                           crs_wkt <- sf.crs$wkt
+                           if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
+                             crs_def <- terra:::.srs_describe(crs_wkt)
+                             if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                               epsgcode <-crs_def$code 
+                             }
+                           }
+                         }
+                         if(!is.na(epsgcode)){
+                            data_srids <<- c(data_srids, as.integer(epsgcode))
+                         }
+                       }
+                     }
+                     #dynamic spatial extent
+                     config$logger.info("Overwriting entity bounding box with DB spatial view bounding box")
+                     if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
+                   }else{
+                     warnMsg <- sprintf("DB view '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
+                     config$logger.warn(warnMsg)
+                   }
+                   
+                 }else{
+                   warnMsg <- sprintf("Cannot get results from DB view '%s'. Dynamic metadata computation aborted!", datasource_name)
+                   config$logger.warn(warnMsg)
+                 }
+                 
+               }else{
+                 warnMsg <- sprintf("No database configured to read DB view '%s'. Dynamic metadata computation aborted!", datasource_name)
+                 config$logger.warn(warnMsg)
+               }
+             },
+             #dbquery
+             #---------------------------------------------------------------------------------
+             "dbquery" = {
+               
+                sqlfile <- file.path(getwd(), paste0(basefilename,".sql"))
+                if(file.exists(sqlfile)){
+                  config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
+                  sql <- paste(readLines(sqlfile), collapse="")
+                  config$logger.info(sql)
+                  data_object$setSourceSql(sql)
+                }else{
+                  if(is.null(data_object$sourceSql)){
+                    warnMsg <- sprintf("No SQL file provided as 'source' nor 'sourceSql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
+                    config$logger.warn(warnMsg)
+                    setwd(wd)
+                    return(FALSE)
+                  }
+                }
+                
+                DBI <- config$software$input$dbi
+                if(!is.null(DBI)){
+                  sf.data <- try(sf::st_read(DBI, query = data_object$sourceSql))
+                  if(!is.null(sf.data)){
+                    if(class(sf.data)[1]=="try-error"){
+                      errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", data_object$sourceSql)
+                      config$logger.error(errMsg)
+                      setwd(wd)
+                      return(FALSE)
+                    }
+                    #we try to apply the cql filter specified as data property
+                    #TODO cqlfilter to dismiss in favour of a sourceFilter property
+                    if(!is.null(data_object$cqlfilter)){
+                      sf.data <- filter_sf_by_cqlfilter(sf.data, data_object$cqlfilter)
+                    }
+                    data_object$setFeatures(sf.data)
+                    if(is(sf.data, "sf")){
+                      #dynamic srid
+                      sf.crs <- sf::st_crs(sf.data)
+                      if(!is.na(sf.crs)){
+                        epsgcode <- sf.crs$epsg
+                        if(!is.null(epsgcode)) {
+                          if(is.na(epsgcode)){
+                            #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                            crs_wkt <- sf.crs$wkt
+                            if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
+                              crs_def <- terra:::.srs_describe(crs_wkt)
+                              if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                                epsgcode <-crs_def$code 
+                              }
+                            }
+                          }
+                          if(!is.na(epsgcode)){
+                            data_srids <<- c(data_srids, as.integer(epsgcode))
+                          }
+                        }
+                      }
+                      #dynamic spatial extent
+                      config$logger.info("Overwriting entity bounding box with SQL query output bounding box")
+                      if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
+                      #dynamic view properties required
+                      
+                      geomtype <- as.character(unique(sf::st_geometry_type(sf.data))[1])
+                      gsGeomType <- switch(geomtype,
+                        "GEOMETRY" = "Geometry", "GEOMETRYCOLLECTION" = "GeometryCollection",
+                        "POINT" = "Point", "MULTIPOINT" = "MultiPoint", 
+                        "LINESTRING" = "LineString", "MULTILINESTRING" = "MultiLineString",
+                        "POLYGON" = "Polygon", "MULTIPOLYGON" = "MultiPolygon"
+                      )
+                      config$logger.info(sprintf("Setting entity geometry type '%s'", gsGeomType))
+                      data_object$setGeometryType(gsGeomType)
+                      geomField <- colnames(sf.data)[sapply(colnames(sf.data), function(x){(is(sf.data[[x]],"sfc"))})][1]
+                      config$logger.info(sprintf("Setting entity geometry field '%s'",geomField))
+                      data_object$setGeometryField(geomField)
+                    }else{
+                      warnMsg <- sprintf("Result of SQL query file '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_file)
+                      config$logger.warn(warnMsg)
+                    }
+                    
+                  }else{
+                    warnMsg <- sprintf("Cannot get results from SQL query file '%s'. Dynamic metadata computation aborted!", datasource_file)
+                    config$logger.warn(warnMsg)
+                  }
+                  
+                }else{
+                  warnMsg <- sprintf("No database configured to execute SQL query file '%s'. Dynamic metadata computation aborted!", datasource_file)
+                  config$logger.warn(warnMsg)
+                }
+                
+              },
+              #geotiff - GeoTIFF
+              #---------------------------------------------------------------------------------
+              "geotiff" = {
+               trgGeotiff <- file.path(getwd(), paste0(basefilename,".tif"))
+               if(file.exists(trgGeotiff)){
+                 #read GeoTIFF
+                 config$logger.info(sprintf("Read GeoTIFF '%s'", trgGeotiff))
+                 cov.data <- terra::rast(trgGeotiff)
+                 if(!is.null(cov.data)){
+                   data_object$setCoverages(cov.data)
+                   
+                   #dynamic srid
+                   cov.crs <- terra:::.srs_describe(cov.data@ptr$get_crs("wkt"))
+                   if(!is.null(cov.crs$code)) if(!is.na(cov.crs$code)){
+                     data_srids <<- c(data_srids, as.integer(cov.crs$code))
+                   }
+                   
+                 }else{
+                   warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgGeotiff)
+                   config$logger.warn(warnMsg)
+                 }
+               }else{
+                 warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
+                 config$logger.warn(warnMsg)
+               }
+              },
+              #other format handlers to come
+              {
+                config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", data_object$sourceType))
+              }
+          )
+          
+          return(data_object)
+          
+        })
+        
+        if(is.null(self$data$dir)){
+          self$data <- data_objects[[1]]
+        }else{
+          self$data$data <- data_objects
+        }
+      }
+      
+      if(length(data_srids)>0){
+        unique_data_srids <- unique(data_srids)
+        if(length(unique_data_srids)==1){
+          if(srid != unique_data_srids[1]){
+            config$logger.info(sprintf("Overwriting entity srid [%s] with data srid [%s]", srid, unique_data_srids[1]))
+            self$srid <- unique_data_srids[1]
+          }
+          if(!skipDynamicBbox){
+            #dynamic spatial extent
+            config$logger.info(sprintf("Overwriting entity bounding box with data bounding boxes, using '%s' strategy", enrichDataStrategy))
+            switch(enrichDataStrategy,
+              "first" = {
+                data_obj <- NULL
+                if(!is.null(data_objects[[1]]$features)){
+                  data_obj <- data_objects[[1]]$features
+                }else if(!is.null(data_objects[[1]]$coverages)){
+                  data_obj <- data_objects[[1]]$coverages
+                }
+                if(!is.null(data_obj)) self$setSpatialBbox(data = data_obj)
+              },
+              "union" = {
+                self$setSpatialBbox(bbox = get_union_bbox(data_objects))
+              }
+            )
+          }
+        }else{
+          config$logger.warn(sprintf("Data objects with mixed SRIDs [%s], aborting overwrite of entity srid [%s] and spatial bounding box", 
+                                     paste0(unique_data_srids, collapse=","), srid))
+        }
+      }
       
       setwd(self$getEntityJobDirPath(config, jobdir))
       
     },
     
+    #'@description This function will enrich the entity data objects with data features (vector data). This method will overwrite 
+    #' spatial metadata such as the bounding box (unless global option \code{skipDynamicBbox} is enabled). Note that the user spatial extent is not overwriten 
+    #' since it may contain finer geometries than a bounding box.
+    #'@param config geoflow config object
+    #'@param jobdir relative path of the job directory
+    enrichWithFeatures = function(config, jobdir = NULL){
+      config$logger.warn("Method 'enrichWithFeatures' is deprecated, please use 'enrichWithData' (that encompasses both 'features' and 'coverages') instead")
+      self$enrichWithData(config, jobdir = jobdir)
+    },
+    
+    #'@description This function will enrich the entity data objects with data coverages (grid data). This method will overwrite 
+    #' spatial metadata such as the bounding box (unless global option \code{skipDynamicBbox} is enabled). Note that the user spatial extent is not overwriten 
+    #' since it may contain finer geometries than a bounding box.
+    #'@param config geoflow config object
+    #'@param jobdir relative path of the job directory
+    enrichWithCoverages = function(config, jobdir = NULL){
+      config$logger.warn("Method 'enrichWithCoverages' is deprecated, please use 'enrichWithData' (that encompasses both 'features' and 'coverages') instead")
+      self$enrichWithData(config, jobdir = jobdir)
+    },
     
     #'@description This function will 1) check (in case of upload is requested) if the type of source and upload are both different 
     #'on files formats(eg. csv,shp,gpkg) and 2) process automatically to conversion from source to upload type.
@@ -1069,30 +1075,52 @@ geoflow_entity <- R6Class("geoflow_entity",
     prepareFeaturesToUpload = function(config) {
       types_with_file<-c("csv","shp","gpkg")
       
-      if(self$data$upload) if(self$data$sourceType %in% types_with_file & self$data$uploadType %in% types_with_file){
+      data_objects <- list()
+      if(is.null(self$data$dir)){
+        data_objects <- list(self$data)
+      }else{
+        data_objects <- self$data$getData()
+      }
+      
+      if(length(data_objects)>0){
+        data_objects <- lapply(1:length(data_objects), function(k){
+          
+          data_object = data_objects[[k]]
         
-        if(self$data$sourceType != self$data$uploadType){
-          
-          config$logger.info(sprintf("Conversion of source file from sourceType (%s) to uploadType (%s)",self$data$sourceType,self$data$uploadType))
-          
-          datasource <- self$data$source[[1]]
-          datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
-          if(length(datasource_parts)<2) stop("Source data file should include a file extension")
-          datasource_name <- datasource_parts[1]
-          datasource_ext <- datasource_parts[2]
-          
-          uploadSourceExt<-switch(self$data$uploadType,
-                                  "shp" = "zip" ,
-                                  self$data$uploadType
-                                  
-          )
-          writeWorkflowJobDataResource(entity=self,config=config,type=self$data$uploadType,useFeatures=TRUE,resourcename=datasource_name)
-          self$data$uploadSource<-list(paste0(datasource_name,".",uploadSourceExt))
-          
+          if(data_object$upload) if(data_object$sourceType %in% types_with_file & data_object$uploadType %in% types_with_file){
+            
+            if(data_object$sourceType != data_object$uploadType){
+              
+              config$logger.info(sprintf("Conversion of source file from sourceType (%s) to uploadType (%s)",data_object$sourceType,data_object$uploadType))
+              
+              datasource <- data_object$source[[1]]
+              datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
+              if(length(datasource_parts)<2) stop("Source data file should include a file extension")
+              datasource_name <- datasource_parts[1]
+              datasource_ext <- datasource_parts[2]
+              
+              uploadSourceExt<-switch(data_object$uploadType,
+                                      "shp" = "zip" ,
+                                      data_object$uploadType
+                                      
+              )
+              writeWorkflowJobDataResource(entity=self,config=config,type=data_object$uploadType,useFeatures=TRUE,resourcename=datasource_name)
+              data_object$uploadSource<-list(paste0(datasource_name,".",uploadSourceExt))
+              
+            }else{
+              config$logger.info("sourceType and uploadType are identical, no conversion require")		
+            }
+          }
+          return(data_object)
+        })
+        
+        if(is.null(self$data$dir)){
+          self$data <- data_objects[[1]]
         }else{
-          config$logger.info("sourceType and uploadType are identical, no conversion require")		
+          self$data$data <- data_objects
         }
       }
+      
     },
     
     #'@description This function that will enrich the entity with relations. At now this is essentially related to adding 
@@ -1113,137 +1141,149 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(length(actions)>0) geosapi_action <- actions[[1]]
       #dynamic relations related to OGC services (only executed if geosapi action is handled and enabled in workflow)
       if(!is.null(geosapi_action)) if(geosapi_action$getOption("enrich_with_relations")) if(!is.null(self$data)){
-        config$logger.info("Enrich entity with OGC relations")
-        layername <- if(!is.null(self$data$layername)) self$data$layername else self$identifiers$id
         
-        #Thumbnail
-        if(geosapi_action$getOption("enrich_with_relation_wms_thumbnail")){
-          config$logger.info("Enrich entity with OGC WMS thumbnail")
-          new_thumbnail <- geoflow_relation$new()
-          new_thumbnail$setKey("thumbnail")
-          new_thumbnail$setName(layername)
-          new_thumbnail$setDescription("Map overview")
-          new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
-                                        config$software$output$geoserver_config$parameters$url, 
-                                        config$software$output$geoserver_config$properties$workspace,
-                                        layername, paste(self$spatial_bbox,collapse=","),self$srid))
-          self$relations <- c(self$relations, new_thumbnail)
+        data_objects <- list()
+        if(is.null(self$data$dir)){
+          data_objects <- list(self$data)
         }else{
-          config$logger.warn("Skip enriching entity with OGC WMS thumbnail")
-        }
-        #WMS base URL
-        if(geosapi_action$getOption("enrich_with_relation_wms")){
-          config$logger.info("Enrich entity with OGC WMS base URL")
-          new_wms <- geoflow_relation$new()
-          new_wms$setKey("wms")
-          new_wms$setName(layername)
-          new_wms$setDescription("Map access - OGC Web Map Service (WMS)")
-          new_wms$setLink(sprintf("%s/%s/ows?service=WMS", 
-                                  config$software$output$geoserver_config$parameters$url, 
-                                  config$software$output$geoserver_config$properties$workspace))
-          self$addRelation(new_wms)
-        }else{
-          config$logger.warn("Skip enriching entity with OGC WMS base URL")
+          data_objects <- self$data$getData()
         }
         
-        #OGC WFS relations in case of spatialRepresentationType = 'vector'
-        if(self$data$spatialRepresentationType == "vector"){
-          #WFS base URL
-          if(geosapi_action$getOption("enrich_with_relation_wfs")){
-            config$logger.info("Enrich entity with OGC WFS base URL")
-            new_wfs <- geoflow_relation$new()
-            new_wfs$setKey("wfs")
-            new_wfs$setName(layername)
-            new_wfs$setDescription("Data (features) access - OGC Web Feature Service (WFS)")
-            new_wfs$setLink(sprintf("%s/%s/ows?service=WFS", 
+        if(length(data_objects)>0) for(k in 1:length(data_objects)){
+          
+          data_object = data_objects[[k]]
+        
+          layername <- if(!is.null(data_object$layername)) data_object$layername else self$identifiers$id
+          config$logger.info(sprintf("Enrich entity with OGC relations for layer = '%s'", layername))
+            
+          #Thumbnail
+          if(geosapi_action$getOption("enrich_with_relation_wms_thumbnail")){
+            config$logger.info(sprintf("Enrich entity with OGC WMS thumbnail for layer = '%s", layername))
+            new_thumbnail <- geoflow_relation$new()
+            new_thumbnail$setKey("thumbnail")
+            new_thumbnail$setName(layername)
+            new_thumbnail$setDescription(sprintf("%s - Map overview", layername))
+            new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
+                                          config$software$output$geoserver_config$parameters$url, 
+                                          config$software$output$geoserver_config$properties$workspace,
+                                          layername, paste(self$spatial_bbox,collapse=","),self$srid))
+            self$relations <- c(self$relations, new_thumbnail)
+          }else{
+            config$logger.warn(sprintf("Skip enriching entity with OGC WMS thumbnail for layer = '%s", layername))
+          }
+          #WMS base URL
+          if(geosapi_action$getOption("enrich_with_relation_wms")){
+            config$logger.info(sprintf("Enrich entity with OGC WMS base URL for layer = '%s", layername))
+            new_wms <- geoflow_relation$new()
+            new_wms$setKey("wms")
+            new_wms$setName(layername)
+            new_wms$setDescription(sprintf("%s - Map access - OGC Web Map Service (WMS)",layername))
+            new_wms$setLink(sprintf("%s/%s/ows?service=WMS", 
                                     config$software$output$geoserver_config$parameters$url, 
                                     config$software$output$geoserver_config$properties$workspace))
-            self$addRelation(new_wfs)
+            self$addRelation(new_wms)
           }else{
-            config$logger.warn("Skip enriching entity with OGC WFS base URL")
-          }
-          #WFS download links
-          if(geosapi_action$getOption("enrich_with_relation_wfs_download_links")){
-            config$logger.info("Enrich entity with OGC WFS download links")
-            #wfs (GML)
-            new_wfs_gml <- geoflow_relation$new()
-            new_wfs_gml$setKey("download")
-            new_wfs_gml$setName(layername)
-            new_wfs_gml$setDescription("Data download - OGC Web Feature Service (WFS) - GML format")
-            new_wfs_gml$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s", 
-                                        config$software$output$geoserver_config$parameters$url, 
-                                        config$software$output$geoserver_config$properties$workspace,
-                                        layername))
-            self$addRelation(new_wfs_gml)
-            #wfs (GeoJSON)
-            new_wfs_geojson <- geoflow_relation$new()
-            new_wfs_geojson$setKey("download")
-            new_wfs_geojson$setName(layername)
-            new_wfs_geojson$setDescription("Data download - OGC Web Feature Service (WFS) - GeoJSON format")
-            new_wfs_geojson$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=json", 
-                                            config$software$output$geoserver_config$parameters$url, 
-                                            config$software$output$geoserver_config$properties$workspace,
-                                            layername))
-            self$addRelation(new_wfs_geojson)
-            #wfs (ESRI Shapefile)
-            new_wfs_shp <- geoflow_relation$new()
-            new_wfs_shp$setKey("download")
-            new_wfs_shp$setName(layername)
-            new_wfs_shp$setDescription("Data download - OGC Web Feature Service (WFS) - ESRI Shapefile format")
-            new_wfs_shp$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=SHAPE-ZIP", 
-                                        config$software$output$geoserver_config$parameters$url, 
-                                        config$software$output$geoserver_config$properties$workspace,
-                                        layername))
-            self$addRelation(new_wfs_shp)
-            #CSV
-            new_wfs_csv <- geoflow_relation$new()
-            new_wfs_csv$setKey("download")
-            new_wfs_csv$setName(layername)
-            new_wfs_csv$setDescription("Data download - OGC Web Feature Service (WFS) - CSV format")
-            new_wfs_csv$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=CSV", 
-                                        config$software$output$geoserver_config$parameters$url, 
-                                        config$software$output$geoserver_config$properties$workspace,
-                                        layername))
-            self$addRelation(new_wfs_csv)
-          }else{
-            config$logger.warn("Skip enriching entity with OGC WFS download links")
-          }
-        }
-        #OGC WCS relations in case of spatialRepresentationType = 'grid'
-        if(self$data$spatialRepresentationType == 'grid'){
-          #WCS base URL
-          if(geosapi_action$getOption("enrich_with_relation_wcs")){
-            config$logger.info("Enrich entity with OGC WCS base URL")
-            new_wcs <- geoflow_relation$new()
-            new_wcs$setKey("wcs")
-            new_wcs$setName(layername)
-            new_wcs$setDescription("Data (Coverage) access - OGC Web Coverage Service (WCS)")
-            new_wcs$setLink(sprintf("%s/%s/ows?service=WCS", 
-                                    config$software$output$geoserver_config$parameters$url, 
-                                    config$software$output$geoserver_config$properties$workspace))
-            self$addRelation(new_wcs)
-          }else{
-            config$logger.warn("Skip enriching entity with OGC WCS base URL")
+            config$logger.warn(sprintf("Skip enriching entity with OGC WMS base URL for layer = '%s", layername))
           }
           
-          #WCS download links
-          if(geosapi_action$getOption("enrich_with_relation_wcs_download_links")){
-            config$logger.info("Enrich entity with OGC WCS download links")
-            #wcs (image/geotiff)
-            new_wcs_geotiff <- geoflow_relation$new()
-            new_wcs_geotiff$setKey("download")
-            new_wcs_geotiff$setName(layername)
-            new_wcs_geotiff$setDescription("Data download - OGC Web Coverage Service (WCS) - GeoTIFF format")
-            new_wcs_geotiff$setLink(sprintf("%s/%s/ows?service=WCS&request=GetCoverage&version=2.0.1&CoverageId=%s&format=image/geotiff", 
-                                        config$software$output$geoserver_config$parameters$url, 
-                                        config$software$output$geoserver_config$properties$workspace,
-                                        layername))
-            self$addRelation(new_wcs_geotiff)
-          }else{
-            config$logger.warn("Skip enriching entity with OGC WCS download links")
+          #OGC WFS relations in case of spatialRepresentationType = 'vector'
+          if(data_object$spatialRepresentationType == "vector"){
+            #WFS base URL
+            if(geosapi_action$getOption("enrich_with_relation_wfs")){
+              config$logger.info(sprintf("Enrich entity with OGC WFS base URL for layer = '%s", layername))
+              new_wfs <- geoflow_relation$new()
+              new_wfs$setKey("wfs")
+              new_wfs$setName(layername)
+              new_wfs$setDescription(sprintf("%s - Data (features) access - OGC Web Feature Service (WFS)", layername))
+              new_wfs$setLink(sprintf("%s/%s/ows?service=WFS", 
+                                      config$software$output$geoserver_config$parameters$url, 
+                                      config$software$output$geoserver_config$properties$workspace))
+              self$addRelation(new_wfs)
+            }else{
+              config$logger.warn(sprintf("Skip enriching entity with OGC WFS base URL for layer = '%s", layername))
+            }
+            #WFS download links
+            if(geosapi_action$getOption("enrich_with_relation_wfs_download_links")){
+              config$logger.info(sprintf("Enrich entity with OGC WFS download links for layer = '%s", layername))
+              #wfs (GML)
+              new_wfs_gml <- geoflow_relation$new()
+              new_wfs_gml$setKey("download")
+              new_wfs_gml$setName(layername)
+              new_wfs_gml$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - GML format", layername))
+              new_wfs_gml$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s", 
+                                          config$software$output$geoserver_config$parameters$url, 
+                                          config$software$output$geoserver_config$properties$workspace,
+                                          layername))
+              self$addRelation(new_wfs_gml)
+              #wfs (GeoJSON)
+              new_wfs_geojson <- geoflow_relation$new()
+              new_wfs_geojson$setKey("download")
+              new_wfs_geojson$setName(layername)
+              new_wfs_geojson$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - GeoJSON format", layername))
+              new_wfs_geojson$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=json", 
+                                              config$software$output$geoserver_config$parameters$url, 
+                                              config$software$output$geoserver_config$properties$workspace,
+                                              layername))
+              self$addRelation(new_wfs_geojson)
+              #wfs (ESRI Shapefile)
+              new_wfs_shp <- geoflow_relation$new()
+              new_wfs_shp$setKey("download")
+              new_wfs_shp$setName(layername)
+              new_wfs_shp$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - ESRI Shapefile format", layername))
+              new_wfs_shp$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=SHAPE-ZIP", 
+                                          config$software$output$geoserver_config$parameters$url, 
+                                          config$software$output$geoserver_config$properties$workspace,
+                                          layername))
+              self$addRelation(new_wfs_shp)
+              #CSV
+              new_wfs_csv <- geoflow_relation$new()
+              new_wfs_csv$setKey("download")
+              new_wfs_csv$setName(layername)
+              new_wfs_csv$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - CSV format", layername))
+              new_wfs_csv$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=CSV", 
+                                          config$software$output$geoserver_config$parameters$url, 
+                                          config$software$output$geoserver_config$properties$workspace,
+                                          layername))
+              self$addRelation(new_wfs_csv)
+            }else{
+              config$logger.warn("Skip enriching entity with OGC WFS download links")
+            }
+          }
+          #OGC WCS relations in case of spatialRepresentationType = 'grid'
+          if(data_object$spatialRepresentationType == 'grid'){
+            #WCS base URL
+            if(geosapi_action$getOption("enrich_with_relation_wcs")){
+              config$logger.info(sprintf("Enrich entity with OGC WCS base URL for layer = '%s", layername))
+              new_wcs <- geoflow_relation$new()
+              new_wcs$setKey("wcs")
+              new_wcs$setName(layername)
+              new_wcs$setDescription(sprintf("%s - Data (Coverage) access - OGC Web Coverage Service (WCS)", layername))
+              new_wcs$setLink(sprintf("%s/%s/ows?service=WCS", 
+                                      config$software$output$geoserver_config$parameters$url, 
+                                      config$software$output$geoserver_config$properties$workspace))
+              self$addRelation(new_wcs)
+            }else{
+              config$logger.warn(sprintf("Skip enriching entity with OGC WCS base URL for layer = '%s", layername))
+            }
+            
+            #WCS download links
+            if(geosapi_action$getOption("enrich_with_relation_wcs_download_links")){
+              config$logger.info(sprintf("Enrich entity with OGC WCS download links for layer = '%s", layername))
+              #wcs (image/geotiff)
+              new_wcs_geotiff <- geoflow_relation$new()
+              new_wcs_geotiff$setKey("download")
+              new_wcs_geotiff$setName(layername)
+              new_wcs_geotiff$setDescription(sprintf("%s - Data download - OGC Web Coverage Service (WCS) - GeoTIFF format", layername))
+              new_wcs_geotiff$setLink(sprintf("%s/%s/ows?service=WCS&request=GetCoverage&version=2.0.1&CoverageId=%s&format=image/geotiff", 
+                                          config$software$output$geoserver_config$parameters$url, 
+                                          config$software$output$geoserver_config$properties$workspace,
+                                          layername))
+              self$addRelation(new_wcs_geotiff)
+            }else{
+              config$logger.warn(sprintf("Skip enriching entity with OGC WCS download links for layer = '%s", layername))
+            }
           }
         }
-        
       }
     },
     
@@ -1251,50 +1291,60 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'automatically add keyword from dictionary to 'theme' category
     #'@param config geoflow config object
     enrichWithSubjects = function(config){
+      
       if(length(self$subjects)==0){
-        #List all columns of data features
-        columns <- colnames(self$data$features)
-        for(featureAttrName in columns){
-          #Check if correspond column exist in dictionary
-          fat_attr <- NULL
-          fto <- self$data$featureTypeObj
-          if(!is.null(fto)) fat_attr <- fto$getMemberById(featureAttrName)
-          if(!is.null(fat_attr)){
-            #Check if register is link
-            registerId <- fat_attr$registerId
-            
-            if(!is.null(registerId)) if(!is.na(registerId)){
-              registers <- config$registers
-              if(length(registers)>0) {
-                registers <- registers[sapply(registers, function(x){x$id == registerId})]
-                fat_attr_register <- registers[[1]]
-                
-                #Check if values of column are in register
-                dataAttrValues <- unique(self$data$features[featureAttrName])
-                featureAttrValues <- switch(class(self$data$features)[1],
-                                            "sf" = self$data$features[,featureAttrName][[1]],
-                                            "data.frame" = self$data$features[,featureAttrName]
-                )
-                featureAttrValues <- unique(featureAttrValues)
-                matchAttrValues <- subset(fat_attr_register$data, code %in% featureAttrValues)
-                
-                if (nrow(matchAttrValues)>0){
-                  #Extract label[code] of this values
-                  for(i in 1:nrow(matchAttrValues)){
-                    matchAttrValues$keyword[i]<-paste0("\'",matchAttrValues$label[i],"[",matchAttrValues$code[i],"]\'",if(!is.na(matchAttrValues$uri[i])){paste0("@",matchAttrValues$uri[i])}else{""})
-                  }
-                  keywords<-unique(matchAttrValues$keyword)
+        
+        data_objects <- self$data
+        if(is(data_objects, "geoflow_data")) data_objects <- list(self$data)
+        
+        if(length(data_objects)>0) for(k in 1:length(data_objects)){
+          
+          data_object = data_objects[[k]]
+        
+          #List all columns of data features
+          columns <- colnames(data_object$features)
+          for(featureAttrName in columns){
+            #Check if correspond column exist in dictionary
+            fat_attr <- NULL
+            fto <- data_object$featureTypeObj
+            if(!is.null(fto)) fat_attr <- fto$getMemberById(featureAttrName)
+            if(!is.null(fat_attr)){
+              #Check if register is link
+              registerId <- fat_attr$registerId
+              
+              if(!is.null(registerId)) if(!is.na(registerId)){
+                registers <- config$registers
+                if(length(registers)>0) {
+                  registers <- registers[sapply(registers, function(x){x$id == registerId})]
+                  fat_attr_register <- registers[[1]]
                   
-                  defSource <- fat_attr$defSource
-                  if(is.na(defSource)){desc_name<-paste0("[",fat_attr$name,"]")}else{
-                    desc_name<-paste0("[",defSource[1],"]")
-                    if(!is.null(attr(defSource,"description"))) desc_name<-paste0("[",attr(defSource,"description"),"]")
-                    if(!is.null(attr(defSource,"uri"))) desc_name<-paste0(desc_name,"@",attr(defSource,"uri"))
-                  }
-                  subject <- paste0("theme",desc_name,":",paste0(keywords,collapse=","))
-                  subject_obj <- geoflow_subject$new(str = subject)
-                  self$addSubject(subject_obj)  
+                  #Check if values of column are in register
+                  dataAttrValues <- unique(data_object$features[featureAttrName])
+                  featureAttrValues <- switch(class(data_object$features)[1],
+                                              "sf" = data_object$features[,featureAttrName][[1]],
+                                              "data.frame" = data_object$features[,featureAttrName]
+                  )
+                  featureAttrValues <- unique(featureAttrValues)
+                  matchAttrValues <- subset(fat_attr_register$data, code %in% featureAttrValues)
                   
+                  if (nrow(matchAttrValues)>0){
+                    #Extract label[code] of this values
+                    for(i in 1:nrow(matchAttrValues)){
+                      matchAttrValues$keyword[i]<-paste0("\'",matchAttrValues$label[i],"[",matchAttrValues$code[i],"]\'",if(!is.na(matchAttrValues$uri[i])){paste0("@",matchAttrValues$uri[i])}else{""})
+                    }
+                    keywords<-unique(matchAttrValues$keyword)
+                    
+                    defSource <- fat_attr$defSource
+                    if(is.na(defSource)){desc_name<-paste0("[",fat_attr$name,"]")}else{
+                      desc_name<-paste0("[",defSource[1],"]")
+                      if(!is.null(attr(defSource,"description"))) desc_name<-paste0("[",attr(defSource,"description"),"]")
+                      if(!is.null(attr(defSource,"uri"))) desc_name<-paste0(desc_name,"@",attr(defSource,"uri"))
+                    }
+                    subject <- paste0("theme",desc_name,":",paste0(keywords,collapse=","))
+                    subject_obj <- geoflow_subject$new(str = subject)
+                    self$addSubject(subject_obj)  
+                    
+                  }
                 }
               }
             }
@@ -1309,19 +1359,27 @@ geoflow_entity <- R6Class("geoflow_entity",
       
       formats<-sapply(self$formats, function(x) x$key)
       
-      if(!"resource" %in% formats)if(!is.null(self$data$sourceType)){
-        if(!self$data$sourceType%in%c("dbtable","dbquery","dbview")){
-          format <- paste0("resource:",mime::guess_type(paste0(".",self$data$sourceType)))
-          format_obj <- geoflow_format$new(str = format)
-          self$addFormat(format_obj)  
-        }
-      }
+      data_objects <- self$data
+      if(is(data_objects, "geoflow_data")) data_objects <- list(self$data)
       
-      if(!"distribution" %in% formats)if(!is.null(self$data$uploadType)){
-        if(!self$data$uploadType%in%c("dbtable","dbquery","dbview")){
-          format <- paste0("distribution:",mime::guess_type(paste0(".",self$data$uploadType)))
-          format_obj <- geoflow_format$new(str = format)
-          self$addFormat(format_obj)  
+      if(length(data_objects)>0) for(k in 1:length(data_objects)){
+        
+        data_object = data_objects[[k]]
+      
+        if(!"resource" %in% formats)if(!is.null(data_object$sourceType)){
+          if(!data_object$sourceType%in%c("dbtable","dbquery","dbview")){
+            format <- paste0("resource:",mime::guess_type(paste0(".",data_object$sourceType)))
+            format_obj <- geoflow_format$new(str = format)
+            self$addFormat(format_obj)  
+          }
+        }
+        
+        if(!"distribution" %in% formats)if(!is.null(data_object$uploadType)){
+          if(!data_object$uploadType%in%c("dbtable","dbquery","dbview")){
+            format <- paste0("distribution:",mime::guess_type(paste0(".",data_object$uploadType)))
+            format_obj <- geoflow_format$new(str = format)
+            self$addFormat(format_obj)  
+          }
         }
       }
         
@@ -1601,6 +1659,10 @@ geoflow_entity <- R6Class("geoflow_entity",
           out_sources <- list()
           
           outdata <- ""
+          
+          if(!is.null(self$data$dir)){
+            outdata <- paste0("dir:", self$data$dir, line_separator)
+          }
           
           if(!is.null(self$data$access)){
             outdata <- paste0("access:", self$data$access, line_separator)
