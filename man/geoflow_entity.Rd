@@ -86,10 +86,12 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_entity-setTemporalExtent}{\code{geoflow_entity$setTemporalExtent()}}
 \item \href{#method-geoflow_entity-setProvenance}{\code{geoflow_entity$setProvenance()}}
 \item \href{#method-geoflow_entity-setData}{\code{geoflow_entity$setData()}}
+\item \href{#method-geoflow_entity-addData}{\code{geoflow_entity$addData()}}
 \item \href{#method-geoflow_entity-getEntityJobDirname}{\code{geoflow_entity$getEntityJobDirname()}}
 \item \href{#method-geoflow_entity-getEntityJobDirPath}{\code{geoflow_entity$getEntityJobDirPath()}}
 \item \href{#method-geoflow_entity-prepareEntityJobDir}{\code{geoflow_entity$prepareEntityJobDir()}}
 \item \href{#method-geoflow_entity-copyDataToJobDir}{\code{geoflow_entity$copyDataToJobDir()}}
+\item \href{#method-geoflow_entity-enrichWithData}{\code{geoflow_entity$enrichWithData()}}
 \item \href{#method-geoflow_entity-enrichWithFeatures}{\code{geoflow_entity$enrichWithFeatures()}}
 \item \href{#method-geoflow_entity-enrichWithCoverages}{\code{geoflow_entity$enrichWithCoverages()}}
 \item \href{#method-geoflow_entity-prepareFeaturesToUpload}{\code{geoflow_entity$prepareFeaturesToUpload()}}
@@ -478,6 +480,23 @@ Sets entity data object
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-addData"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-addData}{}}}
+\subsection{Method \code{addData()}}{
+Adds entity data object
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addData(data)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{data}}{object of class \link{geoflow_data}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_entity-getEntityJobDirname"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_entity-getEntityJobDirname}{}}}
 \subsection{Method \code{getEntityJobDirname()}}{
@@ -538,10 +557,32 @@ Function called internally by \pkg{geoflow} that creates the entity directory an
 \if{html}{\out{<a id="method-geoflow_entity-copyDataToJobDir"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_entity-copyDataToJobDir}{}}}
 \subsection{Method \code{copyDataToJobDir()}}{
-This function will look at data object associated to the entity (previously set with \code{setData}),
-   and will try to (download)/copy the data source to the geoflow job directory.
+This function will look at data object(s) associated to the entity (previously set with 
+\code{setData} or added with \code{addData}), and will try to (download)/copy the data source to the 
+geoflow job directory.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$copyDataToJobDir(config, jobdir = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+
+\item{\code{jobdir}}{relative path of the job directory}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-enrichWithData"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-enrichWithData}{}}}
+\subsection{Method \code{enrichWithData()}}{
+This function will enrich the entity data objects with data features (vector data) or coverages (grid data). This method will overwrite 
+spatial metadata such as the bounding box (unless global option \code{skipDynamicBbox} is enabled). Note that the user spatial extent is not overwriten 
+since it may contain finer geometries than a bounding box.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithData(config, jobdir = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -558,10 +599,9 @@ This function will look at data object associated to the entity (previously set 
 \if{html}{\out{<a id="method-geoflow_entity-enrichWithFeatures"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_entity-enrichWithFeatures}{}}}
 \subsection{Method \code{enrichWithFeatures()}}{
-This function will enrich the entity with data features (vector data), trying to read the spatial data 
-(eg shapefile, sql query - if a database input software is declared in the geoflow config). This method will overwrite 
-spatial metadata such as the bounding box. Note that the user spatial extent is not overwriten since it may contain finer 
-geometries than a bounding box.
+This function will enrich the entity data objects with data features (vector data). This method will overwrite 
+spatial metadata such as the bounding box (unless global option \code{skipDynamicBbox} is enabled). Note that the user spatial extent is not overwriten 
+since it may contain finer geometries than a bounding box.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithFeatures(config, jobdir = NULL)}\if{html}{\out{</div>}}
 }
@@ -580,9 +620,9 @@ geometries than a bounding box.
 \if{html}{\out{<a id="method-geoflow_entity-enrichWithCoverages"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_entity-enrichWithCoverages}{}}}
 \subsection{Method \code{enrichWithCoverages()}}{
-This function will enrich the entity with data coverages (grid data), trying to read the spatial data
-(eg. geotiff). This method will overwrite spatial metadata such as the bounding box. Note that the user spatial extent
-is not overwriten since it may contain finer geometries than a bounding box.
+This function will enrich the entity data objects with data coverages (grid data). This method will overwrite 
+spatial metadata such as the bounding box (unless global option \code{skipDynamicBbox} is enabled). Note that the user spatial extent is not overwriten 
+since it may contain finer geometries than a bounding box.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithCoverages(config, jobdir = NULL)}\if{html}{\out{</div>}}
 }
@@ -620,9 +660,15 @@ on files formats(eg. csv,shp,gpkg) and 2) process automatically to conversion fr
 \if{latex}{\out{\hypertarget{method-geoflow_entity-enrichWithRelations}{}}}
 \subsection{Method \code{enrichWithRelations()}}{
 This function that will enrich the entity with relations. At now this is essentially related to adding 
-   relations if a Geoserver (geosapi) publishing action is enabled in which case this function will add 1) 
-   a thumbnail link built from OGC WMS service, 2) a WMS protocol relation, 3) WFS data protocols in common 
-   formats (GML, GeoJSON, ESRI Shapefile).
+   relations if a Geoserver (geosapi) publishing action is enabled. Relations added will depend on the 
+   \code{enrich_with_relation_*} options set in the geosapi action, ie. 
+   1) add WMS auto-generated thumbnail (if option \code{enrich_with_relation_wms_thumbnail} is \code{TRUE})
+   2) add WMS base URL relation (if option \code{enrich_with_relation_wms} is \code{TRUE})
+   3) for vector spatial representation type:
+     - add WFS base URL relation (if option \code{enrich_with_relation_wfs} is \code{TRUE})
+     - add WFS auto-generated links as convenience for data download links (if option \code{enrich_with_relation_wfs_download_links} is \code{TRUE})
+   4) for grid spatial representation type:
+     - add WCS base URL relation (if option \code{enrich_with_relation_wcs} is \code{TRUE})
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithRelations(config)}\if{html}{\out{</div>}}
 }

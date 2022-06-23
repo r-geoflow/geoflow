@@ -276,7 +276,8 @@ handle_entities_df <- function(config, source){
     data <- sanitize_str(source_entity[,"Data"])
     if(!is.na(data)){
       if(data != ""){
-        data_obj <- geoflow_data$new(str = data)
+        
+        data_obj <- geoflow_data$new(str = data, config = config)
         data_obj$checkSoftwareProperties(config = config)
         entity$setData(data_obj)
         

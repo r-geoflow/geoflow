@@ -90,6 +90,9 @@ initWorkflow <- function(file, dir = "."){
       config$logger.info(sprintf("Setting option 'line_separator' to '%s'", config$profile$options$line_separator))
       set_line_separator(config$profile$options$line_separator)
     }
+    for(option_name in names(config$profile$options)){
+      profile$setOption(option_name, config$profile$options[[option_name]])
+    }
     
     config$profile <- profile
   }
