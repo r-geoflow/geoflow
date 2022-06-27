@@ -153,7 +153,8 @@ geoflow_data <- R6Class("geoflow_data",
         
         #sourceSql
         if(!is.null(data_props$sourceSql)){
-          self$setSourceSql(data_props$sourceSql$values[[1]])
+          sourceSql <- paste(data_props$sourceSql$values, collapse=",")
+          self$setSourceSql(sourceSql)
         }
         
         #sourceZip
