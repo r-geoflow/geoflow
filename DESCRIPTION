@@ -1,6 +1,6 @@
 Package: geoflow
 Version: 1.0.0
-Date: 2022-05-02
+Date: 2022-06-27
 Title: Tools to Orchestrate Geospatial (Meta)Data Management Workflows and Manage FAIR Services
 Description: An engine to facilitate the orchestration and execution of metadata-driven data management workflows, in compliance with FAIR 
   (Findable, Accessible, Interoperable and Reusable) data management principles. By means of a pivot metadata model, relying on the DublinCore standard (<https://dublincore.org/>), 
@@ -66,6 +66,8 @@ Suggests:
   atom4R,
   d4storagehub4R,
   rmarkdown
+Remotes:
+  eblondel/geonapi
 License: MIT + file LICENSE
 URL: https://github.com/eblondel/geoflow
 BugReports: https://github.com/eblondel/geoflow

@@ -4,6 +4,10 @@ function(action, entity, config){
     stop("The 'geonapi-publish-iso-19139' action requires the 'geonapi' package")
   }
   
+  #thumbnail upload
+  publish_thumbnails <- action$getOption("publish_thumbnails")
+  
+  #INSPIRE metadata validation
   geometa_inspire <- action$getOption("geometa_inspire")
   INSPIRE_VALIDATOR <- NULL
   if(geometa_inspire){
@@ -112,7 +116,43 @@ function(action, entity, config){
   if(length(actions)>0) geometa_iso19115_action <- actions[[1]]
   if(!is.null(geometa_iso19115_action)){
     metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_ISO-19115.xml"))
-    if(file.exists(metaFile)) doPublish(metaFile, geometa_inspire)
+    if(file.exists(metaFile)){
+      #publication
+      doPublish(metaFile, geometa_inspire)
+      
+      #upload thumbnails?
+      if(GN$getClassName() == "GNOpenAPIManager") if(publish_thumbnails){
+        #filter on entity thumbnails that are local
+        entity_thumbnails <- entity$relations[sapply(entity$relations, function(rel){
+          rel$key == "thumbnail" && regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", rel$link) < 0
+        })]
+        #manage absolute paths
+        if(length(entity_thumbnails)>0) entity_thumbnails <- lapply(entity_thumbnails, function(rel){
+          if(!is_absolute_path(rel$link)) rel$link <- file.path(config$session_wd, rel$link)
+          return(rel)
+        })
+        if(length(entity_thumbnails)>0) for(entity_thumbnail in entity_thumbnails){
+          uploaded <- GN$uploadAttachment(mdId, entity_thumbnail$link)
+          if(!is.null(uploaded)){
+            desc <- if(!is.null(entity_thumbnail$description)) entity_thumbnail$description else ""
+            published <- GN$publishThumbnail(mdId, uploaded$url, desc)
+            if(published){
+              config$logger.info("Successfully published thumbnail '%s' to metadata '%s'",
+                                 entityt_thumbnail$link, mdId)
+            }else{
+              config$logger.error(sprintf("Error while publishing thumbnail file '%s' to metadata '%s'", 
+                                          entity_thumbnail$link, mdId))
+            }
+          }else{
+            config$logger.error(sprintf("Error while attaching thumbnail file '%s' to metadata '%s'", 
+                                        entity_thumbnail$link, mdId))
+          }
+        }
+        
+        
+      }
+      
+    }
   }
   #geometa ISO 19110
   geometa_iso19110_action <- NULL
