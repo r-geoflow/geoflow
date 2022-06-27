@@ -317,7 +317,9 @@ function(action, entity, config){
              }
              
              #virtual table?
-             if(data_object$uploadType == "dbquery"){
+             uploadType <- data_object$uploadType
+             if(!is.null(data_object$sql)) uploadType = "dbquery"
+             if(uploadType == "dbquery"){
                vt <- GSVirtualTable$new()
                vt$setName(layername)
                vt$setSql(data_object$sql)
