@@ -137,8 +137,8 @@ function(action, entity, config){
             desc <- if(!is.null(entity_thumbnail$description)) entity_thumbnail$description else ""
             published <- GN$publishThumbnail(mdId, uploaded$url, desc)
             if(published){
-              config$logger.info("Successfully published thumbnail '%s' to metadata '%s'",
-                                 entityt_thumbnail$link, mdId)
+              config$logger.info(sprintf("Successfully published thumbnail '%s' to metadata '%s'",
+                                 entityt_thumbnail$link, mdId))
             }else{
               config$logger.error(sprintf("Error while publishing thumbnail file '%s' to metadata '%s'", 
                                           entity_thumbnail$link, mdId))
