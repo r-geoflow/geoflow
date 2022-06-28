@@ -408,68 +408,66 @@ geoflow_entity <- R6Class("geoflow_entity",
           if(datasource_file_needed && is.null(datasource_uri)){
             warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
             config$logger.warn(warnMsg)
-            setwd(wd)
-            return(FALSE)
-          }
-          
-          config$logger.info(sprintf("Copying data source %s '%s' (%s) to entity job data directory '%s'",
-                                     i, datasource, datasource_uri, getwd()))
-          
-          #basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
-          basefilename <- datasource_name
-        
-          #here either we only pickup zipped files and re-distribute them in job data directory
-          #or we write it from data_object$features if the latter is not NULL and if writer available (for now only shp)
-          #The latter allows to push features filtered by cqlfilter (matching an eventual geoserver layer) to Zenodo
-          #instead of the complete dataset
-      
-          #copy data
-          isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_uri) > 0
-          if(isSourceUrl || accessor$id != "default"){
-            #case where data is remote and there was no data enrichment in initWorkflow
-            config$logger.info(sprintf("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id))
-            access_software <- NULL
-            if(!is.na(accessor$software_type)){
-              config$logger.info(sprintf("Accessor '%s' seems to require a software. Try to locate 'input' software", accessor$id))
-              accessor_software <- config$software$input[[accessor$software_type]]
-              if(is.null(accessor_software)){
-                config$logger.info(sprintf("Accessor '%s' doesn't seem to have the required 'input' software. Try to locate 'output' software", accessor$id))
-                accessor_software <- config$software$output[[accessor$software_type]]
-              }
-            }
-            accessor$download(
-              resource = datasource_uri,
-              file = datasource, 
-              path = file.path(getwd(), paste(basefilename, datasource_ext, sep=".")),
-              software = accessor_software
-            )
           }else{
-            if(!is.null(datasource_uri)){
-              if(!is_absolute_path(datasource_uri)) datasource_uri <- file.path(config$session_wd,datasource_uri)
-            }
-            config$logger.info("Copying data to Job data directory from local file(s)")
-            data.files <- list.files(path = dirname(datasource_uri), pattern = datasource_name)
-            if(length(data.files)>0){
-              isZipped <- any(sapply(data.files, endsWith, ".zip"))
-              if(!isZipped){
-                config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
-                for(data.file in data.files){
-                  file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
-                }
-                config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
-                data.files <- list.files(pattern = basefilename)
-                if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
-              }else{
-                config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
-                data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
-                if(length(data.files)>0) for(data.file in data.files){
-                  file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
+            config$logger.info(sprintf("Copying data source %s '%s' (%s) to entity job data directory '%s'",
+                                       i, datasource, datasource_uri, getwd()))
+            
+            #basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
+            basefilename <- datasource_name
+          
+            #here either we only pickup zipped files and re-distribute them in job data directory
+            #or we write it from data_object$features if the latter is not NULL and if writer available (for now only shp)
+            #The latter allows to push features filtered by cqlfilter (matching an eventual geoserver layer) to Zenodo
+            #instead of the complete dataset
+        
+            #copy data
+            isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_uri) > 0
+            if(isSourceUrl || accessor$id != "default"){
+              #case where data is remote and there was no data enrichment in initWorkflow
+              config$logger.info(sprintf("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id))
+              access_software <- NULL
+              if(!is.na(accessor$software_type)){
+                config$logger.info(sprintf("Accessor '%s' seems to require a software. Try to locate 'input' software", accessor$id))
+                accessor_software <- config$software$input[[accessor$software_type]]
+                if(is.null(accessor_software)){
+                  config$logger.info(sprintf("Accessor '%s' doesn't seem to have the required 'input' software. Try to locate 'output' software", accessor$id))
+                  accessor_software <- config$software$output[[accessor$software_type]]
                 }
               }
+              accessor$download(
+                resource = datasource_uri,
+                file = datasource, 
+                path = file.path(getwd(), paste(basefilename, datasource_ext, sep=".")),
+                software = accessor_software
+              )
             }else{
-              errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", datasource_uri, datasource_name)
-              config$logger.error(errMsg)
-              stop(errMsg)
+              if(!is.null(datasource_uri)){
+                if(!is_absolute_path(datasource_uri)) datasource_uri <- file.path(config$session_wd,datasource_uri)
+              }
+              config$logger.info("Copying data to Job data directory from local file(s)")
+              data.files <- list.files(path = dirname(datasource_uri), pattern = basename(datasource_uri))
+              if(length(data.files)>0){
+                isZipped <- any(sapply(data.files, endsWith, ".zip"))
+                if(!isZipped){
+                  config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
+                  for(data.file in data.files){
+                    file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
+                  }
+                  config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
+                  data.files <- list.files(pattern = basefilename)
+                  if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
+                }else{
+                  config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
+                  data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
+                  if(length(data.files)>0) for(data.file in data.files){
+                    file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
+                  }
+                }
+              }else{
+                errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", datasource_uri, datasource_name)
+                config$logger.error(errMsg)
+                stop(errMsg)
+              }
             }
           }
         
@@ -731,7 +729,8 @@ geoflow_entity <- R6Class("geoflow_entity",
                if(file.exists(trgGpkg)){
                  #read CSV
                  config$logger.info("Read GPKG file from geoflow temporary data directory")
-                 
+                 print(trgGpkg)
+                 print(data_object$sourceSql)
                  if(!is.null(data_object$sourceSql)){
                    sf.data <- sf::st_read(trgGpkg, query = data_object$sourceSql)
                  }else{
