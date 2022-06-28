@@ -246,6 +246,7 @@ function(action, entity, config){
     
     #featuretype/coverage  +layer publication
     #--------------------------------------------------------------------------------------------------
+    if(!is.null(data_object$sql)) data_object$uploadType <- "dbquery"
     
     #variables
     epsgCode <- sprintf("EPSG:%s", entity$srid)
@@ -317,9 +318,7 @@ function(action, entity, config){
              }
              
              #virtual table?
-             uploadType <- data_object$uploadType
-             if(!is.null(data_object$sql)) uploadType = "dbquery"
-             if(uploadType == "dbquery"){
+             if(data_object$uploadType == "dbquery"){
                vt <- GSVirtualTable$new()
                vt$setName(layername)
                vt$setSql(data_object$sql)
