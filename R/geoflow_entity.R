@@ -644,11 +644,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                    }
                      
                  }else{
-                   warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
+                   warnMsg <- sprintf("Cannot read Shapefile data source '%s'. Dynamic metadata computation aborted!", trgShp)
                    config$logger.warn(warnMsg)
                  }
                }else{
-                 warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
+                 warnMsg <- sprintf("No readable Shapefile source '%s'. Dynamic metadata computation aborted!", datasource_file)
                  config$logger.warn(warnMsg)
                }
              },
@@ -713,11 +713,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                    }
                    
                  }else{
-                   warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgCsv)
+                   warnMsg <- sprintf("Cannot read CSV data source '%s'. Dynamic metadata computation aborted!", trgCsv)
                    config$logger.warn(warnMsg)
                  }
                }else{
-                 warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
+                 warnMsg <- sprintf("No readable CSV source '%s'. Dynamic metadata computation aborted!", datasource_file)
                  config$logger.warn(warnMsg)
                }
                
@@ -727,10 +727,8 @@ geoflow_entity <- R6Class("geoflow_entity",
              "gpkg" = {
                trgGpkg <- file.path(getwd(), paste0(basefilename,".gpkg"))
                if(file.exists(trgGpkg)){
-                 #read CSV
+                 #read GeoPackage
                  config$logger.info("Read GPKG file from geoflow temporary data directory")
-                 print(trgGpkg)
-                 print(data_object$sourceSql)
                  if(!is.null(data_object$sourceSql)){
                    sf.data <- sf::st_read(trgGpkg, query = data_object$sourceSql)
                  }else{
@@ -768,11 +766,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                    }
                    
                  }else{
-                   warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgShp)
+                   warnMsg <- sprintf("Cannot read GeoPackage data source '%s'. Dynamic metadata computation aborted!", trgGpkg)
                    config$logger.warn(warnMsg)
                  }
                }else{
-                 warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
+                 warnMsg <- sprintf("No readable GeoPackage source '%s'. Dynamic metadata computation aborted!", datasource_file)
                  config$logger.warn(warnMsg)
                }
                
@@ -988,11 +986,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                    }
                    
                  }else{
-                   warnMsg <- sprintf("Cannot read data source '%s'. Dynamic metadata computation aborted!", trgGeotiff)
+                   warnMsg <- sprintf("Cannot read GeoTIFF data source '%s'. Dynamic metadata computation aborted!", trgGeotiff)
                    config$logger.warn(warnMsg)
                  }
                }else{
-                 warnMsg <- sprintf("No readable source '%s'. Dynamic metadata computation aborted!", datasource_file)
+                 warnMsg <- sprintf("No readable GeoTIFF source '%s'. Dynamic metadata computation aborted!", datasource_file)
                  config$logger.warn(warnMsg)
                }
               },
@@ -1107,7 +1105,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               data_object$uploadSource<-list(paste0(datasource_name,".",uploadSourceExt))
               
             }else{
-              config$logger.info("sourceType and uploadType are identical, no conversion require")		
+              config$logger.info("sourceType and uploadType are identical, no conversion required")		
             }
           }
           return(data_object)
