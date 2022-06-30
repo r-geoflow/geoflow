@@ -12,6 +12,7 @@
 	  "options": {
 	    "line_separator": "_\n",
 	    "enrichDataStrategy": "union"
+	  }
     }
   },
   "metadata": {
