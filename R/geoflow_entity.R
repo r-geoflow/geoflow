@@ -462,6 +462,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                   if(length(data.files)>0) for(data.file in data.files){
                     file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
                   }
+                  if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
                 }
               }else{
                 errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", datasource_uri, datasource_name)
