@@ -832,6 +832,7 @@ function(action, entity, config){
     cr_inspire2$setPass(TRUE)
     dc_inspire2$addResult(cr_inspire2)
     dq2$addReport(dc_inspire2)
+    md$addDataQualityInfo(dq2)
   }
   
   #content information --> Feature Catalogue description (if data handling)
