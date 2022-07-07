@@ -110,7 +110,8 @@ handle_dictionary_gsheet <- function(config, source, handle = TRUE){
 handle_dictionary_csv <- function(config, source, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
-  source <- read.csv(source)
+  #source <- read.csv(source)
+  source <- as.data.frame(readr::read_csv(source))
   if(!handle) return(source)
   
   #apply generic handler
