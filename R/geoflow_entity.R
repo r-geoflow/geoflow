@@ -455,20 +455,14 @@ geoflow_entity <- R6Class("geoflow_entity",
                   }
                   config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
                   data.files <- list.files(pattern = basefilename)
-                  if(length(data.files)>0) zip::zipr(
-                    zipfile = file.path(getwd(), paste0(basefilename,".zip")), 
-                    files = file.path(dirname(datasource_uri), data.files)
-                  )
+                  if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
                 }else{
                   config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
                   data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
                   if(length(data.files)>0) for(data.file in data.files){
                     file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
                   }
-                  if(length(data.files)>0) zip::zipr(
-                    zipfile = file.path(getwd(), paste0(basefilename,".zip")), 
-                    files = file.path(dirname(datasource_uri), data.files)
-                  )
+                  if(length(data.files)>0) zip::zipr(zipfile = file.path(getwd(), paste0(basefilename,".zip")), files = data.files)
                 }
               }else{
                 errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", datasource_uri, datasource_name)
