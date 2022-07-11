@@ -80,7 +80,7 @@ function(action, entity, config){
                category <- available_categories[available_categories$name==category,]$id
              }
              GN$insertRecord(geometa = md, group = group, category = category,
-                             uuidProcessing = "OVERWRITE", geometa_inspire = inspire)
+                             uuidProcessing = "OVERWRITE", geometa_inspire = inspire, geometa_inspireValidator = INSPIRE_VALIDATOR)
            },
            "GNLegacyAPIManager" = {
              if(category_match_col=="id"){
