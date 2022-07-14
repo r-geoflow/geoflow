@@ -58,12 +58,13 @@ workflows - List of actions and softwares
 
 ### 1.1.4 List of geonapi-publish-iso-19139 options<a name= geonapi-publish-iso-19139 />
 
-| name            | definition                                                                       | default               |
-|:----------------|:---------------------------------------------------------------------------------|:----------------------|
-| geometa_inspire | Validates ISO 19139 metadata with INSPIRE reference validator before publication | FALSE                 |
-| privileges      | Geonetwork privileges to set for the metadata to be published                    | view,dynamic,featured |
-| group           | Geonetwork user group to which the metadata should be associated                 | 2                     |
-| category        | Category of metadata resources to which the metadata record should be associated | datasets              |
+| name               | definition                                                                                 | default               |
+|:-------------------|:-------------------------------------------------------------------------------------------|:----------------------|
+| geometa_inspire    | Validates ISO 19139 metadata with INSPIRE reference validator before publication           | FALSE                 |
+| privileges         | Geonetwork privileges to set for the metadata to be published                              | view,dynamic,featured |
+| group              | Geonetwork user group to which the metadata should be associated                           | 2                     |
+| category           | Category of metadata resources to which the metadata record should be associated           | datasets              |
+| publish_thumbnails | Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews | TRUE                  |
 
 ### 1.1.5 List of geosapi-publish-ogc-services options<a name= geosapi-publish-ogc-services />
 
@@ -156,25 +157,28 @@ workflows - List of actions and softwares
 
 ## 2.1 List of software supported by geoflow
 
-| software_type                                       | definition                                                                | packages              |
-|:----------------------------------------------------|:--------------------------------------------------------------------------|:----------------------|
-| [**dbi**](#dbi)<br>                                 | Data Base Interface powered by ‘DBI’ package                              | DBI,RSQLite,RPostgres |
-| [**googledrive**](#googledrive)<br>                 | Google Drive access powered by ‘googledrive’ package                      | googledrive           |
-| [**inspire**](#inspire)<br>                         | INSPIRE Metadata validator, powered by ‘geometa’ package                  | geometa               |
-| [**csw**](#csw)<br>                                 | OGC Catalogue Service for the Web (CSW) client powered by ‘ows4R’ package | ows4R                 |
-| [**wfs**](#wfs)<br>                                 | OGC Web Feature Service (WFS) client powered by ‘ows4R’ package           | ows4R                 |
-| [**wps**](#wps)<br>                                 | OGC Web Processing Service (WPS) client powered by ‘ows4R’ package        | ows4R                 |
-| [**geonetwork**](#geonetwork)<br>                   | GeoNetwork API Client, powered by ‘geonapi’ package                       | geonapi               |
-| [**geoserver**](#geoserver)<br>                     | GeoServer REST API Client, powered by ‘geosapi’ package                   | geosapi               |
-| [**zenodo**](#zenodo)<br>                           | Zenodo client powered by ‘zen4R’ package                                  | zen4R                 |
-| [**sword_for_dataverse**](#sword_for_dataverse)<br> | Dataverse SWORD API Client powered by ‘atom4R’ package                    | atom4R                |
-| [**dataone**](#dataone)<br>                         | DataONe API Client powered by ‘dataone’ package                           | dataone               |
-| [**d4storagehub**](#d4storagehub)<br>               | D4science storage hub API Client powered by ‘d4storagehub4R’ package      | d4storagehub4R        |
-| [**gbif**](#gbif)<br>                               | Gbif API Client powered by ‘rgbif’ package                                | rgbif                 |
-| [**thredds**](#thredds)<br>                         | Thredds data server API Client powered by ‘thredds’ package               | thredds               |
-| [**openapi**](#openapi)<br>                         | OpenAPI client powered by ‘rapiclient’ package                            | rapiclient            |
+| software_type                                            | definition                                                                | packages              |
+|:---------------------------------------------------------|:--------------------------------------------------------------------------|:----------------------|
+| [**dbi**](#211-dbi)<br>                                  | Data Base Interface powered by ‘DBI’ package                              | DBI,RSQLite,RPostgres |
+| [**googledrive**](#212-googledrive)<br>                  | Google Drive access powered by ‘googledrive’ package                      | googledrive           |
+| [**inspire**](#213-inspire)<br>                          | INSPIRE Metadata validator, powered by ‘geometa’ package                  | geometa               |
+| [**csw**](#214-csw)<br>                                  | OGC Catalogue Service for the Web (CSW) client powered by ‘ows4R’ package | ows4R                 |
+| [**wfs**](#215-wfs)<br>                                  | OGC Web Feature Service (WFS) client powered by ‘ows4R’ package           | ows4R                 |
+| [**wps**](#216-wps)<br>                                  | OGC Web Processing Service (WPS) client powered by ‘ows4R’ package        | ows4R                 |
+| [**geonetwork**](#217-geonetwork)<br>                    | GeoNetwork API Client, powered by ‘geonapi’ package                       | geonapi               |
+| [**geoserver**](#218-geoserver)<br>                      | GeoServer REST API Client, powered by ‘geosapi’ package                   | geosapi               |
+| [**zenodo**](#219-zenodo)<br>                            | Zenodo client powered by ‘zen4R’ package                                  | zen4R                 |
+| [**sword_for_dataverse**](#2110-sword_for_dataverse)<br> | Dataverse SWORD API Client powered by ‘atom4R’ package                    | atom4R                |
+| [**dataone**](#2111-dataone)<br>                         | DataONe API Client powered by ‘dataone’ package                           | dataone               |
+| [**d4storagehub**](#2112-d4storagehub)<br>               | D4science storage hub API Client powered by ‘d4storagehub4R’ package      | d4storagehub4R        |
+| [**gbif**](#2113-gbif)<br>                               | Gbif API Client powered by ‘rgbif’ package                                | rgbif                 |
+| [**thredds**](#2114-thredds)<br>                         | Thredds data server API Client powered by ‘thredds’ package               | thredds               |
+| [**openapi**](#2115-openapi)<br>                         | OpenAPI client powered by ‘rapiclient’ package                            | rapiclient            |
+| [**ocs**](#2116-ocs)<br>                                 | Open Collaboration Services (OCS) client powered by ‘ocs4R’ package       | ocs4R                 |
 
-### 2.1.1 List of dbi parameters<a name= dbi />
+### 2.1.1 dbi
+
+#### 2.1.1.1 List of dbi parameters<a name= dbi />
 
 | name     | label         | definition      |
 |:---------|:--------------|:----------------|
@@ -185,7 +189,7 @@ workflows - List of actions and softwares
 | port     | Port number   | Port number     |
 | dbname   | Database name | Database name   |
 
-### 2.1.2 List of dbi properties
+#### 2.1.1.2 List of dbi properties
 
 | name        | label                              | definition                                                                                                                                                                                                                                                                                                        |
 |:------------|:-----------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -194,7 +198,9 @@ workflows - List of actions and softwares
 | onend_sql   | SQL ‘on-end’ script                | An SQL script to be run on workflow end                                                                                                                                                                                                                                                                           |
 | onend_r     | R ‘on-end’ SQL generating script   | R instructions to generate a SQL. It should be made of 2 properties ‘script’ (name of the R script) that should include a function standardized with parameter config (being the DBI software config) and will output a character representing the SQL. The name of the function is to specify in ‘fun’ property. |
 
-### 2.1.3 List of googledrive parameters<a name= googledrive />
+### 2.1.2 googledrive
+
+#### 2.1.2.1 List of googledrive parameters<a name= googledrive />
 
 | name  | label      | definition                                                                                                                                                                                                     |
 |:------|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -202,22 +208,26 @@ workflows - List of actions and softwares
 | path  | Path       | An optional path within the Google drive repository. Default will be the root                                                                                                                                  |
 | token | User token | The user authentication token. To get your token in R: gargle::token_fetch()![credentials](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;credentials "credentials")access_token |
 
-### 2.1.4 List of googledrive properties
+#### 2.1.2.2 List of googledrive properties
 
 *No properties available for this software*
 
-### 2.1.5 List of inspire parameters<a name= inspire />
+### 2.1.3 inspire
+
+#### 2.1.3.1 List of inspire parameters<a name= inspire />
 
 | name   | label                          | definition                                                                                                   |
 |:-------|:-------------------------------|:-------------------------------------------------------------------------------------------------------------|
 | url    | INSPIRE Metadata validator URL | URL of the INSPIRE metadata validator instance. By default use ‘<https://inspire.ec.europa.eu/validator/v2>’ |
 | apiKey | API Key                        | API user key to authenticate to INSPIRE API gateway                                                          |
 
-### 2.1.6 List of inspire properties
+#### 2.1.3.2 List of inspire properties
 
 *No properties available for this software*
 
-### 2.1.7 List of csw parameters<a name= csw />
+### 2.1.4 csw
+
+#### 2.1.4.1 List of csw parameters<a name= csw />
 
 | name           | label           | definition                                             |
 |:---------------|:----------------|:-------------------------------------------------------|
@@ -227,11 +237,13 @@ workflows - List of actions and softwares
 | pwd            | Password        | Password for CSW authentication (optional)             |
 | logger         | Logger          | Level for ‘ows4R’ logger messages (NULL,INFO or DEBUG) |
 
-### 2.1.8 List of csw properties
+#### 2.1.4.2 List of csw properties
 
 *No properties available for this software*
 
-### 2.1.9 List of wfs parameters<a name= wfs />
+### 2.1.5 wfs
+
+#### 2.1.5.1 List of wfs parameters<a name= wfs />
 
 | name           | label           | definition                                                  |
 |:---------------|:----------------|:------------------------------------------------------------|
@@ -241,11 +253,13 @@ workflows - List of actions and softwares
 | pwd            | Password        | Password for WFS authentication (optional)                  |
 | logger         | Logger          | Level for ‘ows4R’ logger messages (NULL, ‘INFO’ or ‘DEBUG’) |
 
-### 2.1.10 List of wfs properties
+#### 2.1.5.2 List of wfs properties
 
 *No properties available for this software*
 
-### 2.1.11 List of wps parameters<a name= wps />
+### 2.1.6 wps
+
+#### 2.1.6.1 List of wps parameters<a name= wps />
 
 | name           | label           | definition                                                  |
 |:---------------|:----------------|:------------------------------------------------------------|
@@ -255,11 +269,13 @@ workflows - List of actions and softwares
 | pwd            | Password        | Password for WPS authentication (optional)                  |
 | logger         | Logger          | Level for ‘ows4R’ logger messages (NULL, ‘INFO’ or ‘DEBUG’) |
 
-### 2.1.12 List of wps properties
+#### 2.1.6.2 List of wps properties
 
 *No properties available for this software*
 
-### 2.1.13 List of geonetwork parameters<a name= geonetwork />
+### 2.1.7 geonetwork
+
+#### 2.1.7.1 List of geonetwork parameters<a name= geonetwork />
 
 | name    | label              | definition                                                    |
 |:--------|:-------------------|:--------------------------------------------------------------|
@@ -269,11 +285,13 @@ workflows - List of actions and softwares
 | pwd     | Password           | Password for GeoNetwork authentication                        |
 | logger  | Logger             | Level for ‘geonapi’ logger messages (NULL, ‘INFO’ or ‘DEBUG’) |
 
-### 2.1.14 List of geonetwork properties
+#### 2.1.7.2 List of geonetwork properties
 
 *No properties available for this software*
 
-### 2.1.15 List of geoserver parameters<a name= geoserver />
+### 2.1.8 geoserver
+
+#### 2.1.8.1 List of geoserver parameters<a name= geoserver />
 
 | name   | label    | definition                                                    |
 |:-------|:---------|:--------------------------------------------------------------|
@@ -282,14 +300,16 @@ workflows - List of actions and softwares
 | pwd    | Password | Password for GeoServer authentication                         |
 | logger | Logger   | Level for ‘geosapi’ logger messages (NULL, ‘INFO’ or ‘DEBUG’) |
 
-### 2.1.16 List of geoserver properties
+#### 2.1.8.2 List of geoserver properties
 
 | name      | label     | definition                         |
 |:----------|:----------|:-----------------------------------|
 | workspace | Workspace | GeoServer workspace name           |
 | store     | Store     | GeoServer data/coverage store name |
 
-### 2.1.17 List of zenodo parameters<a name= zenodo />
+### 2.1.9 zenodo
+
+#### 2.1.9.1 List of zenodo parameters<a name= zenodo />
 
 | name   | label      | definition                                                                |
 |:-------|:-----------|:--------------------------------------------------------------------------|
@@ -297,13 +317,15 @@ workflows - List of actions and softwares
 | token  | User token | Zenodo user authentication token.                                         |
 | logger | Logger     | Level for ‘zen4R’ logger messages (NULL, ‘INFO’ or ‘DEBUG’)               |
 
-### 2.1.18 List of zenodo properties
+#### 2.1.9.2 List of zenodo properties
 
 | name  | label | definition                                                                                                                                                                                                                                                       |
 |:------|:------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | clean | Clean | An option, to clean draft Zenodo deposits prior to any new deposit. To clean deposits, enable ‘run’, and optionally specify either a ‘query’ (ElasticSearch Zenodo query), a list of ‘doi’, or ‘community’ for whichyou want to restrain the cleaning operation. |
 
-### 2.1.19 List of sword_for_dataverse parameters<a name= sword_for_dataverse />
+### 2.1.10 sword_for_dataverse
+
+#### 2.1.10.1 List of sword_for_dataverse parameters<a name= sword_for_dataverse />
 
 | name     | label      | definition                                                   |
 |:---------|:-----------|:-------------------------------------------------------------|
@@ -311,13 +333,15 @@ workflows - List of actions and softwares
 | token    | User token | Dataverse user authentication token                          |
 | logger   | Logger     | Level for ‘atom4R’ logger messages (NULL, ‘INFO’ or ‘DEBUG’) |
 
-### 2.1.20 List of sword_for_dataverse properties
+#### 2.1.10.2 List of sword_for_dataverse properties
 
 | name      | label        | definition                                    |
 |:----------|:-------------|:----------------------------------------------|
 | dataverse | Dataverse ID | Dataverse id where to deposit/publish records |
 
-### 2.1.21 List of dataone parameters<a name= dataone />
+### 2.1.11 dataone
+
+#### 2.1.11.1 List of dataone parameters<a name= dataone />
 
 | name  | label                 | definition               |
 |:------|:----------------------|:-------------------------|
@@ -325,24 +349,28 @@ workflows - List of actions and softwares
 | y     | Member Node URL       | Member Node URL          |
 | token | User token            | User Authorization token |
 
-### 2.1.22 List of dataone properties
+#### 2.1.11.2 List of dataone properties
 
 *No properties available for this software*
 
-### 2.1.23 List of d4storagehub parameters<a name= d4storagehub />
+### 2.1.12 d4storagehub
+
+#### 2.1.12.1 List of d4storagehub parameters<a name= d4storagehub />
 
 | name   | label      | definition                                                           |
 |:-------|:-----------|:---------------------------------------------------------------------|
 | token  | User token | D4Science storage hub user authentication token                      |
 | logger | Logger     | Level for ‘d4storagehub4R’ logger messages (NULL, ‘INFO’ or ‘DEBUG’) |
 
-### 2.1.24 List of d4storagehub properties
+#### 2.1.12.2 List of d4storagehub properties
 
 | name      | label     | definition                           |
 |:----------|:----------|:-------------------------------------|
 | workspace | Workspace | D4Science storage hub workspace name |
 
-### 2.1.25 List of gbif parameters<a name= gbif />
+### 2.1.13 gbif
+
+#### 2.1.13.1 List of gbif parameters<a name= gbif />
 
 | name  | label    | definition                             |
 |:------|:---------|:---------------------------------------|
@@ -350,22 +378,26 @@ workflows - List of actions and softwares
 | pwd   | Password | Password for Gbif authentication       |
 | email | Email    | Email address for sending notification |
 
-### 2.1.26 List of gbif properties
+#### 2.1.13.2 List of gbif properties
 
 *No properties available for this software*
 
-### 2.1.27 List of thredds parameters<a name= thredds />
+### 2.1.14 thredds
+
+#### 2.1.14.1 List of thredds parameters<a name= thredds />
 
 | name   | label       | definition                       |
 |:-------|:------------|:---------------------------------|
 | x      | Catalog URL | url of top level catalog request |
 | prefix | Namespace   | the namespace to examine         |
 
-### 2.1.28 List of thredds properties
+#### 2.1.14.2 List of thredds properties
 
 *No properties available for this software*
 
-### 2.1.29 List of openapi parameters<a name= openapi />
+### 2.1.15 openapi
+
+#### 2.1.15.1 List of openapi parameters<a name= openapi />
 
 | name          | label              | definition                                                     |
 |:--------------|:-------------------|:---------------------------------------------------------------|
@@ -373,6 +405,21 @@ workflows - List of actions and softwares
 | api_key_name  | Open API key name  | Name of the API key for registered uses                        |
 | api_key_value | Open API key value | Value of the API key for registered uses (typically a token)   |
 
-### 2.1.30 List of openapi properties
+#### 2.1.15.2 List of openapi properties
+
+*No properties available for this software*
+
+### 2.1.16 ocs
+
+#### 2.1.16.1 List of ocs parameters<a name= ocs />
+
+| name   | label    | definition                                             |
+|:-------|:---------|:-------------------------------------------------------|
+| url    | URL      | OCS service endpoint URL                               |
+| user   | Username | Username for user authentication                       |
+| pwd    | Password | Password for user authentication                       |
+| logger | Logger   | Level for ‘ows4R’ logger messages (NULL,INFO or DEBUG) |
+
+#### 2.1.16.2 List of ocs properties
 
 *No properties available for this software*
