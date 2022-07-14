@@ -123,7 +123,7 @@ register_contact_handlers <- function(){
       def = "Handle metadata contacts from a tabulat data source (csv or excel) hosted on an OCS cloud",
       packages = list("ocs4R"),
       fun = handle_contacts_ocs
-    ),
+    )
   )
   .geoflow$contact_handlers <- handlers
 }
@@ -319,7 +319,7 @@ register_dictionary_handlers <- function(){
       def = "Handle dictionary from a tabulat data source (csv or excel) hosted on an OCS cloud",
       packages = list("ocs4R"),
       fun = handle_dictionary_ocs
-    ),
+    )
   )
   .geoflow$dictionary_handlers <- handlers
 }
