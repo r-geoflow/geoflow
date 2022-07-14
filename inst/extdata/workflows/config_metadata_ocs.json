@@ -1,0 +1,40 @@
+{ 
+  "profile": {
+	"id": "ocs-workflow",
+	"options": {
+		"line_separator": "_\n"
+	},
+	"mode": "entity",
+	"project": "geoflow - metadata handling with OCS",
+	"organization": "Geoflow",
+	"logos": []
+  },
+  "metadata": {
+    "entities": [{
+      "handler": "ocs",
+      "source": "/entities.csv"
+    }],
+    "contacts" : [{
+      "handler": "ocs",
+      "source": "/contacts.csv"
+    }],
+	"dictionary": [{
+	  "handler": "ocs",
+	  "source": "/dictionary.csv"
+	}]
+  },
+  "software": [
+		{
+		"id": "ocs-cloud",
+		"type": "input",
+		"software_type": "ocs",
+		"parameters": {
+			"url": "http://localhost:8080",
+			"user": "user",
+			"pwd": "pwd",
+			"logger": "DEBUG"
+		}
+	}
+  ],
+  "actions": []
+}
