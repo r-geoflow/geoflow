@@ -336,6 +336,30 @@ register_data_accessors <- function(){
         }
         
       }
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #OCS
+    #------------------------------------------------------------------------------------------------------- 
+    geoflow_data_accessor$new(
+      id = "ocs",
+      software_type = "ocs",
+      definition = "An OCS API-based (Owncloud/Nextcloud) data accessor",
+      packages = list("ocs4R"),
+      download = function(resource, file, path, software = NULL){
+        
+        if(is.null(software)){
+          errMsg <- sprintf("[geoflow] OCS data accessor requires a 'ocs' software declaration in the geoflow configuration\n")
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+        cat(sprintf("[geoflow] OCS data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
+        ocs$downloadFile(relPath = dirname(resource), filename = basename(resource), outdir = getwd())
+        
+        if(endsWith(path, "zip")){
+          utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
+        }
+      }
     )
   )
   .geoflow$data_accessors <- data_accessors
