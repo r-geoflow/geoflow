@@ -161,3 +161,25 @@ handle_dictionary_dbi <- function(config, source, handle = TRUE){
   dictionary <- handle_dictionary_df(config, source)
   return(dictionary)
 }
+
+#handle_dictionary_ocs
+handle_dictionary_ocs <- function(config, source, handle = TRUE){
+  
+  if(!requireNamespace("ocs4R", quietly = TRUE)){
+    stop("The OCS handler requires the 'ocs4R' package")
+  }
+  
+  ocs <- config$software$input$ocs
+  if(is.null(ocs)){
+    stop("There is no OCS input software configured to handle dictionary from an OCS service endpoint")
+  }
+  
+  dict_file <- ocs$downloadFile(relPath = dirname(source), filename = basename(source), outdir = tempdir())
+  
+  dictionary <- switch(mime::guess_type(dict_file),
+   "text/csv" = handle_dictionary_csv(config = config, source = dict_file, handle = handle),
+   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = handle_dictionary_excel(config = config, source = dict_file, handle = handle)
+  )
+  return(dictionary)
+}
+

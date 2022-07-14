@@ -117,7 +117,13 @@ register_contact_handlers <- function(){
       def = "Handle metadata contacts from a DB source",
       packages = list("DBI", "RSQLite", "RPostgres"),
       fun = handle_contacts_dbi
-    )
+    ),
+    geoflow_handler$new(
+      id = "ocs",
+      def = "Handle metadata contacts from a tabulat data source (csv or excel) hosted on an OCS cloud",
+      packages = list("ocs4R"),
+      fun = handle_contacts_ocs
+    ),
   )
   .geoflow$contact_handlers <- handlers
 }
@@ -192,6 +198,12 @@ register_entity_handlers <- function(){
       def = "Handle metadata entities from a DB source",
       packages = list("DBI", "RSQLite", "RPostgres"),
       fun = handle_entities_dbi
+    ),
+    geoflow_handler$new(
+      id = "ocs",
+      def = "Handle metadata entities from a tabulat data source (csv or excel) hosted on an OCS cloud",
+      packages = list("ocs4R"),
+      fun = handle_entities_ocs
     ),
     geoflow_handler$new(
       id = "ncdf",
@@ -301,7 +313,13 @@ register_dictionary_handlers <- function(){
       def = "Handle dictionary from a DB source",
       packages = list("DBI", "RSQLite", "RPostgres"),
       fun = handle_dictionary_dbi
-    )
+    ),
+    geoflow_handler$new(
+      id = "ocs",
+      def = "Handle dictionary from a tabulat data source (csv or excel) hosted on an OCS cloud",
+      packages = list("ocs4R"),
+      fun = handle_dictionary_ocs
+    ),
   )
   .geoflow$dictionary_handlers <- handlers
 }
