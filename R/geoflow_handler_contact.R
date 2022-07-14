@@ -114,7 +114,7 @@ handle_contacts_excel <- function(config, source, handle = TRUE){
   if(!handle) return(source)
   
   #apply generic handler
-  contacts <- handle_entities_df(config, source)
+  contacts <- handle_contacts_df(config, source)
   return(contacts)
 }
 
