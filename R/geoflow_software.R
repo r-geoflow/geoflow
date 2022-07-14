@@ -641,6 +641,21 @@ register_software <- function(){
         api_key_name = list(label = "Open API key name", def = "Name of the API key for registered uses", class = "character", default = ""),
         api_key_value = list(label = "Open API key value", def = "Value of the API key for registered uses (typically a token)", class = "character", default = "")
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #OCS CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "ocs",
+      definition = "Open Collaboration Services (OCS) client powered by 'ocs4R' package",
+      packages = list("ocs4R"),
+      handler = try(ocs4R::ocsManager$new, silent = TRUE),
+      arguments = list(
+        url = list(label = "URL", def = "OCS service endpoint URL", class = "character"),
+        user = list(label = "Username", def = "Username for user authentication", class = "character"),
+        pwd = list(label = "Password", def = "Password for user authentication", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)", class = "character", choices = c("INFO", "DEBUG"))
+      )
     )
   )
   .geoflow$software <- software
