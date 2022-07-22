@@ -95,7 +95,7 @@ function(action, entity, config){
                    name = store, 
                    description = store_description , 
                    enabled = TRUE, 
-                   database = paste0("file://data/",workspace,"/",datasource_name,".gpkg")
+                   database = paste0("file:data/",workspace,"/",datasource_name,".gpkg")
                  )
                },
                #vector/dbtable
@@ -153,7 +153,7 @@ function(action, entity, config){
                    name=store, 
                    description = store_description,
                    enabled = TRUE,
-                   url = paste0("file://data","/",workspace)
+                   url = paste0("file:data","/",workspace)
                  )
                },
                #grid/coverages upload types
