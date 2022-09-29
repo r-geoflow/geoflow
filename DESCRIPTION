@@ -67,8 +67,6 @@ Suggests:
   atom4R,
   d4storagehub4R,
   rmarkdown
-Remotes:
-  eblondel/geonapi
 License: MIT + file LICENSE
 URL: https://github.com/eblondel/geoflow
 BugReports: https://github.com/eblondel/geoflow
