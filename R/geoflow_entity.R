@@ -255,6 +255,25 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(class(spatial_bbox)[1]=="try-error"){
         stop("The spatial bbox is invalid!")
       }
+      
+      #convert spatial_bbox in case srid != 4326 (WGS 84)
+      if(!is.na(crs)) if(crs != 4326){
+        #transform min coords
+        sp_bbox_min <- sf::st_sf(sf::st_sfc(sf::st_point(c(spatial_bbox$xmin, spatial_bbox$ymin))))
+        sf::st_crs(sp_bbox_min) <- crs
+        sp_bbox_min_new <- sf::st_transform(sp_bbox_min, crs = 4326)
+        sp_bbox_min_coords <- sf::st_coordinates(sp_bbox_min_new[[1]])
+        #transform max coords
+        sp_bbox_max <- sf::st_sf(sf::st_sfc(sf::st_point(c(spatial_bbox$xmax, spatial_bbox$ymax))))
+        sf::st_crs(sp_bbox_max) <- crs
+        sp_bbox_max_new <- sf::st_transform(sp_bbox_max, crs = 4326)
+        sp_bbox_max_coords <- sf::st_coordinates(sp_bbox_max_new[[1]])
+        #compound trasnformed bbox
+        spatial_bbox <- c(xmin = sp_bbox_min_coords$X, ymin = sp_bbox_min_coords$Y, 
+                          xmax = sp_bbox_max_coords$X, ymax = sp_bbox_max_coords$Y)
+        class(spatial_bbox) <- "bbox"
+      }
+      
       self$spatial_bbox <- spatial_bbox
     },
     
