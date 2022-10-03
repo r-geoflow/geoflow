@@ -286,17 +286,19 @@ function(action, entity, config){
     md_link_xml <- NULL
     md_link_html <- NULL
     if(!is.null(config$software$output$csw)|!is.null(config$software$output$geonetwork)){
+      meta_id <- entity$identifiers[["id"]]
+      if(!is.null(entity$identifiers[["uuid"]])) meta_id <- entity$identifiers[["uuid"]]
       if(!is.null(config$software$output$csw)){
         md_link_xml <- paste0(config$software$output$csw_config$parameters$url, "?service=CSW&request=GetRecordById&Version=", config$software$output$csw_config$parameters$version,
-                              "&elementSetName=full&outputSchema=http%3A//www.isotc211.org/2005/gmd&id=", entity$identifiers[["id"]])
+                              "&elementSetName=full&outputSchema=http%3A//www.isotc211.org/2005/gmd&id=", meta_id)
       }
       if(!is.null(config$software$output$geonetwork)){
         md_link_xml <- paste0(config$software$output$geonetwork_config$parameters$url, "/srv/eng/csw?service=CSW&request=GetRecordById&Version=2.0.2",
-                              "&elementSetName=full&outputSchema=http%3A//www.isotc211.org/2005/gmd&id=", entity$identifiers[["id"]])
+                              "&elementSetName=full&outputSchema=http%3A//www.isotc211.org/2005/gmd&id=", meta_id)
         if(startsWith(config$software$output$geonetwork_config$parameters$version, "2")){
-          md_link_html <- paste0(config$software$output$geonetwork_config$parameters$url, "/srv/en/main.home?uuid=", entity$identifiers[["id"]])
+          md_link_html <- paste0(config$software$output$geonetwork_config$parameters$url, "/srv/en/main.home?uuid=", meta_id)
         }else if(startsWith(config$software$output$geonetwork_config$parameters$version, "3")){
-          md_link_html <- paste0(config$software$output$geonetwork_config$parameters$url, "/srv/eng/catalog.search#/metadata/", entity$identifiers[["id"]])
+          md_link_html <- paste0(config$software$output$geonetwork_config$parameters$url, "/srv/eng/catalog.search#/metadata/", meta_id)
         }
       }
     }
