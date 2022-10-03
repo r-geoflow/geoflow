@@ -7,7 +7,20 @@
 
 **R engine to orchestrate and run (meta)data workflows**
 
-``geoflow`` provides a R engine to orchestrate and run geospatial (meta)data workflows.
+``geoflow`` provides an engine to facilitate the orchestration and execution of metadata-driven data management workflows, in compliance with FAIR (Findable, Accessible, Interoperable and Reusable) data management principles. By means of a pivot metadata model, relying on the [DublinCore](https://dublincore.org/) standard, a unique source of metadata can be used to operate multiple and inter-connected data management actions. Users can also customise their own workflows by creating specific actions but the library comes with a set of native actions that have been identified as key steps most data managers, in particular actions oriented to the publication on the web of metadata and data resources to provide standard discovery and access services. 
+
+At first, default actions of the library were meant to focus on providing turn-key actions for geospatial (meta)data:
+
+* by creating manage geospatial (meta)data complying with [ISO/TC211](https://committee.iso.org/home/tc211) and [OGC](https://www.ogc.org/standards) geographic information standards (eg 19115/19119/19110/19139) and related best practices (eg. INSPIRE); and
+* by facilitating extraction, reading and publishing of standard geospatial (meta)data within widely used software that compound a Spatial Data Infrastructure (SDI), including spatial databases (eg. 'PostGIS'), metadata catalogues (eg. 'GeoNetwork', CSW servers), data servers (eg. GeoServer). 
+
+The library was then extended to actions for other domains:
+
+* biodiversity (meta)data standard management including handling of EML metadata, and their management with DataOne servers,
+* in situ sensors, remote sensing and model outputs  (meta)data standard management by handling part of CF conventions, 'NetCDF' data format and OPeNDAP access protocol, and their management with Thredds servers, 
+* generic / domain agnostic (meta)data standard managers (Dublin Core, DataCite), to facilitate the publication of data within (meta)data repositories such as [Zenodo](https://zenodo.org) or [DataVerse](https://dataverse.org/). 
+
+The execution of several actions will then allow to cross-reference (meta)data resources in each action performed, offering a way to bind resources between each other (eg. reference 'Zenodo' DOIs in 'GeoNetwork'/'Geoserver' metadata, or vice versa reference 'Geonetwork'/Geoserver' links in 'Zenodo' or EML metadata). The use of standardized configuration files (JSON format) allows fully reproducible workflows to facilitate the work of data and information managers.
 
 Please check the [online documentation](https://github.com/r-geoflow/geoflow/wiki) for more details! **(documentation in preparation)**
 
