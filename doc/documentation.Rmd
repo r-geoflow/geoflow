@@ -95,7 +95,7 @@ Once the ``remotes`` package loaded, you can use the install_github to install `
 
 ```{r, eval = FALSE}
 require("remotes")
-install_github("eblondel/geoflow", dependencies = c("Depends", "Imports"))
+install_github("r-geoflow/geoflow", dependencies = c("Depends", "Imports"))
 ```
 
 <a name="geoflow_execute"/>
@@ -116,7 +116,7 @@ Prior to the execution, it also possible to check that the configuration is read
 config <- initWorkflow("config.json")
 ```
 
-> Note: The [geoflow-shiny](https://github.com/eblondel/geoflow-shiny) offers a graphic interface to help configuring the workflow in a user-friendly manner. If you are not familiar with JSON format, this shiny application can make your life easier.
+> Note: The [geoflow-shiny](https://github.com/r-geoflow/geoflow-shiny) offers a graphic interface to help configuring the workflow in a user-friendly manner. If you are not familiar with JSON format, this shiny application can make your life easier.
 
 <a name="geoflow_config"/>
 
@@ -136,7 +136,7 @@ Name | Definition | Optional/Required
 -----|------------|-------------------
 [**profile**](#geoflow_config_profile)|Global metadata workflow. Information that is common to all entities in case of mode _entity_, and that can be exploited in some of the actions. e.g. add a project logo for all dataset descriptions.|Required
 [**metadata**](#geoflow_config_metadata)|Part where the _entity_ set is defined, to be used for executing actions in mode _entity_.|Required with _entity_ mode
-[**software**](#geoflow_config_software)|Part where the software to interact with will be defined. It can be a software from where the user wants to get data, or a software where to publish data using [geoflow](https://github.com/eblondel/geoflow) e.g. a GeoNetwork metadata catalogue, a GeoServer, etc.|Required for publishing actions
+[**software**](#geoflow_config_software)|Part where the software to interact with will be defined. It can be a software from where the user wants to get data, or a software where to publish data using [geoflow](https://github.com/r-geoflow/geoflow) e.g. a GeoNetwork metadata catalogue, a GeoServer, etc.|Required for publishing actions
 [**actions**](#geoflow_config_actions)|Part where the _actions_ to use are defined. These can be source R scripts in case of the _raw_ mode, or entity-based actions in case of mode _entity_. An action put in the list can be enabled/disabled and parameterized with a set of options that is specific to each action.|Required
 
 ###### JSON
@@ -181,7 +181,7 @@ Name|Definition|Default value
 
 Note on the **mode**:
 
-At its earliest stage, [geoflow](https://github.com/eblondel/geoflow) was designed to chain a set of processings handled by different scripts. This is known as _raw_ mode, where the user just wants to use geoflow to chain some tasks with a set of R scripts.
+At its earliest stage, [geoflow](https://github.com/r-geoflow/geoflow) was designed to chain a set of processings handled by different scripts. This is known as _raw_ mode, where the user just wants to use geoflow to chain some tasks with a set of R scripts.
 
 In order to facilitate the management of datasets within Spatial Data Infrastructures (SDI), including their processing, publication and description with proper metadata, a new mode called _entity_ was introduced. The concept of _entity_ refers to the description of a dataset or subset of it for which the user wants to perform actions. In this mode, each action defined in geoflow will be executed for each entity of the list of entities that will be defined in the [**metadata**](#geoflow_config_metadata) configuration part. 
 
@@ -220,7 +220,7 @@ The metadata part is the section of the workflow configuration where to define t
 
 The configuration consists in declaring the ``source`` (a file or URL) and the ``handler``, ie the source format.
 
-The sources of _entities_, _contacts_ and _dictionary_ can be handled for different ``handlers`` (for the timebeing ``gsheet`` - for Google spreadsheets, ``csv``, ``excel`` files, or a ``dbi`` source). The list of ``entity`` and ``contact`` handlers can be retrieved in R with ``list_entity_handlers()``, ``list_contact_handlers()`` and ``list_dictionary_handlers()``. For the time being, [geoflow](https://github.com/eblondel/geoflow) provides basic format handlers.
+The sources of _entities_, _contacts_ and _dictionary_ can be handled for different ``handlers`` (for the timebeing ``gsheet`` - for Google spreadsheets, ``csv``, ``excel`` files, or a ``dbi`` source). The list of ``entity`` and ``contact`` handlers can be retrieved in R with ``list_entity_handlers()``, ``list_contact_handlers()`` and ``list_dictionary_handlers()``. For the time being, [geoflow](https://github.com/r-geoflow/geoflow) provides basic format handlers.
 
 * List of ``entity`` handlers supported by geoflow:
 
@@ -331,7 +331,7 @@ The ``software`` part of the configuration consists in listing the pieces of sof
 
 * **List of software managed by geoflow**
 
-By default [geoflow](https://github.com/eblondel/geoflow) manages specific ``software`` to interact with. These software are essentially R _interfaces_ to common tools (databases, web-applications, APIs). The list of ```software`` managed by geoflow can be retrieved in R with ``list_software()``. The list of software managed by ``geoflow`` are:
+By default [geoflow](https://github.com/r-geoflow/geoflow) manages specific ``software`` to interact with. These software are essentially R _interfaces_ to common tools (databases, web-applications, APIs). The list of ```software`` managed by geoflow can be retrieved in R with ``list_software()``. The list of software managed by ``geoflow`` are:
 
 ```{r, echo = FALSE, message = FALSE, results = 'asis'}
 library(knitr)
@@ -466,7 +466,7 @@ Each _action_ is tightly associated with some _software_ declared in the configu
 
 * **List of actions managed by geoflow**
 
-By default [geoflow](https://github.com/eblondel/geoflow) manages specific ``actions`` to run. These _actions_ are essentially R turnkey functions to interact with common tools (databases, web-applications, APIs). The list of ``actions`` managed by geoflow can be retrieved in R with ``list_actions()``. The list of actions managed by ``geoflow`` are:
+By default [geoflow](https://github.com/r-geoflow/geoflow) manages specific ``actions`` to run. These _actions_ are essentially R turnkey functions to interact with common tools (databases, web-applications, APIs). The list of ``actions`` managed by geoflow can be retrieved in R with ``list_actions()``. The list of actions managed by ``geoflow`` are:
 
 ```{r, echo = FALSE, message = FALSE, results = 'asis'}
 library(knitr)
@@ -523,7 +523,7 @@ to enrich ISO 19110 feature attribute values with labels.
 
 * **List of registers managed by geoflow**
 
-By default [geoflow](https://github.com/eblondel/geoflow) does not yet handle registers but it's planned to handle common standard registers (e.g. list of ISO countries).
+By default [geoflow](https://github.com/r-geoflow/geoflow) does not yet handle registers but it's planned to handle common standard registers (e.g. list of ISO countries).
 
 * **How to configure a register**
 
@@ -566,7 +566,7 @@ The function should a return a standard structure for geoflow registers with is 
 * **label**: handles each register item label
 * **definition**: handles each register item definition
 
-If this structure is not fulfilled, [geoflow](https://github.com/eblondel/geoflow) will return an error at initialization time. To make sure that your registers are well defined, you can then test to initialize the configuratinon with ``initWorkflow``.
+If this structure is not fulfilled, [geoflow](https://github.com/r-geoflow/geoflow) will return an error at initialization time. To make sure that your registers are well defined, you can then test to initialize the configuratinon with ``initWorkflow``.
 
 * Where/How registers are used in geoflow
 
@@ -580,18 +580,18 @@ For the time being, the registers are exploited as EXPERIMENTAL FEATURE to enric
 
 ##### 4.4.1 Create manually a configuration file
 
-The above documentation gives you JSON snippets that help you preparing your configuration file. In addition you may have a look at the [examples](https://github.com/eblondel/geoflow/tree/master/inst/extdata) provided with geoflow.
+The above documentation gives you JSON snippets that help you preparing your configuration file. In addition you may have a look at the [examples](https://github.com/r-geoflow/geoflow/tree/master/inst/extdata) provided with geoflow.
 
 <a name="geoflow_config_shiny"/>
 
 ##### 4.4.2 Use the geoflow-shiny R Shiny application
 
-The [geoflow-shiny](https://github.com/eblondel/geoflow-shiny) R Shiny application can be used to ease the configuration of a workflow.
+The [geoflow-shiny](https://github.com/r-geoflow/geoflow-shiny) R Shiny application can be used to ease the configuration of a workflow.
 
 <a name="package_issues"/>
 
 ### 5. Issue reporting
 ***
 
-Issues can be reported at https://github.com/eblondel/geoflow/issues
+Issues can be reported at https://github.com/r-geoflow/geoflow/issues
 

@@ -2,26 +2,26 @@
 
 The _metadata_ configuration can be constituted of three different inputs:
 
-* *entities*: correspond to the dataset descriptions. [geoflow](https://github.com/eblondel) models each dataset metadata as *entity*. An *entity* is compound by core metadata building blocks essentially inspired from the [Dublin Core metadata standard](https://dublincore.org/) . In order to build richer metadata, each building block can be described with finer levels of information. For more information, see details on how to describe a dataset with geoflow.
+* *entities*: correspond to the dataset descriptions. [geoflow](https://github.com/r-geoflow/geoflow) models each dataset metadata as *entity*. An *entity* is compound by core metadata building blocks essentially inspired from the [Dublin Core metadata standard](https://dublincore.org/) . In order to build richer metadata, each building block can be described with finer levels of information. For more information, see details on how to describe a dataset with geoflow.
 * _contacts_: correspond to a simplified directory of contacts (people / organizations) used by geoflow to manage contact/roles associated to *entities*. Having such directory of contacts will simplify the use and binding of *responsible parties* to dataset metadata.
-* *dictionary*: allows to describe the structure of datasets. This is required for advanced [geoflow](https://github.com/eblondel) use cases where one wants to produce finer dataset description (dataset structural metadata).
+* *dictionary*: allows to describe the structure of datasets. This is required for advanced [geoflow](https://github.com/r-geoflow/geoflow) use cases where one wants to produce finer dataset description (dataset structural metadata).
 
-In [geoflow](https://github.com/eblondel), Each type of metadata input can be structured through different input formats, called *handlers*. 
+In [geoflow](https://github.com/r-geoflow/geoflow), Each type of metadata input can be structured through different input formats, called *handlers*. 
 
 ## **How to create a geoflow entity**
 
 ### from a spreadsheet (for basic users)
 
-To facilitate the edition and maintenance of metadata, [geoflow](https://github.com/eblondel) opted for a simplified tabular data handler that allows user handling their *entities* (ie dataset metadata) in a table, that could be of different sources (CSV, Excel, Google Spreadsheet, or a database source), and where each table row will represent one single *entity*.
+To facilitate the edition and maintenance of metadata, [geoflow](https://github.com/r-geoflow/geoflow) opted for a simplified tabular data handler that allows user handling their *entities* (ie dataset metadata) in a table, that could be of different sources (CSV, Excel, Google Spreadsheet, or a database source), and where each table row will represent one single *entity*.
 
-Although handling a dataset metadata description in one tabular data row may facilitate the edition and maintenance, adding rich metadata requires to  introduce some syntax to fill each of the metadata elements. [geoflow](https://github.com/eblondel) has adopted some writing syntax which essentially relies on key/value pairs, which allow to enter various properties in one single tabular data cell (eg. for a column on dataset "Date", the user will be able to specify multiple dates, depending on their nature: creation, revision, publication, etc).
+Although handling a dataset metadata description in one tabular data row may facilitate the edition and maintenance, adding rich metadata requires to  introduce some syntax to fill each of the metadata elements. [geoflow](https://github.com/r-geoflow/geoflow) has adopted some writing syntax which essentially relies on key/value pairs, which allow to enter various properties in one single tabular data cell (eg. for a column on dataset "Date", the user will be able to specify multiple dates, depending on their nature: creation, revision, publication, etc).
 
 Basic examples of key/value pairs:
 
 * Identifier: ``id:my-metadata-identifier`` (key = `` id``, value = ``my-metadata-identifier`` )
 * Creation date: ``creation:2010-01-01`` (key = ``creation``, value = ``2010-01-01``)
 
-Handling such complexity of content within a same cell requires a way to distinguish each of the key/value pairs. Because [geoflow](https://github.com/eblondel) cannot know a priori what metadata content will be filled in by user, key/value pairs within a same cell have to be separated by a _line separator_ which by default is ``_\n`` (underscore symbol followed by a new line).
+Handling such complexity of content within a same cell requires a way to distinguish each of the key/value pairs. Because [geoflow](https://github.com/r-geoflow/geoflow) cannot know a priori what metadata content will be filled in by user, key/value pairs within a same cell have to be separated by a _line separator_ which by default is ``_\n`` (underscore symbol followed by a new line).
 
 For example, a user wants to fill in 2 types of dates (creation and publication) associated with an *entity*, the following will be used:
 

@@ -1,7 +1,7 @@
 ## **How to create a geoflow dictionary**
 
 ### From a spreadsheet (for basic users)
-A **dictionary** allows to describe the structure of datasets. This is required for advanced [geoflow](https://github.com/eblondel/geoflow) use cases where users want to produce finer dataset description (dataset structural metadata). Presently, dataset structural metadata can be produced as ISO 19110 / Feature catalogue, or directly as dataset structure within EML metadata.
+A **dictionary** allows to describe the structure of datasets. This is required for advanced [geoflow](https://github.com/r-geoflow/geoflow) use cases where users want to produce finer dataset description (dataset structural metadata). Presently, dataset structural metadata can be produced as ISO 19110 / Feature catalogue, or directly as dataset structure within EML metadata.
 
 #### General recommendation
 
