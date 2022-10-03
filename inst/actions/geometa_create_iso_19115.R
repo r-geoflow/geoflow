@@ -19,6 +19,7 @@ function(action, entity, config){
   featureid <- action$getOption("featureid")
   if(is.na(featureid)) if(!is.null(features)) featureid = colnames(features)[1]
   geographySubject <- action$getOption("subject_geography")
+  include_service_identification <- action$getOption("include_service_identification")
   include_coverage_data_dimension_values <- action$getOption("include_coverage_data_dimension_values")
   include_coverage_service_dimension_values <- action$getOption("include_coverage_service_dimension_values")
   
@@ -503,7 +504,7 @@ function(action, entity, config){
   if(length(entity$relations)>0){
     #WMS
     wms<-entity$relations[sapply(entity$relations, function(x){startsWith(x$key,"wms")})]
-    if(length(wms)>0){
+    if(include_service_identification) if(length(wms)>0){
       wms <- wms[[1]]
       wms_link <- gsub("service=WMS","",wms$link)
       wms_version <- switch(wms$key,
