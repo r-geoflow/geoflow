@@ -198,7 +198,7 @@ register_data_accessors <- function(){
         
         cat(sprintf("[geoflow] D4science Storage Hub data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
         link = try(software$getPublicFileLink(resource))
-        if(class(link)!="try-error"){
+        if(!is(link, "try-error")){
           cat(sprintf("[geoflow][INFO] D4science Storage Hub resource ID: %s\n", link))
           download.file(url = link, destfile = path)
         }else{
@@ -354,7 +354,7 @@ register_data_accessors <- function(){
         }
         
         cat(sprintf("[geoflow] OCS data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
-        ocs$downloadFile(relPath = dirname(resource), filename = basename(resource), outdir = getwd())
+        software$downloadFile(relPath = dirname(resource), filename = basename(resource), outdir = getwd())
         
         if(endsWith(path, "zip")){
           utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
