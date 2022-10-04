@@ -147,9 +147,9 @@ geoflow_data <- R6Class("geoflow_data",
         
         #source
         if(!any(sapply(data_props, function(x){x$key=="source"})) && !any(sapply(data_props, function(x){x$key=="dir"}))){
-          stop("The data 'source' is mandatory")
+          stop("One or more data 'source' (or 'dir', as directory for sources) is mandatory")
         }
-        self$setSource(data_props$source$values)
+        if(any(sapply(data_props, function(x){x$key=="source"}))) self$setSource(data_props$source$values)
         
         #sourceSql
         if(!is.null(data_props$sourceSql)){
@@ -430,7 +430,6 @@ geoflow_data <- R6Class("geoflow_data",
             ext_data_files <- list.files(data_dir, full.names = T)
             ext_data_files <- ext_data_files[!endsWith(ext_data_files,".sld")]
           }
-          print(ext_data_files)
           if(length(ext_data_files)>0){
             self$data <- lapply(ext_data_files, function(data_file){
               ext_data <- self$clone(deep = TRUE) #clone parent geoflow_data to inherit all needed properties
@@ -439,7 +438,7 @@ geoflow_data <- R6Class("geoflow_data",
               ext_data_name <- unlist(strsplit(ext_data_src, "\\."))[1]
               ext_data_extension <- unlist(strsplit(ext_data_src, "\\."))[2]
               attr(ext_data_src, "uri") <- data_file
-              ext_data$setSource(ext_data_src)
+              ext_data$addSource(ext_data_src)
               ext_data$setUploadSource(basename(data_file))
               sourceType <- self$sourceType
               if(is.null(self$sourceType) || self$sourceType == "other"){
@@ -460,11 +459,14 @@ geoflow_data <- R6Class("geoflow_data",
               ext_data$setStore(ext_data_name)
               ext_data$setLayername(ext_data_name)
               if(self$styleUpload){
-                ext_data_style_path <- file.path(data_dir, paste0(ext_data_name, ".sld"), full.names = T)
+                ext_data_style_path <- file.path(data_dir, paste0(ext_data_name, ".sld"))
                 if(file.exists(ext_data_style_path)){
-                  ext_data_style <- basename(ext_data_style_path)
+                  ext_data_style_file <- basename(ext_data_style_path)
+                  ext_data_style <- unlist(strsplit(ext_data_style_file, "\\."))[1]
                   attr(ext_data_style, "uri") <- ext_data_style_path
                   ext_data$addStyle(ext_data_style)
+                  attr(ext_data_style_file, "uri") <- ext_data_style_path
+                  ext_data$addSource(ext_data_style_file)
                 }
               }
               
@@ -538,6 +540,13 @@ geoflow_data <- R6Class("geoflow_data",
     #'@param list of Y possible names
     getAllowedYPossibleNames = function(){
       return(private$supportedYPossibleNames)
+    },
+    
+    #'@description Add source, object of class \code{"character"} (single source)
+    #'@param source
+    addSource = function(source){
+      if(is.null(self$source)) self$source <- list()
+      self$source[[length(self$source)+1]] <- source
     },
     
     #'@description Set source, object of class \code{"character"} (single source), or \code{list}.
@@ -655,7 +664,7 @@ geoflow_data <- R6Class("geoflow_data",
     #'@description Adds a style name, object of class \code{character}. Used as layer style name(s) for GeoServer action.
     #'@param style style
     addStyle = function(style){
-      self$styles <- c(self$styles, style)
+      self$styles[[length(self$styles)+1]] <- style
     },
     
     #'@description Adds a dimension

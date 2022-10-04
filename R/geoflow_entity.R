@@ -413,7 +413,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         
           datasource <- data_object$source[[i]]
           datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
-          if(length(datasource_parts)<2)if(data_object$sourceType[[i]]!="nc") stop("Source data file should include a file extension")
+          if(length(datasource_parts)<2)if(data_object$sourceType != "nc") stop("Source data file should include a file extension")
           datasource_name <- datasource_parts[1]
           datasource_ext <- datasource_parts[2]
           datasource_uri <- attr(datasource, "uri")
