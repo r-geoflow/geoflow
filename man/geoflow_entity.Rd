@@ -49,6 +49,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{spatial_bbox}}{spatial bounding box}
 
+\item{\code{geo_bbox}}{geographic bounding box (in EPSG:4326 / WGS 84)}
+
 \item{\code{srid}}{entity srid}
 
 \item{\code{temporal_extent}}{entity temporal extent}
@@ -82,6 +84,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_entity-addRight}{\code{geoflow_entity$addRight()}}
 \item \href{#method-geoflow_entity-setSpatialExtent}{\code{geoflow_entity$setSpatialExtent()}}
 \item \href{#method-geoflow_entity-setSpatialBbox}{\code{geoflow_entity$setSpatialBbox()}}
+\item \href{#method-geoflow_entity-setGeographicBbox}{\code{geoflow_entity$setGeographicBbox()}}
 \item \href{#method-geoflow_entity-setSrid}{\code{geoflow_entity$setSrid()}}
 \item \href{#method-geoflow_entity-setTemporalExtent}{\code{geoflow_entity$setTemporalExtent()}}
 \item \href{#method-geoflow_entity-setProvenance}{\code{geoflow_entity$setProvenance()}}
@@ -410,6 +413,16 @@ Set spatial bbox. Various ways can be used to set the spatial extent 1) with a W
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-setGeographicBbox"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-setGeographicBbox}{}}}
+\subsection{Method \code{setGeographicBbox()}}{
+Set geographic bbox (in EPGS:4326 / WGS 84), by converting (if needed) the spatial bbox
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setGeographicBbox()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_entity-setSrid"></a>}}

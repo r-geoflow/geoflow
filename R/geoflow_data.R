@@ -543,7 +543,7 @@ geoflow_data <- R6Class("geoflow_data",
     },
     
     #'@description Add source, object of class \code{"character"} (single source)
-    #'@param source
+    #'@param source source
     addSource = function(source){
       if(is.null(self$source)) self$source <- list()
       self$source[[length(self$source)+1]] <- source

@@ -22,8 +22,8 @@ geoflow_validator_contacts
 \if{html}{\out{
 <details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_content"><a href='../../geoflow/html/geoflow_validator.html#method-geoflow_validator-validate_content'><code>geoflow::geoflow_validator$validate_content()</code></a></li>
-<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_structure"><a href='../../geoflow/html/geoflow_validator.html#method-geoflow_validator-validate_structure'><code>geoflow::geoflow_validator$validate_structure()</code></a></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_content"><a href='../../geoflow/html/geoflow_validator.html#method-geoflow_validator-validate_content'><code>geoflow::geoflow_validator$validate_content()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_structure"><a href='../../geoflow/html/geoflow_validator.html#method-geoflow_validator-validate_structure'><code>geoflow::geoflow_validator$validate_structure()</code></a></span></li>
 </ul>
 </details>
 }}
