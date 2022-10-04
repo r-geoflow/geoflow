@@ -831,7 +831,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                      }
                      #dynamic spatial extent
                      config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
-                     if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
+                     if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data, crs = self$srid)
                    }else{
                      warnMsg <- sprintf("DB table '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
                      config$logger.warn(warnMsg)
@@ -883,7 +883,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                      }
                      #dynamic spatial extent
                      config$logger.info("Overwriting entity bounding box with DB spatial view bounding box")
-                     if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
+                     if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data, crs = self$srid)
                    }else{
                      warnMsg <- sprintf("DB view '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
                      config$logger.warn(warnMsg)
@@ -957,7 +957,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                       }
                       #dynamic spatial extent
                       config$logger.info("Overwriting entity bounding box with SQL query output bounding box")
-                      if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
+                      if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data, crs = self$srid)
                       #dynamic view properties required
                       
                       geomtype <- as.character(unique(sf::st_geometry_type(sf.data))[1])
@@ -1049,10 +1049,10 @@ geoflow_entity <- R6Class("geoflow_entity",
                 }else if(!is.null(data_objects[[1]]$coverages)){
                   data_obj <- data_objects[[1]]$coverages
                 }
-                if(!is.null(data_obj)) self$setSpatialBbox(data = data_obj)
+                if(!is.null(data_obj)) self$setSpatialBbox(data = data_obj, crs = self$srid)
               },
               "union" = {
-                self$setSpatialBbox(bbox = get_union_bbox(data_objects))
+                self$setSpatialBbox(bbox = get_union_bbox(data_objects), crs = self$srid)
               }
             )
           }
