@@ -269,8 +269,8 @@ geoflow_entity <- R6Class("geoflow_entity",
         sp_bbox_max_new <- sf::st_transform(sp_bbox_max, crs = 4326)
         sp_bbox_max_coords <- sf::st_coordinates(sp_bbox_max_new[[1]])
         #compound trasnformed bbox
-        spatial_bbox <- c(xmin = sp_bbox_min_coords$X, ymin = sp_bbox_min_coords$Y, 
-                          xmax = sp_bbox_max_coords$X, ymax = sp_bbox_max_coords$Y)
+        spatial_bbox <- c(xmin = sp_bbox_min_coords[[1]], ymin = sp_bbox_min_coords[[2]], 
+                          xmax = sp_bbox_max_coords[[1]], ymax = sp_bbox_max_coords[[2]])
         class(spatial_bbox) <- "bbox"
       }
       
