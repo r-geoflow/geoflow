@@ -271,11 +271,8 @@ function(action, entity, config){
     resource$setProjectionPolicy("FORCE_DECLARED")
     bbox <- entity$spatial_bbox
     resource$setNativeBoundingBox(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, crs = epsgCode)
-    sfc_min <- sf::st_sfc(sf::st_point(c(bbox$xmin, bbox$ymin)), crs = epsgCode)
-    sfc_max <- sf::st_sfc(sf::st_point(c(bbox$xmax, bbox$ymax)), crs = epsgCode)
-    sfc_min_ll <- sf::st_bbox(sf::st_transform(sfc_min, crs = 4326))
-    sfc_max_ll <- sf::st_bbox(sf::st_transform(sfc_max, crs = 4326))
-    resource$setLatLonBoundingBox(sfc_min_ll$xmin, sfc_min_ll$ymin, sfc_max_ll$xmax, sfc_max_ll$ymax, crs = 4326)
+    geo_bbox <- entity$geo_bbox
+    resource$setLatLonBoundingBox(geo_bbox$xmin, geo_bbox$ymin, geo_bbox$xmax, geo_bbox$ymax, crs = 4326)
     for(subject in entity$subjects){
       kwds <- subject$keywords
       for(kwd in kwds) resource$addKeyword(kwd$name)

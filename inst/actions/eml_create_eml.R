@@ -151,15 +151,15 @@ function(action, entity, config){
   
   #coverage
   #geo
-  if(!is.null(entity$spatial_bbox)){
+  if(!is.null(entity$geo_bbox)){
     if(is.null(dataset$coverage)) dataset$coverage <- list()
     dataset$coverage$geographicCoverage <- EML::eml$geographicCoverage(
       geographicDescription = "Bounding box",
       boundingCoordinates = EML::eml$boundingCoordinates(
-        westBoundingCoordinate = entity$spatial_bbox$xmin,
-        eastBoundingCoordinate = entity$spatial_bbox$xmax,
-        southBoundingCoordinate = entity$spatial_bbox$ymin,
-        northBoundingCoordinate = entity$spatial_bbox$ymax
+        westBoundingCoordinate = entity$geo_bbox$xmin,
+        eastBoundingCoordinate = entity$geo_bbox$xmax,
+        southBoundingCoordinate = entity$geo_bbox$ymin,
+        northBoundingCoordinate = entity$geo_bbox$ymax
       )
     )
   }

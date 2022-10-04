@@ -51,6 +51,8 @@ geoflow_entity <- R6Class("geoflow_entity",
     spatial_extent = NULL,
     #'@field spatial_bbox spatial bounding box
     spatial_bbox = NULL,
+    #'@field geo_bbox geographic bounding box (in EPSG:4326 / WGS 84)
+    geo_bbox = NULL,
     #'@field srid entity srid
     srid = NULL,
     #'@field temporal_extent entity temporal extent
@@ -256,25 +258,31 @@ geoflow_entity <- R6Class("geoflow_entity",
         stop("The spatial bbox is invalid!")
       }
       
+      self$spatial_bbox <- spatial_bbox
+      self$setGeographicBbox()
+    },
+    
+    #'@description Set geographic bbox (in EPGS:4326 / WGS 84), by converting (if needed) the spatial bbox
+    setGeographicBbox = function(){
       #convert spatial_bbox in case srid != 4326 (WGS 84)
-      if(!is.na(crs)) if(crs != 4326){
+      if(is.null(self$spatial_bbox)) return(NULL)
+      geo_bbox <- self$spatial_bbox
+      if(self$srid != 4326){
         #transform min coords
-        sp_bbox_min <- sf::st_sf(sf::st_sfc(sf::st_point(c(spatial_bbox$xmin, spatial_bbox$ymin))))
-        sf::st_crs(sp_bbox_min) <- crs
+        sp_bbox_min <- sf::st_sf(sf::st_sfc(sf::st_point(c(self$spatial_bbox$xmin, self$spatial_bbox$ymin)), crs = self$srid))
         sp_bbox_min_new <- sf::st_transform(sp_bbox_min, crs = 4326)
         sp_bbox_min_coords <- sf::st_coordinates(sp_bbox_min_new[[1]])
         #transform max coords
-        sp_bbox_max <- sf::st_sf(sf::st_sfc(sf::st_point(c(spatial_bbox$xmax, spatial_bbox$ymax))))
-        sf::st_crs(sp_bbox_max) <- crs
+        sp_bbox_max <- sf::st_sf(sf::st_sfc(sf::st_point(c(self$spatial_bbox$xmax, self$spatial_bbox$ymax)), crs = self$srid))
         sp_bbox_max_new <- sf::st_transform(sp_bbox_max, crs = 4326)
         sp_bbox_max_coords <- sf::st_coordinates(sp_bbox_max_new[[1]])
         #compound trasnformed bbox
-        spatial_bbox <- c(xmin = sp_bbox_min_coords[[1]], ymin = sp_bbox_min_coords[[2]], 
+        geo_bbox <- c(xmin = sp_bbox_min_coords[[1]], ymin = sp_bbox_min_coords[[2]], 
                           xmax = sp_bbox_max_coords[[1]], ymax = sp_bbox_max_coords[[2]])
-        class(spatial_bbox) <- "bbox"
+        class(geo_bbox) <- "bbox"
       }
       
-      self$spatial_bbox <- spatial_bbox
+      self$geo_bbox <- geo_bbox
     },
     
     #'@description Sets entity SRID
@@ -831,7 +839,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                      }
                      #dynamic spatial extent
                      config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
-                     if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data, crs = self$srid)
+                     if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                    }else{
                      warnMsg <- sprintf("DB table '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
                      config$logger.warn(warnMsg)
@@ -883,7 +891,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                      }
                      #dynamic spatial extent
                      config$logger.info("Overwriting entity bounding box with DB spatial view bounding box")
-                     if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data, crs = self$srid)
+                     if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                    }else{
                      warnMsg <- sprintf("DB view '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
                      config$logger.warn(warnMsg)
@@ -957,7 +965,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                       }
                       #dynamic spatial extent
                       config$logger.info("Overwriting entity bounding box with SQL query output bounding box")
-                      if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data, crs = self$srid)
+                      if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                       #dynamic view properties required
                       
                       geomtype <- as.character(unique(sf::st_geometry_type(sf.data))[1])
@@ -1049,10 +1057,10 @@ geoflow_entity <- R6Class("geoflow_entity",
                 }else if(!is.null(data_objects[[1]]$coverages)){
                   data_obj <- data_objects[[1]]$coverages
                 }
-                if(!is.null(data_obj)) self$setSpatialBbox(data = data_obj, crs = self$srid)
+                if(!is.null(data_obj)) self$setSpatialBbox(data = data_obj)
               },
               "union" = {
-                self$setSpatialBbox(bbox = get_union_bbox(data_objects), crs = self$srid)
+                self$setSpatialBbox(bbox = get_union_bbox(data_objects))
               }
             )
           }

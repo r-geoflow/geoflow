@@ -392,8 +392,8 @@ function(action, entity, config){
   #extents
   extent <- ISOExtent$new()
   #geographic extent
-  if(!is.null(entity$spatial_bbox)){
-    sf_bbox <- entity$spatial_bbox
+  if(!is.null(entity$geo_bbox)){
+    sf_bbox <- entity$geo_bbox
     bbox <- ISOGeographicBoundingBox$new(minx = sf_bbox$xmin, miny = sf_bbox$ymin, maxx = sf_bbox$xmax, maxy = sf_bbox$ymax)
     extent$addGeographicElement(bbox)
   }
