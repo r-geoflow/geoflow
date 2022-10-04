@@ -11,8 +11,6 @@
 #' @export
 #' 
 closeWorkflow <- function(config){
-  #move out debug mode
-  if(config$debug) .geoflow$debug <- NULL
   #close DBs
   if(!is.null(config$software$input$dbi)){
     config$logger.info("Closing input database connection")
