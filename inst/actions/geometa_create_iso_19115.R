@@ -366,6 +366,14 @@ function(action, entity, config){
   #legal constraints
   if(length(entity$rights)>0){
     legal_constraints <- ISOLegalConstraints$new()
+    #license
+    licenses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "license"})]
+    if(length(licenses)>0){
+      legal_constraints$addUseConstraint("license")
+      for(license in licenses){
+        legal_constraints$addUseLimitation(license)
+      }
+    }
     #use limitation
     uses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "use"})]
     if(length(uses)>0){
