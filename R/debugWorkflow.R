@@ -91,10 +91,9 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
 
   #enrich metadata with dynamic properties
   if(!is.null(entity$data)){
-    #data features
-    if(is.null(entity$data$features) & !skipFileDownload) {
-      entity$enrichWithFeatures(config, jobdir)
-      setwd(entity$getEntityJobDirPath(config, jobdir)) #make sure we are in entity jobdir
+    #data features/coverages
+    if(!skipFileDownload) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
+      entity$enrichWithData(config, jobdir)
       entity$prepareFeaturesToUpload(config)
     }
     #data relations (eg. geosapi & OGC data protocol online resources)
@@ -115,7 +114,7 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
           for(i in 1:length(entity$data$actions)){
             entity_action <- entity$data$actions[[i]]
             config$logger.info(sprintf("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script))
-            entity_action$fun(entity, config, entity_action$options)
+            entity_action$run(entity, config)
             .geoflow$debug$options <- entity_action$options
           }
           #we trigger entity enrichment (in case entity data action involved modification of entity)

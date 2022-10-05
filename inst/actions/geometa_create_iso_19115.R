@@ -1,4 +1,4 @@
-geometa_create_iso_19115 <- function(entity, config, options){
+function(action, entity, config){
   
   if(!requireNamespace("geometa", quietly = TRUE)){
     stop("The 'geometa-create-iso-19115' action requires the 'geometa' package")
@@ -10,16 +10,18 @@ geometa_create_iso_19115 <- function(entity, config, options){
   features <- entity$data$features
   
   #options
-  use_uuid <- if(!is.null(options$use_uuid)) options$use_uuid else FALSE
-  inspire <- if(!is.null(options$inspire)) options$inspire else FALSE
-  logo <- if(!is.null(options$logo)) options$logo else FALSE
-  doi <- if(!is.null(options$doi)) options$doi else FALSE
-  doi_thumbnail <- if(!is.null(options$doi_thumbnail)) options$doi_thumbnail else FALSE
-  addfeatures <- if(!is.null(options$addfeatures)) options$addfeatures else FALSE
-  featureid <- if(!is.null(options$featureid)){ options$featureid } else { if(!is.null(features)) colnames(features)[1] else NULL} 
-  geographySubject <- if(!is.null(options$subject_geography)) options$subject_geography else "geography"
-  include_coverage_data_dimension_values <- if(!is.null(options$include_coverage_data_dimension_values)) options$include_coverage_data_dimension_values else FALSE
-  include_coverage_service_dimension_values <- if(!is.null(options$include_coverage_service_dimension_values)) options$include_coverage_service_dimension_values else FALSE
+  use_uuid <- action$getOption("use_uuid")
+  inspire <- action$getOption("inspire")
+  logo <- action$getOption("logo")
+  doi <- action$getOption("doi")
+  doi_thumbnail <- action$getOption("doi_thumbnail")
+  addfeatures <- action$getOption("addfeatures")
+  featureid <- action$getOption("featureid")
+  if(is.na(featureid)) if(!is.null(features)) featureid = colnames(features)[1]
+  geographySubject <- action$getOption("subject_geography")
+  include_service_identification <- action$getOption("include_service_identification")
+  include_coverage_data_dimension_values <- action$getOption("include_coverage_data_dimension_values")
+  include_coverage_service_dimension_values <- action$getOption("include_coverage_service_dimension_values")
   
   #check inspire metadata validator configuration
   INSPIRE_VALIDATOR <- NULL
@@ -139,25 +141,25 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md$setHierarchyLevel(dctype_iso)
   
   #add contacts
-   # if(length(entity$contacts)>0){
-   #   metadata_contacts <- entity$contacts[sapply(entity$contacts, function(x){tolower(x$role) == "metadata"})]
-   #   if(is.null(metadata_contacts)) metadata_contacts<-entity$contacts[sapply(entity$contacts, function(x){tolower(x$role) == "owner"})]
-   #     for(metadata_contact in metadata$contacts){
-   #       metadata_contact$setRole("metadata")
-   #       rp<-createResponsibleParty(metadata_contact,"pointOfContact") 
-   #       md$addContact(rp)
-   #     }
-   # }
+  # if(length(entity$contacts)>0){
+  #   metadata_contacts <- entity$contacts[sapply(entity$contacts, function(x){tolower(x$role) == "metadata"})]
+  #   if(is.null(metadata_contacts)) metadata_contacts<-entity$contacts[sapply(entity$contacts, function(x){tolower(x$role) == "owner"})]
+  #     for(metadata_contact in metadata$contacts){
+  #       metadata_contact$setRole("metadata")
+  #       rp<-createResponsibleParty(metadata_contact,"pointOfContact") 
+  #       md$addContact(rp)
+  #     }
+  # }
   
-   if(length(entity$contacts)>0)for(entity_contact in entity$contacts){
-     if(tolower(entity_contact$role) == "metadata"){
-       rp<-createResponsibleParty(entity_contact,"pointOfContact") 
-        md$addContact(rp)
-     } 
-   }
+  if(length(entity$contacts)>0)for(entity_contact in entity$contacts){
+    if(tolower(entity_contact$role) == "metadata"){
+      rp<-createResponsibleParty(entity_contact,"pointOfContact") 
+      md$addContact(rp)
+    } 
+  }
   
   if(length(md$contact)==0) md$contact <- ISOAttributes$new("gco:nilReason" = "missing")   
-
+  
   
   #spatial representation
   if(!is.null(entity$data)) {
@@ -167,7 +169,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
         if(!is.null(features)){
           #support vector spatial representation
           if(is(features, "sf")){
-            geomtypes <- as.list(table(st_geometry_type(features)))
+            geomtypes <- as.list(table(sf::st_geometry_type(features)))
             geomtypes <- geomtypes[geomtypes > 0]
             if(length(geomtypes)>0){
               #spatialRepresentationType <- "vector"
@@ -179,15 +181,15 @@ geometa_create_iso_19115 <- function(entity, config, options){
                 if(geomLevel == "geometryOnly"){
                   geomObject <- ISOGeometricObjects$new()
                   isoGeomType <- switch(geomtype,
-                    "GEOMETRY" = "composite", "GEOMETRYCOLLECTION" = "composite",
-                    "POINT" = "point", "MULTIPOINT" = "point", 
-                    "LINESTRING" = "curve", "CIRCULARSTRING" = "curve", "MULTILINESTRING" = "curve", "CURVE" = "curve", "COMPOUNDCURVE" = "curve",
-                    "POLYGON" = "surface", "MULTIPOLYGON" = "surface", "TRIANGLE" = "surface",
-                    "CURVEPOLYGON" = "surface", "SURFACE" = "surface", "MULTISURFACE" = "surface",
-                    "POLYHEDRALSURFACE" = "solid"
+                                        "GEOMETRY" = "composite", "GEOMETRYCOLLECTION" = "composite",
+                                        "POINT" = "point", "MULTIPOINT" = "point", 
+                                        "LINESTRING" = "curve", "CIRCULARSTRING" = "curve", "MULTILINESTRING" = "curve", "CURVE" = "curve", "COMPOUNDCURVE" = "curve",
+                                        "POLYGON" = "surface", "MULTIPOLYGON" = "surface", "TRIANGLE" = "surface",
+                                        "CURVEPOLYGON" = "surface", "SURFACE" = "surface", "MULTISURFACE" = "surface",
+                                        "POLYHEDRALSURFACE" = "solid"
                   )
                   geomObject$setGeometricObjectType(isoGeomType)
-                  geomObject$setGeometricObjectCount(nrow(features[st_geometry_type(features)==geomtype,]))
+                  geomObject$setGeometricObjectCount(nrow(features[sf::st_geometry_type(features)==geomtype,]))
                   vsr$setGeometricObjects(geomObject)
                 }
                 md$addSpatialRepresentationInfo(vsr)
@@ -212,7 +214,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
           }else{
             dimObject$setResolution(ISOMeasure$new(value=resolution$value,uom=resolution$uom))
           }
-        gsr$addDimension(dimObject)
+          gsr$addDimension(dimObject)
         }
         gsr$setCellGeometry("area")
         md$addSpatialRepresentationInfo(gsr)
@@ -252,7 +254,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
       ident$addPointOfContact(rp)
     }
   }
-
+  
   #citation
   now <- Sys.time()
   ct <- ISOCitation$new()
@@ -296,7 +298,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
       ct$addIdentifier(ISOMetaIdentifier$new(code = mdIdentifier))
     }
   }
-
+  
   ct$addPresentationForm("mapDigital") #TODO to map with gsheet
   
   #adding responsible party (search for owner, otherwise take first contact)
@@ -364,6 +366,14 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #legal constraints
   if(length(entity$rights)>0){
     legal_constraints <- ISOLegalConstraints$new()
+    #license
+    licenses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "license"})]
+    if(length(licenses)>0){
+      legal_constraints$addUseConstraint("license")
+      for(license in licenses){
+        legal_constraints$addUseLimitation(license)
+      }
+    }
     #use limitation
     uses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "use"})]
     if(length(uses)>0){
@@ -390,8 +400,8 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #extents
   extent <- ISOExtent$new()
   #geographic extent
-  if(!is.null(entity$spatial_bbox)){
-    sf_bbox <- entity$spatial_bbox
+  if(!is.null(entity$geo_bbox)){
+    sf_bbox <- entity$geo_bbox
     bbox <- ISOGeographicBoundingBox$new(minx = sf_bbox$xmin, miny = sf_bbox$ymin, maxx = sf_bbox$xmax, maxy = sf_bbox$ymax)
     extent$addGeographicElement(bbox)
   }
@@ -502,7 +512,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   if(length(entity$relations)>0){
     #WMS
     wms<-entity$relations[sapply(entity$relations, function(x){startsWith(x$key,"wms")})]
-    if(length(wms)>0){
+    if(include_service_identification) if(length(wms)>0){
       wms <- wms[[1]]
       wms_link <- gsub("service=WMS","",wms$link)
       wms_version <- switch(wms$key,
@@ -559,10 +569,10 @@ geometa_create_iso_19115 <- function(entity, config, options){
           if(request=="GetCapabilities"){
             or1 <- ISOOnlineResource$new()
             or1$setLinkage(paste0(wms$link,"&version=",switch(wms$key,
-                                                                      "wms" = "1.1.0",
-                                                                      "wms110" = "1.1.0",
-                                                                      "wms111" = "1.1.1",
-                                                                      "wms130" = "1.3.0"),"&request=GetCapabilities"))
+                                                              "wms" = "1.1.0",
+                                                              "wms110" = "1.1.0",
+                                                              "wms111" = "1.1.1",
+                                                              "wms130" = "1.3.0"),"&request=GetCapabilities"))
             or1$setName("OGC:WMS")
             or1$setDescription("Open Geospatial Consortium Web Map Service (WMS)")
             or1$setProtocol("OGC:WMS")
@@ -631,44 +641,44 @@ geometa_create_iso_19115 <- function(entity, config, options){
       md$contentInfo = c(md$contentInfo,cov)
     }
     if(!is.null(entity$data$dimensions)){
-  #create coverage description
-    cov <- ISOImageryCoverageDescription$new()
-    cov$setAttributeDescription("data")
-    cov$setContentType("coordinate")
-  
-  #adding dimensions
-
-  for(dimension in names(entity$data$dimensions)){
-    dim_name<-dimension
-    dimension<-entity$data$dimensions[[dimension]]
-    
-    band <- ISOBand$new()
-    
-    mn <- ISOMemberName$new(aName = dim_name, attributeType = "float")
-    band$sequenceIdentifier<-mn
-    band$descriptor<-dimension$longName
-    band$maxValue<-dimension$minValue
-    band$minValue<-dimension$maxValue
-    #unit
-    # unit<-dimension$resolution$uom
-    # if(length(unit)>0){
-    #   invisible(capture.output(gml<-try(GMLUnitDefinition$buildFrom(unit)),type="message"))
-    #   if(is.null(gml) | class(gml)=="try-error") invisible(capture.output(gml<-try(GMLUnitDefinition$buildFrom(unit,"name_singular")),type="message"))
-    #   if(is.null(gml) | class(gml)=="try-error") invisible(capture.output(gml<-try(GMLUnitDefinition$buildFrom(unit,"name_plural")),type="message"))
-    #   if(!is.null(gml) & class(gml)!="try-error") band$units<-gml
-    # }
-    band$units<-NA
-    cov$dimension = c(cov$dimension, band)
-    
-    if(include_coverage_data_dimension_values){
-       des <- ISOImageryRangeElementDescription$new()
-       des$name<-dim_name
-       des$definition<-dimension$longName
-       des$rangeElement <- sapply(unique(dimension$values), function(x){ ISORecord$new(value = x)})
-       cov$rangeElementDescription = c(cov$rangeElementDescription,des)
-    }
-  }
-    md$contentInfo = c(md$contentInfo,cov)
+      #create coverage description
+      cov <- ISOImageryCoverageDescription$new()
+      cov$setAttributeDescription("data")
+      cov$setContentType("coordinate")
+      
+      #adding dimensions
+      
+      for(dimension in names(entity$data$dimensions)){
+        dim_name<-dimension
+        dimension<-entity$data$dimensions[[dimension]]
+        
+        band <- ISOBand$new()
+        
+        mn <- ISOMemberName$new(aName = dim_name, attributeType = "float")
+        band$sequenceIdentifier<-mn
+        band$descriptor<-dimension$longName
+        band$maxValue<-dimension$minValue
+        band$minValue<-dimension$maxValue
+        #unit
+        # unit<-dimension$resolution$uom
+        # if(length(unit)>0){
+        #   invisible(capture.output(gml<-try(GMLUnitDefinition$buildFrom(unit)),type="message"))
+        #   if(is.null(gml) | class(gml)=="try-error") invisible(capture.output(gml<-try(GMLUnitDefinition$buildFrom(unit,"name_singular")),type="message"))
+        #   if(is.null(gml) | class(gml)=="try-error") invisible(capture.output(gml<-try(GMLUnitDefinition$buildFrom(unit,"name_plural")),type="message"))
+        #   if(!is.null(gml) & class(gml)!="try-error") band$units<-gml
+        # }
+        band$units<-NA
+        cov$dimension = c(cov$dimension, band)
+        
+        if(include_coverage_data_dimension_values){
+          des <- ISOImageryRangeElementDescription$new()
+          des$name<-dim_name
+          des$definition<-dimension$longName
+          des$rangeElement <- sapply(unique(dimension$values), function(x){ ISORecord$new(value = x)})
+          cov$rangeElementDescription = c(cov$rangeElementDescription,des)
+        }
+      }
+      md$contentInfo = c(md$contentInfo,cov)
     }
     if(!is.null(entity$data$ogc_dimensions)){
       #create coverage description
@@ -680,10 +690,10 @@ geometa_create_iso_19115 <- function(entity, config, options){
         ogc_dim_name<-toupper(ogc_dimension)
         ogc_dimension<-entity$data$ogc_dimensions[[ogc_dimension]]
         band <- ISOBand$new()
-       
+        
         mn <- switch(ogc_dim_name,
-          "TIME"  = ISOMemberName$new(aName = ogc_dim_name, attributeType = "xsd:datetime"),
-          "ELEVATION" = ISOMemberName$new(aName = ogc_dim_name, attributeType = "xsd:decimal")
+                     "TIME"  = ISOMemberName$new(aName = ogc_dim_name, attributeType = "xsd:datetime"),
+                     "ELEVATION" = ISOMemberName$new(aName = ogc_dim_name, attributeType = "xsd:decimal")
         )
         
         band$sequenceIdentifier<-mn
@@ -691,11 +701,11 @@ geometa_create_iso_19115 <- function(entity, config, options){
         cov$dimension = c(cov$dimension, band)
         
         if(include_coverage_service_dimension_values){
-           des <- ISOImageryRangeElementDescription$new()
-           des$name<-ogc_dim_name
-           des$definition<-""
-           des$rangeElement <- sapply(ogc_dimension$values, function(x){ ISORecord$new(value = x)})
-           cov$rangeElementDescription = c(cov$rangeElementDescription,des)
+          des <- ISOImageryRangeElementDescription$new()
+          des$name<-ogc_dim_name
+          des$definition<-""
+          des$rangeElement <- sapply(ogc_dimension$values, function(x){ ISORecord$new(value = x)})
+          cov$rangeElementDescription = c(cov$rangeElementDescription,des)
         }
       }
       md$contentInfo = c(md$contentInfo,cov)
@@ -736,7 +746,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
   #add online resource for each relation
   if(length(entity$relations)>0){
     http_relations <- entity$relations[sapply(entity$relations, function(x){
-      x$key %in% c("ftp","http", "wfs", "wms", "wms110", "wms111", "wms130", "wcs", "csw")
+      x$key %in% c("ftp","http", "download", "wfs", "wms", "wms110", "wms111", "wms130", "wcs", "csw")
     })]
     for(http_relation in http_relations){
       or <- ISOOnlineResource$new()
@@ -744,12 +754,24 @@ geometa_create_iso_19115 <- function(entity, config, options){
       or$setName(http_relation$name)
       or$setDescription(http_relation$description)
       protocol <- switch(http_relation$key,
-        "http" = "WWW:LINK-1.0-http--link",
-        "wms" = "OGC:WMS-1.1.0-http-get-map", #defaut
-        "wms110" = "OGC:WMS-1.1.0-http-get-map",
-        "wms111" = "OGC:WMS-1.1.1-http-get-map",
-        "wms130" = "OGC:WMS-1.3.0-http-get-map",
-        "WWW:LINK-1.0-http--link"
+                         "http" = "WWW:LINK-1.0-http--link",
+                         "download" = "WWW:DOWNLOAD-1.0-http--download",
+                         "wms" = "OGC:WMS", #defaut
+                         "wms110" = "OGC:WMS-1.1.0-http-get-map",
+                         "wms111" = "OGC:WMS-1.1.1-http-get-map",
+                         "wms130" = "OGC:WMS-1.3.0-http-get-map",
+                         "wfs" = "OGC:WFS",
+                         "wfs100" = "OGC:WFS-1.0.0-http-get-feature",
+                         "wfs110" = "OGC:WFS-1.1.0-http-get-feature",
+                         "wfs200" = "OGC:WFS-2.0.0-http-get-feature",
+                         "wcs" = "OGC:WCS",
+                         "wcs100" = "OGC:WCS-1.0.0-http-get-coverage",
+                         "wcs11"  = "OGC:WCS-1.1-http-get-coverage",
+                         "wcs110" = "OGC:WCS-1.1.0-http-get-coverage",
+                         "wcs111" = "OGC:WCS-1.1.1-http-get-coverage",
+                         "wcs201" = "OGC:WCS-2.0.1-http-get-coverage",
+                         "wcs210" = "OGC:WCS-2.1.0-http-get-coverage", 
+                         "WWW:LINK-1.0-http--link"
       )
       or$setProtocol(protocol)
       dto$onLine = c(dto$onLine,or)
@@ -819,6 +841,7 @@ geometa_create_iso_19115 <- function(entity, config, options){
     cr_inspire2$setPass(TRUE)
     dc_inspire2$addResult(cr_inspire2)
     dq2$addReport(dc_inspire2)
+    md$addDataQualityInfo(dq2)
   }
   
   #content information --> Feature Catalogue description (if data handling)
@@ -841,4 +864,5 @@ geometa_create_iso_19115 <- function(entity, config, options){
   md$save(file.path(getwd(), "metadata", paste0(entity$getEntityJobDirname(), "_ISO-19115.xml")), 
           inspire = inspire, inspireValidator = INSPIRE_VALIDATOR)
   rm(md)
+
 }

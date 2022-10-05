@@ -7,7 +7,7 @@
 #' @name geoflow_format
 #' @title Geoflow format class
 #' @description This class models a format
-#' @keywords format, mime, mimetype
+#' @keywords format mime mimetype
 #' @return Object of \code{\link{R6Class}} for modelling a format
 #' @format \code{\link{R6Class}} object.
 #' 

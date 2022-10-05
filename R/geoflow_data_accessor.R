@@ -90,7 +90,7 @@ geoflow_data_accessor <- R6Class("geoflow_data_accessor",
     checkPackages = function(){
       self$INFO(sprintf("Check package dependencies for data accessor '%s'", self$id))
       out_pkgs <- try(check_packages(self$packages))
-      if(class(out_pkgs)=="try-error"){
+      if(is(out_pkgs,"try-error")){
         errMsg <- sprintf("One or more packages are not imported although required for data accessor '%s'", self$id)
         self$ERROR(errMsg)
         stop(errMsg)
@@ -218,7 +218,7 @@ register_data_accessors <- function(){
         
         cat(sprintf("[geoflow] D4science Storage Hub data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
         link = try(software$getPublicFileLink(resource))
-        if(class(link)!="try-error"){
+        if(!is(link, "try-error")){
           cat(sprintf("[geoflow][INFO] D4science Storage Hub resource ID: %s\n", link))
           download.file(url = link, destfile = path)
         }else{
@@ -310,6 +310,74 @@ register_data_accessors <- function(){
         if(!is.null(http)){
           dataset_uri<-paste0(base_uri,http,data$url)
           if(httr::GET(dataset_uri)$status=="200") download.file(url = dataset_uri, destfile = dataset_dest,mode="wb")
+        }
+      }
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #OPENAPI
+    #------------------------------------------------------------------------------------------------------- 
+    geoflow_data_accessor$new(
+      id = "openapi",
+      software_type = "openapi",
+      definition = "An OpenAPI data accessor",
+      packages = list("rapiclient"),
+      download = function(resource, file, path, software = NULL){
+        
+        if(is.null(software)){
+          errMsg <- sprintf("[geoflow] OpenAPI data accessor requires a 'openapi' software declaration in the geoflow configuration\n")
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+        openapi_query <- jsonlite::read_json(resource)
+        if(!all(names(openapi_query) %in% c("api_method_name", "api_method_args"))){
+          errMsg <- "[geoflow] OpenAPI data accessor requires a source json file that includes the 'api_method_name' to invoke and the 'api_method_args' to apply to this method"
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+        my_arg_names <- names(openapi_query$api_method_args)
+        api_method_arg_names <- names(formals(software[[openapi_query$api_method_name]]))
+        if(!all(my_arg_names %in% api_method_arg_names)){
+          errMsg <- sprintf("[geoflow] OpenAPI data accessor: arguments [%s] are not valid for method '%'", 
+                            paste0(setdiff(my_arg_names, api_method_arg_names),collapse=","),
+                            openapi_query$api_method_name)
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+        req <- do.call(software[[openapi_query$api_method_name]], openapi_query$api_method_args)
+        if(httr::status_code(req)== 200){
+          writeLines(content(req, type = "text"), path)
+        }else{
+          errMsg <- "[geoflow] OpenAPI data accessor: bad request"
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+      }
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #OCS
+    #------------------------------------------------------------------------------------------------------- 
+    geoflow_data_accessor$new(
+      id = "ocs",
+      software_type = "ocs",
+      definition = "An OCS API-based (Owncloud/Nextcloud) data accessor",
+      packages = list("ocs4R"),
+      download = function(resource, file, path, software = NULL){
+        
+        if(is.null(software)){
+          errMsg <- sprintf("[geoflow] OCS data accessor requires a 'ocs' software declaration in the geoflow configuration\n")
+          cat(errMsg)
+          stop(errMsg)
+        }
+        
+        cat(sprintf("[geoflow] OCS data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
+        software$downloadFile(relPath = dirname(resource), filename = basename(resource), outdir = getwd())
+        
+        if(endsWith(path, "zip")){
+          utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
         }
       }
     )

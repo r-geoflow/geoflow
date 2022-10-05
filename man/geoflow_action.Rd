@@ -80,26 +80,28 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_action$new()}}
-\item \href{#method-checkPackages}{\code{geoflow_action$checkPackages()}}
-\item \href{#method-isPIDGenerator}{\code{geoflow_action$isPIDGenerator()}}
-\item \href{#method-exportPIDs}{\code{geoflow_action$exportPIDs()}}
-\item \href{#method-isGenericUploader}{\code{geoflow_action$isGenericUploader()}}
-\item \href{#method-clone}{\code{geoflow_action$clone()}}
+\item \href{#method-geoflow_action-new}{\code{geoflow_action$new()}}
+\item \href{#method-geoflow_action-checkPackages}{\code{geoflow_action$checkPackages()}}
+\item \href{#method-geoflow_action-run}{\code{geoflow_action$run()}}
+\item \href{#method-geoflow_action-getOption}{\code{geoflow_action$getOption()}}
+\item \href{#method-geoflow_action-isPIDGenerator}{\code{geoflow_action$isPIDGenerator()}}
+\item \href{#method-geoflow_action-exportPIDs}{\code{geoflow_action$exportPIDs()}}
+\item \href{#method-geoflow_action-isGenericUploader}{\code{geoflow_action$isGenericUploader()}}
+\item \href{#method-geoflow_action-clone}{\code{geoflow_action$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="ERROR">}\href{../../geoflow/html/geoflowLogger.html#method-ERROR}{\code{geoflow::geoflowLogger$ERROR()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="INFO">}\href{../../geoflow/html/geoflowLogger.html#method-INFO}{\code{geoflow::geoflowLogger$INFO()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="WARN">}\href{../../geoflow/html/geoflowLogger.html#method-WARN}{\code{geoflow::geoflowLogger$WARN()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="ERROR"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-ERROR'><code>geoflow::geoflowLogger$ERROR()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="INFO"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-INFO'><code>geoflow::geoflowLogger$INFO()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="WARN"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-WARN'><code>geoflow::geoflowLogger$WARN()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_action-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_action-new}{}}}
 \subsection{Method \code{new()}}{
 Initialize a \link{geoflow_action}
 \subsection{Usage}{
@@ -156,8 +158,8 @@ Initialize a \link{geoflow_action}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-checkPackages"></a>}}
-\if{latex}{\out{\hypertarget{method-checkPackages}{}}}
+\if{html}{\out{<a id="method-geoflow_action-checkPackages"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_action-checkPackages}{}}}
 \subsection{Method \code{checkPackages()}}{
 Check that all packages required for the action are available, if yes,
    import them in the R session, and return a \code{data.frame} giving the 
@@ -169,8 +171,47 @@ Check that all packages required for the action are available, if yes,
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-isPIDGenerator"></a>}}
-\if{latex}{\out{\hypertarget{method-isPIDGenerator}{}}}
+\if{html}{\out{<a id="method-geoflow_action-run"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_action-run}{}}}
+\subsection{Method \code{run()}}{
+Runs the action
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$run(entity, config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{entity}}{entity}
+
+\item{\code{config}}{config}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_action-getOption"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_action-getOption}{}}}
+\subsection{Method \code{getOption()}}{
+Get action option value
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$getOption(option)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{option}}{option id}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the option value, either specified through a workflow, or the default value
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_action-isPIDGenerator"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_action-isPIDGenerator}{}}}
 \subsection{Method \code{isPIDGenerator()}}{
 Indicates if the action is PID generator
 \subsection{Usage}{
@@ -182,8 +223,8 @@ Indicates if the action is PID generator
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-exportPIDs"></a>}}
-\if{latex}{\out{\hypertarget{method-exportPIDs}{}}}
+\if{html}{\out{<a id="method-geoflow_action-exportPIDs"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_action-exportPIDs}{}}}
 \subsection{Method \code{exportPIDs()}}{
 Exports PIDs for the action. This function will export the PIDs in several ways. First, a simple CSV file 
 including the list of PIDs for each entity, and associated status (eg. draft/release) for the given PID resource. In 
@@ -206,8 +247,8 @@ publishing resources with PIDs (eg. publishing deposits in Zenodo).
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-isGenericUploader"></a>}}
-\if{latex}{\out{\hypertarget{method-isGenericUploader}{}}}
+\if{html}{\out{<a id="method-geoflow_action-isGenericUploader"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_action-isGenericUploader}{}}}
 \subsection{Method \code{isGenericUploader()}}{
 Indicates if the action is a generic uploader
 \subsection{Usage}{
@@ -219,8 +260,8 @@ Indicates if the action is a generic uploader
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_action-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_action-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

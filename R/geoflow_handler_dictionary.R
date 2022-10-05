@@ -71,12 +71,12 @@ handle_dictionary_df <- function(config, source){
   for(handler in handlers){
     
     fun <- eval(parse(text = handler))
-    if(class(fun)=="try-error"){
+    if(is(fun,"try-error")){
       errMsg <- sprintf("Error while trying to evaluate function '%s", handler)
       config$logger.error(errMsg)
       stop(errMsg)
     }
-    if(class(fun)!="function"){
+    if(!is(fun,"function")){
       errMsg <- sprintf("'%s' is not a function!", handler)
       config$logger.error(errMsg)
       stop(errMsg)
@@ -110,7 +110,8 @@ handle_dictionary_gsheet <- function(config, source, handle = TRUE){
 handle_dictionary_csv <- function(config, source, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
-  source <- read.csv(source)
+  #source <- read.csv(source)
+  source <- as.data.frame(readr::read_csv(source))
   if(!handle) return(source)
   
   #apply generic handler
@@ -141,14 +142,14 @@ handle_dictionary_dbi <- function(config, source, handle = TRUE){
   is_query <- startsWith(tolower(source), "select ")
   if(is_query){
     source <- try(DBI::dbGetQuery(dbi, source))
-    if(class(source)=="try-error"){
+    if(is(source,"try-error")){
       errMsg <- sprintf("Error while trying to execute DB query '%s'.", source)
       config$logger.error(errMsg)
       stop(errMsg)
     }
   }else{
     source <- try(DBI::dbGetQuery(dbi, sprintf("select * from %s", source)))
-    if(class(source)=="try-error"){
+    if(is(source,"try-error")){
       errMsg <- sprintf("Error while trying to read DB table/view '%s'. Check if it exists in DB.", source)
       config$logger.error(errMsg)
       stop(errMsg)
@@ -160,3 +161,25 @@ handle_dictionary_dbi <- function(config, source, handle = TRUE){
   dictionary <- handle_dictionary_df(config, source)
   return(dictionary)
 }
+
+#handle_dictionary_ocs
+handle_dictionary_ocs <- function(config, source, handle = TRUE){
+  
+  if(!requireNamespace("ocs4R", quietly = TRUE)){
+    stop("The OCS handler requires the 'ocs4R' package")
+  }
+  
+  ocs <- config$software$input$ocs
+  if(is.null(ocs)){
+    stop("There is no OCS input software configured to handle dictionary from an OCS service endpoint")
+  }
+  
+  dict_file <- ocs$downloadFile(relPath = dirname(source), filename = basename(source), outdir = tempdir())
+  
+  dictionary <- switch(mime::guess_type(dict_file),
+   "text/csv" = handle_dictionary_csv(config = config, source = dict_file, handle = handle),
+   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = handle_dictionary_excel(config = config, source = dict_file, handle = handle)
+  )
+  return(dictionary)
+}
+

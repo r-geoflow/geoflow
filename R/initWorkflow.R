@@ -90,6 +90,9 @@ initWorkflow <- function(file, dir = "."){
       config$logger.info(sprintf("Setting option 'line_separator' to '%s'", config$profile$options$line_separator))
       set_line_separator(config$profile$options$line_separator)
     }
+    for(option_name in names(config$profile$options)){
+      profile$setOption(option_name, config$profile$options[[option_name]])
+    }
     
     config$profile <- profile
   }
@@ -167,7 +170,7 @@ initWorkflow <- function(file, dir = "."){
         software$actions <- target_software$actions
       }else{
         client_handler <- eval(parse(text=software$handler))
-        if(class(client_handler)=="try-error"){
+        if(is(client_handler,"try-error")){
           errMsg <- sprintf("Error while evaluating software handler '%s'", software$handler)
           config$logger.error(errMsg)
           stop(errMsg)
@@ -275,12 +278,12 @@ initWorkflow <- function(file, dir = "."){
         }else{
           source(reg$script)
           customfun <- eval(parse(text = reg$id))
-          if(class(customfun)=="try-error"){
+          if(is(customfun,"try-error")){
             errMsg <- sprintf("Error while trying to evaluate custom function '%s", reg$id)
             config$logger.error(errMsg)
             stop(errMsg)
           }
-          if(class(customfun)!="function"){
+          if(!is(customfun,"function")){
             errMsg <- sprintf("'%s' is not a function!", reg$id)
             config$logger.error(errMsg)
             stop(errMsg)
@@ -480,21 +483,20 @@ initWorkflow <- function(file, dir = "."){
         
         #options
         if(length(action$options)>0) if(!all(names(action$options) %in% names(action_to_trigger$available_options))){
-          errMsg <- sprintf("Option(s) [%s] invalid for action '%s'", paste0(setdiff(names(action$options), names(action$available_options)), collapse=","), action$id)
+          errMsg <- sprintf("Option(s) [%s] invalid for action '%s'", paste0(setdiff(names(action$options), names(action_to_trigger$available_options)), collapse=","), action$id)
           config$logger.error(errMsg)
           stop(errMsg)
         }
         action_to_trigger$options <- action$options
       }else{
         if(config$profile$mode == "entity"){
-          source(action$script)
-          customfun <- eval(parse(text = action$id))
-          if(class(customfun)=="try-error"){
+          customfun <- source(action$script)$value
+          if(is(customfun,"try-error")){
             errMsg <- sprintf("Error while trying to evaluate custom function'%s", action$id)
             config$logger.error(errMsg)
             stop(errMsg)
           }
-          if(class(customfun)!="function"){
+          if(!is(customfun,"function")){
             errMsg <- sprintf("'%s' is not a function!", action$id)
             config$logger.error(errMsg)
             stop(errMsg)

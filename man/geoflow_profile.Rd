@@ -45,25 +45,28 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item{\code{logos}}{profile logo(s)}
 
 \item{\code{mode}}{mode of execution (Default is "raw")}
+
+\item{\code{options}}{global config options}
 }
 \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_profile$new()}}
-\item \href{#method-setId}{\code{geoflow_profile$setId()}}
-\item \href{#method-setName}{\code{geoflow_profile$setName()}}
-\item \href{#method-setProject}{\code{geoflow_profile$setProject()}}
-\item \href{#method-setOrganization}{\code{geoflow_profile$setOrganization()}}
-\item \href{#method-addLogo}{\code{geoflow_profile$addLogo()}}
-\item \href{#method-setMode}{\code{geoflow_profile$setMode()}}
-\item \href{#method-clone}{\code{geoflow_profile$clone()}}
+\item \href{#method-geoflow_profile-new}{\code{geoflow_profile$new()}}
+\item \href{#method-geoflow_profile-setId}{\code{geoflow_profile$setId()}}
+\item \href{#method-geoflow_profile-setName}{\code{geoflow_profile$setName()}}
+\item \href{#method-geoflow_profile-setProject}{\code{geoflow_profile$setProject()}}
+\item \href{#method-geoflow_profile-setOrganization}{\code{geoflow_profile$setOrganization()}}
+\item \href{#method-geoflow_profile-addLogo}{\code{geoflow_profile$addLogo()}}
+\item \href{#method-geoflow_profile-setMode}{\code{geoflow_profile$setMode()}}
+\item \href{#method-geoflow_profile-setOption}{\code{geoflow_profile$setOption()}}
+\item \href{#method-geoflow_profile-clone}{\code{geoflow_profile$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_profile-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_profile-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes an object of class \link{geoflow_profile}
 \subsection{Usage}{
@@ -72,8 +75,8 @@ Initializes an object of class \link{geoflow_profile}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setId"></a>}}
-\if{latex}{\out{\hypertarget{method-setId}{}}}
+\if{html}{\out{<a id="method-geoflow_profile-setId"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_profile-setId}{}}}
 \subsection{Method \code{setId()}}{
 Sets profile ID
 \subsection{Usage}{
@@ -89,8 +92,8 @@ Sets profile ID
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setName"></a>}}
-\if{latex}{\out{\hypertarget{method-setName}{}}}
+\if{html}{\out{<a id="method-geoflow_profile-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_profile-setName}{}}}
 \subsection{Method \code{setName()}}{
 Sets profile name
 \subsection{Usage}{
@@ -106,8 +109,8 @@ Sets profile name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setProject"></a>}}
-\if{latex}{\out{\hypertarget{method-setProject}{}}}
+\if{html}{\out{<a id="method-geoflow_profile-setProject"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_profile-setProject}{}}}
 \subsection{Method \code{setProject()}}{
 Sets profile project
 \subsection{Usage}{
@@ -123,8 +126,8 @@ Sets profile project
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setOrganization"></a>}}
-\if{latex}{\out{\hypertarget{method-setOrganization}{}}}
+\if{html}{\out{<a id="method-geoflow_profile-setOrganization"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_profile-setOrganization}{}}}
 \subsection{Method \code{setOrganization()}}{
 Sets profile organization
 \subsection{Usage}{
@@ -140,8 +143,8 @@ Sets profile organization
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addLogo"></a>}}
-\if{latex}{\out{\hypertarget{method-addLogo}{}}}
+\if{html}{\out{<a id="method-geoflow_profile-addLogo"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_profile-addLogo}{}}}
 \subsection{Method \code{addLogo()}}{
 Adds a profile organization
 \subsection{Usage}{
@@ -157,8 +160,8 @@ Adds a profile organization
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setMode"></a>}}
-\if{latex}{\out{\hypertarget{method-setMode}{}}}
+\if{html}{\out{<a id="method-geoflow_profile-setMode"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_profile-setMode}{}}}
 \subsection{Method \code{setMode()}}{
 Sets profile mode
 \subsection{Usage}{
@@ -174,8 +177,27 @@ Sets profile mode
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_profile-setOption"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_profile-setOption}{}}}
+\subsection{Method \code{setOption()}}{
+Set global config option
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_profile$setOption(name, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{option name}
+
+\item{\code{value}}{option value}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_profile-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_profile-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

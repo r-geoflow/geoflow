@@ -40,15 +40,15 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_keyword$new()}}
-\item \href{#method-setName}{\code{geoflow_keyword$setName()}}
-\item \href{#method-setUri}{\code{geoflow_keyword$setUri()}}
-\item \href{#method-clone}{\code{geoflow_keyword$clone()}}
+\item \href{#method-geoflow_keyword-new}{\code{geoflow_keyword$new()}}
+\item \href{#method-geoflow_keyword-setName}{\code{geoflow_keyword$setName()}}
+\item \href{#method-geoflow_keyword-setUri}{\code{geoflow_keyword$setUri()}}
+\item \href{#method-geoflow_keyword-clone}{\code{geoflow_keyword$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_keyword-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_keyword-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_keyword}
 \subsection{Usage}{
@@ -66,8 +66,8 @@ Initializes a \link{geoflow_keyword}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setName"></a>}}
-\if{latex}{\out{\hypertarget{method-setName}{}}}
+\if{html}{\out{<a id="method-geoflow_keyword-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_keyword-setName}{}}}
 \subsection{Method \code{setName()}}{
 Sets keyword
 \subsection{Usage}{
@@ -83,8 +83,8 @@ Sets keyword
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setUri"></a>}}
-\if{latex}{\out{\hypertarget{method-setUri}{}}}
+\if{html}{\out{<a id="method-geoflow_keyword-setUri"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_keyword-setUri}{}}}
 \subsection{Method \code{setUri()}}{
 Sets keyword URI
 \subsection{Usage}{
@@ -100,8 +100,8 @@ Sets keyword URI
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_keyword-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_keyword-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

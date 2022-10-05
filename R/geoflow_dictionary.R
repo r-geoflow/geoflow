@@ -11,13 +11,6 @@
 #' @return Object of \code{\link{R6Class}} for modelling a dictionary
 #' @format \code{\link{R6Class}} object.
 #' 
-#' @section Methods:
-#' \describe{
-#'  \item{\code{new()}}{
-#'    This method is used to instantiate a geoflow_dictionary_element object
-#'  }
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_dictionary <- R6Class("geoflow_dictionary",

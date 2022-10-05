@@ -65,7 +65,7 @@ geoflow_handler <- R6Class("geoflow_handler",
       #check package dependencies
       self$INFO(sprintf("Check package dependencies for handler '%s'", self$id))
       out_pkgs <- try(check_packages(self$packages))
-      if(class(out_pkgs)=="try-error"){
+      if(is(out_pkgs,"try-error")){
         errMsg <- sprintf("One or more packages are not imported although required for handler '%s'", self$id)
         self$ERROR(errMsg)
         stop(errMsg)
@@ -117,6 +117,12 @@ register_contact_handlers <- function(){
       def = "Handle metadata contacts from a DB source",
       packages = list("DBI", "RSQLite", "RPostgres"),
       fun = handle_contacts_dbi
+    ),
+    geoflow_handler$new(
+      id = "ocs",
+      def = "Handle metadata contacts from a tabulat data source (csv or excel) hosted on an OCS cloud",
+      packages = list("ocs4R"),
+      fun = handle_contacts_ocs
     )
   )
   .geoflow$contact_handlers <- handlers
@@ -198,6 +204,12 @@ register_entity_handlers <- function(){
       def = "Handle metadata entities built from a Dataverse source",
       packages = list("dataverse"),
       fun = handle_entities_dataverse
+    ),
+    geoflow_handler$new(
+      id = "ocs",
+      def = "Handle metadata entities from a tabulat data source (csv or excel) hosted on an OCS cloud",
+      packages = list("ocs4R"),
+      fun = handle_entities_ocs
     ),
     geoflow_handler$new(
       id = "ncdf",
@@ -307,6 +319,12 @@ register_dictionary_handlers <- function(){
       def = "Handle dictionary from a DB source",
       packages = list("DBI", "RSQLite", "RPostgres"),
       fun = handle_dictionary_dbi
+    ),
+    geoflow_handler$new(
+      id = "ocs",
+      def = "Handle dictionary from a tabulat data source (csv or excel) hosted on an OCS cloud",
+      packages = list("ocs4R"),
+      fun = handle_dictionary_ocs
     )
   )
   .geoflow$dictionary_handlers <- handlers

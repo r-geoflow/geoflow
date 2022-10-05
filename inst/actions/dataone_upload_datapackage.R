@@ -1,4 +1,4 @@
-dataone_upload_datapackage <- function(entity, config, options){
+function(action, entity, config){
   
   if(!requireNamespace("EML", quietly = TRUE)){
     stop("The 'dataone-upload-datapackage' action requires the 'EML' package")
@@ -33,14 +33,14 @@ dataone_upload_datapackage <- function(entity, config, options){
   
   #create datapackage
   dp <- switch(action,
-    "CREATE" = new("DataPackage"),
-    "UPDATE" = try(dataone::getDataPackage(DATAONE, identifier = packageId, lazyLoad = TRUE, limit="0MB", quiet=FALSE))
+               "CREATE" = new("DataPackage"),
+               "UPDATE" = try(dataone::getDataPackage(DATAONE, identifier = packageId, lazyLoad = TRUE, limit="0MB", quiet=FALSE))
   )
   
   if(update){
     members <- datapack::getIdentifiers(dp)
   }
-   
+  
   #EML metadata
   dp_eml_meta_obj <- NULL
   eml_file <- file.path("metadata", paste0(entity$identifiers[["id"]], "_EML.xml"))
@@ -114,10 +114,10 @@ dataone_upload_datapackage <- function(entity, config, options){
   #output table of DOIs
   if(is(out, "character")){
     infoMsg <- switch(action,
-      "CREATE" = sprintf("Successfully created data package with id '%s'", 
-                         entity$identifiers[["id"]]),
-      "UPDATE" = sprintf("Successfully updated Dataverse dataset with id '%s' (packageId: %s)", 
-                         entity$identifiers[["id"]], packageId)
+                      "CREATE" = sprintf("Successfully created data package with id '%s'", 
+                                         entity$identifiers[["id"]]),
+                      "UPDATE" = sprintf("Successfully updated Dataverse dataset with id '%s' (packageId: %s)", 
+                                         entity$identifiers[["id"]], packageId)
     )
     config$logger.info(infoMsg)
     
@@ -136,5 +136,5 @@ dataone_upload_datapackage <- function(entity, config, options){
     entity$identifiers[["dataone_packageId_to_save"]] <- packageId_to_save
     entity$setStatus("dataone", ifelse(publish, "published", "draft"))
   }
-
+  
 }

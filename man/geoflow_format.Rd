@@ -29,8 +29,8 @@ geoflow_format
 \author{
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
-\keyword{format,}
-\keyword{mime,}
+\keyword{format}
+\keyword{mime}
 \keyword{mimetype}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -48,17 +48,17 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_format$new()}}
-\item \href{#method-setKey}{\code{geoflow_format$setKey()}}
-\item \href{#method-setName}{\code{geoflow_format$setName()}}
-\item \href{#method-setUri}{\code{geoflow_format$setUri()}}
-\item \href{#method-setDescription}{\code{geoflow_format$setDescription()}}
-\item \href{#method-clone}{\code{geoflow_format$clone()}}
+\item \href{#method-geoflow_format-new}{\code{geoflow_format$new()}}
+\item \href{#method-geoflow_format-setKey}{\code{geoflow_format$setKey()}}
+\item \href{#method-geoflow_format-setName}{\code{geoflow_format$setName()}}
+\item \href{#method-geoflow_format-setUri}{\code{geoflow_format$setUri()}}
+\item \href{#method-geoflow_format-setDescription}{\code{geoflow_format$setDescription()}}
+\item \href{#method-geoflow_format-clone}{\code{geoflow_format$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_format-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_format-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_format}
 \subsection{Usage}{
@@ -74,8 +74,8 @@ Initializes a \link{geoflow_format}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setKey"></a>}}
-\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\if{html}{\out{<a id="method-geoflow_format-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_format-setKey}{}}}
 \subsection{Method \code{setKey()}}{
 Sets format key
 \subsection{Usage}{
@@ -91,8 +91,8 @@ Sets format key
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setName"></a>}}
-\if{latex}{\out{\hypertarget{method-setName}{}}}
+\if{html}{\out{<a id="method-geoflow_format-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_format-setName}{}}}
 \subsection{Method \code{setName()}}{
 Sets format name
 \subsection{Usage}{
@@ -108,8 +108,8 @@ Sets format name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setUri"></a>}}
-\if{latex}{\out{\hypertarget{method-setUri}{}}}
+\if{html}{\out{<a id="method-geoflow_format-setUri"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_format-setUri}{}}}
 \subsection{Method \code{setUri()}}{
 Sets format URI
 \subsection{Usage}{
@@ -125,8 +125,8 @@ Sets format URI
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setDescription"></a>}}
-\if{latex}{\out{\hypertarget{method-setDescription}{}}}
+\if{html}{\out{<a id="method-geoflow_format-setDescription"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_format-setDescription}{}}}
 \subsection{Method \code{setDescription()}}{
 Sets format description
 \subsection{Usage}{
@@ -142,8 +142,8 @@ Sets format description
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_format-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_format-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

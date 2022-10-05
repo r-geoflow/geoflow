@@ -15,15 +15,24 @@
 #'
 geoflow_data <- R6Class("geoflow_data",
   private = list(
-    supportedSourceTypes = c("dbtable", "dbview", "dbquery","shp", "csv", "gpkg", "other","nc"),
-    supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "gpkg", "other","nc"),
+    supportedSourceTypes = c("dbtable", "dbview", "dbquery","shp", "csv", "gpkg", "other","nc", "geotiff"),
+    supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "gpkg", "other","nc", "geotiff"),
     supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"),
     supportedXPossibleNames = c("x","lon","long","longitude","decimalLongitude"),
     supportedYPossibleNames = c("y","lat","lati","latitude","decimalLatitude"),
-    supportedSpatialRepresentationTypes = c("vector","grid")
+    supportedSpatialRepresentationTypes = c("vector","grid"),
+    supportedEnvelopeCompositionTypes = c("UNION", "INTERSECTION")
 
   ),
   public = list(
+    
+    #'@field dir an object of class \code{character} giving a data directory
+    dir = NULL,
+    #'@field data list of object of class \link{geoflow_data} in case we point to a data directory
+    data = list(),
+    
+    #ACCESS / SOURCE related fields
+    #----------------------------------------------------------------------------
     #'@field access accessor key for accessing sources. Default is 'default'
     access = "default",
     #'@field source source
@@ -36,6 +45,9 @@ geoflow_data <- R6Class("geoflow_data",
     sourceZip = FALSE,
     #'@field sourceZipOnly create a zip only for the sources, remove source files
     sourceZipOnly = FALSE,
+    
+    #UPLOAD related fields
+    #----------------------------------------------------------------------------
     #'@field sql sql
     sql = NULL,
     #'@field upload upload
@@ -46,16 +58,30 @@ geoflow_data <- R6Class("geoflow_data",
     uploadType = "other",
     #'@field cqlfilter CQL filter for filtering data
     cqlfilter = NULL,
-    #'@field features features
-    features = NULL,
     #'@field workspaces workspaces
     workspaces = list(),
-    #'@field datastore datastore
-    datastore = NULL,
+    #'@field store store
+    store = NULL,
     #'@field layername layer name
     layername = NULL,
     #'@field styles styles
     styles = list(),
+    #'@field styleUpload upload styles
+    styleUpload = TRUE,
+    #'@field dimensions dimensions
+    dimensions = list(),
+    
+    #resource generic fields
+    #----------------------------------------------------------------------------
+    #'@field spatialRepresentationType spatial representation type eg. "vector", "grid"
+    spatialRepresentationType = "vector",
+    #'@field ogc_dimensions OGC dimensions
+    ogc_dimensions = list(),
+    
+    #featuretype fields
+    #----------------------------------------------------------------------------
+    #'@field features features
+    features = NULL,
     #'@field parameters parameters
     parameters = list(),
     #'@field geometryField geometry field
@@ -70,12 +96,22 @@ geoflow_data <- R6Class("geoflow_data",
     attributes = NULL,
     #'@field variables variables
     variables = NULL,
-    #'@field ogc_dimensions OGC dimensions
-    ogc_dimensions = list(),
-    #'@field dimensions dimensions
-    dimensions = list(),
-    #'@field spatialRepresentationType spatial representation type eg. "vector", "grid"
-    spatialRepresentationType = "vector",
+    
+    #coverage fields 
+    #----------------------------------------------------------------------------
+    #'@field coverages coverages
+    coverages = NULL,
+    #'@field envelopeCompositionType envelope composition type (for coverages)
+    envelopeCompositionType = NULL,
+    #'@field selectedResolution selected resolution (for coverages)
+    selectedResolution = NULL,
+    #'@field selectedResolutionIndex selected resolution index (for coverages)
+    selectedResolutionIndex = NULL,
+    #'@field bands list of bands
+    bands = list(),
+    
+    #geoflow execution related fields
+    #----------------------------------------------------------------------------
     #'@field actions local actions
     actions = list(),
     #'@field run whether to run local actions
@@ -83,13 +119,21 @@ geoflow_data <- R6Class("geoflow_data",
     
     #'@description Initializes an object of class \link{geoflow_data}
     #'@param str character string to initialize from, using key-based syntax
-    initialize = function(str = NULL){
+    #'@param config a geoflow config, if available and needed
+    initialize = function(str = NULL, config = NULL){
       if(!is.null(str)){
         data_props <-  extract_cell_components(sanitize_str(str))
         data_props <- lapply(data_props, function(data_prop){
           return(extract_kvp(data_prop))
         })
         names(data_props) <- sapply(data_props, function(x){x$key})
+        
+        #spatialRepresentationType
+        if(!any(sapply(data_props, function(x){x$key=="spatialRepresentationType"}))){
+          self$setSpatialRepresentationType("vector")
+        }else{
+          self$setSpatialRepresentationType(data_props$spatialRepresentationType$values[[1]])
+        }
         
         #access to use for reaching sources
         if(!is.null(data_props$access)){
@@ -102,14 +146,15 @@ geoflow_data <- R6Class("geoflow_data",
         }
         
         #source
-        if(!any(sapply(data_props, function(x){x$key=="source"}))){
-          stop("The data 'source' is mandatory")
+        if(!any(sapply(data_props, function(x){x$key=="source"})) && !any(sapply(data_props, function(x){x$key=="dir"}))){
+          stop("One or more data 'source' (or 'dir', as directory for sources) is mandatory")
         }
-        self$setSource(data_props$source$values)
+        if(any(sapply(data_props, function(x){x$key=="source"}))) self$setSource(data_props$source$values)
         
         #sourceSql
         if(!is.null(data_props$sourceSql)){
-          self$setSourceSql(data_props$sourceSql$values[[1]])
+          sourceSql <- paste(data_props$sourceSql$values, collapse=",")
+          self$setSourceSql(sourceSql)
         }
         
         #sourceZip
@@ -161,6 +206,16 @@ geoflow_data <- R6Class("geoflow_data",
         }
         #20211130 this prevents from uploading data resources in generic uploaders (eg. zenodo)
         #if(startsWith(self$uploadType, "db")) self$setUpload(FALSE)
+        
+        #styles upload
+        if(!is.null(data_props$styleUpload)){
+          styleUpload <- as.logical(tolower(data_props$styleUpload$values[[1]]))
+          if(!is.na(styleUpload)){
+            self$setStyleUpload(styleUpload) 
+          }
+        }else{
+          self$setStyleUpload(TRUE)
+        }
         
         #layername (if any)
         #not mandatory, can be used for subset layers
@@ -218,11 +273,42 @@ geoflow_data <- R6Class("geoflow_data",
           self$setGeometryType(geom$values[[2]])
         }
         
+        #coverage view properties
+        if(!is.null(data_props$envelopeCompositionType)){
+          self$setEnvelopeCompositionType(data_props$envelopeCompositionType$values[[1]])
+        }
+        if(!is.null(data_props$selectedResolution)){
+          self$setSelectedResolution(data_props$selectedResolution$values[[1]])
+        }
+        if(!is.null(data_props$selectedResolutionIndex)){
+          self$setSelectedResolutionIndex(data_props$selectedResolutionIndex$values[[1]])
+        }
+        bands <- data_props[sapply(data_props, function(x){x$key=="band"})]
+        if(length(bands)>0){
+          if(self$spatialRepresentationType != "grid"){
+            stop("The specification of bands is only possible for a grid spatial representation!")
+          }
+          if(self$uploadType != "geotiff"){ #TODO to extend to other coverage formats
+            stop(" The specification of bands is only possible for a 'geotiff' upload type")
+          }
+          #check and set parameter
+          for(band in bands){
+            if(length(band$values) != 2){
+              stop("Band definition should be compound by 2 elements: name (coverage name), index")
+            }
+            covname <- band$values[[1]]
+            index <- band$values[[2]]
+            self$setBand(covname, index)
+          }
+        }
+        
         #layer styles
         styles <- data_props[sapply(data_props, function(x){x$key=="style"})]
         if(length(styles)>0){
           for(style in styles){
-            self$addStyle(style$values[[1]])
+            for(style_val in style$values){
+              self$addStyle(style_val)
+            }
           }
         }
         
@@ -236,9 +322,9 @@ geoflow_data <- R6Class("geoflow_data",
             self$setWorkspace(software_type, value)
           }
         }
-        #datastore
-        datastores <- data_props[sapply(data_props, function(x){x$key=="datastore"})]
-        if(length(datastores)>0) self$setDatastore(datastores[[1]]$values[[1]])
+        #store
+        stores <- data_props[sapply(data_props, function(x){x$key %in% c("datastore","store")})] #keep datastore for backward compatibility
+        if(length(stores)>0) self$setDatastore(stores[[1]]$values[[1]])
         
         #feature type
         fts <- data_props[sapply(data_props, function(x){x$key=="featureType"})]
@@ -263,13 +349,6 @@ geoflow_data <- R6Class("geoflow_data",
           }
         }))
         if(length(get_variables)>0) self$variables <- get_variables
-        
-        #spatialRepresentationType
-        if(!any(sapply(data_props, function(x){x$key=="spatialRepresentationType"}))){
-          self$setSpatialRepresentationType("vector")
-        }else{
-          self$spatialRepresentationType(data_props$spatialRepresentationType$values[[1]])
-        }
         
         #run entity actions
         runs <- data_props[sapply(data_props, function(x){x$key=="run"})]
@@ -317,8 +396,10 @@ geoflow_data <- R6Class("geoflow_data",
               scope = "local",
               types = c("Entity data action"),
               def = desc,
-              fun = eval(expr = parse(text = paste0("function(entity, config, options){
-                source(",script_to_source,", local = TRUE)
+              fun = eval(expr = parse(text = paste0("function(action, entity, config){
+                act_fun <- source(",script_to_source,", local = TRUE)$value
+                if(!is(act_fun, \"function\")) stop(\"Script for entity action ",action," is not a function!\")
+                act_fun(action, entity, config)
               }"))),
               script = script,
               options = action_options
@@ -326,8 +407,91 @@ geoflow_data <- R6Class("geoflow_data",
             self$addAction(entity_action)
           }
         }
+        
+        #datadir
+        if(any(sapply(data_props, function(x){x$key=="dir"}))){
+          data_dir <- data_props$dir$values[[1]]
+          self$dir <- data_dir
+          if(!is_absolute_path(data_dir) && !is.null(config)) data_dir <- file.path(config$session_wd, datasource_uri)
+          if(!dir.exists(data_dir)){
+            config$logger.error("Data dir doesn't exist!")
+          }
+          #data_dir <- "D:/sandbox-geoflow/testdir
+          ext_data_files <- list()
+          if(!is.null(self$sourceType) && self$sourceType != "other"){
+            ext <- switch(self$sourceType,
+              "shp" = "zip",
+              "gpkg" = "gpkg",
+              "geotiff" = "tif",
+              self$sourceType
+            )
+            ext_data_files <- list.files(data_dir, pattern = paste0(".", ext), full.names = T)
+          }else{
+            ext_data_files <- list.files(data_dir, full.names = T)
+            ext_data_files <- ext_data_files[!endsWith(ext_data_files,".sld")]
+          }
+          if(length(ext_data_files)>0){
+            self$data <- lapply(ext_data_files, function(data_file){
+              ext_data <- self$clone(deep = TRUE) #clone parent geoflow_data to inherit all needed properties
+              ext_data$dir <- NULL
+              ext_data_src <- basename(data_file)
+              ext_data_name <- unlist(strsplit(ext_data_src, "\\."))[1]
+              ext_data_extension <- unlist(strsplit(ext_data_src, "\\."))[2]
+              attr(ext_data_src, "uri") <- data_file
+              ext_data$addSource(ext_data_src)
+              ext_data$setUploadSource(basename(data_file))
+              sourceType <- self$sourceType
+              if(is.null(self$sourceType) || self$sourceType == "other"){
+                sourceType <- switch(ext_data_extension,
+                  "zip" = "shp",
+                  "gpkg" = "gpkg",
+                  "tif" = "geotiff",
+                  "csv" = "csv"
+                )
+              }
+              if(!is.null(sourceType)){
+                ext_data$setSourceType(sourceType)
+              }
+              if((is.null(self$uploadType) || self$uploadType == "other") && !is.null(sourceType)){
+                ext_data$setUploadType(sourceType)
+                if(ext_data$uploadType == "geotiff") ext_data$setSpatialRepresentationType("grid")
+              }
+              ext_data$setStore(ext_data_name)
+              ext_data$setLayername(ext_data_name)
+              if(self$styleUpload){
+                ext_data_style_path <- file.path(data_dir, paste0(ext_data_name, ".sld"))
+                if(file.exists(ext_data_style_path)){
+                  ext_data_style_file <- basename(ext_data_style_path)
+                  ext_data_style <- unlist(strsplit(ext_data_style_file, "\\."))[1]
+                  attr(ext_data_style, "uri") <- ext_data_style_path
+                  ext_data$addStyle(ext_data_style)
+                  attr(ext_data_style_file, "uri") <- ext_data_style_path
+                  ext_data$addSource(ext_data_style_file)
+                }
+              }
+              
+              return(ext_data)
+            })
+          }
+        }
+        
       }
     },
+    
+    #'@description Get data directory where datasets are scanned to build \code{geoflow_data} objects
+    #'@return an object of class \code{character}
+    getDir = function(){
+      return(self$dir)
+    },
+    
+    #'@description Get a lis tof \code{geoflow_data} objects built from a directory
+    #'@return a list of objects of class \code{geoflow_data}
+    getData = function(){
+      return(self$data)
+    },
+    
+    #ACCESS / SOURCE related methods
+    #----------------------------------------------------------------------------
     
     #'@description Get allowed source values
     #'@return a vector of class \code{character}
@@ -378,6 +542,13 @@ geoflow_data <- R6Class("geoflow_data",
       return(private$supportedYPossibleNames)
     },
     
+    #'@description Add source, object of class \code{"character"} (single source)
+    #'@param source source
+    addSource = function(source){
+      if(is.null(self$source)) self$source <- list()
+      self$source[[length(self$source)+1]] <- source
+    },
+    
     #'@description Set source, object of class \code{"character"} (single source), or \code{list}.
     #'    For spatial source, a single source will be used, while for sources of type 'other'
     #'    (eg PDF files), multiple sources can be specified
@@ -406,6 +577,9 @@ geoflow_data <- R6Class("geoflow_data",
     setSourceZipOnly = function(sourceZipOnly){
       self$sourceZipOnly <- sourceZipOnly
     },
+    
+    #UPLOAD related methods
+    #----------------------------------------------------------------------------
     
     #'@description Set the source to upload in output software, alternative to the source. If leave empty, the source will be used
     #'    as uploadSource. A typical use case is when we want to get a CSV source to import in a database, and use the
@@ -441,6 +615,12 @@ geoflow_data <- R6Class("geoflow_data",
       self$upload <- upload
     },
     
+    #'@description Set whether styles in source data should be uploaded, by default \code{TRUE}
+    #'@param styleUpload style upload
+    setStyleUpload = function(styleUpload){
+      self$styleUpload <- styleUpload
+    },
+    
     #'@description Sets SQL for publication purpose. 
     #'@param sql sql
     setSql = function(sql){
@@ -453,12 +633,6 @@ geoflow_data <- R6Class("geoflow_data",
     setCqlFilter = function(cqlfilter){
       self$cqlfilter <- cqlfilter
     },
-
-    #'@description Set data features
-    #'@param features features
-    setFeatures = function(features){
-      self$features <- features
-    },
         
     #'@description Sets a workspace name, object of class \code{character}. A workspace must target a valid software type, object of
     #'    class \code{character}, to be declared as first argument of this function, assuming the corresponding software is
@@ -469,10 +643,16 @@ geoflow_data <- R6Class("geoflow_data",
       self$workspaces[[software_type]] <- workspace
     },
     
-    #'@description Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action.
+    #'@description Sets a data/coverage store name, object of class \code{character}. Used as target data/coverage store name for GeoServer action.
+    #'@param store store
+    setStore = function(store){
+      self$store <- store
+    },
+    
+    #'@description Sets a datastore name, object of class \code{character}. Used as target datastore name for GeoServer action. DEPRECATED, use \code{setStore}
     #'@param datastore datastore
     setDatastore = function(datastore){
-      self$datastore <- datastore
+      self$setStore(store = datastore)
     },
     
     #'@description Sets a layername, object of class \code{character}. Used as target layer name for Geoserver action.
@@ -484,7 +664,52 @@ geoflow_data <- R6Class("geoflow_data",
     #'@description Adds a style name, object of class \code{character}. Used as layer style name(s) for GeoServer action.
     #'@param style style
     addStyle = function(style){
-      self$styles <- c(self$styles, style)
+      self$styles[[length(self$styles)+1]] <- style
+    },
+    
+    #'@description Adds a dimension
+    #'@param name dimension name
+    #'@param dimension object of class \link{geoflow_dimension}
+    addDimension = function(name,dimension){
+      if(!is(dimension, "geoflow_dimension")){
+        stop("The argument should be an object of class 'geoflow_dimension'")
+      }
+      self$dimensions[[name]] <- dimension
+    },
+    
+    #GENERIC RESOURCE related methods
+    #----------------------------------------------------------------------------
+    
+    #'@description Get allowed spatial representation types, typically "vector" and "grid"
+    #'@return an object of class \code{character}
+    getAllowedSpatialRepresentationTypes = function(){
+      return(private$supportedSpatialRepresentationTypes)
+    },
+    
+    #'@description Set spatial representation type for the data considered
+    #'@param spatialRepresentationType spatial representation type
+    setSpatialRepresentationType = function(spatialRepresentationType){
+      if(!(spatialRepresentationType %in% private$supportedSpatialRepresentationTypes)){
+        errMsg <- sprintf("Spatial representation type should be among values [%s]", paste0(private$supportedSpatialRepresentationTypes, collapse=","))
+        stop(errMsg)
+      }
+      self$spatialRepresentationType <- spatialRepresentationType
+    },
+    
+    #'@description Set OGC dimensions
+    #'@param name dimension name
+    #'@param values dimension values
+    setOgcDimensions = function(name, values){
+      self$ogc_dimensions[[name]] <- values
+    },
+    
+    #FeatureType related methods
+    #----------------------------------------------------------------------------
+    
+    #'@description Set data features
+    #'@param features features
+    setFeatures = function(features){
+      self$features <- features
     },
     
     #'@description Set virtual parameter definition for setting virtual SQL view parametized layers in Geoserver, when \code{uploadType} is
@@ -540,43 +765,60 @@ geoflow_data <- R6Class("geoflow_data",
       self$variables <- variables
     },
     
+    #Coverage related methods
+    #----------------------------------------------------------------------------
+    
+    #'@description Set coverages
+    #'@param coverages coverages
+    setCoverages = function(coverages){
+      self$coverages <- coverages
+    },
+    
+    #'@description Get allowed envelope composition types
+    #'@return an object of class \code{character}
+    getAllowedEnvelopeCompositionTypes = function(){
+      return(private$supportedEnvelopeCompositionTypes)
+    },
+    
+    #'@description Set envelope composition type
+    #'@param envelopeCompositionType envelope composition type, either 'UNION' or 'INTERSECTION'
+    setEnvelopeCompositionType = function(envelopeCompositionType){
+      if(!(envelopeCompositionType %in% self$getAllowedEnvelopeCompositionTypes())){
+        errMsg <- sprintf("Envelope composition type should be among values [%s]", paste0(self$getAllowedEnvelopeCompositionTypes(), collapse=","))
+        stop(errMsg)
+      }
+      self$envelopeCompositionType <- envelopeCompositionType
+    },
+    
+    #'@description Set selected resolution
+    #'@param selectedResolution selected resolution
+    setSelectedResolution = function(selectedResolution){
+      self$selectedResolution <- selectedResolution
+    },
+    
+    #'@description Set selected resolution index
+    #'@param selectedResolutionIndex selected resolution index
+    setSelectedResolutionIndex = function(selectedResolutionIndex){
+      self$selectedResolutionIndex <- selectedResolutionIndex
+    },
+    
+    #'@description Set band
+    #'@param name band name
+    #'@param index band index
+    setBand = function(name, index){
+      self$bands[[paste0(name,"@",index)]] <- list(
+        name = name,
+        index = index
+      )
+    },
+    
+    #geoflow execution related methods
+    #----------------------------------------------------------------------------
+    
     #'@description Adds a local action
     #'@param action object of class \link{geoflow_action}
     addAction = function(action){
       self$actions[[length(self$actions)+1]] <- action
-    },
-    
-    #'@description Set OGC dimensions
-    #'@param name dimension name
-    #'@param values dimension values
-    setOgcDimensions = function(name, values){
-      self$ogc_dimensions[[name]] <- values
-    },
-    
-    #'@description Adds a dimension
-    #'@param name dimension name
-    #'@param dimension object of class \link{geoflow_dimension}
-    addDimension = function(name,dimension){
-      if(!is(dimension, "geoflow_dimension")){
-        stop("The argument should be an object of class 'geoflow_dimension'")
-      }
-      self$dimensions[[name]] <- dimension
-    },
-    
-    #'@description Get allowed spatial representation types, typically "vector" and "grid"
-    #'@return an object of class \code{character}
-    getAllowedSpatialRepresentationTypes = function(){
-      return(private$supportedSpatialRepresentationTypes)
-    },
-    
-    #'@description Set spatial representation type for the data considered
-    #'@param spatialRepresentationType spatial representation type
-    setSpatialRepresentationType = function(spatialRepresentationType){
-      if(!(spatialRepresentationType %in% private$supportedSpatialRepresentationTypes)){
-        errMsg <- sprintf("Spatial representation type should be among values [%s]", paste0(private$supportedSpatialRepresentationTypes, collapse=","))
-        stop(errMsg)
-      }
-      self$spatialRepresentationType <- spatialRepresentationType
     },
     
     #'@description A function triggered when loading a data object to check eventual software dependent properties, to make sure

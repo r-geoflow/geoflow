@@ -52,19 +52,19 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_dimension$new()}}
-\item \href{#method-setLongName}{\code{geoflow_dimension$setLongName()}}
-\item \href{#method-setResolution}{\code{geoflow_dimension$setResolution()}}
-\item \href{#method-setSize}{\code{geoflow_dimension$setSize()}}
-\item \href{#method-setValues}{\code{geoflow_dimension$setValues()}}
-\item \href{#method-setMinValue}{\code{geoflow_dimension$setMinValue()}}
-\item \href{#method-setMaxValue}{\code{geoflow_dimension$setMaxValue()}}
-\item \href{#method-clone}{\code{geoflow_dimension$clone()}}
+\item \href{#method-geoflow_dimension-new}{\code{geoflow_dimension$new()}}
+\item \href{#method-geoflow_dimension-setLongName}{\code{geoflow_dimension$setLongName()}}
+\item \href{#method-geoflow_dimension-setResolution}{\code{geoflow_dimension$setResolution()}}
+\item \href{#method-geoflow_dimension-setSize}{\code{geoflow_dimension$setSize()}}
+\item \href{#method-geoflow_dimension-setValues}{\code{geoflow_dimension$setValues()}}
+\item \href{#method-geoflow_dimension-setMinValue}{\code{geoflow_dimension$setMinValue()}}
+\item \href{#method-geoflow_dimension-setMaxValue}{\code{geoflow_dimension$setMaxValue()}}
+\item \href{#method-geoflow_dimension-clone}{\code{geoflow_dimension$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_dimension-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dimension-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes the \link{geoflow_dimension}
 \subsection{Usage}{
@@ -73,8 +73,8 @@ Initializes the \link{geoflow_dimension}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setLongName"></a>}}
-\if{latex}{\out{\hypertarget{method-setLongName}{}}}
+\if{html}{\out{<a id="method-geoflow_dimension-setLongName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dimension-setLongName}{}}}
 \subsection{Method \code{setLongName()}}{
 Sets the dimension long name
 \subsection{Usage}{
@@ -90,8 +90,8 @@ Sets the dimension long name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setResolution"></a>}}
-\if{latex}{\out{\hypertarget{method-setResolution}{}}}
+\if{html}{\out{<a id="method-geoflow_dimension-setResolution"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dimension-setResolution}{}}}
 \subsection{Method \code{setResolution()}}{
 Sets the resolution
 \subsection{Usage}{
@@ -109,8 +109,8 @@ Sets the resolution
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setSize"></a>}}
-\if{latex}{\out{\hypertarget{method-setSize}{}}}
+\if{html}{\out{<a id="method-geoflow_dimension-setSize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dimension-setSize}{}}}
 \subsection{Method \code{setSize()}}{
 Sets the dimension size
 \subsection{Usage}{
@@ -126,8 +126,8 @@ Sets the dimension size
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setValues"></a>}}
-\if{latex}{\out{\hypertarget{method-setValues}{}}}
+\if{html}{\out{<a id="method-geoflow_dimension-setValues"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dimension-setValues}{}}}
 \subsection{Method \code{setValues()}}{
 Sets dimension values
 \subsection{Usage}{
@@ -143,8 +143,8 @@ Sets dimension values
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setMinValue"></a>}}
-\if{latex}{\out{\hypertarget{method-setMinValue}{}}}
+\if{html}{\out{<a id="method-geoflow_dimension-setMinValue"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dimension-setMinValue}{}}}
 \subsection{Method \code{setMinValue()}}{
 Sets dimension min value
 \subsection{Usage}{
@@ -160,8 +160,8 @@ Sets dimension min value
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setMaxValue"></a>}}
-\if{latex}{\out{\hypertarget{method-setMaxValue}{}}}
+\if{html}{\out{<a id="method-geoflow_dimension-setMaxValue"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dimension-setMaxValue}{}}}
 \subsection{Method \code{setMaxValue()}}{
 Sets dimension max value
 \subsection{Usage}{
@@ -177,8 +177,8 @@ Sets dimension max value
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_dimension-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dimension-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

@@ -15,21 +15,21 @@ geoflow_validator_contacts
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_validator_contacts$new()}}
-\item \href{#method-clone}{\code{geoflow_validator_contacts$clone()}}
+\item \href{#method-geoflow_validator_contacts-new}{\code{geoflow_validator_contacts$new()}}
+\item \href{#method-geoflow_validator_contacts-clone}{\code{geoflow_validator_contacts$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_content">}\href{../../geoflow/html/geoflow_validator.html#method-validate_content}{\code{geoflow::geoflow_validator$validate_content()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_structure">}\href{../../geoflow/html/geoflow_validator.html#method-validate_structure}{\code{geoflow::geoflow_validator$validate_structure()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_content"><a href='../../geoflow/html/geoflow_validator.html#method-geoflow_validator-validate_content'><code>geoflow::geoflow_validator$validate_content()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_structure"><a href='../../geoflow/html/geoflow_validator.html#method-geoflow_validator-validate_structure'><code>geoflow::geoflow_validator$validate_structure()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_contacts-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_contacts-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a contacts table validator
 \subsection{Usage}{
@@ -45,8 +45,8 @@ Initializes a contacts table validator
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_validator_contacts-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_contacts-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

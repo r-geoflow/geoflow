@@ -16,15 +16,6 @@ This class models a dictionary to be executed by geoflow
 \details{
 geoflow_dictionary
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new()}}{
-   This method is used to instantiate a geoflow_dictionary_element object
- }
-}
-}
-
 \author{
 Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
@@ -43,20 +34,20 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_dictionary$new()}}
-\item \href{#method-setSource}{\code{geoflow_dictionary$setSource()}}
-\item \href{#method-getFeatureTypes}{\code{geoflow_dictionary$getFeatureTypes()}}
-\item \href{#method-getFeatureTypeById}{\code{geoflow_dictionary$getFeatureTypeById()}}
-\item \href{#method-addFeatureType}{\code{geoflow_dictionary$addFeatureType()}}
-\item \href{#method-getRegisters}{\code{geoflow_dictionary$getRegisters()}}
-\item \href{#method-getRegisterById}{\code{geoflow_dictionary$getRegisterById()}}
-\item \href{#method-addRegister}{\code{geoflow_dictionary$addRegister()}}
-\item \href{#method-clone}{\code{geoflow_dictionary$clone()}}
+\item \href{#method-geoflow_dictionary-new}{\code{geoflow_dictionary$new()}}
+\item \href{#method-geoflow_dictionary-setSource}{\code{geoflow_dictionary$setSource()}}
+\item \href{#method-geoflow_dictionary-getFeatureTypes}{\code{geoflow_dictionary$getFeatureTypes()}}
+\item \href{#method-geoflow_dictionary-getFeatureTypeById}{\code{geoflow_dictionary$getFeatureTypeById()}}
+\item \href{#method-geoflow_dictionary-addFeatureType}{\code{geoflow_dictionary$addFeatureType()}}
+\item \href{#method-geoflow_dictionary-getRegisters}{\code{geoflow_dictionary$getRegisters()}}
+\item \href{#method-geoflow_dictionary-getRegisterById}{\code{geoflow_dictionary$getRegisterById()}}
+\item \href{#method-geoflow_dictionary-addRegister}{\code{geoflow_dictionary$addRegister()}}
+\item \href{#method-geoflow_dictionary-clone}{\code{geoflow_dictionary$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_dictionary-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dictionary-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_dictionary} object
 \subsection{Usage}{
@@ -65,8 +56,8 @@ Initializes a \link{geoflow_dictionary} object
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setSource"></a>}}
-\if{latex}{\out{\hypertarget{method-setSource}{}}}
+\if{html}{\out{<a id="method-geoflow_dictionary-setSource"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dictionary-setSource}{}}}
 \subsection{Method \code{setSource()}}{
 Sets dictionnary source
 \subsection{Usage}{
@@ -82,8 +73,8 @@ Sets dictionnary source
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFeatureTypes"></a>}}
-\if{latex}{\out{\hypertarget{method-getFeatureTypes}{}}}
+\if{html}{\out{<a id="method-geoflow_dictionary-getFeatureTypes"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dictionary-getFeatureTypes}{}}}
 \subsection{Method \code{getFeatureTypes()}}{
 Get the list of \link{geoflow_featuretype} defined in the dictionary
 \subsection{Usage}{
@@ -95,8 +86,8 @@ a \code{list} of \code{geoflow_featuretype}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getFeatureTypeById"></a>}}
-\if{latex}{\out{\hypertarget{method-getFeatureTypeById}{}}}
+\if{html}{\out{<a id="method-geoflow_dictionary-getFeatureTypeById"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dictionary-getFeatureTypeById}{}}}
 \subsection{Method \code{getFeatureTypeById()}}{
 Get an object of class \link{geoflow_featuretype} given an ID
 \subsection{Usage}{
@@ -115,8 +106,8 @@ an object of class \link{geoflow_featuretype}, otherwise \code{NULL}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addFeatureType"></a>}}
-\if{latex}{\out{\hypertarget{method-addFeatureType}{}}}
+\if{html}{\out{<a id="method-geoflow_dictionary-addFeatureType"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dictionary-addFeatureType}{}}}
 \subsection{Method \code{addFeatureType()}}{
 Adds a feature type to the dictionnary
 \subsection{Usage}{
@@ -132,8 +123,8 @@ Adds a feature type to the dictionnary
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getRegisters"></a>}}
-\if{latex}{\out{\hypertarget{method-getRegisters}{}}}
+\if{html}{\out{<a id="method-geoflow_dictionary-getRegisters"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dictionary-getRegisters}{}}}
 \subsection{Method \code{getRegisters()}}{
 Get the list of registers associated with the dictionnary
 \subsection{Usage}{
@@ -145,8 +136,8 @@ a list of \link{geoflow_register} objects
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getRegisterById"></a>}}
-\if{latex}{\out{\hypertarget{method-getRegisterById}{}}}
+\if{html}{\out{<a id="method-geoflow_dictionary-getRegisterById"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dictionary-getRegisterById}{}}}
 \subsection{Method \code{getRegisterById()}}{
 Get register by ID
 \subsection{Usage}{
@@ -165,8 +156,8 @@ an object of class \link{geoflow_register}, otherwise \code{NULL}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addRegister"></a>}}
-\if{latex}{\out{\hypertarget{method-addRegister}{}}}
+\if{html}{\out{<a id="method-geoflow_dictionary-addRegister"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dictionary-addRegister}{}}}
 \subsection{Method \code{addRegister()}}{
 Adds a register to the dictionnary
 \subsection{Usage}{
@@ -182,8 +173,8 @@ Adds a register to the dictionnary
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_dictionary-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_dictionary-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

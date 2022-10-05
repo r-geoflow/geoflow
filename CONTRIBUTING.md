@@ -5,7 +5,7 @@ Contributing guidelines - 2021-12-20 - version 1 (subject to revision/consolidat
 
 ---------------
 
-The [geoflow](https://github.com/eblondel/geoflow) project openly welcomes contributions (bug reports, bug fixes, code enhancements/features, etc.).  This document will outline some guidelines on contributing to `geoflow`.  As well, the [geoflow-users](https://gitter.im/geoflow-users/community) chat room is a great place to get an idea of how to connect and participate in geoflow community, and it should be used primarily for questions regarding the use of geoflow.
+The [geoflow](https://github.com/r-geoflow/geoflow) project openly welcomes contributions (bug reports, bug fixes, code enhancements/features, etc.).  This document will outline some guidelines on contributing to `geoflow`.  As well, the [geoflow-users](https://gitter.im/geoflow-users/community) chat room is a great place to get an idea of how to connect and participate in geoflow community, and it should be used primarily for questions regarding the use of geoflow.
 
 geoflow has the following modes of contribution:
 
@@ -15,12 +15,12 @@ geoflow has the following modes of contribution:
 Code of Conduct
 ---------------
 
-Contributors to this project are expected to act respectfully toward others in accordance with the geoflow [code of conduct](https://github.com/eblondel/geoflow/blob/master/CODE_OF_CONDUCT.md).
+Contributors to this project are expected to act respectfully toward others in accordance with the geoflow [code of conduct](https://github.com/r-geoflow/geoflow/blob/master/CODE_OF_CONDUCT.md).
 
 Contributions and Licensing
 ---------------------------
 
-Contributors are asked to confirm that they comply with the geoflow project [MIT license](https://github.com/eblondel/geoflow/blob/master/LICENSE) and underlying guidelines.
+Contributors are asked to confirm that they comply with the geoflow project [MIT license](https://github.com/r-geoflow/geoflow/blob/master/LICENSE) and underlying guidelines.
 
 ### GitHub Commit Access
 
@@ -29,15 +29,15 @@ Contributors are asked to confirm that they comply with the geoflow project [MIT
 - Direct commit access shall be granted only after significant amount of code / pull requests have been contributed by the developer, and when the latter has proven his/her knowledge of the geoflow source code, capacity to manage it and guarantee its integrity.
 - removal of commit access shall be handled in the same manner
 - each committer must send an email to the geoflow author/maintainer list agreeing to the license guidelines (see below `Contributions and Licensing Agreement Template <#contributions-and-licensing-agreement-template>`_).  **This is only required once**
-- each committer shall be listed as contributor in the geoflow package [description](https://github.com/eblondel/geoflow/blob/master/DESCRIPTION)
+- each committer shall be listed as contributor in the geoflow package [description](https://github.com/r-geoflow/geoflow/blob/master/DESCRIPTION)
 
 ### GitHub Pull Requests
 
 - development proposals shall be discussed first on the [geoflow-developers](https://gitter.im/geoflow-developers/community) chat room and then described through a Github issue. 
 - pull requests can provide agreement to license guidelines as text in the pull request or via email to the geoflow author/maintainer_  (see `Contributions and Licensing Agreement Template <#contributions-and-licensing-agreement-template>`_).  **This is only required for a contributor's first pull request.  Subsequent pull requests do not require this step**
 - pull requests may include copyright in the source code header by the contributor if the contribution is significant (in general targeting a new core feature or a major enhancement of the geoflow core engine) and the contributor would like to claim copyright on their contribution. The copyright shall be handled under the current geoflow license (MIT).
-- all contributors shall be listed at https://github.com/eblondel/geoflow/graphs/contributors
-- unclaimed copyright, by default, is assigned to the main copyright holders as specified in https://github.com/eblondel/geoflow/blob/master/LICENSE
+- all contributors shall be listed at https://github.com/r-geoflow/geoflow/graphs/contributors
+- unclaimed copyright, by default, is assigned to the main copyright holders as specified in https://github.com/r-geoflow/geoflow/blob/master/LICENSE
 
 ### Contributions and Licensing Agreement Template
 
@@ -53,7 +53,7 @@ Make sure you have a `GitHub account <https://github.com/signup/free>`_.
 Code Overview
 -------------
 
-- the geoflow `wiki <https://github.com/eblondel/geoflow/wiki>`_ documents an overview of the package
+- the geoflow `wiki <https://github.com/r-geoflow/geoflow/wiki>`_ documents an overview of the package
 
 Documentation
 -------------
@@ -63,12 +63,12 @@ Documentation
 Bugs
 ----
 
-geoflow's `issue tracker <https://github.com/eblondel/geoflow/issues>`_ is the place to report bugs or request enhancements. To submit a bug be sure to specify the geoflow version you are using, the appropriate component, a description of how to reproduce the bug, as well as what version of R and platform.
+geoflow's `issue tracker <https://github.com/r-geoflow/geoflow/issues>`_ is the place to report bugs or request enhancements. To submit a bug be sure to specify the geoflow version you are using, the appropriate component, a description of how to reproduce the bug, as well as what version of R and platform.
 
 Forking geoflow
 -------------
 
-Contributions are most easily managed via GitHub pull requests.  `Fork <https://github.com/eblondel/geoflow/fork>`_
+Contributions are most easily managed via GitHub pull requests.  `Fork <https://github.com/r-geoflow/geoflow/fork>`_
 geoflow into your own GitHub repository to be able to commit your work and submit pull requests.
 
 Development

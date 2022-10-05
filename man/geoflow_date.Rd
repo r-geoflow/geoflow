@@ -40,15 +40,15 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_date$new()}}
-\item \href{#method-setKey}{\code{geoflow_date$setKey()}}
-\item \href{#method-setValue}{\code{geoflow_date$setValue()}}
-\item \href{#method-clone}{\code{geoflow_date$clone()}}
+\item \href{#method-geoflow_date-new}{\code{geoflow_date$new()}}
+\item \href{#method-geoflow_date-setKey}{\code{geoflow_date$setKey()}}
+\item \href{#method-geoflow_date-setValue}{\code{geoflow_date$setValue()}}
+\item \href{#method-geoflow_date-clone}{\code{geoflow_date$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_date-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_date-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_date}
 \subsection{Usage}{
@@ -57,8 +57,8 @@ Initializes a \link{geoflow_date}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setKey"></a>}}
-\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\if{html}{\out{<a id="method-geoflow_date-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_date-setKey}{}}}
 \subsection{Method \code{setKey()}}{
 Sets the date key
 \subsection{Usage}{
@@ -74,8 +74,8 @@ Sets the date key
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setValue"></a>}}
-\if{latex}{\out{\hypertarget{method-setValue}{}}}
+\if{html}{\out{<a id="method-geoflow_date-setValue"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_date-setValue}{}}}
 \subsection{Method \code{setValue()}}{
 Sets the date value. The method will check validity of date value.
 \subsection{Usage}{
@@ -91,8 +91,8 @@ Sets the date value. The method will check validity of date value.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_date-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_date-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

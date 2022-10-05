@@ -121,13 +121,16 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           
           #enrich metadata with dynamic properties
           if(!is.null(entity$data)){
-            #data features
+            #data features/coverages
             if(!skipFileDownload){
               #we copy data to job data dir
-              if(!is.null(entity$data$source)) entity$copyDataToJobDir(config, jobdir)
-              #we enrich entity with features
-              #control is added in case of entity already enriched with features (when loaded from custom R entity handlers)
-              if(is.null(entity$data$features)) entity$enrichWithFeatures(config, jobdir)
+              entity$copyDataToJobDir(config, jobdir)
+              #vector data: we enrich entity with features
+              #control is added in case of entity already enriched with features/coverages (when loaded from custom R entity handlers)
+              if(is.null(entity$data$features) && is.null(entity$data$coverages)){
+                entity$enrichWithData(config, jobdir)
+              }
+              
               setwd(entity$getEntityJobDirPath(config, jobdir)) #make sure we are in entity jobdir
               #we check if the source and upload are both different file format (csv,shp,gpkg) and process automatically to conversion from source to upload type
               entity$prepareFeaturesToUpload(config)
@@ -152,7 +155,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
                 for(i in 1:length(entity$data$actions)){
                   entity_action <- entity$data$actions[[i]]
                   config$logger.info(sprintf("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script))
-                  entity_action$fun(entity, config, entity_action$options)
+                  entity_action$run(entity, config)
                   #monitor local action
                   step<-step+inc_step
                   config$logger.info(sprintf("WORKFLOW PROGRESS : ACTION '%s' of ENTITY '%s' ... %s %%",entity_action$id,entity$identifiers[["id"]],step))
@@ -171,9 +174,8 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           withGeosapi <- any(geosapi)
           
           if(withGeosapi){
-            createWorkspace<-actions[geosapi][[1]]$options$createWorkspace
-            createWorkspace <- if(!is.null(actions[geosapi][[1]]$options$createWorkspace)) actions[geosapi][[1]]$options$createWorkspace else FALSE  
-            
+            createWorkspace<-actions[geosapi][[1]]$getOption("createWorkspace")
+    
             GS <- config$software$output$geoserver
             if(is.null(GS)){
               errMsg <- "This action requires a GeoServer software to be declared in the configuration"
@@ -218,7 +220,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           if(length(actions)>0) for(i in 1:length(actions)){
             action <- actions[[i]]
             config$logger.info(sprintf("Executing Action %s: %s - for entity %s", i, action$id, entity$identifiers[["id"]]))
-            action$fun(entity = entity, config = config, options = action$options)
+            action$run(entity = entity, config = config)
             
             #monitor global action
             step<-step+inc_step
@@ -244,7 +246,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
                 #behavior for generic uploaders, we set depositWithFiles = TRUE and proceed with all resource uploads
                 generic_uploader_options <- generic_uploader$options
                 generic_uploader_options$depositWithFiles <- TRUE
-                generic_uploader$fun(entity, config, generic_uploader_options)
+                generic_uploader$run(entity, config)
               }
             }
           }

@@ -165,7 +165,7 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
                 if(private$error_if_invalid_key){
                   report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Key '%s' is invalid, allowed key values are [%s]", kvp$key, paste0(private$valid_keys, collapse = ","))))
                 }else{
-                  if(gregexpr("\\d", text = kvp$key)[[1]][1] != 1){
+                  if(gregexpr("\\d", text = kvp$key)[[1]][1] != -1){
                   report <- rbind(report, data.frame(type = "WARNING", message = sprintf("Key '%s' is not a recognised geoflow key [%s]", kvp$key, paste0(private$valid_keys, collapse = ","))))
                   }
                 }
@@ -265,7 +265,7 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
          if(cid_kvp$key=="orcid"){
            isValidOrcid<-grepl(x = cid_kvp$values[[1]], pattern = '^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\-?([0-9]{4})\\s*$',perl = TRUE, ignore.case = TRUE)
            if(!isValidOrcid){
-             report <- rbind(report, data.frame(type = "WARNING", message = springf("ORCID '%s' is not recognized as valid ORCID id format",cid_kvp$values[[1]])))
+             report <- rbind(report, data.frame(type = "WARNING", message = sprintf("ORCID '%s' is not recognized as valid ORCID id format",cid_kvp$values[[1]])))
            }
          }
        }
@@ -315,14 +315,14 @@ geoflow_validator_entity_Identifier <- R6Class("geoflow_validator_entity_Identif
         if(id_kvp$key=="doi"){
           isValidDoi<-grepl(x = id_kvp$values[[1]], pattern = '^10\\.\\d{4,9}/[-._;()/:A-Z0-9]+$',perl = TRUE, ignore.case = TRUE)
           if(!isValidDoi){
-            report <- rbind(report, data.frame(type = "WARNING", message = springf("DOI '%s' is not recognized as valid doi format",id_kvp$values[[1]])))
+            report <- rbind(report, data.frame(type = "WARNING", message = sprintf("DOI '%s' is not recognized as valid doi format",id_kvp$values[[1]])))
           }
         }
         #validity of UUID
         if(id_kvp$key=="uuid"){
           isValidUuid<-grepl(x = id_kvp$values[[1]], pattern = '^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$',perl = TRUE, ignore.case = TRUE)
           if(!isValidUuid){
-            report <- rbind(report, data.frame(type = "WARNING", message = springf("UUID '%s' is not recognized as valid uuid format",id_kvp$values[[1]])))
+            report <- rbind(report, data.frame(type = "WARNING", message = sprintf("UUID '%s' is not recognized as valid uuid format",id_kvp$values[[1]])))
           }
         }
       }
@@ -449,7 +449,7 @@ geoflow_validator_entity_Date <- R6Class("geoflow_validator_entity_Date",
      #'@param str string to validate
      initialize = function(i, j, str){
        valid_keys <- list("creation","publication","edition")
-       super$initialize(TRUE,TRUE, TRUE, valid_keys, "creation",FALSE, TRUE, TRUE, i, j, str)
+       super$initialize(TRUE,TRUE, TRUE, valid_keys, "creation",FALSE, TRUE, TRUE, i, j, as(str,"character"))
      },
      
      #'@description Validates a date. Proceeds with syntactic validation and content validation.
@@ -461,24 +461,28 @@ geoflow_validator_entity_Date <- R6Class("geoflow_validator_entity_Date",
        dates <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
        if(length(dates)==0){
          #If no date, inform about added of automatic creation date
-         report <- rbind(report, data.frame(type = "WARNING", message = "Creation date is missing and will be automaticaly completed at present present day and hour"))
+         report <- rbind(report, data.frame(type = "WARNING", message = "Creation date is missing and will be automaticaly completed at present day and hour"))
        }else{
+         if(length(dates)==1){
+           hasDateKey <- any(sapply(self$getValidKeys(), function(x){startsWith(dates, x)}))
+           if(!hasDateKey) dates <- paste0(self$getDefaultKey(),":", dates)
+         }
          for(date in dates){
            date_kvp <- extract_kvp(date)
          
-         #Check if date key is a ISO key
-         if(!date_kvp$key %in% c("edition",geometa::ISODateType$values())){
-           report <- rbind(report, data.frame(type = "WARNING", message = sprintf("key '%s' is not a recognized ISO date key.", date_kvp$key)))
-         }
-         #Check if date value is an accepted date format
-         for(value in date_kvp$values){
-           if(is(value, "character")){
-             value <- try(sanitize_date(value),silent=T)
+           #Check if date key is a ISO key
+           if(!date_kvp$key %in% geometa::ISODateType$values()){
+             report <- rbind(report, data.frame(type = "WARNING", message = sprintf("key '%s' is not a recognized ISO date key.", date_kvp$key)))
            }
-           if(!(is(value, "Date") | inherits(value, "POSIXt"))){
-             report <- rbind(report, data.frame(type = "ERROR", message = sprintf("date value '%s' is not a recognized date format", value)))
+           #Check if date value is an accepted date format
+           for(value in date_kvp$values){
+             if(is(value, "character")){
+               value <- try(sanitize_date(value),silent=T)
+             }
+             if(!(is(value, "Date") | inherits(value, "POSIXt"))){
+               report <- rbind(report, data.frame(type = "ERROR", message = sprintf("date value '%s' is not a recognized date format", value)))
+             }
            }
-         }
         }
        }
        return(report)
@@ -664,20 +668,21 @@ geoflow_validator_entity_TemporalCoverage <- R6Class("geoflow_validator_entity_T
           }else if(length(value)==2){
             #check start date
             start<-value[1]
-            if(is(start, "character")){
+            if(is(start, "character") && is.na(as(start,"numeric"))){
                start<- try(sanitize_date(start),silent=T)
-            }
-            if(!(is(start, "Date") | inherits(start, "POSIXt"))){
-              report <- rbind(report, data.frame(type = "ERROR", message = sprintf("start date value '%s' is not a recognized date format", value[1])))
+               if(!(is(start, "Date") | inherits(start, "POSIXt"))){
+                 report <- rbind(report, data.frame(type = "ERROR", message = sprintf("start date value '%s' is not a recognized date format", value[1])))
+               }
             }
             #check end date
             end<-value[2]
-            if(is(end, "character")){
+            if(is(end, "character")  && is.na(as(end,"numeric"))){
               end <- try(sanitize_date(end),silent=T)
+              if(!(is(end, "Date") | inherits(end, "POSIXt"))){
+                report <- rbind(report, data.frame(type = "ERROR", message = sprintf("end date value '%s' is not a recognized date format", value[2])))
+              }
             }
-            if(!(is(end, "Date") | inherits(end, "POSIXt"))){
-              report <- rbind(report, data.frame(type = "ERROR", message = sprintf("end date value '%s' is not a recognized date format", value[2])))
-            }
+            
           }else{
             report <- rbind(report, data.frame(type = "ERROR", message = sprintf("spatial extent '%' is not a recognized format",tmp_cov)))
           }
@@ -723,7 +728,7 @@ geoflow_validator_entity_Relation <- R6Class("geoflow_validator_entity_Relation"
       #'@param str string to validate
       initialize = function(i, j, str){
         valid_keys <- list(
-          "ftp", "http",
+          "ftp", "http", "download",
           "parent","thumbnail",
           "csw", "csw202", "csw30",
           "wcs", "wcs100", "wcs11", "wcs110", "wcs111", "wcs201",
@@ -777,6 +782,7 @@ geoflow_validator_entity_Provenance <- R6Class("geoflow_validator_entity_Provena
       #'@return an validation report, as object of class \code{data.frame}  
       validate = function(){
         report <- super$validate()
+        if(is.na(private$str)) return(report)
         #Validity of corresponding number of processors vs. processes   
         data_props <- extract_cell_components(sanitize_str(private$str))
         if(length(data_props>0)){
@@ -882,7 +888,7 @@ geoflow_validator <- R6Class("geoflow_validator",
      validate_content = function(raw = FALSE){
        content_validation_report <- NULL
        if(!self$validate_structure()) return(NULL)
-       source <- self$source[,private$valid_columns]
+       source <- self$source[,colnames(self$source)[colnames(self$source) %in% private$valid_columns]]
        cell_reports <- lapply(1:nrow(source), function(i){
          src_obj <- source[i,]
          out_row_report <- lapply(colnames(src_obj), function(colname){

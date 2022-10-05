@@ -32,16 +32,16 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_featuretype$new()}}
-\item \href{#method-addMember}{\code{geoflow_featuretype$addMember()}}
-\item \href{#method-getMembers}{\code{geoflow_featuretype$getMembers()}}
-\item \href{#method-getMemberById}{\code{geoflow_featuretype$getMemberById()}}
-\item \href{#method-clone}{\code{geoflow_featuretype$clone()}}
+\item \href{#method-geoflow_featuretype-new}{\code{geoflow_featuretype$new()}}
+\item \href{#method-geoflow_featuretype-addMember}{\code{geoflow_featuretype$addMember()}}
+\item \href{#method-geoflow_featuretype-getMembers}{\code{geoflow_featuretype$getMembers()}}
+\item \href{#method-geoflow_featuretype-getMemberById}{\code{geoflow_featuretype$getMemberById()}}
+\item \href{#method-geoflow_featuretype-clone}{\code{geoflow_featuretype$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_featuretype-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_featuretype-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_featuretype}
 \subsection{Usage}{
@@ -57,8 +57,8 @@ Initializes a \link{geoflow_featuretype}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addMember"></a>}}
-\if{latex}{\out{\hypertarget{method-addMember}{}}}
+\if{html}{\out{<a id="method-geoflow_featuretype-addMember"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_featuretype-addMember}{}}}
 \subsection{Method \code{addMember()}}{
 Adds a member
 \subsection{Usage}{
@@ -74,8 +74,8 @@ Adds a member
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getMembers"></a>}}
-\if{latex}{\out{\hypertarget{method-getMembers}{}}}
+\if{html}{\out{<a id="method-geoflow_featuretype-getMembers"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_featuretype-getMembers}{}}}
 \subsection{Method \code{getMembers()}}{
 Get members
 \subsection{Usage}{
@@ -87,8 +87,8 @@ the list of members, as objects of class \link{geoflow_featuremember}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getMemberById"></a>}}
-\if{latex}{\out{\hypertarget{method-getMemberById}{}}}
+\if{html}{\out{<a id="method-geoflow_featuretype-getMemberById"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_featuretype-getMemberById}{}}}
 \subsection{Method \code{getMemberById()}}{
 Get member by ID
 \subsection{Usage}{
@@ -107,8 +107,8 @@ an object of class \link{geoflow_featuremember}, \code{NULL} otherwise
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_featuretype-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_featuretype-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

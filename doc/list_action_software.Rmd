@@ -52,8 +52,10 @@ kable(tab)
 
 ```{r, echo = FALSE, message = FALSE, results='asis'}
 for (software in softwares){
-   cat('\n') 
-  cat('### ','List of ',software, ' parameters')
+   cat('\n')
+  cat('### ', software)
+  cat('\n')
+  cat('#### ','List of ',software, ' parameters')
    cat('<a name=',software,'/>\n')
 if(nrow(list_software_parameters(software))>0){
   print(kable(list_software_parameters(software)))
@@ -61,7 +63,7 @@ if(nrow(list_software_parameters(software))>0){
     cat('*No parameters available for this software*\n') 
   }
    cat('\n')
-   cat('### ','List of ',software, ' properties','\n')
+   cat('#### ','List of ',software, ' properties','\n')
 if(nrow(list_software_properties(software))>0){
   temp<-list_software_properties(software)
   temp$definition<-gsub('\n +',"",temp$definition)

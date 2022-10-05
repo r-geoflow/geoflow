@@ -55,7 +55,7 @@ loadMetadataHandler <- function(config, element, type){
     }
     source(h_script) #load script
     md_handler <- try(eval(parse(text = h)))
-    if(class(md_handler)=="try-error"){
+    if(is(md_handler,"try-error")){
       errMsg <- sprintf("Failed loading function '%s. Please check the script '%s'", h, h_script)
       if(!is.null(config)) config$logger.error(errMsg)
       stop(errMsg)

@@ -81,29 +81,29 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_contact$new()}}
-\item \href{#method-setIdentifier}{\code{geoflow_contact$setIdentifier()}}
-\item \href{#method-setId}{\code{geoflow_contact$setId()}}
-\item \href{#method-setFirstName}{\code{geoflow_contact$setFirstName()}}
-\item \href{#method-setLastName}{\code{geoflow_contact$setLastName()}}
-\item \href{#method-setOrganizationName}{\code{geoflow_contact$setOrganizationName()}}
-\item \href{#method-setPositionName}{\code{geoflow_contact$setPositionName()}}
-\item \href{#method-setRole}{\code{geoflow_contact$setRole()}}
-\item \href{#method-setVoice}{\code{geoflow_contact$setVoice()}}
-\item \href{#method-setFacsimile}{\code{geoflow_contact$setFacsimile()}}
-\item \href{#method-setEmail}{\code{geoflow_contact$setEmail()}}
-\item \href{#method-setWebsiteUrl}{\code{geoflow_contact$setWebsiteUrl()}}
-\item \href{#method-setWebsiteName}{\code{geoflow_contact$setWebsiteName()}}
-\item \href{#method-setPostalAddress}{\code{geoflow_contact$setPostalAddress()}}
-\item \href{#method-setPostalCode}{\code{geoflow_contact$setPostalCode()}}
-\item \href{#method-setCity}{\code{geoflow_contact$setCity()}}
-\item \href{#method-setCountry}{\code{geoflow_contact$setCountry()}}
-\item \href{#method-clone}{\code{geoflow_contact$clone()}}
+\item \href{#method-geoflow_contact-new}{\code{geoflow_contact$new()}}
+\item \href{#method-geoflow_contact-setIdentifier}{\code{geoflow_contact$setIdentifier()}}
+\item \href{#method-geoflow_contact-setId}{\code{geoflow_contact$setId()}}
+\item \href{#method-geoflow_contact-setFirstName}{\code{geoflow_contact$setFirstName()}}
+\item \href{#method-geoflow_contact-setLastName}{\code{geoflow_contact$setLastName()}}
+\item \href{#method-geoflow_contact-setOrganizationName}{\code{geoflow_contact$setOrganizationName()}}
+\item \href{#method-geoflow_contact-setPositionName}{\code{geoflow_contact$setPositionName()}}
+\item \href{#method-geoflow_contact-setRole}{\code{geoflow_contact$setRole()}}
+\item \href{#method-geoflow_contact-setVoice}{\code{geoflow_contact$setVoice()}}
+\item \href{#method-geoflow_contact-setFacsimile}{\code{geoflow_contact$setFacsimile()}}
+\item \href{#method-geoflow_contact-setEmail}{\code{geoflow_contact$setEmail()}}
+\item \href{#method-geoflow_contact-setWebsiteUrl}{\code{geoflow_contact$setWebsiteUrl()}}
+\item \href{#method-geoflow_contact-setWebsiteName}{\code{geoflow_contact$setWebsiteName()}}
+\item \href{#method-geoflow_contact-setPostalAddress}{\code{geoflow_contact$setPostalAddress()}}
+\item \href{#method-geoflow_contact-setPostalCode}{\code{geoflow_contact$setPostalCode()}}
+\item \href{#method-geoflow_contact-setCity}{\code{geoflow_contact$setCity()}}
+\item \href{#method-geoflow_contact-setCountry}{\code{geoflow_contact$setCountry()}}
+\item \href{#method-geoflow_contact-clone}{\code{geoflow_contact$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_contact} object
 \subsection{Usage}{
@@ -112,8 +112,8 @@ Initializes a \link{geoflow_contact} object
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setIdentifier"></a>}}
-\if{latex}{\out{\hypertarget{method-setIdentifier}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setIdentifier"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setIdentifier}{}}}
 \subsection{Method \code{setIdentifier()}}{
 Sets an identifier by means of key
 \subsection{Usage}{
@@ -131,8 +131,8 @@ Sets an identifier by means of key
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setId"></a>}}
-\if{latex}{\out{\hypertarget{method-setId}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setId"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setId}{}}}
 \subsection{Method \code{setId()}}{
 Sets an "id" identifier
 \subsection{Usage}{
@@ -148,8 +148,8 @@ Sets an "id" identifier
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setFirstName"></a>}}
-\if{latex}{\out{\hypertarget{method-setFirstName}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setFirstName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setFirstName}{}}}
 \subsection{Method \code{setFirstName()}}{
 Sets contact first name
 \subsection{Usage}{
@@ -165,8 +165,8 @@ Sets contact first name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setLastName"></a>}}
-\if{latex}{\out{\hypertarget{method-setLastName}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setLastName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setLastName}{}}}
 \subsection{Method \code{setLastName()}}{
 Sets contact last name
 \subsection{Usage}{
@@ -182,8 +182,8 @@ Sets contact last name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setOrganizationName"></a>}}
-\if{latex}{\out{\hypertarget{method-setOrganizationName}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setOrganizationName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setOrganizationName}{}}}
 \subsection{Method \code{setOrganizationName()}}{
 Sets contact organization name
 \subsection{Usage}{
@@ -199,8 +199,8 @@ Sets contact organization name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setPositionName"></a>}}
-\if{latex}{\out{\hypertarget{method-setPositionName}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setPositionName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setPositionName}{}}}
 \subsection{Method \code{setPositionName()}}{
 Sets contact position name
 \subsection{Usage}{
@@ -216,8 +216,8 @@ Sets contact position name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setRole"></a>}}
-\if{latex}{\out{\hypertarget{method-setRole}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setRole"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setRole}{}}}
 \subsection{Method \code{setRole()}}{
 Sets contact role
 \subsection{Usage}{
@@ -233,8 +233,8 @@ Sets contact role
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setVoice"></a>}}
-\if{latex}{\out{\hypertarget{method-setVoice}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setVoice"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setVoice}{}}}
 \subsection{Method \code{setVoice()}}{
 Sets contact voice (phone number)
 \subsection{Usage}{
@@ -250,8 +250,8 @@ Sets contact voice (phone number)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setFacsimile"></a>}}
-\if{latex}{\out{\hypertarget{method-setFacsimile}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setFacsimile"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setFacsimile}{}}}
 \subsection{Method \code{setFacsimile()}}{
 Sets contact facsimile
 \subsection{Usage}{
@@ -267,8 +267,8 @@ Sets contact facsimile
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setEmail"></a>}}
-\if{latex}{\out{\hypertarget{method-setEmail}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setEmail"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setEmail}{}}}
 \subsection{Method \code{setEmail()}}{
 Sets contact email
 \subsection{Usage}{
@@ -284,8 +284,8 @@ Sets contact email
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setWebsiteUrl"></a>}}
-\if{latex}{\out{\hypertarget{method-setWebsiteUrl}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setWebsiteUrl"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setWebsiteUrl}{}}}
 \subsection{Method \code{setWebsiteUrl()}}{
 Sets contact website URL
 \subsection{Usage}{
@@ -301,8 +301,8 @@ Sets contact website URL
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setWebsiteName"></a>}}
-\if{latex}{\out{\hypertarget{method-setWebsiteName}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setWebsiteName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setWebsiteName}{}}}
 \subsection{Method \code{setWebsiteName()}}{
 Sets contact website name
 \subsection{Usage}{
@@ -318,8 +318,8 @@ Sets contact website name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setPostalAddress"></a>}}
-\if{latex}{\out{\hypertarget{method-setPostalAddress}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setPostalAddress"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setPostalAddress}{}}}
 \subsection{Method \code{setPostalAddress()}}{
 Sets the contact postal address
 \subsection{Usage}{
@@ -335,8 +335,8 @@ Sets the contact postal address
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setPostalCode"></a>}}
-\if{latex}{\out{\hypertarget{method-setPostalCode}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setPostalCode"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setPostalCode}{}}}
 \subsection{Method \code{setPostalCode()}}{
 Sets the contact postal code
 \subsection{Usage}{
@@ -352,8 +352,8 @@ Sets the contact postal code
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setCity"></a>}}
-\if{latex}{\out{\hypertarget{method-setCity}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setCity"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setCity}{}}}
 \subsection{Method \code{setCity()}}{
 Sets the contact city
 \subsection{Usage}{
@@ -369,8 +369,8 @@ Sets the contact city
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setCountry"></a>}}
-\if{latex}{\out{\hypertarget{method-setCountry}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-setCountry"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setCountry}{}}}
 \subsection{Method \code{setCountry()}}{
 Sets the contact country
 \subsection{Usage}{
@@ -386,8 +386,8 @@ Sets the contact country
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_contact-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

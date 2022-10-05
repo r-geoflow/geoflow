@@ -16,35 +16,6 @@ This class models a subject
 \details{
 geoflow_subject
 }
-\section{Methods}{
-
-\describe{
- \item{\code{new)}}{
-   This method is used to instantiate a geoflow_subject object
- }
- \item{\code{setKey(key)}}{
-   Set key
- }
- \item{\code{setName(name)}}{
-   Sets name 
- }
- \item{\code{setUri(uri)}}{
-   Sets URI
- }
- \item{\code{setDate(dateType, date)}}{
-   Sets a date (with a given date type)
- }
- \item{\code{addKeyword(keyword, uri)}}{
-   Adds a keyword
- }
- \item{\code{getKeywords(pretty = FALSE)}}{
-   Gets the keywords. If \code{pretty} is \code{TRUE}, then the method
-   returns a \code{data.frame}, else it returns a list of \code{geoflow_keyword}
-   (default behavior).
- }
-}
-}
-
 \examples{
 \dontrun{
   subject <- geoflow_subject$new()
@@ -79,19 +50,19 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_subject$new()}}
-\item \href{#method-setKey}{\code{geoflow_subject$setKey()}}
-\item \href{#method-setName}{\code{geoflow_subject$setName()}}
-\item \href{#method-setUri}{\code{geoflow_subject$setUri()}}
-\item \href{#method-setDate}{\code{geoflow_subject$setDate()}}
-\item \href{#method-addKeyword}{\code{geoflow_subject$addKeyword()}}
-\item \href{#method-getKeywords}{\code{geoflow_subject$getKeywords()}}
-\item \href{#method-clone}{\code{geoflow_subject$clone()}}
+\item \href{#method-geoflow_subject-new}{\code{geoflow_subject$new()}}
+\item \href{#method-geoflow_subject-setKey}{\code{geoflow_subject$setKey()}}
+\item \href{#method-geoflow_subject-setName}{\code{geoflow_subject$setName()}}
+\item \href{#method-geoflow_subject-setUri}{\code{geoflow_subject$setUri()}}
+\item \href{#method-geoflow_subject-setDate}{\code{geoflow_subject$setDate()}}
+\item \href{#method-geoflow_subject-addKeyword}{\code{geoflow_subject$addKeyword()}}
+\item \href{#method-geoflow_subject-getKeywords}{\code{geoflow_subject$getKeywords()}}
+\item \href{#method-geoflow_subject-clone}{\code{geoflow_subject$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_subject-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_subject-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes an object of class \link{geoflow_subject}
 \subsection{Usage}{
@@ -107,8 +78,8 @@ Initializes an object of class \link{geoflow_subject}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setKey"></a>}}
-\if{latex}{\out{\hypertarget{method-setKey}{}}}
+\if{html}{\out{<a id="method-geoflow_subject-setKey"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_subject-setKey}{}}}
 \subsection{Method \code{setKey()}}{
 Sets subject key
 \subsection{Usage}{
@@ -124,8 +95,8 @@ Sets subject key
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setName"></a>}}
-\if{latex}{\out{\hypertarget{method-setName}{}}}
+\if{html}{\out{<a id="method-geoflow_subject-setName"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_subject-setName}{}}}
 \subsection{Method \code{setName()}}{
 Sets subject name
 \subsection{Usage}{
@@ -141,8 +112,8 @@ Sets subject name
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setUri"></a>}}
-\if{latex}{\out{\hypertarget{method-setUri}{}}}
+\if{html}{\out{<a id="method-geoflow_subject-setUri"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_subject-setUri}{}}}
 \subsection{Method \code{setUri()}}{
 Sets subject URI
 \subsection{Usage}{
@@ -158,8 +129,8 @@ Sets subject URI
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setDate"></a>}}
-\if{latex}{\out{\hypertarget{method-setDate}{}}}
+\if{html}{\out{<a id="method-geoflow_subject-setDate"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_subject-setDate}{}}}
 \subsection{Method \code{setDate()}}{
 Sets date
 \subsection{Usage}{
@@ -177,8 +148,8 @@ Sets date
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-addKeyword"></a>}}
-\if{latex}{\out{\hypertarget{method-addKeyword}{}}}
+\if{html}{\out{<a id="method-geoflow_subject-addKeyword"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_subject-addKeyword}{}}}
 \subsection{Method \code{addKeyword()}}{
 Adds a keyword
 \subsection{Usage}{
@@ -196,8 +167,8 @@ Adds a keyword
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getKeywords"></a>}}
-\if{latex}{\out{\hypertarget{method-getKeywords}{}}}
+\if{html}{\out{<a id="method-geoflow_subject-getKeywords"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_subject-getKeywords}{}}}
 \subsection{Method \code{getKeywords()}}{
 Get keywords associated with the subject
 \subsection{Usage}{
@@ -216,8 +187,8 @@ the list of keywords as \code{list} of \code{geoflow_keyword} objects or \code{d
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_subject-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_subject-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

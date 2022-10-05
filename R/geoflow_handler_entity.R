@@ -242,8 +242,6 @@ handle_entities_df <- function(config, source){
             },
             "srid" = {
               spatial_srid <- as.integer(kvps$srid$values[[1]])
-              if(is.na(spatial_srid))
-                # stop("The spatial SRID should be an integer.")
               entity$setSrid(spatial_srid)
             }
           )
@@ -278,7 +276,8 @@ handle_entities_df <- function(config, source){
     data <- sanitize_str(source_entity[,"Data"])
     if(!is.na(data)){
       if(data != ""){
-        data_obj <- geoflow_data$new(str = data)
+        
+        data_obj <- geoflow_data$new(str = data, config = config)
         data_obj$checkSoftwareProperties(config = config)
         entity$setData(data_obj)
         
@@ -360,7 +359,8 @@ handle_entities_gsheet <- function(config, source, handle = TRUE){
 handle_entities_csv <- function(config, source, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
-  source <- read.csv(source,stringsAsFactors = F)
+  #source <- read.csv(source,stringsAsFactors = F)
+  source <- as.data.frame(readr::read_csv(source))
   if(!handle) return(source)
   
   #apply generic handler
@@ -391,14 +391,14 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
   is_query <- startsWith(tolower(source), "select ")
   if(is_query){
     source <- try(DBI::dbGetQuery(dbi, source))
-    if(class(source)=="try-error"){
+    if(is(source,"try-error")){
       errMsg <- sprintf("Error while trying to execute DB query '%s'.", source)
       config$logger.error(errMsg)
       stop(errMsg)
     }
   }else{
     source <- try(DBI::dbGetQuery(dbi, sprintf("select * from %s", source)))
-    if(class(source)=="try-error"){
+    if(is(source,"try-error")){
       errMsg <- sprintf("Error while trying to read DB table/view '%s'. Check if it exists in DB.", source)
       config$logger.error(errMsg)
       stop(errMsg)
@@ -408,6 +408,27 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
 
   #apply generic handler
   entities <- handle_entities_df(config, source)
+  return(entities)
+}
+
+#handle_entities_ocs
+handle_entities_ocs <- function(config, source, handle = TRUE){
+  
+  if(!requireNamespace("ocs4R", quietly = TRUE)){
+    stop("The OCS handler requires the 'ocs4R' package")
+  }
+  
+  ocs <- config$software$input$ocs
+  if(is.null(ocs)){
+    stop("There is no OCS input software configured to handle entities from an OCS service endpoint")
+  }
+  
+  entities_file <- ocs$downloadFile(relPath = dirname(source), filename = basename(source), outdir = tempdir())
+  
+  entities <- switch(mime::guess_type(entities_file),
+    "text/csv" = handle_entities_csv(config = config, source = entities_file, handle = handle),
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = handle_entities_excel(config = config, source = entities_file, handle = handle)
+  )
   return(entities)
 }
 

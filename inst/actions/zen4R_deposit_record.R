@@ -1,4 +1,4 @@
-zen4R_deposit_record <- function(entity, config, options){
+function(action, entity, config){
   
   if(!requireNamespace("zen4R", quietly = TRUE)){
     stop("The 'zen4R-deposit-record' action requires the 'zen4R' package")
@@ -16,16 +16,16 @@ zen4R_deposit_record <- function(entity, config, options){
   skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
   
   #options
-  depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
-  depositDataPattern <- if(!is.null(options$depositDataPattern)) options$depositDataPattern else ""
-  depositMetadataPattern <- if(!is.null(options$depositMetadataPattern)) options$depositMetadataPattern else ""
-  zipEachDataFile <- if(!is.null(options$zipEachDataFile)) options$zipEachDataFile else FALSE
-  publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
-  strategy <- if(!is.null(options$strategy)) options$strategy else "newversion"
-  deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
-  update_metadata <- if(!is.null(options$update_metadata)) options$update_metadata else TRUE
-  update_files <- if(!is.null(options$update_files)) options$update_files else TRUE
-  communities <- if(!is.null(options$community)) options$community else NA
+  depositWithFiles <- action$getOption("depositWithFiles")
+  depositDataPattern <- action$getOption("depositDataPattern")
+  depositMetadataPattern <- action$getOption("depositMetadataPattern")
+  zipEachDataFile <- action$getOption("zipEachDataFile")
+  publish <- action$getOption("publish")
+  strategy <- action$getOption("strategy")
+  deleteOldFiles <- action$getOption("deleteOldFiles")
+  update_metadata <- action$getOption("update_metadata")
+  update_files <- action$getOption("update_files")
+  communities <- action$getOption("communities")
   
   #zenodo object
   zenodo_metadata <- NULL
@@ -59,19 +59,19 @@ zen4R_deposit_record <- function(entity, config, options){
   #check related identifier
   if(length(deposits)>0){
     invisible(lapply(deposits, function(deposit){
-     related_identifiers <- deposit$metadata$related_identifiers
-     if(!is.null(related_identifiers)){
-       for(related_identifier in related_identifiers){
-         if(startsWith(related_identifier$identifier,"urn")){
-           related_id <- unlist(strsplit(related_identifier$identifier, "urn:"))[2]
-           if(related_id == entity$identifiers[["id"]] &
-              related_identifier$relation == "isIdenticalTo"){
-             zenodo_metadata <<- deposit
-             break
-           }
-         }
-       }
-     }
+      related_identifiers <- deposit$metadata$related_identifiers
+      if(!is.null(related_identifiers)){
+        for(related_identifier in related_identifiers){
+          if(startsWith(related_identifier$identifier,"urn")){
+            related_id <- unlist(strsplit(related_identifier$identifier, "urn:"))[2]
+            if(related_id == entity$identifiers[["id"]] &
+               related_identifier$relation == "isIdenticalTo"){
+              zenodo_metadata <<- deposit
+              break
+            }
+          }
+        }
+      }
     }))
   }
   
@@ -116,7 +116,7 @@ zen4R_deposit_record <- function(entity, config, options){
   if(!is.null(entity$identifiers[["doi"]])){
     doi <- entity$identifiers[["doi"]]
   }
-
+  
   #if entity comes with a foreign DOI (not assigned by Zenodo)
   #we set the DOI (which set prereserve_doi to FALSE)
   if(!is.null(doi)) if(regexpr("zenodo", doi)<0){
@@ -215,10 +215,10 @@ zen4R_deposit_record <- function(entity, config, options){
         license <- licenses[[1]]$value
         accepted_licenses <- ZENODO$getLicenses()$id
         if(license%in%accepted_licenses){
-        zenodo_metadata$setLicense(license)
+          zenodo_metadata$setLicense(license)
         }else{
-        config$logger.warn(sprintf("Zenodo :license specified (%s) in entity doesn't match Zenodo accepted list of licenses. license %s ignored!", 
-                                   license,license))
+          config$logger.warn(sprintf("Zenodo :license specified (%s) in entity doesn't match Zenodo accepted list of licenses. license %s ignored!", 
+                                     license,license))
         }  
       }
     }
@@ -293,7 +293,7 @@ zen4R_deposit_record <- function(entity, config, options){
   }else{
     config$logger.info("Skipping update of Zenodo record files (option 'update_files' and/or 'depositWithFiles FALSE)")
   }
-
+  
   #deposit (and publish, if specified in options)
   if(publish){
     #2d verification for publish action, need to have the DOI specified in the entity table
@@ -312,38 +312,38 @@ zen4R_deposit_record <- function(entity, config, options){
   }
   config$logger.info(sprintf("Deposit record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
   out <- switch(record_state,
-      "unsubmitted" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
-      "inprogress" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
-      "done" = {
-        switch(strategy,
-          "edition" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
-          "newversion" = {
-            data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern)
-            
-            if(zipEachDataFile){
-              config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
-              data_files <- lapply(data_files, function(data_file){
-                config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
-                fileparts <- unlist(strsplit(data_file, "\\."))
-                if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
-                filename <- paste0(fileparts, collapse = ".")
-                outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
-                zip::zipr(zipfile = outfilename, files = data_file)
-                return(outfilename)
-              })
-            }
-            
-            metadata_files <- list.files(file.path(getwd(),"metadata"))
-            files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
-            ZENODO$depositRecordVersion(
-              record = zenodo_metadata, 
-              delete_latest_files = TRUE,
-              files = files_to_upload,
-              publish = publish
-            )
-          }
-        )
-      }
+                "unsubmitted" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
+                "inprogress" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
+                "done" = {
+                  switch(strategy,
+                         "edition" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
+                         "newversion" = {
+                           data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern)
+                           
+                           if(zipEachDataFile){
+                             config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
+                             data_files <- lapply(data_files, function(data_file){
+                               config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
+                               fileparts <- unlist(strsplit(data_file, "\\."))
+                               if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
+                               filename <- paste0(fileparts, collapse = ".")
+                               outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
+                               zip::zipr(zipfile = outfilename, files = data_file)
+                               return(outfilename)
+                             })
+                           }
+                           
+                           metadata_files <- list.files(file.path(getwd(),"metadata"))
+                           files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
+                           ZENODO$depositRecordVersion(
+                             record = zenodo_metadata, 
+                             delete_latest_files = TRUE,
+                             files = files_to_upload,
+                             publish = publish
+                           )
+                         }
+                  )
+                }
   )
   if(!is(out,"ZenodoRecord")){
     errMsg <- sprintf("Zenodo: %s", out$errors[[1]]$message)
@@ -372,7 +372,7 @@ zen4R_deposit_record <- function(entity, config, options){
   
   #if publish, we save all
   if(publish){
-    config$logger.info(sprintf("Export record to Zenodo metadata formats", out$getConceptDOI()))
+    config$logger.info(sprintf("Export record '%s' to Zenodo metadata formats", out$getConceptDOI()))
     out$exportAsAllFormats(file.path(getwd(),"metadata",entity$identifiers[["id"]]))
   }
   

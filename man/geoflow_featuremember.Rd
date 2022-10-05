@@ -48,13 +48,13 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{geoflow_featuremember$new()}}
-\item \href{#method-clone}{\code{geoflow_featuremember$clone()}}
+\item \href{#method-geoflow_featuremember-new}{\code{geoflow_featuremember$new()}}
+\item \href{#method-geoflow_featuremember-clone}{\code{geoflow_featuremember$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-geoflow_featuremember-new"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_featuremember-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_featuremember}
 \subsection{Usage}{
@@ -96,8 +96,8 @@ Initializes a \link{geoflow_featuremember}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-geoflow_featuremember-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_featuremember-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

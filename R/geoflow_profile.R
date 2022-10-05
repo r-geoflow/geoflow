@@ -37,6 +37,8 @@ geoflow_profile <- R6Class("geoflow_profile",
    logos = list(),
    #'@field mode mode of execution (Default is "raw")
    mode = "raw",
+   #'@field options global config options
+   options = list(),
    
    #'@description Initializes an object of class \link{geoflow_profile}
    initialize = function(){},
@@ -75,6 +77,13 @@ geoflow_profile <- R6Class("geoflow_profile",
    #'@param mode profile mode
    setMode = function(mode){
       self$mode <- mode
+   },
+   
+   #'@description Set global config option
+   #'@param name option name
+   #'@param value option value
+   setOption = function(name, value){
+      self$options[[name]] <- value
    }
    
  )                                  

@@ -1,4 +1,4 @@
-atom4R_dataverse_deposit_record <- function(entity, config, options){
+function(action, entity, config){
   
   if(!requireNamespace("atom4R", quietly = TRUE)){
     stop("The 'atom4R-dataverse-deposit-record' action requires the 'atom4R' package")
@@ -8,11 +8,11 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
   
   #options
-  depositWithFiles <- if(!is.null(options$depositWithFiles)) options$depositWithFiles else FALSE
-  publish <- if(!is.null(options$publish) & depositWithFiles) options$publish else FALSE
-  deleteOldFiles <- if(!is.null(options$deleteOldFiles)) options$deleteOldFiles else TRUE
-  update_metadata <- if(!is.null(options$update_metadata)) options$update_metadata else TRUE
-  update_files <- if(!is.null(options$update_files)) options$update_files else TRUE
+  depositWithFiles <- action$getOption("depositWithFiles")
+  publish <- action$getOption("publish")
+  deleteOldFiles <- action$getOption("deleteOldFiles")
+  update_metadata <- action$getOption("update_metadata")
+  update_files <- action$getOption("update_files")
   
   #Sword API
   SWORD <- config$software$output$sword_for_dataverse
@@ -165,20 +165,20 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   action <- ifelse(is.null(doi),"CREATE","UPDATE")
   update <- action == "UPDATE"
   out <- switch(action,
-    "CREATE" = {
-      rec <- SWORD$createDataverseRecord(target_dataverse_id, dcentry)
-      doi <- unlist(strsplit(rec$id, "doi:"))[2] #we need the reserved doi to add files
-      rec
-    },
-    "UPDATE" = {
-      if(update_metadata){
-        config$logger.info(sprintf("Updating record for doi '%s'", doi))
-        SWORD$updateDataverseRecord(target_dataverse_id, dcentry, paste0("doi:", doi))
-      }else{
-        config$logger.info(sprintf("Skip updating record for doi '%s' (option 'update_metadata' is FALSE)", doi))
-        SWORD$getDataverseRecord(paste0("doi:", doi))
-      }
-    }
+                "CREATE" = {
+                  rec <- SWORD$createDataverseRecord(target_dataverse_id, dcentry)
+                  doi <- unlist(strsplit(rec$id, "doi:"))[2] #we need the reserved doi to add files
+                  rec
+                },
+                "UPDATE" = {
+                  if(update_metadata){
+                    config$logger.info(sprintf("Updating record for doi '%s'", doi))
+                    SWORD$updateDataverseRecord(target_dataverse_id, dcentry, paste0("doi:", doi))
+                  }else{
+                    config$logger.info(sprintf("Skip updating record for doi '%s' (option 'update_metadata' is FALSE)", doi))
+                    SWORD$getDataverseRecord(paste0("doi:", doi))
+                  }
+                }
   )
   
   #delete/add files
@@ -244,10 +244,10 @@ atom4R_dataverse_deposit_record <- function(entity, config, options){
   #output table of DOIs
   if(is(out, "AtomEntry") | is(out, "AtomFeed")){
     infoMsg <- switch(action,
-      "CREATE" = sprintf("Successfully created Dataverse dataset with id '%s'", 
-                         entity$identifiers[["id"]]),
-      "UPDATE" = sprintf("Successfully updated Dataverse dataset with id '%s' (doi: %s)", 
-                         entity$identifiers[["id"]], doi)
+                      "CREATE" = sprintf("Successfully created Dataverse dataset with id '%s'", 
+                                         entity$identifiers[["id"]]),
+                      "UPDATE" = sprintf("Successfully updated Dataverse dataset with id '%s' (doi: %s)", 
+                                         entity$identifiers[["id"]], doi)
     )
     config$logger.info(infoMsg)
     

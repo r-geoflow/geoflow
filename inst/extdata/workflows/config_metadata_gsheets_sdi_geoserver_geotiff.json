@@ -1,0 +1,56 @@
+{
+  "profile": {
+    "id": "my-geoserver-geotiff-workflow",
+    "name": "My Geoserver geotiff workflow",
+	  "project": "Test geoflow project",
+	  "organization": "My organization",
+	  "logos": [
+		  "https://via.placeholder.com/300x150.png/09f/fff?text=geometa",
+		  "https://via.placeholder.com/300x150.png/09f/fff?text=ows4R"
+	  ],
+	  "mode": "entity",
+	  "options": {
+	    "line_separator": "_\n"
+    }
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1BX68yhdLOut9cLb45IC4U_QvwjtYsgqxwk67ADwkPfg/edit?usp=sharing"
+      }
+    ],
+    "contacts" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1BqlXwA2fKiRuozNAQhBb_PbQVSPTCfl8_Q9rfM8E2ws/edit?usp=sharing"
+      }
+    ]
+  },
+  "software": [
+	{
+		"id": "my-geoserver",
+		"type": "output",
+		"software_type": "geoserver",
+		"parameters": {
+			"url": "http://localhost:8080/geoserver",
+			"user": "admin",
+			"pwd": "geoserver",
+			"logger": "DEBUG"
+		},
+		"properties" : {
+			"workspace": "mysf"
+		}
+	}
+  ],
+  "actions": [
+	{
+	  "id": "geosapi-publish-ogc-services",
+	  "run": true,
+	  "options" : {
+	    "createWorkspace": true,
+	    "createStore": true
+	  }
+	}
+  ]
+}

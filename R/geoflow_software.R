@@ -178,7 +178,7 @@ geoflow_software <- R6Class("geoflow_software",
     checkPackages = function(){
       self$INFO(sprintf("Check package dependencies for software '%s' (%s)", self$id, self$software_type))
       out_pkgs <- try(check_packages(self$packages))
-      if(class(out_pkgs)=="try-error"){
+      if(is(out_pkgs,"try-error")){
         errMsg <- sprintf("One or more packages are not imported although required for software '%s' (%s)", 
                           self$id, self$software_type)
         self$ERROR(errMsg)
@@ -284,7 +284,7 @@ register_software <- function(){
                 stop(errMsg)
               }
               src <- try(source(software_config$properties$onstart_r$script))
-              if(class(src)=="try-error"){
+              if(is(src,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Error while sourcing script '%s'",
                                   software_config$id, software_config$properties$onstart_r$script)
                 config$logger.error(errMsg)
@@ -293,7 +293,7 @@ register_software <- function(){
               onstart_r_fun <- eval(parse(text=software_config$properties$onstart_r$fun))
               print(class(onstart_r_fun))
               sql <- try(onstart_r_fun(config, software, software_config))
-              if(class(sql)=="try-error"){
+              if(is(sql,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Error while executing function '%s'",
                                   software_config$id, software_config$properties$onstart_r$fun)
                 config$logger.error(errMsg)
@@ -314,7 +314,7 @@ register_software <- function(){
             
             #send sql to dB
             out <- try(DBI::dbSendQuery(software, sql))
-            if(class(out)=="try-error"){
+            if(is(out,"try-error")){
               errMsg <- sprintf("DBI [id='%s'] Error while executing SQL",software_config$id)
               config$logger.error(errMsg)
               stop(errMsg)
@@ -345,7 +345,7 @@ register_software <- function(){
                 stop(errMsg)
               }
               src <- try(source(software_config$properties$onend_r$script))
-              if(class(src)=="try-error"){
+              if(is(src,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Error while sourcing script '%s'",
                                   software_config$id, software_config$properties$onend_r$script)
                 config$logger.error(errMsg)
@@ -354,7 +354,7 @@ register_software <- function(){
               onend_r_fun <- eval(parse(text=software_config$properties$onend_r$fun))
               print(class(onend_r_fun))
               sql <- try(onend_r_fun(config, software, software_config))
-              if(class(sql)=="try-error"){
+              if(is(sql,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Error while executing function '%s'",
                                   software_config$id, software_config$properties$onend_r$fun)
                 config$logger.error(errMsg)
@@ -375,7 +375,7 @@ register_software <- function(){
             
             #send sql to dB
             out <- try(DBI::dbSendQuery(software, sql))
-            if(class(out)=="try-error"){
+            if(is(out,"try-error")){
               errMsg <- sprintf("DBI [id='%s'] Error while executing SQL",software_config$id)
               config$logger.error(errMsg)
               stop(errMsg)
@@ -494,7 +494,7 @@ register_software <- function(){
       ),
       attributes = list(
         workspace = list(label = "Workspace", def = "GeoServer workspace name", class = "character"),
-        datastore = list(label = "Datastore", def = "GeoServer datastore name", class = "character")
+        store = list(label = "Store", def = "GeoServer data/coverage store name", class = "character")
       ),
       actions = list(
         onstart = function(config, software, software_config){
@@ -505,7 +505,7 @@ register_software <- function(){
               software$createWorkspace(config$properties$workspace, paste0("http://",config$properties$workspace))
             }
           }
-          #TODO to be completed with datastore creation cases
+          #TODO to be completed with store creation cases
         },
         onend = function(config, software, software_config){
           config$logger.info("Executing GeoServer 'onend' action")
@@ -632,6 +632,44 @@ register_software <- function(){
       arguments = list(
         x = list(label = "Catalog URL", def = "url of top level catalog request", class = "character"),
         prefix = list(label = "Namespace", def = "the namespace to examine", class = "character")
+      )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #OPENAPI CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "openapi",
+      definition = "OpenAPI client powered by 'rapiclient' package",
+      packages = list("rapiclient"),
+      handler = try({
+        openapi_handler <- function(url, api_key_name = "", api_key_value = ""){
+          api <- rapiclient::get_api(url)
+          api_headers <- list()
+          api_headers[[api_key_name]] <- api_key_value
+          api_ops <- rapiclient::get_operations(api, .headers = unlist(api_headers))
+          return(api_ops)
+        }
+        openapi_handler
+      }, silent = TRUE),
+      arguments = list(
+        url = list(label = "OpenAPI URL", def = "url of the OpenAPI JSON definition (now limited to OpenAPI v2)", class = "character"),
+        api_key_name = list(label = "Open API key name", def = "Name of the API key for registered uses", class = "character", default = ""),
+        api_key_value = list(label = "Open API key value", def = "Value of the API key for registered uses (typically a token)", class = "character", default = "")
+      )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #OCS CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "ocs",
+      definition = "Open Collaboration Services (OCS) client powered by 'ocs4R' package",
+      packages = list("ocs4R"),
+      handler = try(ocs4R::ocsManager$new, silent = TRUE),
+      arguments = list(
+        url = list(label = "URL", def = "OCS service endpoint URL", class = "character"),
+        user = list(label = "Username", def = "Username for user authentication", class = "character"),
+        pwd = list(label = "Password", def = "Password for user authentication", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)", class = "character", choices = c("INFO", "DEBUG"))
       )
     )
   )
