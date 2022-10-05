@@ -182,6 +182,26 @@ register_data_accessors <- function(){
       }
     ),
     #-------------------------------------------------------------------------------------------------------
+    #DATAVERSE
+    #------------------------------------------------------------------------------------------------------- 
+    geoflow_data_accessor$new(
+      id = "dataverse",
+      software_type = "dataverse",
+      definition = "A Dataverse public data accessor",
+      packages = list("dataverse"),
+      download = function(resource, file, path, software = NULL){
+        if(is.null(software)){
+          errMsg <- sprintf("[geoflow] Dataverse data accessor requires a 'dataverse' software declaration in the geoflow configuration\n")
+          cat(errMsg)
+          stop(errMsg)
+        }
+        if(startsWith(resource, "https://dx.doi.org/")) resource <- unlist(strsplit(resource, "https://dx.doi.org/"))[2]
+        cat(sprintf("[geoflow] Dataverse data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
+        file_raw <- dataverse::get_file(file = file, dataset = resource, server = software$server)
+        writeBin(file_raw, file.path(getwd(), file))
+      }
+    ),
+    #-------------------------------------------------------------------------------------------------------
     #D4SCIENCE STORAGE HUB
     #-------------------------------------------------------------------------------------------------------    
     geoflow_data_accessor$new(
