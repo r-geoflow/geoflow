@@ -5,7 +5,7 @@ Contributing guidelines - 2021-12-20 - version 1 (subject to revision/consolidat
 
 ---------------
 
-The [geoflow](https://github.com/r-geoflow/geoflow) project openly welcomes contributions (bug reports, bug fixes, code enhancements/features, etc.).  This document will outline some guidelines on contributing to `geoflow`.  As well, the [geoflow-users](https://gitter.im/geoflow-users/community) chat room is a great place to get an idea of how to connect and participate in geoflow community, and it should be used primarily for questions regarding the use of geoflow.
+The [geoflow](https://github.com/r-geoflow/geoflow) project openly welcomes contributions (bug reports, bug fixes, code enhancements/features, etc.).  This document will outline some guidelines on contributing to `geoflow`.  As well, the [geoflow discussions](https://github.com/r-geoflow/geoflow/discussions) is a great place to get an idea of how to connect and participate in geoflow community, and it should be used primarily for questions regarding the use of geoflow.
 
 geoflow has the following modes of contribution:
 
@@ -33,7 +33,7 @@ Contributors are asked to confirm that they comply with the geoflow project [MIT
 
 ### GitHub Pull Requests
 
-- development proposals shall be discussed first on the [geoflow-developers](https://gitter.im/geoflow-developers/community) chat room and then described through a Github issue. 
+- development proposals shall be discussed first on the [geoflow discussions](https://github.com/r-geoflow/geoflow/discussions) and then described through a Github issue. 
 - pull requests can provide agreement to license guidelines as text in the pull request or via email to the geoflow author/maintainer_  (see `Contributions and Licensing Agreement Template <#contributions-and-licensing-agreement-template>`_).  **This is only required for a contributor's first pull request.  Subsequent pull requests do not require this step**
 - pull requests may include copyright in the source code header by the contributor if the contribution is significant (in general targeting a new core feature or a major enhancement of the geoflow core engine) and the contributor would like to claim copyright on their contribution. The copyright shall be handled under the current geoflow license (MIT).
 - all contributors shall be listed at https://github.com/r-geoflow/geoflow/graphs/contributors
