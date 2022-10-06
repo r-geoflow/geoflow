@@ -24,7 +24,7 @@
       "type": "input",
       "software_type": "dataverse",
       "parameters": {
-        "server": "data.inrae.fr"
+        "server": "https://entrepot.recherche.data.gouv.fr"
       },
       "properties": {
         "dataverse": "dynafor"
