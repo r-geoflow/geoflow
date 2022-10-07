@@ -35,31 +35,15 @@
   			"version": "4.0.5",
   			"logger": "DEBUG"
   		}
-  	},
-  	{
-      "id": "inspire",
-      "type": "output",
-  		"software_type": "inspire",
-  		"parameters": {
-        "url": "{{INSPIRE_API_ENDPOINT}}",
-        "apiKey": "{{INSPIRE_API_KEY}}"
-  		}
-    }
+  	}
    ],
   "actions": [
     {
       "id": "geometa-create-iso-19115",
-      "options" : {
-        "use_uuid": true,
-        "inspire" : true
-      },
       "run": true
     },
     {
       "id": "geonapi-publish-iso-19139",
-      "options" : {
-        "geometa_inspire" : true
-      },
       "run" : true
     }
   ]

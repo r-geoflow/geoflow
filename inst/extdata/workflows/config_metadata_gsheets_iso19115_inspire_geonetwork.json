@@ -50,13 +50,15 @@
     {
       "id": "geometa-create-iso-19115",
       "options" : {
-        "use_uuid": true,
         "inspire" : true
       },
       "run": true
     },
     {
       "id": "geonapi-publish-iso-19139",
+      "options" : {
+        "geometa_inspire": true
+      },
       "run" : true
     }
   ]
