@@ -96,6 +96,8 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
       entity$enrichWithData(config, jobdir)
       entity$prepareFeaturesToUpload(config)
     }
+    #extra identifiers to use in entity identification/actions
+    entity$enrichWithIdentifiers(config)
     #data relations (eg. geosapi & OGC data protocol online resources)
     entity$enrichWithRelations(config)
     

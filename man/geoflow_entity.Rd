@@ -98,6 +98,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_entity-enrichWithFeatures}{\code{geoflow_entity$enrichWithFeatures()}}
 \item \href{#method-geoflow_entity-enrichWithCoverages}{\code{geoflow_entity$enrichWithCoverages()}}
 \item \href{#method-geoflow_entity-prepareFeaturesToUpload}{\code{geoflow_entity$prepareFeaturesToUpload()}}
+\item \href{#method-geoflow_entity-enrichWithIdentifiers}{\code{geoflow_entity$enrichWithIdentifiers()}}
 \item \href{#method-geoflow_entity-enrichWithRelations}{\code{geoflow_entity$enrichWithRelations()}}
 \item \href{#method-geoflow_entity-enrichWithSubjects}{\code{geoflow_entity$enrichWithSubjects()}}
 \item \href{#method-geoflow_entity-enrichWithFormats}{\code{geoflow_entity$enrichWithFormats()}}
@@ -658,6 +659,23 @@ This function will 1) check (in case of upload is requested) if the type of sour
 on files formats(eg. csv,shp,gpkg) and 2) process automatically to conversion from source to upload type.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$prepareFeaturesToUpload(config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-enrichWithIdentifiers"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-enrichWithIdentifiers}{}}}
+\subsection{Method \code{enrichWithIdentifiers()}}{
+Function that will enrich entity with identifiers needed across multiple actions
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithIdentifiers(config)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

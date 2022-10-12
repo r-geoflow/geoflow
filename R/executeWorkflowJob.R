@@ -135,6 +135,8 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
               #we check if the source and upload are both different file format (csv,shp,gpkg) and process automatically to conversion from source to upload type
               entity$prepareFeaturesToUpload(config)
             }
+            #extra identifiers to use in entity identification/actions
+            entity$enrichWithIdentifiers(config)
             #data relations (eg. geosapi & OGC data protocol online resources)
             entity$enrichWithRelations(config)
             

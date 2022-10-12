@@ -85,12 +85,7 @@ function(action, entity, config){
   # }
   md <- ISOMetadata$new()
   mdId <- entity$identifiers[["id"]]
-  if(use_uuid){
-    if(is.null(entity$identifiers[["uuid"]])){
-      entity$identifiers[["uuid"]] <- uuid::UUIDgenerate()
-    }
-    mdId <- entity$identifiers[["uuid"]]
-  }
+  if(use_uuid) mdId <- entity$identifiers[["uuid"]]
   md$setFileIdentifier(mdId)
   
   the_doi <- entity$identifiers[["doi"]]

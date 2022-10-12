@@ -1148,6 +1148,18 @@ geoflow_entity <- R6Class("geoflow_entity",
       
     },
     
+    #'@description Function that will enrich entity with identifiers needed across multiple actions
+    #'@param config geoflow config object
+    enrichWithIdentifiers = function(config){
+      geometa_action <- NULL
+      actions <- list()
+      if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geometa-create-iso-19115",x$id)>0})]
+      if(length(actions)>0) geometa_action <- actions[[1]]
+      if(!is.null(geometa_action)) if(is.null(self$identifiers[["uuid"]])){
+        self$identifiers[["uuid"]] <- uuid::UUIDgenerate()
+      }
+    },
+    
     #'@description This function that will enrich the entity with relations. At now this is essentially related to adding 
     #'    relations if a Geoserver (geosapi) publishing action is enabled. Relations added will depend on the 
     #'    \code{enrich_with_relation_*} options set in the geosapi action, ie. 
@@ -1160,6 +1172,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'      - add WCS base URL relation (if option \code{enrich_with_relation_wcs} is \code{TRUE})
     #'@param config geoflow config object
     enrichWithRelations = function(config){
+      
       geosapi_action <- NULL
       actions <- list()
       if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geosapi",x$id)>0})]
