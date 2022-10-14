@@ -10,6 +10,7 @@
 #' @param file a JSON geoflow configuration file
 #' @param dir a directory where to execute the workflow
 #' @param queue an \pkg{ipc} queue to use geoflow in \pkg{geoflow-shiny}
+#' @param on_initWorkflowJob a function to trigger once \code{initWorkflowJob} is executed
 #' @param on_initWorkflow a function to trigger once \code{initWorkflow} is executed
 #' @param on_closeWorkflow a function to trigger once \code{closeWorkflow} is executed
 #' @param monitor a monitor function to increase progress bar 
@@ -20,6 +21,7 @@
 #' 
 executeWorkflow <- function(file, dir = ".", 
                             queue = NULL, 
+                            on_initWorkflowJob = NULL,
                             on_initWorkflow = NULL,
                             on_closeWorkflow = NULL,
                             monitor = NULL){
@@ -31,8 +33,13 @@ executeWorkflow <- function(file, dir = ".",
   
   #1. Init the workflow based on configuration file
   wd <- getwd()
-  config <- NULL
+  config <- list()
   jobDirPath <- initWorkflowJob(dir = dir)
+  config$job <- jobDirPath
+  if(!is.null(on_initWorkflowJob)){
+    on_initWorkflowJob(config = config, queue = queue)
+  }
+  
   capture.output({
     config <- try(initWorkflow(file, dir = dir, jobDirPath = jobDirPath))
     if(is(config,"try-error")){

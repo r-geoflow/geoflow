@@ -15,6 +15,8 @@ executeWorkflow(file, dir, queue,
 
 \item{queue}{an \pkg{ipc} queue to use geoflow in \pkg{geoflow-shiny}}
 
+\item{on_initWorkflowJob}{a function to trigger once \code{initWorkflowJob} is executed}
+
 \item{on_initWorkflow}{a function to trigger once \code{initWorkflow} is executed}
 
 \item{on_closeWorkflow}{a function to trigger once \code{closeWorkflow} is executed}
