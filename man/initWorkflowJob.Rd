@@ -4,10 +4,10 @@
 \alias{initWorkflowJob}
 \title{initWorkflowJob}
 \usage{
-initWorkflowJob(config)
+initWorkflowJob(dir)
 }
 \arguments{
-\item{config}{a configuration object as read by \code{initWorkflow}}
+\item{dir}{a directory where to initialize/execute the workflow}
 }
 \value{
 the job directory path

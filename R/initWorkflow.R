@@ -3,15 +3,17 @@
 #' @title initWorkflow
 #' @description \code{initWorkflow} allows to init a workflow
 #'
-#' @usage initWorkflow(file, dir)
+#' @usage initWorkflow(file, dir, jobDirPath)
 #'                 
 #' @param file a JSON configuration file
 #' @param dir a directory where to execute the workflow
+#' @param jobDirPath a directory set-up for the job. Default is \code{NULL} means it will be created
+#'  during initialization of the workflow, otherwise the path provided will be used.
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'
-initWorkflow <- function(file, dir = "."){
+initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
 
   file <- tools::file_path_as_absolute(file)
   config <- jsonlite::read_json(file)
@@ -32,8 +34,26 @@ initWorkflow <- function(file, dir = "."){
   config$logger.warn <- function(text){config$logger("WARN", text)}
   config$logger.error <- function(text){config$logger("ERROR", text)}
   
+  config$logger.info("R Session info")
+  config$logger.info("===========================================================================================================")
+  print(sessionInfo())
+  config$logger.info("Init Workflow job directory")
+  config$logger.info("===========================================================================================================")
+  config_file <- config$src
+  #working dir (where jobs will be created)
+  if(is.null(config$wd)) config$wd <- tools::file_path_as_absolute(dir)
+  if(is.null(jobDirPath)) jobDirPath <- initWorkflowJob(dir = dir)
+  setwd(jobDirPath)
+  config$job <- jobDirPath
+  config$logger.info(sprintf("Workflow job directory: %s", jobDirPath))
+  
   config$logger.info("Init Workflow configuration")
-  config$logger.info("========================================================================")
+  config$logger.info("===========================================================================================================")
+  #copy configuration file
+  file.copy(from = config_file, to = getwd())
+  #rename copied file
+  file.rename(from = file.path(getwd(), basename(config_file)), to = "job.json")
+  
   
   #profile
   if(!is.null(config$profile)){
@@ -99,8 +119,6 @@ initWorkflow <- function(file, dir = "."){
   
   #session_wd
   config$session_wd <- getwd()
-  #working dir (where jobs will be created)
-  if(is.null(config$wd)) config$wd <- tools::file_path_as_absolute(dir)
 
   #load source scripts
   #--------------------
@@ -541,6 +559,27 @@ initWorkflow <- function(file, dir = "."){
     })
     config$actions <- config$actions[!sapply(config$actions, is.null)]
     
+  }
+  
+  #create sub directories as listed in the configuration file
+  job_targets <- sapply(config$actions, function(x){if(!is.na(x$target)) if(x$target=="job") return(x$target_dir)})
+  job_targets <- job_targets[!sapply(job_targets,is.null)]
+  directories <- unique(job_targets)
+  directories <- directories[!is.na(directories)]
+  for(directory in directories){
+    if (!file.exists(directory)){
+      dir_name <- file.path(config$job, directory)
+      config$logger.info(sprintf("Creating '%s' job directory: %s",directory, dir_name))
+      dir.create(dir_name)
+    }
+  }
+  
+  if(config$profile$mode == "raw"){
+    config$logger.info("Copying raw action scripts to job directory")
+    for(action in config$actions){
+      config$logger.info(sprintf("Copying %s ...", action$script))
+      file.copy(from = file.path(config$wd, action$script), to = getwd())
+    }
   }
 
   return(config)

@@ -11,7 +11,6 @@
 #' @param dir a directory where to execute the workflow
 #' @param queue an \pkg{ipc} queue to use geoflow in \pkg{geoflow-shiny}
 #' @param on_initWorkflow a function to trigger once \code{initWorkflow} is executed
-#' @param on_initWorkflowJob a function to trigger once \code{initWorkflowJob} is executed
 #' @param on_closeWorkflow a function to trigger once \code{closeWorkflow} is executed
 #' @param monitor a monitor function to increase progress bar 
 #' @return the path of the job directory
@@ -22,7 +21,6 @@
 executeWorkflow <- function(file, dir = ".", 
                             queue = NULL, 
                             on_initWorkflow = NULL,
-                            on_initWorkflowJob = NULL,
                             on_closeWorkflow = NULL,
                             monitor = NULL){
   
@@ -32,20 +30,23 @@ executeWorkflow <- function(file, dir = ".",
   options(gargle_oob_default = TRUE)
   
   #1. Init the workflow based on configuration file
-  config <- initWorkflow(file, dir = dir)
-  if(!is.null(on_initWorkflow)){
-    on_initWorkflow(config = config, queue = queue)
-  }
-  
-  #2. Inits workflow job (create directories)
   wd <- getwd()
   if(!is.null(dir)) setwd(dir)
-  jobdir <- initWorkflowJob(config)
-  config$debug <- FALSE
-  config$job <- jobdir
-  if(!is.null(on_initWorkflowJob)){
-    on_initWorkflowJob(config = config, queue = queue)
-  }
+  config <- NULL
+  
+  jobDirPath <- initWorkflowJob(dir = dir)
+  capture.output({
+    config <- try(initWorkflow(file, dir = dir, jobDirPath = jobDirPath))
+    if(is(config,"try-error")){
+      setwd(wd)
+      closeWorkflow(config)
+      stop(sprintf("Workflow failed during initialization, check logs at: %s", file.path(jobDirPath, "job-logs.txt")))
+    }
+    config$debug <- FALSE
+    if(!is.null(on_initWorkflow)){
+      on_initWorkflow(config = config, queue = queue)
+    }
+  }, file = file.path(jobDirPath, "job-logs.txt"))
   
   #manage monitor
   if(!is.null(monitor)){
@@ -62,25 +63,26 @@ executeWorkflow <- function(file, dir = ".",
     }
   }
   
-  #3. Execute the workflow job
+  #2. Execute the workflow job
   capture.output({
     exec <- try(executeWorkflowJob(config, queue = queue, monitor = monitor))
     if(is(exec,"try-error")){
       setwd(wd)
       closeWorkflow(config)
-      stop(sprintf("Workflow '%s' failed, check logs at: %s", config$profile$id, file.path(jobdir, "job-logs.txt")))
+      stop(sprintf("Workflow failed during execution, check logs at: %s", file.path(config$job, "job-logs.txt")))
     }
-  }, file = file.path(jobdir, "job-logs.txt"))
-  
-  #4. close workflow
-  closeWorkflow(config)
-  if(!is.null(on_closeWorkflow)){
-    on_closeWorkflow(config = config, queue = queue)
-  }
+    
+    #3. close workflow
+    closeWorkflow(config)
+    if(!is.null(on_closeWorkflow)){
+      on_closeWorkflow(config = config, queue = queue)
+    }
+    
+  }, file = file.path(config$job, "job-logs.txt"), append = TRUE)
   
   #reset options
   options(.defaultOptions)
   
   setwd(wd)
-  return(jobdir)
+  return(config$job)
 }

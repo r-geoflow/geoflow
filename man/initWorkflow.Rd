@@ -4,12 +4,15 @@
 \alias{initWorkflow}
 \title{initWorkflow}
 \usage{
-initWorkflow(file, dir)
+initWorkflow(file, dir, jobDirPath)
 }
 \arguments{
 \item{file}{a JSON configuration file}
 
 \item{dir}{a directory where to execute the workflow}
+
+\item{jobDirPath}{a directory set-up for the job. Default is \code{NULL} means it will be created
+during initialization of the workflow, otherwise the path provided will be used.}
 }
 \description{
 \code{initWorkflow} allows to init a workflow

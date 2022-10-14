@@ -18,12 +18,13 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
     if(is.null(jobdir)) jobdir <- config$job
   
     config$logger.info("Executing workflow job...")
+    config$logger.info("===========================================================================================================")
     
     #options
     skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
   
     #Actions onstart
-    config$logger.info("---------------------------------------------------------------------------------------")
+    config$logger.info("-----------------------------------------------------------------------------------------------------------")
     config$logger.info("Executing software actions 'onstart' ...")
     
     #function to run software actions
@@ -49,7 +50,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
     runSoftwareActions(config, "output", "onstart")
     
     #workflow actions
-    config$logger.info("---------------------------------------------------------------------------------------")
+    config$logger.info("-----------------------------------------------------------------------------------------------------------")
     config$logger.info("Executing entity actions ...")
     actions <- config$actions
     if(is.null(actions)){
@@ -294,9 +295,10 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
     }
     
     #Actions onend
-    config$logger.info("---------------------------------------------------------------------------------------")
+    config$logger.info("-----------------------------------------------------------------------------------------------------------")
     config$logger.info("Executing software actions 'onend' ...")
     #run software 'onend' actions
     runSoftwareActions(config, "input", "onend")
     runSoftwareActions(config, "output", "onend")
+    config$logger.info("Workflow successfully executed ...")
 }

@@ -34,12 +34,9 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
   options(stringsAsFactors = FALSE)
   
   #1. Init the workflow based on configuration file
-  config <- initWorkflow(file)
+  jobDirPath <- initWorkflowJob(dir = dir)
+  config <- initWorkflow(file, dir = dir, jobDirPath = jobDirPath)
   config$debug <- TRUE
-  
-  #2. Inits workflow job (create directories)
-  jobdir <- initWorkflowJob(config)
-  config$job <- jobdir
   .geoflow$debug = list()
   .geoflow$debug$config = config
   
@@ -77,9 +74,9 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
   }
   
   #create entity jobdir
-  entity$prepareEntityJobDir(config, jobdir)
+  entity$prepareEntityJobDir(config, config$job)
   #let's work in entity jobdir
-  setwd(entity$getEntityJobDirPath(config, jobdir))
+  setwd(entity$getEntityJobDirPath(config, config$job))
   config$logger.info(sprintf("Entity working directory: %s", getwd()))
   
   #copy data?
@@ -87,13 +84,13 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
     config$logger.warn("'skipFileDownload' is enabled in the config, copyData set to FALSE!")
     copyData <- !skipFileDownload
   }
-  if(copyData && !is.null(entity$data)) entity$copyDataToJobDir(config, jobdir)
+  if(copyData && !is.null(entity$data)) entity$copyDataToJobDir(config, config$job)
 
   #enrich metadata with dynamic properties
   if(!is.null(entity$data)){
     #data features/coverages
     if(!skipFileDownload) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
-      entity$enrichWithData(config, jobdir)
+      entity$enrichWithData(config, config$job)
       entity$prepareFeaturesToUpload(config)
     }
     #extra identifiers to use in entity identification/actions
