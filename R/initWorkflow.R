@@ -38,6 +38,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
   config$logger.info("R Session info")
   config$log_separator("=")
   print(sessionInfo())
+  config$log_separator("=")
   config$logger.info("Init Workflow job directory")
   config$log_separator("=")
   config_file <- config$src
