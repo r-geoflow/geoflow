@@ -31,9 +31,7 @@ executeWorkflow <- function(file, dir = ".",
   
   #1. Init the workflow based on configuration file
   wd <- getwd()
-  if(!is.null(dir)) setwd(dir)
   config <- NULL
-  
   jobDirPath <- initWorkflowJob(dir = dir)
   capture.output({
     config <- try(initWorkflow(file, dir = dir, jobDirPath = jobDirPath))
