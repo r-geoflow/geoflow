@@ -4,7 +4,7 @@
 #' @description \code{executeWorkflow} allows to execute a workflow
 #'
 #' @usage executeWorkflow(file, dir, queue, 
-#'                        on_initWorkflow, on_initWorkflowJob, on_closeWorkflow, 
+#'                        on_initWorkflowJob, on_initWorkflow, on_closeWorkflow, 
 #'                        monitor)
 #'                 
 #' @param file a JSON geoflow configuration file

@@ -5,7 +5,7 @@
 \title{executeWorkflow}
 \usage{
 executeWorkflow(file, dir, queue, 
-                       on_initWorkflow, on_initWorkflowJob, on_closeWorkflow, 
+                       on_initWorkflowJob, on_initWorkflow, on_closeWorkflow, 
                        monitor)
 }
 \arguments{
