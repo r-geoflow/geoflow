@@ -18,8 +18,9 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
     if(is.null(jobdir)) jobdir <- config$job
   
     config$log_separator("=")
-    config$logger.info("Executing workflow job...")
+    cat("Workflow Execution\n")
     config$log_separator("=")
+    config$logger.info("Executing workflow job...")
     
     #options
     skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
