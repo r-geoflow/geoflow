@@ -11,7 +11,6 @@
 #' @export
 #' 
 closeWorkflow <- function(config){
-  config$log_separator("=")
   #close DBs
   if(!is.null(config$software$input$dbi)){
     config$logger.info("Closing input database connection")
