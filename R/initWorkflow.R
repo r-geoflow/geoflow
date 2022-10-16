@@ -35,7 +35,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
   config$logger.error <- function(text){config$logger("ERROR", text)}
   config$log_separator <- function(char){cat(paste0(paste0(rep(char,100),collapse=""),"\n"))}
   
-  cat("R session info\n")
+  cat("Session info\n")
   config$log_separator("=")
   print(sessionInfo())
   config$log_separator("=")
