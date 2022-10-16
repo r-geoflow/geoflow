@@ -39,6 +39,9 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
   config$log_separator("=")
   print(sessionInfo())
   config$log_separator("=")
+  cat("Workflow initialization\n")
+  config$log_separator("=")
+  config$logger.info("Init Workflow configuration")
   
   config_file <- config$src
   #working dir (where jobs will be created)
@@ -46,12 +49,8 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
   if(is.null(jobDirPath)) jobDirPath <- initWorkflowJob(dir = dir)
   setwd(jobDirPath)
   config$job <- jobDirPath
-
-  config$log_separator("=")
-  cat("Workflow initialization\n")
-  config$log_separator("=")
-  config$logger.info("Init Workflow configuration")
   config$logger.info(sprintf("Workflow job directory: %s", jobDirPath))
+  
   #copy configuration file
   file.copy(from = config_file, to = getwd())
   #rename copied file
