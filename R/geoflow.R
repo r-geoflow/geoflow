@@ -5,6 +5,7 @@
 #' 
 #' @import R6
 #' @import methods
+#' @importFrom utils sessionInfo
 #' @importFrom utils capture.output
 #' @importFrom utils read.csv write.csv
 #' @importFrom utils unzip
