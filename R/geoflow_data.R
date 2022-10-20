@@ -236,9 +236,6 @@ geoflow_data <- R6Class("geoflow_data",
         #params
         params <- data_props[sapply(data_props, function(x){x$key=="parameter"})]
         if(length(params)>0){
-          if(self$uploadType != "dbquery"){
-            stop("The specification of service parameters is only possible for a 'dbquery' upload type!")
-          }
           #check and set parameter
           for(param in params){
             if(!length(param$values) %in% c(2,3)){
