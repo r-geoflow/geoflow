@@ -1155,7 +1155,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       actions <- list()
       if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geometa-create-iso-19115",x$id)>0})]
       if(length(actions)>0) geometa_action <- actions[[1]]
-      if(!is.null(geometa_action)) if(is.null(self$identifiers[["uuid"]])){
+      if(!is.null(geometa_action)) if(geometa_action$getOption("use_uuid")) if(is.null(self$identifiers[["uuid"]])){
         self$identifiers[["uuid"]] <- uuid::UUIDgenerate()
       }
     },
