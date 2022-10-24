@@ -310,7 +310,7 @@ register_actions <- function(){
       packages = list("geonapi"),
       available_options = list(
         geometa_inspire = list(def = "Validates ISO 19139 metadata with INSPIRE reference validator before publication", class = "logical", default = FALSE),
-        privileges = list(def = "Geonetwork privileges to set for the metadata to be published", class = "character", choices = c("view","dynamic","featured"), default = c("view","dynamic","featured"), multiple = TRUE),
+        privileges = list(def = "Geonetwork privileges to set for the metadata to be published", class = "character", choices = c("view","dynamic","download", "featured"), default = c("view","dynamic","featured"), multiple = TRUE),
         group = list(def = "Geonetwork user group to which the metadata should be associated", class = "character", default = "2"),
         category = list(def = "Category of metadata resources to which the metadata record should be associated", class = "character", default = "datasets"),
         publish_thumbnails = list(def = "Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews", class = "logical", default = TRUE)
