@@ -133,7 +133,7 @@ function(action, entity, config){
   dctype_idx = which(tolower(ISOHierarchyLevel$values()) == tolower(dctype))
   dctype_iso = ISOHierarchyLevel$values()[dctype_idx]
   if(length(dctype_iso)==0) dctype_iso = "dataset"
-  md$setHierarchyLevel(dctype_iso)
+  md$addHierarchyLevel(dctype_iso)
   
   #add contacts
   # if(length(entity$contacts)>0){
@@ -185,7 +185,7 @@ function(action, entity, config){
                   )
                   geomObject$setGeometricObjectType(isoGeomType)
                   geomObject$setGeometricObjectCount(nrow(features[sf::st_geometry_type(features)==geomtype,]))
-                  vsr$setGeometricObjects(geomObject)
+                  vsr$addGeometricObjects(geomObject)
                 }
                 md$addSpatialRepresentationInfo(vsr)
               }
@@ -222,7 +222,7 @@ function(action, entity, config){
     rs <- ISOReferenceSystem$new()
     rsId <- ISOReferenceIdentifier$new(code = as.character(entity$srid), codeSpace = "EPSG")
     rs$setReferenceSystemIdentifier(rsId)
-    md$setReferenceSystemInfo(rs)
+    md$addReferenceSystemInfo(rs)
   }
   
   #Data identification
@@ -231,8 +231,8 @@ function(action, entity, config){
   ident$setPurpose(entity$descriptions[["purpose"]])
   ident$addCredit(entity$descriptions[["credit"]])
   ident$addStatus(entity$descriptions[["status"]])
-  ident$setLanguage(entity$language)
-  ident$setCharacterSet("utf8")
+  ident$addLanguage(entity$language)
+  ident$addCharacterSet("utf8")
   #topic categories
   topics <- list()
   if(length(entity$subjects)>0) topics <- entity$subjects[sapply(entity$subjects, function(x){return(tolower(x$key) == "topic")})]
