@@ -48,7 +48,8 @@ loadMetadataHandler <- function(config, element, type){
     #in case handler is a script
     h_script <- element$script
     if(!is.null(config)) config$logger.info(sprintf("Try to use custom handler '%s' from script '%s'", h, h_script))
-    if(!file.exists(h_script)){
+    isScriptUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", h_script) > 0
+    if(!isScriptUrl) if(!file.exists(h_script)){
       errMsg <- sprintf("File '%s' does not exist in current directory!", h_script)
       if(!is.null(config)) config$logger.error(errMsg)
       stop(errMsg)
