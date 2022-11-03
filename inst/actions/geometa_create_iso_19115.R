@@ -454,7 +454,7 @@ function(action, entity, config){
     }
     extent$addTemporalElement(time)
   }
-  ident$setExtent(extent)
+  ident$addExtent(extent)
   
   #thesaurus/keywords
   subjects <- entity$subjects
@@ -500,7 +500,7 @@ function(action, entity, config){
   }
   
   ident$setSupplementalInformation(entity$descriptions[["info"]])
-  if(!is.null(entity$data)) ident$setSpatialRepresentationType(entity$data$spatialRepresentationType)
+  if(!is.null(entity$data)) ident$addSpatialRepresentationType(entity$data$spatialRepresentationType)
   md$identificationInfo = c(md$identificationInfo,ident)
   
   #service information
@@ -772,7 +772,7 @@ function(action, entity, config){
       dto$onLine = c(dto$onLine,or)
     }
   }
-  distrib$setDigitalTransferOptions(dto)
+  distrib$addDigitalTransferOptions(dto)
   md$setDistributionInfo(distrib)
   
   #data quality - provenance / lineage
