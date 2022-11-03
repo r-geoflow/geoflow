@@ -264,6 +264,7 @@ function(action, entity, config){
                        "sfc_POLYGON" = "gml:PolygonPropertyType",
                        "sfc_MULTIPOLYGON" = "gml:MultiPolygonPropertyType"
     )
+    config$logger.info(sprintf("Set primitive type '%s' for feature Attribute '%s'...", fat_type, featureAttrName))
     fat_generic_type <- switch(class(featureAttrValues[1])[1],
                                "integer" = "variable",
                                "numeric" = "variable",
@@ -274,6 +275,7 @@ function(action, entity, config){
     fat$setValueType(fat_type_anchor)
     
     #add feature attribute as carrierOfCharacteristic
+    config$logger.info(sprintf("Add carrier of characteristics for feature Attribute '%s'...", featureAttrName))
     ft$carrierOfCharacteristics <- c(ft$carrierOfCharacteristics, fat)
   }
   #add featureType to catalogue
