@@ -42,7 +42,7 @@ executeWorkflow <- function(file, dir = ".",
   
   capture.output({
     setwd(wd)
-    config <- try(initWorkflow(file, dir = dir, jobDirPath = jobDirPath))
+    config <- try(initWorkflow(file = file, dir = dir, jobDirPath = jobDirPath))
     if(is(config,"try-error")){
       closeWorkflow(config)
       stop(sprintf("Workflow failed during initialization, check logs at: %s", file.path(jobDirPath, "job-logs.txt")))

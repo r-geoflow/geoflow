@@ -51,9 +51,9 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
   config$logger.info(sprintf("Workflow job directory: %s", jobDirPath))
   
   #copy configuration file
-  file.copy(from = config_file, to = getwd())
+  file.copy(from = config_file, to = jobDirPath)
   #rename copied file
-  file.rename(from = file.path(getwd(), basename(config_file)), to = "job.json")
+  file.rename(from = file.path(jobDirPath, basename(config_file)), to = "job.json")
   
   
   #profile
@@ -579,7 +579,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
     config$logger.info("Copying raw action scripts to job directory")
     for(action in config$actions){
       config$logger.info(sprintf("Copying %s ...", action$script))
-      file.copy(from = file.path(config$wd, action$script), to = getwd())
+      file.copy(from = file.path(config$wd, action$script), to = jobDirPath)
     }
   }
 
