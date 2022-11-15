@@ -35,7 +35,9 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
   
   #1. Init the workflow based on configuration file
   jobDirPath <- initWorkflowJob(dir = dir)
+  setwd(wd)
   config <- initWorkflow(file, dir = dir, jobDirPath = jobDirPath)
+  setwd(jobDirPath)
   config$debug <- TRUE
   .geoflow$debug = list()
   .geoflow$debug$config = config
