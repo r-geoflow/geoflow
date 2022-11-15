@@ -51,10 +51,12 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
   config$logger.info(sprintf("Workflow job directory: %s", jobDirPath))
   
   #copy configuration file
-  file.copy(from = config_file, to = jobDirPath)
+  wd <- getwd()
+  setwd(jobDirPath)
+  file.copy(from = config_file, to = getwd())
   #rename copied file
-  file.rename(from = file.path(jobDirPath, basename(config_file)), to = "job.json")
-  
+  file.rename(from = file.path(getwd(), basename(config_file)), to = "job.json")
+  setwd(wd)
   
   #profile
   if(!is.null(config$profile)){
