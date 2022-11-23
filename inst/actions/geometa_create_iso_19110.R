@@ -43,7 +43,7 @@ function(action, entity, config){
   fc$addScope(paste0("geoflow:", entity$data$uploadType))
   #-> ofv (openfairviewer) scope
   ofv_scope <- "ogc_filters"
-  if(entity$data$uploadType == "dbquery" & length(entity$data$parameters)>0){
+  if(length(entity$data$parameters)>0){
     ofv_scope <- "ogc_viewparams"
   }
   if(length(entity$data$ogc_dimensions)>0){
