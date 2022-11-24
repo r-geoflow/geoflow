@@ -18,6 +18,7 @@
 #' @importFrom png readPNG
 #' @importFrom curl curl_fetch_memory
 #' @importFrom whisker whisker.render
+#' @import dotenv
 #' @import uuid
 #' @import httr
 #' @import jsonlite

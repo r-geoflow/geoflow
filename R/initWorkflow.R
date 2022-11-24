@@ -22,18 +22,8 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
   config$src <- file
   config$src_config <- config
   
-  #convert back to string to eval variable expressions
-  config_str <- jsonlite::toJSON(config, auto_unbox = TRUE)
-  config_str <- geoflow::eval_variable_expressions(config_str)
-  config <- jsonlite::parse_json(config_str)
-  
   #worfklow config$loggers
-  id <- if(!is.null(config$profile$id)) config$profile$id else config$id
-  config$logger <- function(type, text){cat(sprintf("[geoflow][%s][%s] %s \n", id, type, text))}
-  config$logger.info <- function(text){config$logger("INFO", text)}
-  config$logger.warn <- function(text){config$logger("WARN", text)}
-  config$logger.error <- function(text){config$logger("ERROR", text)}
-  config$log_separator <- function(char){cat(paste0(paste0(rep(char,100),collapse=""),"\n"))}
+  config <- add_config_utils(config)
   
   cat("Session info\n")
   config$log_separator("=")
@@ -59,6 +49,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
   setwd(wd)
   
   #profile
+  profile <- NULL
   if(!is.null(config$profile)){
     config$logger.info("Creating workflow profile...")
     profile <- geoflow_profile$new()
@@ -69,10 +60,20 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
       config$logger.warn("Configuration file TO UPDATE: 'id' should be defined in profile!")
       profile$setId(config$id)
     }
+    config$logger.info(sprintf("Workflow ID: %s", profile$id))
     #other workflow metadata
-    if(!is.null(config$profile$name)) profile$setName(config$profile$name)
-    if(!is.null(config$profile$project)) profile$setProject(config$profile$project)
-    if(!is.null(config$profile$organization)) profile$setOrganization(config$profile$organization)
+    if(!is.null(config$profile$name)){
+      profile$setName(config$profile$name)
+      config$logger.info(sprintf("Workflow name: %s", profile$name))
+    }
+    if(!is.null(config$profile$project)){
+      profile$setProject(config$profile$project)
+      config$logger.info(sprintf("Workflow project: %s", profile$project))
+    }
+    if(!is.null(config$profile$organization)){
+      profile$setOrganization(config$profile$organization)
+      config$logger.info(sprintf("Workflow organization: %s", profile$organization))
+    }
     if(!is.null(config$profile$logos)){
       for(logo in config$profile$logos) profile$addLogo(logo)
     }
@@ -98,7 +99,29 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
       config$logger.warn(warnMes)
       profile$mode <- "raw"
     }
-    
+    #environment
+    if(!is.null(config$profile$environment)) if(!is.null(config$profile$environment$file)){
+      config$logger.info(sprintf("Loading environment from env file '%s'", basename(config$profile$environment$file)))
+      env_vars_before <- as.list(Sys.getenv())
+      config$session_env <- env_vars_before
+      loaded <- try(dotenv::load_dot_env(file = config$profile$environment$file))
+      if(is(loaded,"try-error")){
+        errMsg <- sprintf("Error while trying to load environment from env file '%s'", basename(config$profile$environment$file))
+        config$logger.error(errMsg)
+        stop(errMsg)
+      }else{
+        env_vars_after <- as.list(Sys.getenv())
+        env_vars <- setdiff(env_vars_after, env_vars_before)
+        config$logger.info("Workflow environment:")
+        hide_env_vars <- c("PASSWORD", "PWD", "TOKEN")
+        if(!is.null(config$profile$environment$hide_env_vars)) hide_env_vars <- unlist(config$profile$environment$hide_env_vars)
+        for(env_var_name in names(env_vars)){
+          env_var_value <- env_vars[[env_var_name]]
+          if(any(sapply(hide_env_vars, regexpr, env_var_name)>0)) env_var_value <- "**********"
+          config$logger.info(sprintf("* %s = %s", env_var_name, env_var_value))
+        }
+      }
+    }
     #options
     cfg_options <- NULL
     if(!is.null(config$profile$options)){
@@ -116,8 +139,6 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
     for(option_name in names(config$profile$options)){
       profile$setOption(option_name, config$profile$options[[option_name]])
     }
-    
-    config$profile <- profile
   }
   
   #session_wd
@@ -133,6 +154,13 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
       source(script)
     }))
   }
+  
+  #load environment
+  config <- load_workflow_environment(config)
+  
+  #set profile (R6)
+  config$profile_config <- config$profile
+  if(!is.null(profile)) config$profile <- profile
   
   #software components
   if(!is.null(config$software)){

@@ -11,6 +11,8 @@
 #' @export
 #' 
 closeWorkflow <- function(config){
+  #unload env environment
+  unload_workflow_environment(config)
   #close DBs
   if(!is.null(config$software$input$dbi)){
     config$logger.info("Closing input database connection")

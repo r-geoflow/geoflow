@@ -351,22 +351,85 @@ check_packages <- function(pkgs){
   return(pkgs_df)
 }
 
-#' @name eval_variable_expressions
-#' @aliases eval_variable_expressions
-#' @title eval_variable_expressions
-#' @description \code{evaluate_variable_expression} evaluate a variable expression in the 
+#'@name add_config_utils
+#'@aliases add_config_utils
+#'@title add_config_utils
+#'@description \code{add_config_utils} adds util functions needed (logger, log_separator) to the configuratino object
+#'
+#'@usage add_config_utils(config)
+#'
+#'@param config object of class \link{list}
+#'
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+add_config_utils <- function(config){
+  id <- if(!is.null(config$profile$id)) config$profile$id else config$id
+  config$logger <- function(type, text){
+    txt <- text #use this to make sure sprintf calls don't conflict with next sprintf call
+    cat(sprintf("[geoflow][%s][%s] %s \n", id, type, txt))
+  }
+  config$logger.info <- function(text){config$logger("INFO", text)}
+  config$logger.warn <- function(text){config$logger("WARN", text)}
+  config$logger.error <- function(text){config$logger("ERROR", text)}
+  config$log_separator <- function(char){cat(paste0(paste0(rep(char,100),collapse=""),"\n"))}
+  return(config)
+}
+
+#' @name load_workflow_environment
+#' @aliases load_workflow_environment
+#' @title load_workflow_environment
+#' @description \code{load_workflow_environment} loads a workflow environment by evaluating variable expressions in the 
 #' form \code{${{variable}}}. If no variable expression pattern is identified in the string, 
 #' the function will return the original string.
 #' 
-#' @usage eval_variable_expressions(str)
+#' @usage load_workflow_environment(config)
 #' 
-#' @param str a character string
+#' @param config object of class \link{list}
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
-eval_variable_expressions <- function(str){
-  eval_str <- whisker::whisker.render(str, as.list(Sys.getenv()))
-  return(eval_str)
+load_workflow_environment <- function(config){
+  config_str <- jsonlite::toJSON(config, auto_unbox = TRUE)
+  config_str <- whisker::whisker.render(config_str, as.list(Sys.getenv()))
+  config <- jsonlite::parse_json(config_str)
+  config <- add_config_utils(config)
+  return(config)
+}
+
+#' @name unload_workflow_environment
+#' @aliases unload_workflow_environment
+#' @title unload_workflow_environment
+#' @description \code{unload_workflow_environment} unloads a workflow environment, in the case environment 
+#' was provided by means of a dotenv file, and loaded using \pkg{dotenv} by \pkg{geoflow}. The function will
+#' recover the session environment variables values (useful in case an environment variable was overwriten for
+#' the workflow execution).
+#' 
+#' @usage unload_workflow_environment(config)
+#' 
+#' @param config object of class \link{list}
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+unload_workflow_environment <- function(config){
+  env_vars_workflow <- as.list(Sys.getenv())
+  envfile <- config$profile_config$environment$file
+  if(!is.null(envfile)){
+    tmp <- readLines(envfile)
+    tmp <- dotenv:::ignore_comments(tmp)
+    tmp <- dotenv:::ignore_empty_lines(tmp)
+    if (length(tmp) > 0){
+      tmp <- lapply(tmp, dotenv:::parse_dot_line)
+      tmp <- structure(.Data = lapply(tmp, "[[", "value"), .Names = sapply(tmp, "[[", "key"))
+      
+      #remove env vars based on .env file
+      Sys.unsetenv(names(tmp))
+      
+      #reset env vars previously in session env
+      env_vars_before <- config$session_env
+      env_vars_to_reset <- setdiff(env_vars_before, env_vars_workflow)
+      do.call(Sys.setenv, env_vars_to_reset)
+    }
+  }
 }
 
 #' @name is_absolute_path
