@@ -11,8 +11,6 @@
 #' @export
 #' 
 closeWorkflow <- function(config){
-  #unload env environment
-  unload_workflow_environment(config)
   #close DBs
   if(!is.null(config$software$input$dbi)){
     config$logger.info("Closing input database connection")
@@ -51,6 +49,10 @@ closeWorkflow <- function(config){
     config$software$output$csw_config <- NULL
   }
   setwd(config$wd)
-  set_line_separator() #default line separator
   
+  #set default line separator
+  set_line_separator() 
+  
+  #unload env environment
+  unload_workflow_environment(config)
 }
