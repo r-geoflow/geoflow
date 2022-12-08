@@ -9,11 +9,15 @@
 #' @param dir a directory where to execute the workflow
 #' @param jobDirPath a directory set-up for the job. Default is \code{NULL} means it will be created
 #'  during initialization of the workflow, otherwise the path provided will be used.
+#' @param handleMetadata Default is \code{TRUE}. Metadata contacts/entities/dictionary will be handled.
+#'   If set to \code{FALSE}, they will not be handled. This is used for example in geoflow Shiny app
+#'   where we want to initialize config without handling metadata to inherit software connections and 
+#'   test dynamically the metadata validity.
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'
-initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
+initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TRUE){
 
   file <- tools::file_path_as_absolute(file)
   config <- jsonlite::read_json(file)
@@ -359,7 +363,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL){
   }
   
   #metadata elements
-  if(!is.null(config$metadata)){
+  if(handleMetadata) if(!is.null(config$metadata)){
     config$logger.info("Loading metadata elements...")
     if(is.null(config$metadata$content)) config$metadata$content <- list()
     

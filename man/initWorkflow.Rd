@@ -13,6 +13,11 @@ initWorkflow(file, dir, jobDirPath)
 
 \item{jobDirPath}{a directory set-up for the job. Default is \code{NULL} means it will be created
 during initialization of the workflow, otherwise the path provided will be used.}
+
+\item{handleMetadata}{Default is \code{TRUE}. Metadata contacts/entities/dictionary will be handled.
+If set to \code{FALSE}, they will not be handled. This is used for example in geoflow Shiny app
+where we want to initialize config without handling metadata to inherit software connections and 
+test dynamically the metadata validity.}
 }
 \description{
 \code{initWorkflow} allows to init a workflow
