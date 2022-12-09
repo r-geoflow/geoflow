@@ -4,7 +4,7 @@
 \alias{initWorkflow}
 \title{initWorkflow}
 \usage{
-initWorkflow(file, dir, jobDirPath)
+initWorkflow(file, dir, jobDirPath, handleMetadata, session)
 }
 \arguments{
 \item{file}{a JSON configuration file}
@@ -18,6 +18,8 @@ during initialization of the workflow, otherwise the path provided will be used.
 If set to \code{FALSE}, they will not be handled. This is used for example in geoflow Shiny app
 where we want to initialize config without handling metadata to inherit software connections and 
 test dynamically the metadata validity.}
+
+\item{session}{a \pkg{shiny} session object (optional) to run geoflow in a \pkg{shiny} context}
 }
 \description{
 \code{initWorkflow} allows to init a workflow

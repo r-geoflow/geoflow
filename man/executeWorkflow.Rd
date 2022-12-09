@@ -6,7 +6,7 @@
 \usage{
 executeWorkflow(file, dir, queue, 
                        on_initWorkflowJob, on_initWorkflow, on_closeWorkflow, 
-                       monitor)
+                       monitor, session)
 }
 \arguments{
 \item{file}{a JSON geoflow configuration file}
@@ -22,6 +22,8 @@ executeWorkflow(file, dir, queue,
 \item{on_closeWorkflow}{a function to trigger once \code{closeWorkflow} is executed}
 
 \item{monitor}{a monitor function to increase progress bar}
+
+\item{session}{a \pkg{shiny} session object (optional) to run geoflow in a \pkg{shiny} context}
 }
 \value{
 the path of the job directory

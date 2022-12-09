@@ -5,7 +5,7 @@
 #'
 #' @usage executeWorkflow(file, dir, queue, 
 #'                        on_initWorkflowJob, on_initWorkflow, on_closeWorkflow, 
-#'                        monitor)
+#'                        monitor, session)
 #'                 
 #' @param file a JSON geoflow configuration file
 #' @param dir a directory where to execute the workflow
@@ -13,7 +13,8 @@
 #' @param on_initWorkflowJob a function to trigger once \code{initWorkflowJob} is executed
 #' @param on_initWorkflow a function to trigger once \code{initWorkflow} is executed
 #' @param on_closeWorkflow a function to trigger once \code{closeWorkflow} is executed
-#' @param monitor a monitor function to increase progress bar 
+#' @param monitor a monitor function to increase progress bar
+#' @param session a \pkg{shiny} session object (optional) to run geoflow in a \pkg{shiny} context
 #' @return the path of the job directory
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
@@ -24,12 +25,18 @@ executeWorkflow <- function(file, dir = ".",
                             on_initWorkflowJob = NULL,
                             on_initWorkflow = NULL,
                             on_closeWorkflow = NULL,
-                            monitor = NULL){
+                            monitor = NULL,
+                            session = NULL){
   
   #options
   .defaultOptions <- options()
   options(stringsAsFactors = FALSE)
   options(gargle_oob_default = TRUE)
+  
+  #optional shiny session object
+  if(!is.null(session)) if(!is(session, "ShinySession")){
+    stop("The 'session' argument should specify an object of class 'ShinySession'")
+  }
   
   #1. Init the workflow based on configuration file
   wd <- getwd()
@@ -42,7 +49,7 @@ executeWorkflow <- function(file, dir = ".",
   
   capture.output({
     setwd(wd)
-    config <- try(initWorkflow(file = file, dir = dir, jobDirPath = jobDirPath))
+    config <- try(initWorkflow(file = file, dir = dir, jobDirPath = jobDirPath, session = session))
     if(is(config,"try-error")){
       stop(sprintf("Workflow failed during initialization, check logs at: %s", file.path(jobDirPath, "job-logs.txt")))
     }

@@ -3,7 +3,7 @@
 #' @title initWorkflow
 #' @description \code{initWorkflow} allows to init a workflow
 #'
-#' @usage initWorkflow(file, dir, jobDirPath)
+#' @usage initWorkflow(file, dir, jobDirPath, handleMetadata, session)
 #'                 
 #' @param file a JSON configuration file
 #' @param dir a directory where to execute the workflow
@@ -13,12 +13,19 @@
 #'   If set to \code{FALSE}, they will not be handled. This is used for example in geoflow Shiny app
 #'   where we want to initialize config without handling metadata to inherit software connections and 
 #'   test dynamically the metadata validity.
+#' @param session a \pkg{shiny} session object (optional) to run geoflow in a \pkg{shiny} context
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'
-initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TRUE){
+initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TRUE, session = NULL){
 
+  #optional shiny session object
+  if(!is.null(session)) if(!is(session, "ShinySession")){
+    stop("The 'session' argument should specify an object of class 'ShinySession'")
+  }
+  
+  #file/config
   file <- tools::file_path_as_absolute(file)
   config <- jsonlite::read_json(file)
   
@@ -160,7 +167,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   }
   
   #load environment
-  config <- load_workflow_environment(config)
+  config <- load_workflow_environment(config, session)
   
   #set profile (R6)
   config$profile_config <- config$profile

@@ -382,15 +382,29 @@ add_config_utils <- function(config){
 #' form \code{${{variable}}}. If no variable expression pattern is identified in the string, 
 #' the function will return the original string.
 #' 
-#' @usage load_workflow_environment(config)
+#' @usage load_workflow_environment(config, session)
 #' 
 #' @param config object of class \link{list}
+#' @param session a \pkg{shiny} session object (optional) to run geoflow in a \pkg{shiny} context.
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
-load_workflow_environment <- function(config){
+load_workflow_environment <- function(config, session = NULL){
   config_str <- jsonlite::toJSON(config, auto_unbox = TRUE)
-  config_str <- whisker::whisker.render(config_str, as.list(Sys.getenv()))
+  
+  #grab shiny session userData if any session specified
+  userdata <- list()
+  if(!is.null(session)){
+    if(!is(session, "ShinySession")){
+      stop("The 'session' argument should specify an object of class 'ShinySession'")
+    }
+    userdata <- as.list(session$userData)
+    userdata <- userdata[!sapply(userdata, is.function)]
+  }
+  
+  #evaluate environment variables + eventual shiny session userData
+  config_str <- whisker::whisker.render(config_str, c(as.list(Sys.getenv()), userdata))
+
   config <- jsonlite::parse_json(config_str)
   config <- add_config_utils(config)
   return(config)

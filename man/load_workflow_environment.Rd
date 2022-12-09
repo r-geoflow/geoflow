@@ -4,10 +4,12 @@
 \alias{load_workflow_environment}
 \title{load_workflow_environment}
 \usage{
-load_workflow_environment(config)
+load_workflow_environment(config, session)
 }
 \arguments{
 \item{config}{object of class \link{list}}
+
+\item{session}{a \pkg{shiny} session object (optional) to run geoflow in a \pkg{shiny} context.}
 }
 \description{
 \code{load_workflow_environment} loads a workflow environment by evaluating variable expressions in the 
