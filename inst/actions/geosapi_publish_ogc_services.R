@@ -55,7 +55,7 @@ function(action, entity, config){
     }
     
     workspace <- GS_CONFIG$properties$workspace
-    if(is.null(workspace)) if(!is.null(data_object$workspaces$geoserver)) workspace <- data_object$workspaces$geoserver
+    if(!is.null(data_object$workspaces$geoserver)) workspace <- data_object$workspaces$geoserver
     if(is.null(workspace)){
       errMsg <- "The geoserver configuration requires a workspace for publishing action"
       config$logger.error(errMsg)
@@ -63,7 +63,7 @@ function(action, entity, config){
     }
     
     store <- GS_CONFIG$properties$store
-    if(is.null(store)) if(!is.null(data_object$store)) store <- data_object$store
+    if(!is.null(data_object$store)) store <- data_object$store
     if(is.null(store)){
       errMsg <- "The geoserver configuration requires a data/coverage store for publishing action"
       config$logger.error(errMsg)
