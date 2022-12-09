@@ -62,7 +62,7 @@ function(action, entity, config){
   dcentry$addDCTitle(entity$titles[["title"]])
   ##type
   dctype <- entity$types[["generic"]]
-  dctype_allowed <- atom4R::getDCMIVocabulary(id = "http://purl.org/dc/dcmitype/")$get()$label
+  dctype_allowed <- atom4R::getDCMIVocabulary(id = "http://purl.org/dc/dcmitype/")$fetch()$label
   dctype_idx <- which(tolower(dctype_allowed) == tolower(dctype))
   dctype_dataverse <- dctype_allowed[dctype_idx]
   if(length(dctype_dataverse)==0) dctype_dataverse <- "Dataset"
