@@ -1,185 +1,81 @@
-#handle_dictionary_df
-handle_dictionary_df <- function(config, source){
-  
-  source [source == ""] <- NA
-  
-  if(!is(source, "data.frame")){
-    errMsg <- "Error in 'handle_dictionary_df': source parameter should be an object of class 'data.frame'"
-    config$logger.error(errMsg)
-    stop(errMsg)
-  }
-  
-  dict <- geoflow_dictionary$new()
-  dict$setSource(source)
-  config$logger.info(sprintf("Parsing %s dictionary elements from tabular source", nrow(source)))
-  if(!"FeatureType" %in% colnames(source)){
-    errMsg <- "Error in 'handle_dictionary_df': missing 'featuretype' column"
-    config$logger.error(errMsg)
-    stop(errMsg)
-  }
-  
-  #feature types
-  fts <- unique(source$FeatureType)
-  config$logger.info(sprintf("Loading %s feature types from data dictionnary...",length(fts)))
-  for(ft in fts){
-    ft_df <- source[source$FeatureType == ft, ]
-    featuretype <- geoflow_featuretype$new(id = ft)
-    rowNb <- nrow(ft_df)
-    for(i in 1:rowNb){
-      ftm <- ft_df[i,]
-      defSource <- ftm$DefinitionSource
-      if(!is.na(defSource)){
-        defSource <- extract_kvp(paste0("str:",defSource))$values[[1]]
-      }
-      member <- geoflow_featuremember$new(
-        type = ftm$MemberType,
-        code = ftm$MemberCode,
-        name = ftm$MemberName,
-        def = ftm$Definition,
-        defSource = defSource,
-        registerId = ftm$RegisterId
-      )
-      if(!is.null(ftm$MinOccurs)) member$minOccurs <- ftm$MinOccurs
-      if(!is.null(ftm$MaxOccurs)) member$maxOccurs <- ftm$MaxOccurs
-      uom <- ftm$MeasurementUnit
-      if(!is.na(uom)){
-        member$uom <- extract_kvp(paste0("str:", uom))$values[[1]]
-      }
-      featuretype$addMember(member)
-    }
-    dict$addFeatureType(featuretype)
-  }
-  
-  #registers
-  config$logger.info("Loading register scripts from data dictionnary...")
-  scripts <- unique(source$RegisterScript)
-  scripts <- scripts[!is.na(scripts)]
-  
-  invisible(lapply(as.character(scripts), function(script){
-    isSourceUrl <- regexpr('(http|https)[^([:blank:]|\\\'|<|&|#\n\r)]+', script) > 0
-    if(!isSourceUrl){
-      if(!is_absolute_path(script)){
-        script<-file.path(config$session_wd,script)
-      }
-    }
-    source(script)
-  }))
-  
-  config$logger.info("Fetching registers from data dictionnary...")
-  handlers <- unique(source$RegisterId)
-  handlers <- handlers[!is.na(handlers)]
-  for(handler in handlers){
-    
-    fun <- eval(parse(text = handler))
-    if(is(fun,"try-error")){
-      errMsg <- sprintf("Error while trying to evaluate function '%s", handler)
-      config$logger.error(errMsg)
-      stop(errMsg)
-    }
-    if(!is(fun,"function")){
-      errMsg <- sprintf("'%s' is not a function!", handler)
-      config$logger.error(errMsg)
-      stop(errMsg)
-    }
-    register_to_fetch <- geoflow_register$new(
-      id = handler, 
-      def = "", 
-      fun = fun
+#' @name register_dictionary_handlers
+#' @aliases register_dictionary_handlers
+#' @title register_dictionary_handlers
+#' @description \code{register_dictionary_handlers} registers the default dictionary handlers for geoflow
+#'
+#' @usage register_dictionary_handlers()
+#' 
+#' @note Internal function called on load by geoflow
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+register_dictionary_handlers <- function(){
+  handlers <- list(
+    geoflow_handler$new(
+      id = "csv",
+      def = "Handle dictionary from a CSV file",
+      fun = source(system.file("metadata/dictionary", "dictionary_handler_csv.R", package = "geoflow"))$value
+    ),
+    geoflow_handler$new(
+      id = "excel",
+      def = "Handle dictionary from a Microsoft Excel (xls,xlsx) file",
+      packages = list("readxl"),
+      fun = source(system.file("metadata/dictionary", "dictionary_handler_excel.R", package = "geoflow"))$value
+    ),
+    geoflow_handler$new(
+      id = "gsheet",
+      def = "Handle dictionary from a Google spreadsheet",
+      packages = list("gsheet"),
+      fun = source(system.file("metadata/dictionary", "dictionary_handler_gsheet.R", package = "geoflow"))$value
+    ),
+    geoflow_handler$new(
+      id = "dbi",
+      def = "Handle dictionary from a DB source",
+      packages = list("DBI", "RSQLite", "RPostgres"),
+      fun = source(system.file("metadata/dictionary", "dictionary_handler_dbi.R", package = "geoflow"))$value
+    ),
+    geoflow_handler$new(
+      id = "ocs",
+      def = "Handle dictionary from a tabulat data source (csv or excel) hosted on an OCS cloud",
+      packages = list("ocs4R"),
+      fun = source(system.file("metadata/dictionary", "dictionary_handler_ocs.R", package = "geoflow"))$value
     )
-    config$logger.info(sprintf("Fetching data for register '%s'...", handler))
-    register_to_fetch$fetch(config)
-    dict$addRegister(register_to_fetch)
-  }
-  
-  return(dict)
-}
-
-#handle_dictionary_gsheet
-handle_dictionary_gsheet <- function(config, source, handle = TRUE){
-  
-  #read gsheet URL
-  source <- read.csv(text = gsheet::gsheet2text(source))
-  if(!handle) return(source)
-  
-  #apply generic handler
-  dictionary <- handle_dictionary_df(config, source)
-  return(dictionary)
-}
-
-#handle_dictionary_csv
-handle_dictionary_csv <- function(config, source, handle = TRUE){
-  
-  #read csv TODO -> options management: sep, encoding etc
-  #source <- read.csv(source)
-  source <- as.data.frame(readr::read_csv(source, guess_max = 0))
-  if(!handle) return(source)
-  
-  #apply generic handler
-  dictionary <- handle_dictionary_df(config, source)
-  return(dictionary)
-}
-
-#handle_dictionary_excel
-handle_dictionary_excel <- function(config, source, handle = TRUE){
-  
-  #read excel TODO -> options management: sep, encoding etc
-  source <- as.data.frame(readxl::read_excel(source))
-  if(!handle) return(source)
-  
-  #apply generic handler
-  dictionary <- handle_dictionary_df(config, source)
-  return(dictionary)
-}
-
-#handle_dictionary_dbi
-handle_dictionary_dbi <- function(config, source, handle = TRUE){
-  dbi <- config$software$input$dbi
-  if(is.null(dbi)){
-    stop("There is no database input software configured to handle dictionary from DB")
-  }
-  
-  #db source
-  is_query <- startsWith(tolower(source), "select ")
-  if(is_query){
-    source <- try(DBI::dbGetQuery(dbi, source))
-    if(is(source,"try-error")){
-      errMsg <- sprintf("Error while trying to execute DB query '%s'.", source)
-      config$logger.error(errMsg)
-      stop(errMsg)
-    }
-  }else{
-    source <- try(DBI::dbGetQuery(dbi, sprintf("select * from %s", source)))
-    if(is(source,"try-error")){
-      errMsg <- sprintf("Error while trying to read DB table/view '%s'. Check if it exists in DB.", source)
-      config$logger.error(errMsg)
-      stop(errMsg)
-    }
-  }
-  if(!handle) return(source)
-  
-  #apply generic handler
-  dictionary <- handle_dictionary_df(config, source)
-  return(dictionary)
-}
-
-#handle_dictionary_ocs
-handle_dictionary_ocs <- function(config, source, handle = TRUE){
-  
-  if(!requireNamespace("ocs4R", quietly = TRUE)){
-    stop("The OCS handler requires the 'ocs4R' package")
-  }
-  
-  ocs <- config$software$input$ocs
-  if(is.null(ocs)){
-    stop("There is no OCS input software configured to handle dictionary from an OCS service endpoint")
-  }
-  
-  dict_file <- ocs$downloadFile(relPath = dirname(source), filename = basename(source), outdir = tempdir())
-  
-  dictionary <- switch(mime::guess_type(dict_file),
-   "text/csv" = handle_dictionary_csv(config = config, source = dict_file, handle = handle),
-   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = handle_dictionary_excel(config = config, source = dict_file, handle = handle)
   )
-  return(dictionary)
+  .geoflow$dictionary_handlers <- handlers
 }
+
+#' @name list_dictionary_handlers
+#' @aliases list_dictionary_handlers
+#' @title list_dictionary_handlers
+#' @description \code{list_dictionary_handlers} lists the dictionary handlers supported by geoflow.
+#'
+#' @usage list_dictionary_handlers(raw)
+#' 
+#' @param raw Default value is \code{FALSE}, meaning the handlers will be listed as
+#' \code{data.frame}. The output If \code{TRUE} the raw list of \link{geoflow_handler} 
+#' is returned.
+#' 
+#' @return an object of class \code{data.frame} (or \code{list} of \link{geoflow_handler} if raw = FALSE)
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+list_dictionary_handlers <- function(raw = FALSE){
+  handlers <- .geoflow$dictionary_handlers 
+  if(raw){
+    return(handlers)
+  }else{
+    handlers <- do.call("rbind", lapply(handlers, function(handler){
+      return(data.frame(
+        id = handler$id,
+        definition = handler$def,
+        packages = paste(handler$packages, collapse=","),
+        stringsAsFactors = FALSE
+      ))
+    }))
+  }
+  return(handlers)
+}
+
 
