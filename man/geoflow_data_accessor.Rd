@@ -23,7 +23,8 @@ geoflow_data_accessor
    software_type = "some-software",
    definition = "definition",
    packages = list(),
-   download = function(file, path){}
+   download = function(resource, file, path, software){},
+   list = function(resource, software){}
  )
 }
 
@@ -49,6 +50,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item{\code{packages}}{list of packages required for the accessor}
 
 \item{\code{download}}{a download function handler}
+
+\item{\code{list}}{a function handler to list resources in case of a data directory}
 }
 \if{html}{\out{</div>}}
 }
@@ -61,6 +64,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_data_accessor-setPackages}{\code{geoflow_data_accessor$setPackages()}}
 \item \href{#method-geoflow_data_accessor-setDefinition}{\code{geoflow_data_accessor$setDefinition()}}
 \item \href{#method-geoflow_data_accessor-setDownload}{\code{geoflow_data_accessor$setDownload()}}
+\item \href{#method-geoflow_data_accessor-setList}{\code{geoflow_data_accessor$setList()}}
 \item \href{#method-geoflow_data_accessor-checkPackages}{\code{geoflow_data_accessor$checkPackages()}}
 \item \href{#method-geoflow_data_accessor-clone}{\code{geoflow_data_accessor$clone()}}
 }
@@ -85,7 +89,8 @@ Initializes the data ccessor
   software_type = NULL,
   definition,
   packages = list(),
-  download
+  download,
+  list = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -101,6 +106,8 @@ Initializes the data ccessor
 \item{\code{packages}}{list of packages required for the accessor}
 
 \item{\code{download}}{download function handler}
+
+\item{\code{list}}{list function handler}
 }
 \if{html}{\out{</div>}}
 }
@@ -177,7 +184,7 @@ Sets accessor definition
 \if{html}{\out{<a id="method-geoflow_data_accessor-setDownload"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_data_accessor-setDownload}{}}}
 \subsection{Method \code{setDownload()}}{
-Set download handler (a function with arguments \code{file} and \code{path})
+Set download handler (a function with arguments \code{resource}, \code{file}, \code{path} and optional \code{software})
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$setDownload(download)}\if{html}{\out{</div>}}
 }
@@ -186,6 +193,23 @@ Set download handler (a function with arguments \code{file} and \code{path})
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{download}}{an object of class \code{function}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_data_accessor-setList"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data_accessor-setList}{}}}
+\subsection{Method \code{setList()}}{
+Set list handler (a function with no arguments)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$setList(list)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{list}}{an object of class \code{function}}
 }
 \if{html}{\out{</div>}}
 }

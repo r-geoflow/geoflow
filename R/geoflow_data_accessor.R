@@ -18,7 +18,8 @@
 #'    software_type = "some-software",
 #'    definition = "definition",
 #'    packages = list(),
-#'    download = function(file, path){}
+#'    download = function(resource, file, path, software){},
+#'    list = function(resource, software){}
 #'  )
 #' }
 #' 
@@ -37,6 +38,8 @@ geoflow_data_accessor <- R6Class("geoflow_data_accessor",
     packages = list(),
     #'@field download a download function handler
     download = NULL,
+    #'@field list a function handler to list resources in case of a data directory
+    list = NULL,
     
     #'@description Initializes the data ccessor
     #'@param id accessor ID
@@ -44,13 +47,15 @@ geoflow_data_accessor <- R6Class("geoflow_data_accessor",
     #'@param definition accessor definition
     #'@param packages list of packages required for the accessor
     #'@param download download function handler
+    #'@param list list function handler
     initialize = function(id = NULL, software_type = NULL, definition, 
-                          packages = list(), download){
+                          packages = list(), download, list = NULL){
       self$setId(id)
       if(!is.null(software_type)) self$setSoftwareType(software_type)
       self$setPackages(packages)
       self$setDefinition(definition)
       self$setDownload(download)
+      self$setList(list)
     },
     
     #'@description Sets accessor ID
@@ -77,10 +82,16 @@ geoflow_data_accessor <- R6Class("geoflow_data_accessor",
       self$definition <- definition
     },
     
-    #'@description Set download handler (a function with arguments \code{file} and \code{path})
+    #'@description Set download handler (a function with arguments \code{resource}, \code{file}, \code{path} and optional \code{software})
     #'@param download an object of class \code{function}
     setDownload = function(download){
       self$download = download
+    },
+    
+    #'@description Set list handler (a function with no arguments)
+    #'@param list an object of class \code{function}
+    setList = function(list){
+      self$list = list
     },
     
     #'@description Check that all packages required for the software are available, if yes,
@@ -366,19 +377,35 @@ register_data_accessors <- function(){
       definition = "An OCS API-based (Owncloud/Nextcloud) data accessor",
       packages = list("ocs4R"),
       download = function(resource, file, path, software = NULL){
-        
         if(is.null(software)){
           errMsg <- sprintf("[geoflow] OCS data accessor requires a 'ocs' software declaration in the geoflow configuration\n")
           cat(errMsg)
           stop(errMsg)
         }
-        
         cat(sprintf("[geoflow] OCS data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
         software$downloadFile(relPath = dirname(resource), filename = basename(resource), outdir = getwd())
-        
         if(endsWith(path, "zip")){
           utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
         }
+      },
+      list = function(resource, software = NULL){
+        outfiles <- list()
+        if(is.null(software)){
+          errMsg <- sprintf("[geoflow] OCS data accessor requires a 'ocs' software declaration in the geoflow configuration\n")
+          cat(errMsg)
+          stop(errMsg)
+        }
+        files <- try(software$listFiles(resource))
+        if(!is(files, "try-error")){
+          if(nrow(files)>0){
+            outfiles <- file.path(resource, files$name)
+          }
+        }else{
+          errMsg <- sprintf("[geoflow] Error while listing files for remote OCS cloud folder '%s'\n", resource)
+          cat(errMsg)
+          stop(errMsg)
+        }
+        return(outfiles)
       }
     )
   )

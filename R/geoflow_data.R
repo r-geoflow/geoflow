@@ -22,7 +22,6 @@ geoflow_data <- R6Class("geoflow_data",
     supportedYPossibleNames = c("y","lat","lati","latitude","decimalLatitude"),
     supportedSpatialRepresentationTypes = c("vector","grid"),
     supportedEnvelopeCompositionTypes = c("UNION", "INTERSECTION")
-
   ),
   public = list(
     
@@ -409,24 +408,62 @@ geoflow_data <- R6Class("geoflow_data",
         if(any(sapply(data_props, function(x){x$key=="dir"}))){
           data_dir <- data_props$dir$values[[1]]
           self$dir <- data_dir
-          if(!is_absolute_path(data_dir) && !is.null(config)) data_dir <- file.path(config$session_wd, datasource_uri)
-          if(!dir.exists(data_dir)){
-            config$logger.error("Data dir doesn't exist!")
-          }
-          #data_dir <- "D:/sandbox-geoflow/testdir
           ext_data_files <- list()
-          if(!is.null(self$sourceType) && self$sourceType != "other"){
-            ext <- switch(self$sourceType,
-              "shp" = "zip",
-              "gpkg" = "gpkg",
-              "geotiff" = "tif",
-              self$sourceType
-            )
-            ext_data_files <- list.files(data_dir, pattern = paste0(".", ext), full.names = T)
+          ext_sld_files <- list()
+          if(self$access == "default"){
+            if(!is_absolute_path(data_dir) && !is.null(config)) data_dir <- file.path(config$session_wd, datasource_uri)
+            if(!dir.exists(data_dir)){
+              config$logger.error("Data dir doesn't exist!")
+            }
+            #local access
+            #TODO remote access
+            if(!is.null(self$sourceType) && self$sourceType != "other"){
+              ext <- switch(self$sourceType,
+                "shp" = "zip",
+                "gpkg" = "gpkg",
+                "geotiff" = "tif",
+                self$sourceType
+              )
+              ext_data_files <- list.files(data_dir, pattern = paste0(".", ext), full.names = T)
+            }else{
+              ext_data_files <- list.files(data_dir, full.names = T)
+            }
           }else{
-            ext_data_files <- list.files(data_dir, full.names = T)
-            ext_data_files <- ext_data_files[!endsWith(ext_data_files,".sld")]
+            if(!is.null(config)){
+              #remote access through custom API accessors
+              accessors <- list_data_accessors(raw = TRUE)
+              accessor <- accessors[sapply(accessors, function(x){x$id == self$access})][[1]]
+              
+              config$logger.info(sprintf("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id))
+              access_software <- NULL
+              if(!is.na(accessor$software_type)){
+                config$logger.info(sprintf("Accessor '%s' seems to require a software. Try to locate 'input' software", accessor$id))
+                accessor_software <- config$software$input[[accessor$software_type]]
+                if(is.null(accessor_software)){
+                  config$logger.info(sprintf("Accessor '%s' doesn't seem to have the required 'input' software. Try to locate 'output' software", accessor$id))
+                  accessor_software <- config$software$output[[accessor$software_type]]
+                }
+              }
+              if(!is.null(accessor$list)){
+                ext_data_files <- accessor$list(resource = data_dir, software = accessor_software)
+              }else{
+                errMsg <- sprintf("No data access 'list' method for accessor '%s'", )
+                if(!is.null(config)) config$logger.error(errMsg)
+                stop(errMsg)
+              }
+            }else{
+              errMsg <- sprintf("No config available to invoke data accessor '%s'", )
+              if(!is.null(config)) config$logger.error(errMsg)
+              stop(errMsg)
+            }
           }
+          
+          if(length(ext_data_files)>0){
+            ext_sld_files <- ext_data_files[endsWith(ext_data_files,".sld")]
+            ext_data_files <-ext_data_files[!endsWith(ext_data_files,".sld")]
+          }
+ 
+          #geoflow build children
           if(length(ext_data_files)>0){
             self$data <- lapply(ext_data_files, function(data_file){
               ext_data <- self$clone(deep = TRUE) #clone parent geoflow_data to inherit all needed properties
@@ -455,15 +492,20 @@ geoflow_data <- R6Class("geoflow_data",
               }
               ext_data$setStore(ext_data_name)
               ext_data$setLayername(ext_data_name)
+              
               if(self$styleUpload){
-                ext_data_style_path <- file.path(data_dir, paste0(ext_data_name, ".sld"))
-                if(file.exists(ext_data_style_path)){
-                  ext_data_style_file <- basename(ext_data_style_path)
-                  ext_data_style <- unlist(strsplit(ext_data_style_file, "\\."))[1]
-                  attr(ext_data_style, "uri") <- ext_data_style_path
-                  ext_data$addStyle(ext_data_style)
-                  attr(ext_data_style_file, "uri") <- ext_data_style_path
-                  ext_data$addSource(ext_data_style_file)
+                #we add all sld files to each child so they can be downloaded if needed
+                if(length(ext_sld_files)>0) for(ext_sld_file in ext_sld_files) {
+                  exists <- TRUE
+                  if(self$access == "default") exists <- file.exists(ext_sld_file)
+                  if(exists){
+                    ext_sld_src <- basename(ext_sld_file)
+                    ext_sld_name <- unlist(strsplit(ext_sld_src, "\\."))[1]
+                    ext_sld_extension <- unlist(strsplit(ext_sld_src, "\\."))[2]
+                    attr(ext_sld_src, "uri") <- ext_sld_file
+                    ext_data$addSource(ext_sld_src)
+                    ext_data$addStyle(ext_sld_name)
+                  }
                 }
               }
               
