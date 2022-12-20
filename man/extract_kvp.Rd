@@ -2,14 +2,22 @@
 % Please edit documentation in R/geoflow_utils.R
 \name{extract_kvp}
 \alias{extract_kvp}
+\alias{extract_kvps}
 \title{extract_kvp}
 \usage{
 extract_kvp(str)
+
+extract_kvps(strs)
 }
 \arguments{
 \item{str}{a string as object of class \code{character}}
+
+\item{collapse}{collapse by. Default is \code{NULL}}
 }
 \description{
+\code{extract_kvp} parses a string into a key value pair represented by
+a \code{geoflow_kvp} object.
+
 \code{extract_kvp} parses a string into a key value pair represented by
 a \code{geoflow_kvp} object.
 }

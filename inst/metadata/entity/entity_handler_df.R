@@ -110,14 +110,9 @@ handle_entities_df <- function(config, source){
     }
     titles <- if(!is.na(src_title)) extract_cell_components(src_title) else list()
     if(length(titles)>0){
-      if(length(titles)==1){
-        kvp <- extract_kvp(titles)
-        entity$setTitle("title", paste(kvp$values, collapse=",")) 
-      }else{
-        for(title in titles){
-          kvp <- extract_kvp(title)
-          entity$setTitle(kvp$key, paste(kvp$values, collapse=","))
-        }
+      kvps <- extract_kvps(titles, collapse=",")
+      for(kvp in kvps){
+        entity$setTitle(kvp$key, kvp$values)
       }
     }
     

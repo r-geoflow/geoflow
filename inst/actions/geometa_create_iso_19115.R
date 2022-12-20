@@ -113,6 +113,17 @@ function(action, entity, config){
   md$setLanguage(entity$language)
   md$setDateStamp(Sys.time())
   
+  #locales (i18n/i10n support)
+  if(length(entity$locales)){
+    for(locale in entity$locales){
+      a_locale <- ISOLocale$new()
+      a_locale$setId(locale)
+      a_locale$setLanguage(locale)
+      a_locale$setCharacterSet("utf8")
+      md$addLocale(a_locale)
+    }
+  }
+  
   if(!is.null(entity$data)) {
     md$setMetadataStandardName(switch(entity$data$spatialRepresentationType,
                                       "vector" = "ISO 19115:2003 Geographic information - Metadata",
@@ -253,7 +264,7 @@ function(action, entity, config){
   #citation
   now <- Sys.time()
   ct <- ISOCitation$new()
-  ct$setTitle(entity$titles[["title"]])
+  ct$setTitle(entity$titles[["title"]], locales = geoflow::get_locales_from(entity$titles[["title"]]))
   if("alternative" %in% names(entity$titles)){
     ct$setAlternateTitle(entity$titles[["alternative"]])
   }

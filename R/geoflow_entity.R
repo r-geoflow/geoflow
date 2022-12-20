@@ -65,6 +65,8 @@ geoflow_entity <- R6Class("geoflow_entity",
     status = list(),
     #'@field resources entity resources
     resources = list(),
+    #'@field locales entity locales
+    locales = list(),
     
     #'@description Initializes an object of class \link{geoflow_entity}
     initialize = function(){
@@ -77,6 +79,13 @@ geoflow_entity <- R6Class("geoflow_entity",
       clazz <- eval(parse(text = paste0("geoflow_validator_entity_",field)))
       clazz_obj <- clazz$new(0,0,"")
       return(clazz_obj$getValidKeys())
+    },
+    
+    #'@description Adds locales to entity from kvp values
+    #'@param values values
+    addLocalesFromValues = function(values){
+      locales <- unlist(lapply(names(attributes(values)), function(x){unlist(strsplit(x,"locale#"))[2]}))
+      self$locales <- unique(c(self$locales, locales))
     },
     
     #'@description Set an identifier given a key. Default key is "id", but others can be specified, eg "doi".
@@ -141,6 +150,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                      paste0(self$getAllowedKeyValuesFor("Title"), collapse=",")))
       }
       self$titles[[key]] <- title
+      self$addLocalesFromValues(title)
     },
     
     #'@description Sets description

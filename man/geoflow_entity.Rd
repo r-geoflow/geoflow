@@ -62,6 +62,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item{\code{status}}{entity status}
 
 \item{\code{resources}}{entity resources}
+
+\item{\code{locales}}{entity locales}
 }
 \if{html}{\out{</div>}}
 }
@@ -70,6 +72,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \itemize{
 \item \href{#method-geoflow_entity-new}{\code{geoflow_entity$new()}}
 \item \href{#method-geoflow_entity-getAllowedKeyValuesFor}{\code{geoflow_entity$getAllowedKeyValuesFor()}}
+\item \href{#method-geoflow_entity-addLocalesFromValues}{\code{geoflow_entity$addLocalesFromValues()}}
 \item \href{#method-geoflow_entity-setIdentifier}{\code{geoflow_entity$setIdentifier()}}
 \item \href{#method-geoflow_entity-addDate}{\code{geoflow_entity$addDate()}}
 \item \href{#method-geoflow_entity-setLanguage}{\code{geoflow_entity$setLanguage()}}
@@ -143,6 +146,23 @@ Retrieves keys allowed for a given tabular field name. eg. "Identifier"
 }
 \subsection{Returns}{
 the list of valid keys for the field considered
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-addLocalesFromValues"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-addLocalesFromValues}{}}}
+\subsection{Method \code{addLocalesFromValues()}}{
+Adds locales to entity from kvp values
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$addLocalesFromValues(values)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{values}}{values}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

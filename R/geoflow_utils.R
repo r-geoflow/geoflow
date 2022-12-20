@@ -123,7 +123,79 @@ extract_kvp <- function(str){
     return(value)
   })
   
-  return(list(key = key, values = values))
+  #locale management
+  locale = NULL
+  key_parts <- unlist(strsplit(key, "#"))
+  if(length(key_parts)>1){
+    key <- key_parts[1]
+    locale <- key_parts[2]
+  }
+  
+  return(list(key = key, values = values, locale = locale))
+}
+
+#' @name extract_kvp
+#' @aliases extract_kvp
+#' @title extract_kvp
+#' @description \code{extract_kvp} parses a string into a key value pair represented by
+#' a \code{geoflow_kvp} object.
+#'
+#' @usage extract_kvps(strs)
+#'                 
+#' @param str a string as object of class \code{character}
+#' @param collapse collapse by. Default is \code{NULL}
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+extract_kvps <- function(strs, collapse = NULL){
+  kvps <- lapply(strs, function(str){
+    kvp <- extract_kvp(str)
+    if(!is.null(collapse)) kvp$values <- list(paste0(kvp$values, collapse = collapse))
+    return(kvp)
+  })
+  keys <- unique(sapply(kvps, "[[", "key"))
+  kvps <- lapply(keys, function(key){
+    kvps_for_key <- kvps[sapply(kvps, function(kvp){kvp$key == key})]
+    with_null_locale <- any(sapply(kvps_for_key, function(x){is.null(x$locale)}))
+    kvp_with_default_locale <- kvps_for_key[sapply(kvps_for_key, function(x){is.null(x$locale)})]
+    if(length(kvp_with_default_locale)>0){
+      kvp_with_default_locale <- kvp_with_default_locale[[1]]
+    }else{
+      #TODO support default language in geoflow
+    }
+    locale_values <- kvp_with_default_locale$values
+    if(length(locale_values)==1) locale_values <- locale_values[[1]]
+    kvp_with_locale <- kvps_for_key[sapply(kvps_for_key, function(x){!is.null(x$locale)})]
+    for(item in kvp_with_locale){
+      attr(locale_values, paste0("locale#", toupper(item$locale))) <- item$values
+    }
+    
+    kvp_with_locales <- list(key = key, values = locale_values)
+    return(kvp_with_locales)
+  })
+  
+  return(kvps)
+}
+
+#'@name get_locales_from
+#'@aliases get_locales_from
+#'@title get_locales_from
+#'@description Get locales from a property values set
+#'
+#'@usage get_locales_from(values)
+#'
+#'@param values values
+#'
+#'@export
+get_locales_from <- function(values){
+  if(is.null(attributes(values))) return(NULL)
+  locales <- lapply(attributes(values), function(x){
+    if(is.list(x)) x <- x[[1]]
+    return(x)
+  })
+  names(locales) <- sapply(names(attributes(values)), function(x){unlist(strsplit(x, "locale#"))[2]})
+  return(locales)
 }
 
 #' @name str_to_posix
