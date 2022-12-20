@@ -125,14 +125,9 @@ handle_entities_df <- function(config, source){
     }
     descriptions <- if(!is.na(src_description)) extract_cell_components(src_description) else list()
     if(length(descriptions)>0){
-      if(length(descriptions)==1){
-        des_kvp <- extract_kvp(descriptions)
-        entity$setDescription("abstract", paste(des_kvp$values, collapse=",")) 
-      }else{
-        for(description in descriptions){
-          des_kvp <- extract_kvp(description)
-          entity$setDescription(des_kvp$key, paste(des_kvp$values, collapse=","))
-        }
+      kvps <- extract_kvps(descriptions, collapse=",")
+      for(kvp in kvps){
+        entity$setDescription(kvp$key, kvp$values)
       }
     }
     

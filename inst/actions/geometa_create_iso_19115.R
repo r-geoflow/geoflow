@@ -238,9 +238,9 @@ function(action, entity, config){
   
   #Data identification
   ident <- ISODataIdentification$new()
-  ident$setAbstract(entity$descriptions[["abstract"]])
-  ident$setPurpose(entity$descriptions[["purpose"]])
-  ident$addCredit(entity$descriptions[["credit"]])
+  ident$setAbstract(entity$descriptions[["abstract"]], locales = geoflow::get_locales_from(entity$descriptions[["abstract"]]))
+  ident$setPurpose(entity$descriptions[["purpose"]], locales = geoflow::get_locales_from(entity$descriptions[["purpose"]]))
+  ident$addCredit(entity$descriptions[["credit"]], locales = geoflow::get_locales_from(entity$descriptions[["credit"]]))
   ident$addStatus(entity$descriptions[["status"]])
   ident$addLanguage(entity$language)
   ident$addCharacterSet("utf8")
@@ -510,7 +510,7 @@ function(action, entity, config){
     ident$addKeywords(kwds)
   }
   
-  ident$setSupplementalInformation(entity$descriptions[["info"]])
+  ident$setSupplementalInformation(entity$descriptions[["info"]], locales = geoflow::get_locales_from(entity$descriptions[["info"]]))
   if(!is.null(entity$data)) ident$addSpatialRepresentationType(entity$data$spatialRepresentationType)
   md$identificationInfo = c(md$identificationInfo,ident)
   
