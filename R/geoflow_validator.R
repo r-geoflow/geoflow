@@ -170,6 +170,14 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
                   }
                 }
               }
+              if("locale" %in% names(kvp)){
+                if(nchar(kvp$locale)!= 2){
+                  report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Locale value '%s' is invalid, it should be a locale ISO 2 code", kvp$locale)))
+                }
+                if(kvp$locale != toupper(kvp$locale)){
+                  report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Locale value '%s' is invalid, locale ISO 2 code should be uppercase", kvp$locale)))
+                }
+              }
             }
           }
           
