@@ -11,34 +11,25 @@
 #' @return Object of \code{\link{R6Class}} for modelling an kvp (Key Values pair)
 #' @format \code{\link{R6Class}} object.
 #' 
-#' @examples
-#' \dontrun{
-#'   #with setters
-#'   kvp <- geoflow_kvp$new()
-#'   kvp$setKey("thekey")
-#'   kvp$setValue("thevalue")
-#'   #from string
-#'   kvp <- geoflow_kvp$new(str = "thekey:thevalue1,thevalue2")
-#' }
-#' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_kvp <- R6Class("geoflow_kvp",
   public = list(
     #'@field key the KVP key
     key = NULL,
-    #'@field value the KVP value
-    value = NULL,
+    #'@field values the KVP values
+    values = NULL,
+    #'@field locale a locale definition for the KVP
+    locale = NULL,
     
     #'@description Initializes a Key-Value pair (KVP)
-    #'@param str character string to initialize from using key-based syntax
-    initialize = function(str = NULL){
-      if(!is.null(str)){
-        kvp <- unlist(strsplit(str,':\\s*(?=([^"]*"[^"]*")*[^"]*$)', perl = T))
-        if(length(kvp)!=2) stop("Invalid Key-value pair string")
-        self$setKey(kvp[1])
-        self$setValue(kvp[2])
-      }
+    #'@param key key
+    #'@param values values
+    #'@param locale locale
+    initialize = function(key = NULL, values = NULL, locale = NULL){
+      if(!is.null(key)) self$setKey(key)
+      if(!is.null(values)) self$setValues(values)
+      if(!is.null(locale)) self$setLocale(locale)
     },
     
     #'@description Set KVP key
@@ -47,10 +38,16 @@ geoflow_kvp <- R6Class("geoflow_kvp",
       self$key <- key
     },
     
-    #'@description Set KVP value
-    #'@param value the value
-    setValue = function(value){
-      self$value <- value
+    #'@description Set KVP values
+    #'@param values the values
+    setValues = function(values){
+      self$values <- values
+    },
+    
+    #'@description Set KVP locale
+    #'@param locale locale
+    setLocale = function(locale){
+      self$locale <- locale
     }
   )                                  
 )

@@ -135,10 +135,11 @@ handle_entities_df <- function(config, source){
     src_subject <- sanitize_str(source_entity[,"Subject"])
     subjects <- if(!is.na(src_subject)) extract_cell_components(src_subject) else list()
     if(length(subjects)>0){
-      invisible(lapply(subjects, function(subject){
-        subject_obj <- geoflow_subject$new(str = subject)
+      kvps <- extract_kvps(subjects)
+      for(kvp in kvps){
+        subject_obj <- geoflow_subject$new(kvp = kvp)
         entity$addSubject(subject_obj)
-      }))
+      }
     }
     
     #formats

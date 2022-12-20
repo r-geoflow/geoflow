@@ -39,7 +39,8 @@ geoflow_subject <- R6Class("geoflow_subject",
     
     #'@description Initializes an object of class \link{geoflow_subject}
     #'@param str a character string to initialize from, using key-based syntax
-    initialize = function(str = NULL){
+    #'@param kvp an object of class \link{geoflow_kvp}
+    initialize = function(str = NULL, kvp = NULL){
       if(!is.null(str)){
         subject_kvp <- extract_kvp(str)
         key <- subject_kvp$key
@@ -51,6 +52,48 @@ geoflow_subject <- R6Class("geoflow_subject",
         self$setUri(uri)
         self$setName(name)
         invisible(lapply(subject_kvp$values, self$addKeyword))
+      }else if(!is.null(kvp)){
+        #key
+        subject_key <- kvp$key
+        key_attrs <- attributes(subject_key)
+        attributes(subject_key) <- NULL
+        self$setKey(subject_key)
+        #name
+        name <- key_attrs$description
+        if(!is.null(name)){
+          key_desc_attrs <- key_attrs[startsWith(names(key_attrs),"description") & names(key_attrs)!="description"]
+          for(attr_name in names(key_desc_attrs)){
+            locale <- unlist(strsplit(attr_name,"description#"))[2]
+            attr(name, paste0("locale#",locale)) <- key_desc_attrs[[attr_name]]
+          }
+          self$setName(name)
+        }
+        #uri
+        uri <- key_attrs$uri
+        if(!is.null(uri)){
+          key_uri_attrs <- key_attrs[startsWith(names(key_attrs),"uri") & names(key_attrs)!="uri"]
+          for(attr_name in names(key_uri_attrs)){
+            locale <- unlist(strsplit(attr_name, "uri#"))[2]
+            attr(uri, paste0("locale#",locale)) <- key_uri_attrs[[attr_name]]
+          }
+          self$setUri(uri)
+        }
+        #keywords
+        for(i in 1:length(kvp$values)){
+          kwd = kvp$values[[i]]
+          kwd_uri <- attr(kwd,"uri")
+          attributes(kwd) <- NULL
+          
+          val_locale_attrs <- attributes(kvp$values)
+          for(attr_name in names(val_locale_attrs)){
+            locale_value <- val_locale_attrs[[attr_name]][[i]]
+            if(!is.null(kwd_uri)) attr(kwd_uri, attr_name) <- attr(locale_value, "uri")
+            attributes(locale_value) <- NULL
+            attr(kwd, attr_name) <- locale_value
+          }
+          self$addKeyword(keyword = kwd, uri = kwd_uri)
+        }
+        
       }
     },
     

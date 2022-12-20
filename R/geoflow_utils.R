@@ -125,13 +125,15 @@ extract_kvp <- function(str){
   
   #locale management
   locale = NULL
+  key_attrs <- attributes(key)
   key_parts <- unlist(strsplit(key, "#"))
   if(length(key_parts)>1){
     key <- key_parts[1]
+    attributes(key) <- key_attrs
     locale <- key_parts[2]
   }
   
-  return(list(key = key, values = values, locale = locale))
+  return(geoflow_kvp$new(key = key, values = values, locale = locale))
 }
 
 #' @name extract_kvp
@@ -159,19 +161,28 @@ extract_kvps <- function(strs, collapse = NULL){
     kvps_for_key <- kvps[sapply(kvps, function(kvp){kvp$key == key})]
     with_null_locale <- any(sapply(kvps_for_key, function(x){is.null(x$locale)}))
     kvp_with_default_locale <- kvps_for_key[sapply(kvps_for_key, function(x){is.null(x$locale)})]
+    kvp_with_locale <- kvps_for_key[sapply(kvps_for_key, function(x){!is.null(x$locale)})]
     if(length(kvp_with_default_locale)>0){
       kvp_with_default_locale <- kvp_with_default_locale[[1]]
     }else{
       #TODO support default language in geoflow
     }
+    #localization
+    key <- kvp_with_default_locale$key
+    #locale key descriptions
+    for(kvp in kvp_with_locale){
+      if(!is.null(attr(kvp$key, "uri"))) attr(key, paste0("uri#", kvp$locale)) <- attr(kvp$key, "uri")
+      if(!is.null(attr(kvp$key, "description"))) attr(key, paste0("description#", kvp$locale)) <- attr(kvp$key, "description")
+    }
+    #locale key uris
+    #locale values
     locale_values <- kvp_with_default_locale$values
     if(length(locale_values)==1) locale_values <- locale_values[[1]]
-    kvp_with_locale <- kvps_for_key[sapply(kvps_for_key, function(x){!is.null(x$locale)})]
     for(item in kvp_with_locale){
       attr(locale_values, paste0("locale#", toupper(item$locale))) <- item$values
     }
     
-    kvp_with_locales <- list(key = key, values = locale_values)
+    kvp_with_locales <- geoflow_kvp$new(key = key, values = locale_values)
     return(kvp_with_locales)
   })
   

@@ -475,20 +475,43 @@ function(action, entity, config){
     kwds <- ISOKeywords$new()
     for(kwd in subject$keywords){
       iso_kwd <- kwd$name
+      iso_kwd_locales <- geoflow::get_locales_from(kwd$name)
+      iso_kwd_locales_codes = names(iso_kwd_locales)
       if(!is.null(kwd$uri)){
         iso_kwd <- ISOAnchor$new(name = kwd$name, href = kwd$uri)
+        iso_kwd_locales_uris <- geoflow::get_locales_from(kwd$uri)
+        if(length(iso_kwd_locales_uris)>0){
+          iso_kwd_locales <- lapply(iso_kwd_locales_codes, function(locale){
+            iso_kwd_locale <- iso_kwd_locales[[locale]]
+            attr(iso_kwd_locale, "uri") <- iso_kwd_locales_uris[[locale]]
+            return(iso_kwd_locale)
+          })
+          names(iso_kwd_locales) <- iso_kwd_locales_codes
+        }
       }
-      kwds$addKeyword(iso_kwd)
+      kwds$addKeyword(iso_kwd, locales = iso_kwd_locales)
     }
     kwds$setKeywordType(subject$key)
     #theausurus
     if(!is.null(subject$name)){
       th <- ISOCitation$new()
       title <- subject$name
+      title_locales <- geoflow::get_locales_from(subject$name)
+      title_locales_codes <- names(title_locales)
+      
       if(!is.null(subject$uri)){
         title <- ISOAnchor$new(name = subject$name, href = subject$uri)
+        title_locales_uris <- geoflow::get_locales_from(subject$uri)
+        if(length(title_locales_uris)>0){
+          title_locales <- lapply(title_locales_codes, function(locale){
+            title_locale <- title_locales[[locale]]
+            attr(title_locale, "uri") <- title_locales_uris[[locale]]
+            return(title_locale)
+          })
+          names(title_locales) <- title_locales_codes
+        }
       }
-      th$setTitle(title)
+      th$setTitle(title, locales = title_locales)
       
       if(length(subject$dates)>0){
         for(subj_datetype in names(subject$dates)){

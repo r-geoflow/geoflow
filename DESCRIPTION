@@ -68,6 +68,8 @@ Suggests:
   d4storagehub4R,
   rmarkdown,
   dataverse
+Remotes:
+  eblondel/geometa
 License: MIT + file LICENSE
 URL: https://github.com/r-geoflow/geoflow
 BugReports: https://github.com/r-geoflow/geoflow
