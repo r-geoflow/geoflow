@@ -524,7 +524,7 @@ unload_workflow_environment <- function(config){
       #reset env vars previously in session env
       env_vars_before <- config$session_env
       env_vars_to_reset <- setdiff(env_vars_before, env_vars_workflow)
-      do.call(Sys.setenv, env_vars_to_reset)
+      if(length(env_vars_to_reset)>0) do.call(Sys.setenv, env_vars_to_reset)
     }
   }
 }
