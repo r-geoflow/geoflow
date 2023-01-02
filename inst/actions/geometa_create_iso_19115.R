@@ -255,7 +255,7 @@ function(action, entity, config){
   
   #adding contacts
   if(length(entity$contacts)>0)for(entity_contact in entity$contacts){
-    if(tolower(entity_contact$role) != "metadata"){
+    if(tolower(entity_contact$role) != "metadata" && !startsWith(entity_contact$role, "processor")){
       rp<-createResponsibleParty(entity_contact) 
       ident$addPointOfContact(rp)
     }
@@ -825,9 +825,10 @@ function(action, entity, config){
         processStep$setDescription(process$description)
         
         #processor as responsability party
-        processor <- process$processor
-        rpp<-createResponsibleParty(processor) 
-        processStep$addProcessor(rpp)
+        for(processor in process$processors){
+          rpp<-createResponsibleParty(processor) 
+          processStep$addProcessor(rpp)
+        }
         lineage$addProcessStep(processStep)
       }
     }

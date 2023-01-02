@@ -22,7 +22,7 @@ geoflow_process
   process$setRationale("rationale")
   process$setDescription("description")
   processor <- geoflow_contact$new()
-  process$setProcessor(processor)
+  process$addProcessor(processor)
 }
 
 }
@@ -37,7 +37,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{description}}{process description}
 
-\item{\code{processor}}{object of class \code{geoflow_contact}}
+\item{\code{processors}}{object of class \code{list}}
 }
 \if{html}{\out{</div>}}
 }
@@ -47,7 +47,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_process-new}{\code{geoflow_process$new()}}
 \item \href{#method-geoflow_process-setRationale}{\code{geoflow_process$setRationale()}}
 \item \href{#method-geoflow_process-setDescription}{\code{geoflow_process$setDescription()}}
-\item \href{#method-geoflow_process-setProcessor}{\code{geoflow_process$setProcessor()}}
+\item \href{#method-geoflow_process-addProcessor}{\code{geoflow_process$addProcessor()}}
 \item \href{#method-geoflow_process-clone}{\code{geoflow_process$clone()}}
 }
 }
@@ -96,12 +96,12 @@ Set process description
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_process-setProcessor"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_process-setProcessor}{}}}
-\subsection{Method \code{setProcessor()}}{
-Set processor
+\if{html}{\out{<a id="method-geoflow_process-addProcessor"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_process-addProcessor}{}}}
+\subsection{Method \code{addProcessor()}}{
+Adds processor
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_process$setProcessor(processor)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_process$addProcessor(processor)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

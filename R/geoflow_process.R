@@ -17,7 +17,7 @@
 #'   process$setRationale("rationale")
 #'   process$setDescription("description")
 #'   processor <- geoflow_contact$new()
-#'   process$setProcessor(processor)
+#'   process$addProcessor(processor)
 #' }
 #' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
@@ -28,8 +28,8 @@ geoflow_process <- R6Class("geoflow_process",
     rationale = NULL,
     #'@field description process description
     description = NULL,
-    #'@field processor object of class \code{geoflow_contact}
-    processor = NULL,
+    #'@field processors object of class \code{list}
+    processors = list(),
     
     #'@description Initializes the \link{geoflow_process}
     initialize = function(){
@@ -47,13 +47,13 @@ geoflow_process <- R6Class("geoflow_process",
       self$description <- description
     },
     
-    #'@description Set processor
+    #'@description Adds processor
     #'@param processor, object of class \link{geoflow_contact}
-    setProcessor = function(processor){
+    addProcessor = function(processor){
       if(!is(processor, "geoflow_contact")){
         stop("The processor should be an object of class 'geoflow_contact")
       }
-      self$processor <- processor
+      self$processors <- c(self$processors, processor)
     }
     
   )                                  

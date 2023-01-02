@@ -66,13 +66,15 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Method \code{new()}}{
 Initializes an object of class \link{geoflow_subject}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$new(str = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$new(str = NULL, kvp = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{str}}{a character string to initialize from, using key-based syntax}
+
+\item{\code{kvp}}{an object of class \link{geoflow_kvp}}
 }
 \if{html}{\out{</div>}}
 }

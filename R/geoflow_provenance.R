@@ -53,15 +53,16 @@ geoflow_provenance <- R6Class("geoflow_provenance",
              return(extract_kvp(process))
            })
            #processors
-           processors <- data_props[sapply(data_props, function(x){startsWith(x,"processor:")})]
-           processors_splits <- unlist(strsplit(processors, ":"))
-           processors <- unlist(strsplit(processors_splits[2],","))
+           #processors <- data_props[sapply(data_props, function(x){startsWith(x,"processor:")})]
+           #processors_splits <- unlist(strsplit(processors, ":"))
+           #processors <- unlist(strsplit(processors_splits[2],","))
            #control processors vs. processes
-           if(length(processors)!=length(processes)){
-              stop(sprintf("Number of processors [%s] doesn't match the number of processes [%s]",
-                           length(processors), length(processes)))
-           }
-           if(length(processes)>0 & length(processors)>0 & length(processes)==length(processors)){
+           #if(length(processors)!=length(processes)){
+           #  stop(sprintf("Number of processors [%s] doesn't match the number of processes [%s]",
+           #               length(processors), length(processes)))
+           #}
+           #if(length(processes)>0 & length(processors)>0 & length(processes)==length(processors)){
+           if(length(processes)>0){     
              for(i in 1:length(processes)){
                process <- processes[[i]]$values[[1]]
                process_obj <- geoflow_process$new()
@@ -69,10 +70,10 @@ geoflow_provenance <- R6Class("geoflow_provenance",
                process_obj$setDescription(process_des)
                attr(process, "description") <- NULL
                process_obj$setRationale(process)
-               processor_obj <- geoflow_contact$new()
-               processor_obj$setIdentifier(key = "id", processors[i])
-               processor_obj$setRole("processor")
-               process_obj$setProcessor(processor_obj)
+               #processor_obj <- geoflow_contact$new()
+               #processor_obj$setIdentifier(key = "id", processors[i])
+               #processor_obj$setRole("processor")
+               #process_obj$setProcessor(processor_obj)
                self$addProcess(process_obj)
              }
            }

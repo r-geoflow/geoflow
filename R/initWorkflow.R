@@ -474,17 +474,23 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
           if(!is.null(entity$provenance)) if(is(entity$provenance, "geoflow_provenance")){
             newprov <- entity$provenance$clone()
             if(length(entity$provenance$processes)>0){
-              newprov$processes <- lapply(entity$provenance$processes, function(process){
+              processors <- entity$contacts
+              if(length(processors)>0) processors <- entity$contacts[sapply(entity$contacts, function(x){startsWith(x$role, "processor")})]
+              newprov$processes <- lapply(1:length(entity$provenance$processes), function(i){
+                process <- entity$provenance$processes[[i]]
                 newprocess <- process$clone()
-                processor <- process$processor
-                if(!is.null(processor)){
-                  processor_from_directory <- directory_of_contacts[sapply(directory_of_contacts, function(x){processor$identifiers[["id"]] %in% x$identifiers})]
-                  if(length(processor_from_directory)>0){
-                    processor_from_directory <- processor_from_directory[[1]]
-                    new_processor <- processor_from_directory
-                    new_processor$setIdentifier(key = "id", processor$identifiers[["id"]])
-                    new_processor$setRole("processor")
-                    newprocess$setProcessor(new_processor)
+                if(length(processors)>0) for(j in 1:length(processors)){
+                  processor = processors[[j]]
+                  processor_to_add = regexpr(paste0("[",i,"]$"), processor$role) > 0 || processor$role == "processor" 
+                  if(processor_to_add){
+                    processor_from_directory <- directory_of_contacts[sapply(directory_of_contacts, function(x){any(processor$identifiers %in% x$identifiers)})]
+                    if(length(processor_from_directory)>0){
+                      processor_from_directory <- processor_from_directory[[1]]
+                      new_processor <- processor_from_directory
+                      new_processor$setIdentifier(key = "id", processor$identifiers[["id"]])
+                      new_processor$setRole("processor")
+                      newprocess$addProcessor(new_processor)
+                    }
                   }
                 }
                 return(newprocess)

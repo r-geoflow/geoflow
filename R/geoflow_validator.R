@@ -144,7 +144,7 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
           #check match length with keys
           #if no valid keys are associated, we need to identify line separator issues based on any prefix: except http:/https:
           valid_key_regexp <- ""
-          if(length(private$valid_keys)>0) valid_key_regexp <- paste0("(",paste0(private$valid_keys, collapse="|"),")")
+          if(length(private$valid_keys)>0) valid_key_regexp <- paste0("(",paste0(private$valid_keys, collapse="|"),")+[1-9]?[1-9]?")
           http_exclude_regexp <- ""
           if(private$exclude_http_keys) http_exclude_regexp <- "(?![\\w_]*(http|https)[\\w_]*)" 
           str_keys_m <- gregexpr(paste0("\\b", valid_key_regexp, http_exclude_regexp, ":\\b"), text = str, perl = TRUE)[[1]]
@@ -436,7 +436,7 @@ geoflow_validator_entity_Creator <- R6Class("geoflow_validator_entity_Creator",
     #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
     #'@param str string to validate
     initialize = function(i, j, str){
-      valid_keys <- list("metadata", geometa::ISORole$values())
+      valid_keys <- c("metadata", geometa::ISORole$values())
       super$initialize(FALSE,TRUE, TRUE, valid_keys, NULL,FALSE, TRUE, TRUE, i, j, str)
     }
   )
@@ -782,7 +782,7 @@ geoflow_validator_entity_Provenance <- R6Class("geoflow_validator_entity_Provena
       #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
       #'@param str string to validate
       initialize = function(i, j, str){
-        valid_keys <- list("statement", "process", "processor")
+        valid_keys <- list("statement", "process")
         super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,TRUE, FALSE, TRUE, i, j, str)
       },
       
@@ -807,13 +807,13 @@ geoflow_validator_entity_Provenance <- R6Class("geoflow_validator_entity_Provena
               return(extract_kvp(process))
             })
             #processors
-            processors <- data_props[sapply(data_props, function(x){startsWith(x,"processor:")})]
-            processors_splits <- unlist(strsplit(processors, ":"))
-            processors <- unlist(strsplit(processors_splits[2],","))
+            #processors <- data_props[sapply(data_props, function(x){startsWith(x,"processor:")})]
+            #processors_splits <- unlist(strsplit(processors, ":"))
+            #processors <- unlist(strsplit(processors_splits[2],","))
             #control processors vs. processes
-            if(length(processors)!=length(processes)){
-              report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Number of processors [%s] doesn't match the number of processes [%s]",length(processors), length(processes))))
-            }
+            #if(length(processors)!=length(processes)){
+            #  report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Number of processors [%s] doesn't match the number of processes [%s]",length(processors), length(processes))))
+            #}
           }
         }
         return(report)

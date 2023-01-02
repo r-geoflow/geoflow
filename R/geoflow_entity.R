@@ -1693,11 +1693,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                 }
                 return(outproc)
               }),collapse=line_separator)
-              outprov <- paste0(outprov, processes_str, line_separator)
-              processors_str <- paste0("processor:",paste0(sapply(self$provenance$processes, function(process){
-                return(process$processor$id)
-              }),collapse=","))
-              outprov <- paste0(outprov, processors_str)
+              outprov <- paste0(outprov, processes_str)
+              #processors_str <- paste0("processor:",paste0(sapply(self$provenance$processes, function(process){
+              #  return(process$processor$id)
+              #}),collapse=","))
+              #outprov <- paste0(outprov, processors_str)
             }
           }
           outprov
