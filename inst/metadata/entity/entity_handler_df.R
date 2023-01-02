@@ -250,10 +250,11 @@ handle_entities_df <- function(config, source){
     src_rights <- sanitize_str(source_entity[,"Rights"])
     rights <- if(!is.na(src_rights)) extract_cell_components(src_rights) else list()
     if(length(rights)>0){
-      invisible(lapply(rights, function(right){
-        right_obj <- geoflow_right$new(str = right)
+      kvps <- extract_kvps(rights)
+      for(kvp in kvps){
+        right_obj <- geoflow_right$new(kvp = kvp)
         entity$addRight(right_obj)
-      }))
+      }
     }
     
     #Provenance

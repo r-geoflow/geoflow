@@ -29,11 +29,15 @@ geoflow_right <- R6Class("geoflow_right",
     
     #'@description Initializes an object of class \link{geoflow_right}
     #'@param str character string to initialize from using key-based syntax
-    initialize = function(str = NULL){
+    #'@param kvp an object of class \link{geoflow_kvp}
+    initialize = function(str = NULL, kvp = NULL){
       if(!is.null(str)){
         right <- extract_kvp(str)
         self$setKey(right$key)
         self$setValue(paste(right$values, collapse=","))
+      }else if(!is.null(kvp)){
+        self$setKey(kvp$key)
+        self$setValue(kvp$values)
       }
     },
     
