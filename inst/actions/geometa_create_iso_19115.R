@@ -826,13 +826,13 @@ function(action, entity, config){
     dq_lineage_scope$setLevel(dctype_iso)
     dq_lineage$setScope(dq_lineage_scope)
     lineage <- ISOLineage$new()
-    lineage$setStatement(entity$provenance$statement)
+    lineage$setStatement(entity$provenance$statement, locales = geoflow::get_locales_from(entity$provenance$statement))
     processes <- entity$provenance$processes
     if(length(processes)>0){
       for(process in processes){
         processStep <- ISOProcessStep$new()
-        processStep$setRationale(process$rationale)
-        processStep$setDescription(process$description)
+        processStep$setRationale(process$rationale, locales = geoflow::get_locales_from(process$rationale))
+        processStep$setDescription(process$description, locales = geoflow::get_locales_from(process$description))
         
         #processor as responsability party
         for(processor in process$processors){

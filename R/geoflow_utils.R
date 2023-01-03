@@ -132,7 +132,6 @@ extract_kvp <- function(str){
     attributes(key) <- key_attrs
     locale <- key_parts[2]
   }
-  
   return(geoflow_kvp$new(key = key, values = values, locale = locale))
 }
 
@@ -154,12 +153,16 @@ extract_kvps <- function(strs, collapse = NULL){
   kvps <- lapply(strs, function(str){
     kvp <- extract_kvp(str)
     if(!is.null(collapse)) kvp$values <- list(paste0(kvp$values, collapse = collapse))
+    if(length(kvp$values)==1) kvp$values <- kvp$values[[1]]
     return(kvp)
   })
   keys <- unique(sapply(kvps, "[[", "key"))
-  kvps <- lapply(keys, function(key){
+  kvps <- do.call("c", lapply(keys, function(key){
     kvps_for_key <- kvps[sapply(kvps, function(kvp){kvp$key == key})]
-    with_null_locale <- any(sapply(kvps_for_key, function(x){is.null(x$locale)}))
+    with_locales <- any(sapply(kvps_for_key, function(x){!is.null(x$locale)}))
+    if(!with_locales){
+      return(kvps_for_key)
+    }
     kvp_with_default_locale <- kvps_for_key[sapply(kvps_for_key, function(x){is.null(x$locale)})]
     kvp_with_locale <- kvps_for_key[sapply(kvps_for_key, function(x){!is.null(x$locale)})]
     if(length(kvp_with_default_locale)>0){
@@ -168,7 +171,6 @@ extract_kvps <- function(strs, collapse = NULL){
       #TODO support default language in geoflow
     }
     #localization
-    key <- kvp_with_default_locale$key
     #locale key descriptions
     for(kvp in kvp_with_locale){
       if(!is.null(attr(kvp$key, "uri"))) attr(key, paste0("uri#", kvp$locale)) <- attr(kvp$key, "uri")
@@ -177,14 +179,14 @@ extract_kvps <- function(strs, collapse = NULL){
     #locale key uris
     #locale values
     locale_values <- kvp_with_default_locale$values
-    if(length(locale_values)==1) locale_values <- locale_values[[1]]
+    #if(length(locale_values)==1) locale_values <- locale_values[[1]]
     for(item in kvp_with_locale){
       attr(locale_values, paste0("locale#", toupper(item$locale))) <- item$values
     }
     
-    kvp_with_locales <- geoflow_kvp$new(key = key, values = locale_values)
+    kvp_with_locales <- list(geoflow_kvp$new(key = key, values = locale_values))
     return(kvp_with_locales)
-  })
+  }))
   
   return(kvps)
 }

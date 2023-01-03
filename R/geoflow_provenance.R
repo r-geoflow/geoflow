@@ -38,45 +38,43 @@ geoflow_provenance <- R6Class("geoflow_provenance",
      #'@param str character string to initialize a provenance using key-based syntax
      initialize = function(str = NULL){
        if(!is.null(str)){
-         data_props <- extract_cell_components(sanitize_str(str))
-         state_prop <- data_props[[1]]
-         if(!startsWith(state_prop, "statement")){
-           stop("The data 'statement' is mandatory")
-         }
-         state_prop <- unlist(strsplit(state_prop,"statement:"))[2]
-         self$setStatement(state_prop)
-         if(length(data_props)>1){
-           data_props <- data_props[2:length(data_props)]
-           #processes
-           processes <- data_props[sapply(data_props, function(x){startsWith(x, "process:")})]
-           processes <- lapply(processes, function(process){
-             return(extract_kvp(process))
-           })
-           #processors
-           #processors <- data_props[sapply(data_props, function(x){startsWith(x,"processor:")})]
-           #processors_splits <- unlist(strsplit(processors, ":"))
-           #processors <- unlist(strsplit(processors_splits[2],","))
-           #control processors vs. processes
-           #if(length(processors)!=length(processes)){
-           #  stop(sprintf("Number of processors [%s] doesn't match the number of processes [%s]",
-           #               length(processors), length(processes)))
-           #}
-           #if(length(processes)>0 & length(processors)>0 & length(processes)==length(processors)){
-           if(length(processes)>0){     
-             for(i in 1:length(processes)){
-               process <- processes[[i]]$values[[1]]
-               process_obj <- geoflow_process$new()
-               process_des <- attr(process, "description")
-               process_obj$setDescription(process_des)
-               attr(process, "description") <- NULL
-               process_obj$setRationale(process)
-               #processor_obj <- geoflow_contact$new()
-               #processor_obj$setIdentifier(key = "id", processors[i])
-               #processor_obj$setRole("processor")
-               #process_obj$setProcessor(processor_obj)
-               self$addProcess(process_obj)
-             }
-           }
+         strs <- extract_cell_components(sanitize_str(str))
+         kvps <- extract_kvps(strs)
+         
+         #statement
+         statement <- kvps[sapply(kvps, function(kvp){kvp$key == "statement"})]
+         if(length(statement)==0) stop("No provenance statement, statement is mandatory")
+         if(length(statement)>1) warning("More than one provenance statement declared, only the first will be considered!")
+         statement = statement [[1]]
+         self$setStatement(statement$values)
+         
+         #processes
+         processes <- kvps[sapply(kvps, function(kvp){kvp$key == "process"})]
+         if(length(processes)>0){
+            for(process in processes){ #in case processes defined on various lines
+               print(process)
+               process_attrs <- attributes(process$values)
+               for(i in 1:length(process$values)){ #in case processes defined on same line (eg for i18n)
+                  value = if(is.list(process$values)) process$values[[i]] else process$values[i]
+                  process_obj <- geoflow_process$new()
+                  rationale = value
+                  description = process_attrs$description
+                  attributes(rationale) <- NULL
+                  if(is.null(description)) description = attr(value, "description")
+                  if(length(process_attrs)>0){
+                     process_attrs <- process_attrs[names(process_attrs)!="description"]
+                     for(attr_name in names(process_attrs)){
+                        rationale_i18n = process_attrs[[attr_name]][[i]]
+                        attr(description, attr_name) <- attr(rationale_i18n, "description")
+                        attributes(rationale_i18n) = NULL
+                        attr(rationale, attr_name) <- rationale_i18n
+                     }
+                  }
+                  process_obj$setRationale(rationale)
+                  process_obj$setDescription(description)
+                  self$addProcess(process_obj)
+               }
+            }
          }
        }
      },

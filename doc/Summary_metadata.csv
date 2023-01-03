@@ -42,8 +42,8 @@
 "Rights","accessConstraint",,,"x",,,,,,"x",,
 "Rights","otherConstraint","x","x","x",,,,,,"x",,
 "Rights","license","x","x","x",,,,,"x","x",,"x"
-"Provenance","statement","x",,"x",,,,,,,,
-"Provenance","process","x",,"x",,,,,,,,
+"Provenance","statement","x","x","x",,,,,,,,
+"Provenance","process","x","x","x",,,,,,,,
 "Format","ressource",,,"x",,,,,,,,
 "Format","distribution",,,"x",,,,,,,,
 "Data",,,,,,,,,,,,
