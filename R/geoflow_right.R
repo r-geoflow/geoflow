@@ -15,7 +15,7 @@
 #' \dontrun{
 #'   right <- geoflow_right$new()
 #'   right$setKey("use")
-#'   right$setValue("No restrictions")
+#'   right$setValues("No restrictions")
 #' }
 #' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
@@ -24,8 +24,8 @@ geoflow_right <- R6Class("geoflow_right",
   public = list(
     #'@field key right key
     key = NULL,
-    #'@field value right value
-    value = NULL,
+    #'@field values right values
+    values = list(),
     
     #'@description Initializes an object of class \link{geoflow_right}
     #'@param str character string to initialize from using key-based syntax
@@ -34,10 +34,21 @@ geoflow_right <- R6Class("geoflow_right",
       if(!is.null(str)){
         right <- extract_kvp(str)
         self$setKey(right$key)
-        self$setValue(paste(right$values, collapse=","))
+        self$setValues(right$values)
       }else if(!is.null(kvp)){
         self$setKey(kvp$key)
-        self$setValue(kvp$values)
+        values = lapply(1:length(kvp$values), function(i){
+          right = kvp$values[[i]]
+          attributes(right) <- NULL
+          val_locale_attrs <- attributes(kvp$values)
+          for(attr_name in names(val_locale_attrs)){
+            locale_value <- val_locale_attrs[[attr_name]][[i]]
+            attributes(locale_value) <- NULL
+            attr(right, attr_name) <- locale_value
+          }
+          return(right)
+        })
+        self$setValues(values)
       }
     },
     
@@ -47,10 +58,10 @@ geoflow_right <- R6Class("geoflow_right",
       self$key <- key
     },
     
-    #'@description Sets value
-    #'@param value value
-    setValue = function(value){
-      self$value <- value
+    #'@description Sets values
+    #'@param values values
+    setValues = function(values){
+      self$values <- c(self$values, values)
     }
   )                                  
 )

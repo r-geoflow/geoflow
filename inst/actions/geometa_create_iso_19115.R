@@ -377,13 +377,19 @@ function(action, entity, config){
     if(length(licenses)>0){
       legal_constraints$addUseConstraint("license")
       for(license in licenses){
-        legal_constraints$addUseLimitation(license$value, locales = geoflow::get_locales_from(license$value))
+        for(value in license$values){
+          legal_constraints$addUseLimitation(value, locales = geoflow::get_locales_from(value))
+        }
       }
     }
     #use limitation
     uses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) %in% c("use","uselimitation")})]
     if(length(uses)>0){
-      for(use in uses) legal_constraints$addUseLimitation(use$value, locales = geoflow::get_locales_from(use$value))
+      for(use in uses){
+        for(value in use$values){
+          legal_constraints$addUseLimitation(value, locales = geoflow::get_locales_from(value))
+        }
+      }
     }
     #use constraints
     useConstraints <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "useconstraint"})]
@@ -398,7 +404,11 @@ function(action, entity, config){
     #other constraints
     otherConstraints <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "otherconstraint"})]
     if(length(otherConstraints)>0){
-      for(otherConstraint in otherConstraints) legal_constraints$addOtherConstraint(otherConstraint$value, locales = geoflow::get_locales_from(otherConstraint$value))
+      for(otherConstraint in otherConstraints){
+        for(value in otherConstraint$values){
+          legal_constraints$addOtherConstraint(value, locales = geoflow::get_locales_from(value))
+        }
+      }
     }
     ident$addResourceConstraints(legal_constraints)
   }
