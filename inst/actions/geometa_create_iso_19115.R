@@ -286,7 +286,7 @@ function(action, entity, config){
   #edition
   if(!is.null(entity$descriptions[["edition"]])){
     edition = entity$descriptions[["edition"]]
-    ct$setEdition(edition)
+    ct$setEdition(edition, locales = geoflow::get_locales_from(edition))
   }
   
   #set metadata identifier
