@@ -226,7 +226,7 @@ function(action, entity, config){
     #TODO myrec$setAccessRight
     
     #communities
-    if(!is.na(communities)){
+    if(length(communities)>0){
       zenodo_metadata$metadata$communities <- list()
       for(community in communities) zenodo_metadata$addCommunity(community)
     }
