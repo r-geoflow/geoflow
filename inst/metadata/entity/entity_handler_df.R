@@ -9,7 +9,7 @@ handle_entities_df <- function(config, source){
   
   #validation
   config$logger.info("Validating entities")
-  validation_report <- geoflow_validator_entities$new(source = source)$validate_content()
+  validation_report <- geoflow::geoflow_validator_entities$new(source = source)$validate_content()
   if(is.null(validation_report)){
     errMsg <- "Error of metadata structure for entities"
     config$logger.error(errMsg)
@@ -33,21 +33,21 @@ handle_entities_df <- function(config, source){
   for(i in 1:rowNum){
     config$logger.info(sprintf("Parsing entity %s", i))
     source_entity <- source[i,]
-    entity <- geoflow_entity$new()
+    entity <- geoflow::geoflow_entity$new()
     
     #language
     entity$setLanguage(source_entity[,"Language"])
     
     #dates
-    src_date <- sanitize_str(as(source_entity[,"Date"], "character"))
-    dates <- if(!is.na(src_date)) extract_cell_components(src_date) else list()
+    src_date <- geoflow::sanitize_str(as(source_entity[,"Date"], "character"))
+    dates <- if(!is.na(src_date)) geoflow::extract_cell_components(src_date) else list()
     if(length(dates)>0){
       if(length(dates)==1){
         if(regexpr(":",dates) == -1 && nchar(dates)>0){
           entity$dates <- list()
           entity$addDate("creation", dates)
         }else{
-          date_kvp <- extract_kvp(dates)
+          date_kvp <- geoflow::extract_kvp(dates)
           for(date in date_kvp$values){
             entity$addDate(date_kvp$key, date)
           }
@@ -56,12 +56,12 @@ handle_entities_df <- function(config, source){
         for(date in dates){
           if(regexpr("creation:",date)>0){
             entity$dates <- list()
-            date_kvp <- extract_kvp(date)
+            date_kvp <- geoflow::extract_kvp(date)
             for(adate in date_kvp$values){
               entity$addDate(date_kvp$key, adate)
             }
           }else{
-            date_kvp <- extract_kvp(date)
+            date_kvp <- geoflow::extract_kvp(date)
             for(adate in date_kvp$values){
               entity$addDate(date_kvp$key, adate)
             }
@@ -73,8 +73,8 @@ handle_entities_df <- function(config, source){
     }
     
     #types
-    src_type <- sanitize_str(source_entity[,"Type"])
-    types <- if(!is.na(src_type)) extract_cell_components(src_type) else list()
+    src_type <- geoflow::sanitize_str(source_entity[,"Type"])
+    types <- if(!is.na(src_type)) geoflow::extract_cell_components(src_type) else list()
     if(length(types)>0){
       if(length(types)==1){
         entity$setType("generic", types)
@@ -83,7 +83,7 @@ handle_entities_df <- function(config, source){
           if(regexpr(":",type) == -1){
             entity$setType("generic", type)
           }else{
-            type_kvp <- extract_kvp(type)
+            type_kvp <- geoflow::extract_kvp(type)
             entity$setType(type_kvp$key, type_kvp$values[[1]])
           }
         }
@@ -91,75 +91,75 @@ handle_entities_df <- function(config, source){
     }
     
     #identifier
-    identifiers <-extract_cell_components(sanitize_str(source_entity[,"Identifier"]))
+    identifiers <-geoflow::extract_cell_components(geoflow::sanitize_str(source_entity[,"Identifier"]))
     for(identifier in identifiers){
       if(regexpr(":",identifier) == -1){
         entity$setIdentifier("id", identifier)
       }else{
-        id_kvp <- extract_kvp(identifier)
+        id_kvp <- geoflow::extract_kvp(identifier)
         entity$setIdentifier(id_kvp$key, id_kvp$values[[1]])
       }
     }
     
     #title
-    src_title <- sanitize_str(source_entity[,"Title"])
+    src_title <- geoflow::sanitize_str(source_entity[,"Title"])
     if(!is.na(src_title)){
       allowedTitleKeys <- entity$getAllowedKeyValuesFor("Title")
       hasTitleKey <- any(sapply(allowedTitleKeys, function(x){startsWith(src_title, x)}))
       if(!hasTitleKey) src_title <- paste0("title:", src_title)
     }
-    titles <- if(!is.na(src_title)) extract_cell_components(src_title) else list()
+    titles <- if(!is.na(src_title)) geoflow::extract_cell_components(src_title) else list()
     if(length(titles)>0){
-      kvps <- extract_kvps(titles, collapse=",")
+      kvps <- geoflow::extract_kvps(titles, collapse=",")
       for(kvp in kvps){
         entity$setTitle(kvp$key, kvp$values)
       }
     }
     
     #description
-    src_description <- sanitize_str(source_entity[,"Description"])
+    src_description <- geoflow::sanitize_str(source_entity[,"Description"])
     if(!is.na(src_description)){
       allowedDescKeys <- entity$getAllowedKeyValuesFor("Description")
       hasDescKey <- any(sapply(allowedDescKeys, function(x){startsWith(src_description, x)}))
       if(!hasDescKey) src_description <- paste0("abstract:", src_description)
     }
-    descriptions <- if(!is.na(src_description)) extract_cell_components(src_description) else list()
+    descriptions <- if(!is.na(src_description)) geoflow::extract_cell_components(src_description) else list()
     if(length(descriptions)>0){
-      kvps <- extract_kvps(descriptions, collapse=",")
+      kvps <- geoflow::extract_kvps(descriptions, collapse=",")
       for(kvp in kvps){
         entity$setDescription(kvp$key, kvp$values)
       }
     }
     
     #subjects
-    src_subject <- sanitize_str(source_entity[,"Subject"])
-    subjects <- if(!is.na(src_subject)) extract_cell_components(src_subject) else list()
+    src_subject <- geoflow::sanitize_str(source_entity[,"Subject"])
+    subjects <- if(!is.na(src_subject)) geoflow::extract_cell_components(src_subject) else list()
     if(length(subjects)>0){
-      kvps <- extract_kvps(subjects)
+      kvps <- geoflow::extract_kvps(subjects)
       for(kvp in kvps){
-        subject_obj <- geoflow_subject$new(kvp = kvp)
+        subject_obj <- geoflow::geoflow_subject$new(kvp = kvp)
         entity$addSubject(subject_obj)
       }
     }
     
     #formats
-    src_format <- sanitize_str(source_entity[,"Format"])
+    src_format <- geoflow::sanitize_str(source_entity[,"Format"])
     if(!is.na(src_format)){
       allowedFormatsKeys <- entity$getAllowedKeyValuesFor("Format")
       hasFormatKey <- any(sapply(allowedFormatsKeys, function(x){startsWith(src_format, x)}))
       if(!hasFormatKey) src_format <- paste0("resource:", src_format)
     }
-    formats <- if(!is.na(src_format)) extract_cell_components(src_format) else list()
+    formats <- if(!is.na(src_format)) geoflow::extract_cell_components(src_format) else list()
     if(length(formats)>0){
       invisible(lapply(formats, function(format){
-        format_obj <- geoflow_format$new(str = format)
+        format_obj <- geoflow::geoflow_format$new(str = format)
         entity$addFormat(format_obj)
       }))
     }
     
     #contacts
-    src_contact <- sanitize_str(source_entity[,"Creator"])
-    contacts <- if(!is.na(src_contact)) extract_cell_components(src_contact) else list()
+    src_contact <- geoflow::sanitize_str(source_entity[,"Creator"])
+    contacts <- if(!is.na(src_contact)) geoflow::extract_cell_components(src_contact) else list()
     if(length(contacts)>0){
       invisible(lapply(contacts, function(contact){
         contact_splits <- unlist(strsplit(contact, ":"))
@@ -170,7 +170,7 @@ handle_entities_df <- function(config, source){
           }else if(contact_id==""){
             config$logger.warn(sprintf("Warning: In entity %s, empty contact id will be ignored!", i))
           }else{
-            contact_obj <- geoflow_contact$new()
+            contact_obj <- geoflow::geoflow_contact$new()
             contact_obj$setIdentifier(key = "id", contact_id)
             contact_obj$setRole(contact_splits[1])
             entity$addContact(contact_obj)
@@ -180,24 +180,24 @@ handle_entities_df <- function(config, source){
     }
     
     #relations
-    src_relation <- sanitize_str(source_entity[,"Relation"])
-    relations <- if(!is.na(src_relation)) extract_cell_components(src_relation) else list()
+    src_relation <- geoflow::sanitize_str(source_entity[,"Relation"])
+    relations <- if(!is.na(src_relation)) geoflow::extract_cell_components(src_relation) else list()
     if(length(relations)>0){
       invisible(lapply(relations, function(relation){
-        relation_obj <- geoflow_relation$new(str = relation)
+        relation_obj <- geoflow::geoflow_relation$new(str = relation)
         entity$addRelation(relation_obj)
       }))
     }
     
     #spatial extent
-    spatial_cov <- sanitize_str(source_entity[,"SpatialCoverage"])
+    spatial_cov <- geoflow::sanitize_str(source_entity[,"SpatialCoverage"])
     if(!is.na(spatial_cov)){
       allowedSpatialCoverageKeys <- entity$getAllowedKeyValuesFor("SpatialCoverage")
       hasSpatialCoverageKey <- any(sapply(allowedSpatialCoverageKeys, function(x){startsWith(spatial_cov, x)}))
       if(!hasSpatialCoverageKey) spatial_cov <- paste0("ewkt:", spatial_cov)
-      spatial_props <- if(!is.na(spatial_cov)) extract_cell_components(spatial_cov) else list()
+      spatial_props <- if(!is.na(spatial_cov)) geoflow::extract_cell_components(spatial_cov) else list()
       if(length(spatial_props)>0){
-        kvps <- lapply(spatial_props, extract_kvp)
+        kvps <- lapply(spatial_props, geoflow::extract_kvp)
         kvps <- lapply(kvps, function(x){out <- x; out$values <- list(paste0(out$values, collapse=",")); return(out)})
         names(kvps) <- sapply(kvps, function(x){x$key})
         for(kvpname in names(kvps)){
@@ -241,35 +241,35 @@ handle_entities_df <- function(config, source){
     }
     
     #temporal extent
-    temporal_cov <- sanitize_str(source_entity[,"TemporalCoverage"])
+    temporal_cov <- geoflow::sanitize_str(source_entity[,"TemporalCoverage"])
     if(is(temporal_cov, "character")) if(temporal_cov == "") temporal_cov <- NA
     if(!is.null(temporal_cov)){
       if(!is.na(temporal_cov)) entity$setTemporalExtent(temporal_cov)
     }
     #Rights
-    src_rights <- sanitize_str(source_entity[,"Rights"])
-    rights <- if(!is.na(src_rights)) extract_cell_components(src_rights) else list()
+    src_rights <- geoflow::sanitize_str(source_entity[,"Rights"])
+    rights <- if(!is.na(src_rights)) geoflow::extract_cell_components(src_rights) else list()
     if(length(rights)>0){
-      kvps <- extract_kvps(rights)
+      kvps <- geoflow::extract_kvps(rights)
       for(kvp in kvps){
-        right_obj <- geoflow_right$new(kvp = kvp)
+        right_obj <- geoflow::geoflow_right$new(kvp = kvp)
         entity$addRight(right_obj)
       }
     }
     
     #Provenance
-    prov <- sanitize_str(source_entity[,"Provenance"])
+    prov <- geoflow::sanitize_str(source_entity[,"Provenance"])
     if(!is.na(prov)){
-      prov_obj <- geoflow_provenance$new(str = prov)
+      prov_obj <- geoflow::geoflow_provenance$new(str = prov)
       entity$setProvenance(prov_obj)
     }
     
     #data
-    data <- sanitize_str(source_entity[,"Data"])
+    data <- geoflow::sanitize_str(source_entity[,"Data"])
     if(!is.na(data)){
       if(data != ""){
         
-        data_obj <- geoflow_data$new(str = data, config = config)
+        data_obj <- geoflow::geoflow_data$new(str = data, config = config)
         data_obj$checkSoftwareProperties(config = config)
         entity$setData(data_obj)
         
@@ -291,13 +291,13 @@ handle_entities_df <- function(config, source){
         
         #build featuretype for attributes/variables if declared
         if(length(entity$data$attributes)>0 | length(entity$data$attributes)>0){
-          featureTypeObj <- geoflow_featuretype$new(id = entity$identifiers[["id"]])
+          featureTypeObj <- geoflow::geoflow_featuretype$new(id = entity$identifiers[["id"]])
           if(length(entity$data$attributes)>0){
             for(attribute in entity$data$attributes){
               attr_desc <- attr(attribute,"description")
               attr_handler <- attr(attribute, "uri")
               attributes(attribute) <- NULL
-              member <- geoflow_featuremember$new(
+              member <- geoflow::geoflow_featuremember$new(
                 type = "attribute",
                 code = attribute,
                 name = attr_desc,
@@ -313,7 +313,7 @@ handle_entities_df <- function(config, source){
               var_desc <- attr(variable,"description")
               var_handler <- attr(variable, "uri")
               attributes(variable) <- NULL
-              member <- geoflow_featuremember$new(
+              member <- geoflow::geoflow_featuremember$new(
                 type = "variable",
                 code = variable,
                 name = var_desc,

@@ -9,7 +9,7 @@ handle_contacts_df <- function(config, source){
   
   #validation
   config$logger.info("Validating contacts")
-  validation_report <- geoflow_validator_contacts$new(source = source)$validate_content()
+  validation_report <- geoflow::geoflow_validator_contacts$new(source = source)$validate_content()
   if(is.null(validation_report)){
     errMsg <- "Error of metadata structure for contacts"
     config$logger.error(errMsg)
@@ -32,13 +32,13 @@ handle_contacts_df <- function(config, source){
   config$logger.info(sprintf("Parsing %s contacts from tabular source", rowNum))
   for(i in 1:rowNum){
     source_contact <- source[i,]
-    contact <- geoflow_contact$new()
+    contact <- geoflow::geoflow_contact$new()
     
     #identifier
-    id <- sanitize_str(source_contact[,"Identifier"])
+    id <- geoflow::sanitize_str(source_contact[,"Identifier"])
     if(!is.na(id)){
       config$logger.warn("Use 'Identifier' column as contact Ids. Make sure to use these identifiers in your dataset contact references")
-      identifiers <-extract_cell_components(id)
+      identifiers <- geoflow::extract_cell_components(id)
       
       invisible(lapply(identifiers, function(identifier){
         identifier_splits <- unlist(strsplit(identifier, ":"))

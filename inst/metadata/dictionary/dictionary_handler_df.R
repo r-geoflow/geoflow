@@ -9,7 +9,7 @@ handle_dictionary_df <- function(config, source){
     stop(errMsg)
   }
   
-  dict <- geoflow_dictionary$new()
+  dict <- geoflow::geoflow_dictionary$new()
   dict$setSource(source)
   config$logger.info(sprintf("Parsing %s dictionary elements from tabular source", nrow(source)))
   if(!"FeatureType" %in% colnames(source)){
@@ -23,15 +23,15 @@ handle_dictionary_df <- function(config, source){
   config$logger.info(sprintf("Loading %s feature types from data dictionnary...",length(fts)))
   for(ft in fts){
     ft_df <- source[source$FeatureType == ft, ]
-    featuretype <- geoflow_featuretype$new(id = ft)
+    featuretype <- geoflow::geoflow_featuretype$new(id = ft)
     rowNb <- nrow(ft_df)
     for(i in 1:rowNb){
       ftm <- ft_df[i,]
       defSource <- ftm$DefinitionSource
       if(!is.na(defSource)){
-        defSource <- extract_kvp(paste0("str:",defSource))$values[[1]]
+        defSource <- geoflow::extract_kvp(paste0("str:",defSource))$values[[1]]
       }
-      member <- geoflow_featuremember$new(
+      member <- geoflow::geoflow_featuremember$new(
         type = ftm$MemberType,
         code = ftm$MemberCode,
         name = ftm$MemberName,
@@ -43,7 +43,7 @@ handle_dictionary_df <- function(config, source){
       if(!is.null(ftm$MaxOccurs)) member$maxOccurs <- ftm$MaxOccurs
       uom <- ftm$MeasurementUnit
       if(!is.na(uom)){
-        member$uom <- extract_kvp(paste0("str:", uom))$values[[1]]
+        member$uom <- geoflow::extract_kvp(paste0("str:", uom))$values[[1]]
       }
       featuretype$addMember(member)
     }
@@ -81,7 +81,7 @@ handle_dictionary_df <- function(config, source){
       config$logger.error(errMsg)
       stop(errMsg)
     }
-    register_to_fetch <- geoflow_register$new(
+    register_to_fetch <- geoflow::geoflow_register$new(
       id = handler, 
       def = "", 
       fun = fun

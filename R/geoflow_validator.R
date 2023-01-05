@@ -942,7 +942,7 @@ geoflow_validator_contacts <- R6Class("geoflow_validator_contacts",
       initialize = function(source){
         valid_columns <- c("Identifier", "Email", "OrganizationName", "PositionName", "LastName", "FirstName",
                               "PostalAddress", "PostalCode", "City", "Country", "Voice", "Facsimile", "WebsiteUrl", "WebsiteName")
-        super$initialize("contact", valid_columns, source)
+        super$initialize(model = "contact", valid_columns = valid_columns, source = source)
       }
     )
 )
@@ -961,7 +961,7 @@ geoflow_validator_entities <- R6Class("geoflow_validator_entities",
     initialize = function(source){
       valid_columns <- c("Identifier", "Title", "Description", "Subject", "Creator", "Date", "Type", "Language", 
                             "SpatialCoverage", "TemporalCoverage", "Format", "Relation", "Rights", "Provenance", "Data")
-      super$initialize("entity", valid_columns, source)
+      super$initialize(model = "entity", valid_columns = valid_columns, source = source)
     }
   )
 )

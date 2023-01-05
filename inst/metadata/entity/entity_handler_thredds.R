@@ -62,7 +62,7 @@ handle_entities_thredds <- function(config, source){
     #relations
     
     #Thredds
-    new_thredds_link <- geoflow_relation$new()
+    new_thredds_link <- geoflow::geoflow_relation$new()
     new_thredds_link$setKey("http")
     new_thredds_link$setName(dataset)
     new_thredds_link$setDescription(paste0(entity$titles[["title"]]," - Thredds Catalog"))
@@ -73,7 +73,7 @@ handle_entities_thredds <- function(config, source){
     http<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="HTTPServer") thredds$list_services()[[x]]["base"]))[1]
     if(!is.null(http)){
       http_uri<-paste0(base_uri,http,data$url)
-      new_data_link <- geoflow_relation$new()
+      new_data_link <- geoflow::geoflow_relation$new()
       new_data_link$setKey("http")
       new_data_link$setName(dataset)
       new_data_link$setDescription(paste0(entity$titles[["title"]]," - Data"))
@@ -120,7 +120,7 @@ handle_entities_thredds <- function(config, source){
             thumbnails<-rbind(thumbnails,imgScoring)
           }
           #add wms relation
-          new_wms <- geoflow_relation$new()
+          new_wms <- geoflow::geoflow_relation$new()
           new_wms$setKey("wms130")
           new_wms$setName(layername)
           new_wms$setDescription(title)
@@ -133,7 +133,7 @@ handle_entities_thredds <- function(config, source){
         thumbnails<-thumbnails[order(thumbnails$score, decreasing = T),]
         for(i in 1:nrow(thumbnails)){
           thumbnail<-thumbnails[i,]
-          new_thumbnail <- geoflow_relation$new()
+          new_thumbnail <- geoflow::geoflow_relation$new()
           new_thumbnail$setKey("thumbnail")
           new_thumbnail$setName(thumbnail$layername)
           new_thumbnail$setDescription(paste0(thumbnail$title," [",thumbnail$layername,"]", " - Layer Overview",if(i==1)" - Pretty" else ""))
@@ -149,7 +149,7 @@ handle_entities_thredds <- function(config, source){
     # wcs<-unlist(sapply(names(thredds$list_services()), function(x) if(thredds$list_services()[[x]]["serviceType"]=="WCS") thredds$list_services()[[x]]["base"]))
     # if(!is.null(wcs)){
     #   wcs_uri<-paste0(base_uri,wcs,data$url,"?service=WCS")
-    #   new_wcs <- geoflow_relation$new()
+    #   new_wcs <- geoflow::geoflow_relation$new()
     #   new_wcs$setKey("wcs")
     #   new_wcs$setName(layername)
     #   new_wcs$setDescription(entity$titles[["title"]])

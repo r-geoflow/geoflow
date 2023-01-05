@@ -25,7 +25,7 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
     config$logger.info(sprintf("Creating entity (%s out of %s) from Dataverse dataset with DOI '%s'", i, nrow(results), ds_doi))
     
     #create entity
-    entity <- geoflow_entity$new()
+    entity <- geoflow::geoflow_entity$new()
     #entity Identifier
     entity$setIdentifier("id", ds_doi)
     entity$setIdentifier("doi", ds_doi)
@@ -52,7 +52,7 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
         subject <- subjects[[i]]
         keywords <- keywords[[i]]$keywordValue$value
         
-        subj <- geoflow_subject$new()
+        subj <- geoflow::geoflow_subject$new()
         subj$setKey(subject)
         subj$setName(subject)
         for(keyword in keywords) subj$addKeyword(keyword)
@@ -61,7 +61,7 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
       #entity 'topic' subject
       topics <- citation$fields[citation$fields$typeName == "topicClassification",]$value
       for(topic in topics){
-        subj <- geoflow_subject$new()
+        subj <- geoflow::geoflow_subject$new()
         subj$setKey("topic")
         subj$addKeyword(topic)
         entity$addSubject(subj)
@@ -71,7 +71,7 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
       datasetContacts <- citation$fields[citation$fields$typeName == "datasetContact",]$value
       for(datasetContact in datasetContacts){
         datasetContactNames <- unlist(strsplit(datasetContact$datasetContactName$value," "))
-        poc <- geoflow_contact$new()
+        poc <- geoflow::geoflow_contact$new()
         poc$setIdentifier(key = "id", datasetContact$datasetContactEmail$value)
         poc$setFirstName(datasetContactNames[1])
         poc$setLastName(datasetContactNames[2])
@@ -86,7 +86,7 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
       authors <- citation$fields[citation$fields$typeName == "author",]$value
       for(author in authors){
         authorNames <- unlist(strsplit(author$authorName$value, ", "))
-        author_c <- geoflow_contact$new()
+        author_c <- geoflow::geoflow_contact$new()
         author_c$setFirstName(authorNames[2])
         author_c$setLastName(authorNames[1])
         author_c$setRole("author")
@@ -96,7 +96,7 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
       contribs <- citation$fields[citation$fields$typeName == "contributor",]$value
       for(contrib in contribs){
         contribNames <- unlist(strsplit(contrib$contributorName$value, ", "))
-        contrib_c <- geoflow_contact$new()
+        contrib_c <- geoflow::geoflow_contact$new()
         contrib_c$setFirstName(contribNames[2])
         contrib_c$setLastName(contribNames[1])
         contrib_c$setRole("contributor")
@@ -106,7 +106,7 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
       producers <- citation$fields[citation$fields$typeName == "producer",]$value
       for(producer in producers){
         producerNames <- unlist(strsplit(producer$producerName$value, ", "))
-        producer_c <- geoflow_contact$new()
+        producer_c <- geoflow::geoflow_contact$new()
         producer_c$setFirstName(producerNames[2])
         producer_c$setLastName(producerNames[1])
         producer_c$setRole("processor")
@@ -116,7 +116,7 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
       #TODO related material
       
       #license / terms of use
-      rights <- geoflow_right$new()
+      rights <- geoflow::geoflow_right$new()
       if(ds$termsOfUse == "license") if(ds$license != "NONE"){
         rights$setKey("useConstraint", ds$termsOfUse)
       }
@@ -142,7 +142,7 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
     
     #data
     if(nrow(ds$files)>0){
-      data <- geoflow_data$new()
+      data <- geoflow::geoflow_data$new()
       data$setAccess("dataverse")
       data$source <- lapply(1:nrow(ds$files), function(i){
         ds_file <- ds$files[i,]

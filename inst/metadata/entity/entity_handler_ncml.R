@@ -76,7 +76,7 @@ handle_entities_ncml <- function(config, source, handle = TRUE){
   }
   
   entities<-list()
-  entity <- geoflow_entity$new()
+  entity <- geoflow::geoflow_entity$new()
   source_name<-source
   source <- getNCML(source)
   if(!handle) return(source)
@@ -132,14 +132,14 @@ handle_entities_ncml <- function(config, source, handle = TRUE){
                   "institution"="dataCenter"
       )
       thesaurus<-if(paste0(subject,"_vocabulary") %in% names(attr)){attr[paste0(subject,"_vocabulary")]$value }else{""}
-      subject_obj <- geoflow_subject$new(str = paste0(key,"[",thesaurus,"]:",keywords))
+      subject_obj <- geoflow::geoflow_subject$new(str = paste0(key,"[",thesaurus,"]:",keywords))
       entity$addSubject(subject_obj)
     }
   }
   
   #contacts
   if(!is.null(attr$creator_name$value)){
-    contact_obj <- geoflow_contact$new()
+    contact_obj <- geoflow::geoflow_contact$new()
     contact_obj$setRole("owner")
     contact_obj$setLastName(attr$creator_name$value)
     contact_obj$setOrganizationName(attr$creator_institution$value)
@@ -147,7 +147,7 @@ handle_entities_ncml <- function(config, source, handle = TRUE){
     contact_obj$setWebsiteUrl(attr$creator_url$value)
     entity$addContact(contact_obj) 
     
-    contact_obj <- geoflow_contact$new()
+    contact_obj <- geoflow::geoflow_contact$new()
     contact_obj$setRole("metadata")
     contact_obj$setLastName(attr$creator_name$value)
     contact_obj$setOrganizationName(attr$creator_institution$value)
@@ -157,7 +157,7 @@ handle_entities_ncml <- function(config, source, handle = TRUE){
   }
   
   if(!is.null(attr$publisher_name)){
-    contact_obj <- geoflow_contact$new()
+    contact_obj <- geoflow::geoflow_contact$new()
     contact_obj$setRole("publisher")
     contact_obj$setLastName(attr$publisher_name$value)
     contact_obj$setOrganizationName(attr$publisher_institution$value)
@@ -203,23 +203,23 @@ handle_entities_ncml <- function(config, source, handle = TRUE){
   
   #rights
   if(!is.null(attr$license$value)){
-    right_obj <- geoflow_right$new(str = paste0("license:",attr$license$value))
+    right_obj <- geoflow::geoflow_right$new(str = paste0("license:",attr$license$value))
     entity$addRight(right_obj)
   }
   
   #formats
-  format_obj <- geoflow_format$new(str = "resource:application/x-netcdf")
+  format_obj <- geoflow::geoflow_format$new(str = "resource:application/x-netcdf")
   entity$addFormat(format_obj)
   
   #provenance
   #No information available 
   
   #data
-  data_obj <- geoflow_data$new()
+  data_obj <- geoflow::geoflow_data$new()
   
   #variables
   variables = lapply(setdiff(names(source$variables),names(source$dimensions)), function(x){
-    #TODO in future create a geoflow_variable class to handle more info (eg. min/max, type, domain eg. physicalMeasurement, etc)
+    #TODO in future create a geoflow::geoflow_variable class to handle more info (eg. min/max, type, domain eg. physicalMeasurement, etc)
     var = source$var[[x]]
     outvar <- x
     var_attrs <- var$attributes
@@ -291,7 +291,7 @@ handle_entities_ncml <- function(config, source, handle = TRUE){
         value=NULL
       )
     }
-    dimension_obj<-geoflow_dimension$new()
+    dimension_obj<-geoflow::geoflow_dimension$new()
     dimension_obj$setLongName(source$variables[[dim]]$attributes$long_name$value)
     dimension_obj$setMinValue(source$variables[[dim]]$attributes$valid_min$value)
     dimension_obj$setMaxValue(source$variables[[dim]]$attributes$valid_max$value)
