@@ -54,14 +54,14 @@ jobs:
       #--------------------------
       #R Set-up
       - name: Set up R ${{ matrix.config.r }}
-        uses: r-lib/actions/setup-r@v1
+        uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
       #Install dependencies
       - name: Install dependencies
-        uses: r-lib/actions/setup-r-dependencies@v1
+        uses: r-lib/actions/setup-r-dependencies@v2
       #Check R Package
       - name: Check R package
         uses: r-lib/actions/check-r-package@check-r-package
