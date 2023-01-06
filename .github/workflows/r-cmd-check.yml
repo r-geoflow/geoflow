@@ -64,6 +64,7 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
       #Check R Package
       - name: Check R package
-        uses: r-lib/actions/check-r-package@check-r-package
+        uses: r-lib/actions/check-r-package@v2
         with:
+          upload-snapshots: true
           artifact-name: geoflow_r-${{ matrix.config.r }}_${{ matrix.config.os }}-results
