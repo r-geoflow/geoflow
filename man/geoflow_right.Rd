@@ -20,7 +20,7 @@ geoflow_right
 \dontrun{
   right <- geoflow_right$new()
   right$setKey("use")
-  right$setValue("No restrictions")
+  right$setValues("No restrictions")
 }
 
 }
@@ -33,7 +33,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \describe{
 \item{\code{key}}{right key}
 
-\item{\code{value}}{right value}
+\item{\code{values}}{right values}
 }
 \if{html}{\out{</div>}}
 }
@@ -42,7 +42,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \itemize{
 \item \href{#method-geoflow_right-new}{\code{geoflow_right$new()}}
 \item \href{#method-geoflow_right-setKey}{\code{geoflow_right$setKey()}}
-\item \href{#method-geoflow_right-setValue}{\code{geoflow_right$setValue()}}
+\item \href{#method-geoflow_right-setValues}{\code{geoflow_right$setValues()}}
 \item \href{#method-geoflow_right-clone}{\code{geoflow_right$clone()}}
 }
 }
@@ -52,13 +52,15 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Method \code{new()}}{
 Initializes an object of class \link{geoflow_right}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_right$new(str = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_right$new(str = NULL, kvp = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{str}}{character string to initialize from using key-based syntax}
+
+\item{\code{kvp}}{an object of class \link{geoflow_kvp}}
 }
 \if{html}{\out{</div>}}
 }
@@ -81,18 +83,18 @@ Sets key
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_right-setValue"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_right-setValue}{}}}
-\subsection{Method \code{setValue()}}{
-Sets value
+\if{html}{\out{<a id="method-geoflow_right-setValues"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_right-setValues}{}}}
+\subsection{Method \code{setValues()}}{
+Sets values
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_right$setValue(value)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_right$setValues(values)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{value}}{value}
+\item{\code{values}}{values}
 }
 \if{html}{\out{</div>}}
 }
