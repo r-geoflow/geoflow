@@ -26,6 +26,7 @@ Depends: R (>= 3.3)
 Imports:
   R6, 
   methods,
+  dotenv,
   httr,
   jsonlite,
   XML,
