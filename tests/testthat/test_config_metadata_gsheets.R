@@ -31,7 +31,7 @@ test_that("debug",{
   expect_equal(names(DEBUG), c("config", "entity"))
   expect_is(DEBUG$config, "list")
   expect_is(DEBUG$entity, "geoflow_entity")
-  expect_equal(DEBUG$entity$identifiers[["id"]], "my-geoflow-record1")
+  expect_equal(DEBUG$entity$identifiers[["id"]], "my-geoflow-record")
   
 })
 

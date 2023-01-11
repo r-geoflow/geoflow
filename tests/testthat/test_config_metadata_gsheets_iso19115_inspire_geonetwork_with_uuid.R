@@ -51,7 +51,7 @@ test_that("execute",{
   geonetwork <- config$software$output$geonetwork
   
   entity_dirs <- list.dirs(path = file.path(EXEC, "entities"), full.names = F,recursive = F)
-  expect_equal(entity_dirs, c("my-geoflow-record1", "my-geoflow-record2"))
+  expect_equal(entity_dirs, c("my-geoflow-record", "my-geoflow-record-i18n"))
   for(entity_dir in entity_dirs){
     entity_resource_dirs <- list.dirs(path = file.path(EXEC, "entities", entity_dir), full.names = F,recursive = F)
     expect_equal(entity_resource_dirs, c("data", "metadata"))
