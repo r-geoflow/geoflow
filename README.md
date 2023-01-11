@@ -38,7 +38,8 @@ Many thanks to the following organizations that have provided fundings for stren
 <br>
 <div style="float:left;">
   <a href="http://www.cnrs.fr"><img src="http://www.cnrs.fr/themes/custom/cnrs/logo.svg" height=100 width=100/></a>
-  <a href="https://inee.cnrs.fr/fr/zones-ateliers"><img src="https://inee.cnrs.fr/sites/institut_inee/files/inline-images/logo-za_0_0.jpg" height=75 width=150/></a>
+  <a href="https://inee.cnrs.fr/fr/zones-ateliers"><img src="https://inee.cnrs.fr/sites/institut_inee/files/inline-images/logo-za_0_0.jpg" height=100 width=200/></a>
+  <a href="https://letg.cnrs.fr"><img height=100 width=50 src="https://letg.cnrs.fr/plugins/letg/images/letg.png"></a>
 </div>
 
 The following projects have contributed to strenghten ``geoflow``:
