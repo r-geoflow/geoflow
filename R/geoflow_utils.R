@@ -135,15 +135,15 @@ extract_kvp <- function(str){
   return(geoflow_kvp$new(key = key, values = values, locale = locale))
 }
 
-#' @name extract_kvp
-#' @aliases extract_kvp
-#' @title extract_kvp
+#' @name extract_kvps
+#' @aliases extract_kvps
+#' @title extract_kvps
 #' @description \code{extract_kvp} parses a string into a key value pair represented by
 #' a \code{geoflow_kvp} object.
 #'
-#' @usage extract_kvps(strs)
+#' @usage extract_kvps(strs, collapse)
 #'                 
-#' @param str a string as object of class \code{character}
+#' @param strs a string as object of class \code{character}
 #' @param collapse collapse by. Default is \code{NULL}
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
