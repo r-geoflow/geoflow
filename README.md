@@ -38,12 +38,13 @@ Many thanks to the following organizations that have provided fundings for stren
 <br>
 <div style="float:left;">
   <a href="http://www.cnrs.fr"><img src="http://www.cnrs.fr/themes/custom/cnrs/logo.svg" height=100 width=100/></a>
-  <a href="https://inee.cnrs.fr/fr/zones-ateliers"><img src="https://inee.cnrs.fr/sites/institut_inee/files/inline-images/logo-za_0_0.jpg" height=75 width=150/></a>
+  <a href="https://inee.cnrs.fr/fr/zones-ateliers"><img src="https://inee.cnrs.fr/sites/institut_inee/files/inline-images/logo-za_0_0.jpg" height=100 width=200/></a>
+  <a href="https://letg.cnrs.fr"><img height=100 width=50 src="https://letg.cnrs.fr/plugins/letg/images/letg.png"></a>
 </div>
 
 The following projects have contributed to strenghten ``geoflow``:
 
-<a href="https://blue-cloud.org/"><img height=50 width=150 src="https://blue-cloud.org/sites/all/themes/arcadia/logo.png"/></a>
+<a href="https://www.blue-cloud.org"><img height=100 width=300 src="https://hackathon.blue-cloud.org/wp-content/uploads/2021/11/Blue-cloud_extended_color.png"/></a>
 
 _Blue-Cloud has received funding from the European Union's Horizon programme call BG-07-2019-2020, topic: [A] 2019 - Blue Cloud services, Grant Agreement No.862409._
 
