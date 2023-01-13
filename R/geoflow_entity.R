@@ -1022,6 +1022,9 @@ geoflow_entity <- R6Class("geoflow_entity",
                    if(!is.null(cov.crs$code)) if(!is.na(cov.crs$code)){
                      data_srids <<- c(data_srids, as.integer(cov.crs$code))
                    }
+                   #dynamic spatial extent
+                   config$logger.info("Overwriting entity bounding box with Geotiff bounding box")
+                   if(!skipDynamicBbox) self$setSpatialBbox(data = cov.data)
                    
                  }else{
                    warnMsg <- sprintf("Cannot read GeoTIFF data source '%s'. Dynamic metadata computation aborted!", trgGeotiff)
