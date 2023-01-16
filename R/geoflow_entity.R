@@ -277,7 +277,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       #convert spatial_bbox in case srid != 4326 (WGS 84)
       if(is.null(self$spatial_bbox)) return(NULL)
       geo_bbox <- self$spatial_bbox
-      if(self$srid != 4326){
+      if(!is.null(self$srid)) if(self$srid != 4326){
         #transform min coords
         sp_bbox_min <- sf::st_sf(sf::st_sfc(sf::st_point(c(self$spatial_bbox$xmin, self$spatial_bbox$ymin)), crs = self$srid))
         sp_bbox_min_new <- sf::st_transform(sp_bbox_min, crs = 4326)
