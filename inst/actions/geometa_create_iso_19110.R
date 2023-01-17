@@ -28,7 +28,7 @@ function(action, entity, config){
   fcIdentifier <- paste0(entity$identifiers[["id"]],"_dsd")
   #produce feature catalogue
   fc <- ISOFeatureCatalogue$new(uuid = fcIdentifier)
-  fc$setName(paste0(entity$title, " - Feature Catalogue"))
+  fc$setName(paste0(entity$titles[["title"]], " - Feature Catalogue"))
   fc$addFieldOfApplication("Open Science")
   fc$addFieldOfApplication("FAIR")
   versionDate <- as.POSIXct(Sys.time())
