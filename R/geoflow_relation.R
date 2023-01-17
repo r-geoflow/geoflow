@@ -16,6 +16,7 @@
 #'   relation <- geoflow_relation$new()
 #'   relation$setKey("wms")
 #'   relation$setLink("http://somelink/wms")
+#'   relation$setMimeType("application/xml")
 #'   relation$setName("layername")
 #'   relation$setDescription("layer description")
 #' }
@@ -28,6 +29,8 @@ geoflow_relation <- R6Class("geoflow_relation",
    key = NULL,
    #'@field link relation link
    link = NULL,
+   #'@field mimeType relation mime
+   mimeType = NULL,
    #'@field name relation name
    name = NULL,
    #'@field description relation name
@@ -44,7 +47,14 @@ geoflow_relation <- R6Class("geoflow_relation",
        description <- attr(name, "description")
        attr(name, "uri") <- NULL
        attr(name, "description") <- NULL
-       self$setLink(link)
+       if(!is.null(link)){
+          self$setLink(link)
+          req = try(httr::HEAD(link), silent = TRUE)
+          mimetype = httr::headers(req)[["Content-Type"]]
+          if(!is.null(mimetype)){
+             self$setMimeType(mimetype)
+          }
+       }
        self$setName(name)
        self$setDescription(description)
      }
@@ -60,6 +70,12 @@ geoflow_relation <- R6Class("geoflow_relation",
    #'@param link link
    setLink = function(link){
      self$link <- link
+   },
+   
+   #'@description Set mime type
+   #'@param mimeType mime type
+   setMimeType = function(mimeType){
+      self$mimeType = mimeType
    },
    
    #'@description Set name

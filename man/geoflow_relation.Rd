@@ -21,6 +21,7 @@ geoflow_relation
   relation <- geoflow_relation$new()
   relation$setKey("wms")
   relation$setLink("http://somelink/wms")
+  relation$setMimeType("application/xml")
   relation$setName("layername")
   relation$setDescription("layer description")
 }
@@ -37,6 +38,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{link}}{relation link}
 
+\item{\code{mimeType}}{relation mime}
+
 \item{\code{name}}{relation name}
 
 \item{\code{description}}{relation name}
@@ -49,6 +52,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_relation-new}{\code{geoflow_relation$new()}}
 \item \href{#method-geoflow_relation-setKey}{\code{geoflow_relation$setKey()}}
 \item \href{#method-geoflow_relation-setLink}{\code{geoflow_relation$setLink()}}
+\item \href{#method-geoflow_relation-setMimeType}{\code{geoflow_relation$setMimeType()}}
 \item \href{#method-geoflow_relation-setName}{\code{geoflow_relation$setName()}}
 \item \href{#method-geoflow_relation-setDescription}{\code{geoflow_relation$setDescription()}}
 \item \href{#method-geoflow_relation-clone}{\code{geoflow_relation$clone()}}
@@ -101,6 +105,23 @@ Set link
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{link}}{link}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_relation-setMimeType"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_relation-setMimeType}{}}}
+\subsection{Method \code{setMimeType()}}{
+Set mime type
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setMimeType(mimeType)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{mimeType}}{mime type}
 }
 \if{html}{\out{</div>}}
 }

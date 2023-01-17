@@ -1265,6 +1265,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                                           config$software$output$geoserver_config$parameters$url, 
                                           config$software$output$geoserver_config$properties$workspace,
                                           layername))
+              new_wfs_gml$setMimeType("text/xml; subtype=gml/2.1.2")
               self$addRelation(new_wfs_gml)
               #wfs (GeoJSON)
               new_wfs_geojson <- geoflow_relation$new()
@@ -1275,6 +1276,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                                               config$software$output$geoserver_config$parameters$url, 
                                               config$software$output$geoserver_config$properties$workspace,
                                               layername))
+              new_wfs_geojson$setMimeType("application/json;charset=UTF-8")
               self$addRelation(new_wfs_geojson)
               #wfs (ESRI Shapefile)
               new_wfs_shp <- geoflow_relation$new()
@@ -1285,6 +1287,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                                           config$software$output$geoserver_config$parameters$url, 
                                           config$software$output$geoserver_config$properties$workspace,
                                           layername))
+              new_wfs_shp$setMimeType("application/zip")
               self$addRelation(new_wfs_shp)
               #CSV
               new_wfs_csv <- geoflow_relation$new()
@@ -1295,6 +1298,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                                           config$software$output$geoserver_config$parameters$url, 
                                           config$software$output$geoserver_config$properties$workspace,
                                           layername))
+              new_wfs_csv$setMimeType("text/csv;charset=UTF-8")
               self$addRelation(new_wfs_csv)
             }else{
               config$logger.warn("Skip enriching entity with OGC WFS download links")
@@ -1329,6 +1333,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                                           config$software$output$geoserver_config$parameters$url, 
                                           config$software$output$geoserver_config$properties$workspace,
                                           layername))
+              new_wcs_geotiff$setMimeType("image/tiff")
               self$addRelation(new_wcs_geotiff)
             }else{
               config$logger.warn(sprintf("Skip enriching entity with OGC WCS download links for layer = '%s'", layername))

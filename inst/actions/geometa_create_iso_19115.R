@@ -790,7 +790,18 @@ function(action, entity, config){
     for(http_relation in http_relations){
       or <- ISOOnlineResource$new()
       or$setLinkage(http_relation$link)
-      or$setName(http_relation$name)
+      
+      mimeType <- http_relation$mimeType
+      if(is.null(mimeType) && any(sapply(c("wms", "wfs", "wcs"), function(x){startsWith(http_relation$key, x)}))){
+        mimeType <- "application/xml"
+      }
+      name = http_relation$name
+      if(!is.null(mimeType)){
+        name = ISOMimeFileType$buildFrom(mimeType)
+        if(is.null(name)) name = ISOMimeFileType$new(type = mimeType, name = http_relation$name)
+        name$setName(http_relation$name)
+      }
+      or$setName(name)
       or$setDescription(http_relation$description)
       protocol <- switch(http_relation$key,
                          "http" = "WWW:LINK-1.0-http--link",
