@@ -44,10 +44,13 @@ Many thanks to the following organizations that have provided fundings for stren
 
 The following projects have contributed to strenghten ``geoflow``:
 
-<a href="https://www.blue-cloud.org"><img height=100 width=300 src="https://hackathon.blue-cloud.org/wp-content/uploads/2021/11/Blue-cloud_extended_color.png"/></a>
+* **Blue-Cloud** _Blue-Cloud has received funding from the European Union's Horizon programme call BG-07-2019-2020, topic: [A] 2019 - Blue Cloud services, Grant Agreement No.862409._ 
 
-_Blue-Cloud has received funding from the European Union's Horizon programme call BG-07-2019-2020, topic: [A] 2019 - Blue Cloud services, Grant Agreement No.862409._
+<a href="https://www.blue-cloud.org"><img height=100 width=300 src="https://hackathon.blue-cloud.org/wp-content/uploads/2021/11/Blue-cloud_extended_color.png"/></a> 
 
+* **CCSAFE** 
+
+<a href="https://www6.inrae.fr/cc-safe"><img height=100 width=300 src="https://www6.inrae.fr/var/internet6_national_cc_safe/storage/images/configuration-graphique/haut/logo-cc-safe/34567-1-fre-FR/Logo-cc-safe_inra_logo.png"/></a>
 
 For geoflow sponsoring/funding new developments, enhancements, support requests, please contact me by [e-mail](mailto:eblondel.pro@gmail.com)
 
