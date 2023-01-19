@@ -50,9 +50,11 @@ geoflow_relation <- R6Class("geoflow_relation",
        if(!is.null(link)){
           self$setLink(link)
           req = try(httr::HEAD(link), silent = TRUE)
-          mimetype = httr::headers(req)[["Content-Type"]]
-          if(!is.null(mimetype)){
-             self$setMimeType(mimetype)
+          if(!is(req,"try-error")){
+             mimetype = httr::headers(req)[["Content-Type"]]
+             if(!is.null(mimetype)){
+                self$setMimeType(mimetype)
+             }
           }
        }
        self$setName(name)
