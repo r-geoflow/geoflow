@@ -46,6 +46,7 @@ function(action, entity, config){
     config$logger.info(sprintf("Successfully fetched dataverse for id '%s':", target_dataverse_id))
   }else{
     errMsg <- sprintf("Error while fetching dataverse for id '%s'. Unknown dataverse", target_dataverse_id)
+    config$logger.error(errMsg)
     stop(errMsg)
   }
   
@@ -158,7 +159,9 @@ function(action, entity, config){
   }
   
   #save Dublin Core XML to metadata folder
-  dcentry$save(file.path(getwd(), "metadata", paste0(entity$getEntityJobDirname(), "_DC.xml")))
+  xml_file <- file.path(getwd(), "metadata", paste0(entity$getEntityJobDirname(), "_DC.xml"))
+  dcentry$save(xml_file)
+  config$logger.info(sprintf("Dublin Core XML metadata file saved at '%s'", xml_file))
   
   #action (create/update) on dataverse
   doi <- entity$identifiers[["doi"]]
@@ -166,16 +169,32 @@ function(action, entity, config){
   update <- action == "UPDATE"
   out <- switch(action,
                 "CREATE" = {
-                  rec <- SWORD$createDataverseRecord(target_dataverse_id, dcentry)
-                  doi <- unlist(strsplit(rec$id, "doi:"))[2] #we need the reserved doi to add files
-                  rec
+                  config$logger.info(sprintf("Creating dataverse record in dataverse '%s'", target_dataverse_id))
+                  rec <- try(SWORD$createDataverseRecord(target_dataverse_id, dcentry))
+                  if(!is(rec, "try-error")){
+                    config$logger.info("Dataverse record successfuly created!")
+                    doi <- unlist(strsplit(rec$id, "doi:"))[2] #we need the reserved doi to add files
+                    rec
+                  }else{
+                    errMsg <- "Error while creating new dataverse record"
+                    config$logger.error(errMsg)
+                    stop(errMsg)
+                  }
                 },
                 "UPDATE" = {
                   if(update_metadata){
-                    config$logger.info(sprintf("Updating record for doi '%s'", doi))
-                    SWORD$updateDataverseRecord(target_dataverse_id, dcentry, paste0("doi:", doi))
+                    config$logger.info(sprintf("Updating dataverse record for doi '%s'", doi))
+                    rec <- try(SWORD$updateDataverseRecord(target_dataverse_id, dcentry, paste0("doi:", doi)))
+                    if(!is(rec, "try-error")){
+                      config$logger.info("Dataverse record successfuly updated!")
+                      rec
+                    }else{
+                      errMsg <- "Error while updating dataverse record"
+                      config$logger.error(errMsg)
+                      stop(errMsg)
+                    }
                   }else{
-                    config$logger.info(sprintf("Skip updating record for doi '%s' (option 'update_metadata' is FALSE)", doi))
+                    config$logger.info(sprintf("Skip updating dataverse record for doi '%s' (option 'update_metadata' is FALSE)", doi))
                     SWORD$getDataverseRecord(paste0("doi:", doi))
                   }
                 }
@@ -237,7 +256,14 @@ function(action, entity, config){
     #publish
     if(publish){
       config$logger.warn(sprintf("Dataverse: publishing record for DOI '%s'", doi))
-      SWORD$publishDataverseRecord(paste0("doi:", doi))
+      rec <- try(SWORD$publishDataverseRecord(paste0("doi:", doi)))
+      if(!is(rec,"try-error")){
+        config$logger.info("Dataverse record successfully published!")
+      }else{
+        errMsg <- "Error while publishing dataverse record"
+        config$logger.error(errMsg)
+        stop(errMsg)
+      }
     }
   }
   
