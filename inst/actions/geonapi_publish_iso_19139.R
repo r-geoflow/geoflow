@@ -152,6 +152,8 @@ function(action, entity, config){
         
       }
       
+    }else{
+      config$logger.warn(sprintf("No ISO 19115 XML metadata file to publish for entity '%s, skipping action!", entity$identifiers[["id"]]))
     }
   }
   #geometa ISO 19110
@@ -161,7 +163,11 @@ function(action, entity, config){
   if(!is.null(geometa_iso19110_action)){
     geometa_inspire <- FALSE
     metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_ISO-19110.xml"))
-    if(file.exists(metaFile)) doPublish(metaFile, geometa_inspire)
+    if(file.exists(metaFile)){
+      doPublish(metaFile, geometa_inspire)
+    }else{
+      config$logger.warn(sprintf("No ISO ISO 19110 XML metadata file to publish for entity '%s, skipping action!", entity$identifiers[["id"]]))
+    }
   }
   
   return(TRUE)
