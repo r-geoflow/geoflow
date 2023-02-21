@@ -490,7 +490,11 @@ geoflow_data <- R6Class("geoflow_data",
                 ext_data$setUploadType(sourceType)
                 if(ext_data$uploadType == "geotiff") ext_data$setSpatialRepresentationType("grid")
               }
-              ext_data$setStore(ext_data_name)
+              
+              hasStoredDeclared <- FALSE
+              if(!is.null(cfg$software$output$geoserver_config$properties$store)) hasStoredDeclared <- TRUE
+              if(!is.null(self$store)) hasStoredDeclared <- TRUE
+              if(!hasStoreDeclared) ext_data$setStore(ext_data_name)
               ext_data$setLayername(ext_data_name)
               
               if(self$styleUpload){
