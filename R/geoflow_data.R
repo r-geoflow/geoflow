@@ -492,7 +492,7 @@ geoflow_data <- R6Class("geoflow_data",
               }
               
               hasStoreDeclared <- FALSE
-              if(!is.null(cfg$software$output$geoserver_config$properties$store)) hasStoreDeclared <- TRUE
+              if(!is.null(config$software$output$geoserver_config$properties$store)) hasStoreDeclared <- TRUE
               if(!is.null(self$store)) hasStoreDeclared <- TRUE
               if(!hasStoreDeclared) ext_data$setStore(ext_data_name)
               ext_data$setLayername(ext_data_name)
