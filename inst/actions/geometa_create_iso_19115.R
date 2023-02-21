@@ -114,7 +114,7 @@ function(action, entity, config){
   md$setDateStamp(Sys.time())
   
   #locales (i18n/i10n support)
-  if(length(entity$locales)){
+  if(length(entity$locales)>0){
     for(locale in entity$locales){
       a_locale <- ISOLocale$new()
       a_locale$setId(locale)
@@ -796,7 +796,7 @@ function(action, entity, config){
         mimeType <- "application/xml"
       }
       name = http_relation$name
-      if(!is.null(mimeType)){
+      if(http_relation$key == "download") if(!is.null(mimeType)){
         name = ISOMimeFileType$buildFrom(mimeType)
         if(is.null(name)) name = ISOMimeFileType$new(type = mimeType, name = http_relation$name)
         name$setName(http_relation$name)
