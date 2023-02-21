@@ -31,11 +31,36 @@ handle_dictionary_df <- function(config, source){
       if(!is.na(defSource)){
         defSource <- geoflow::extract_kvp(paste0("str:",defSource))$values[[1]]
       }
+      
+      #memberName
+      src_membername <- geoflow::sanitize_str(ftm$MemberName)
+      memberName <- src_membername
+      if(!is.na(src_membername)){
+        if(!startsWith(src_membername, "name:")) src_membername <- paste0("name:", src_membername)
+      }
+      membernames <- if(!is.na(src_membername)) geoflow::extract_cell_components(src_membername) else list()
+      if(length(membernames)>0){
+        kvps <- geoflow::extract_kvps(membernames, collapse=",")
+        memberName <- kvps[[1]]$values
+      }
+      
+      #definition
+      src_memberdef <- geoflow::sanitize_str(ftm$Definition)
+      memberDef <- src_memberdef
+      if(!is.na(src_memberdef)){
+        if(!startsWith(src_memberdef, "def:")) src_memberdef <- paste0("def:", src_memberdef)
+      }
+      memberdefs <- if(!is.na(src_memberdef)) geoflow::extract_cell_components(src_memberdef) else list()
+      if(length(memberdefs)>0){
+        kvps <- geoflow::extract_kvps(memberdefs, collapse=",")
+        memberDef <- kvps[[1]]$values
+      }
+      
       member <- geoflow::geoflow_featuremember$new(
         type = ftm$MemberType,
         code = ftm$MemberCode,
-        name = ftm$MemberName,
-        def = ftm$Definition,
+        name = memberName, #i18n support
+        def = memberDef, #i18n support
         defSource = defSource,
         registerId = ftm$RegisterId
       )

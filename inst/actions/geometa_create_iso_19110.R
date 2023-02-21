@@ -28,14 +28,30 @@ function(action, entity, config){
   fcIdentifier <- paste0(entity$identifiers[["id"]],"_dsd")
   #produce feature catalogue
   fc <- ISOFeatureCatalogue$new(uuid = fcIdentifier)
-  fc$setName(paste0(entity$titles[["title"]], " - Feature Catalogue"))
-  fc$addFieldOfApplication("Open Science")
+  fc_title_locales <- geoflow::get_locales_from(entity$titles[["title"]])
+  if(!is.null(fc_title_locales)){
+    fc_title_locale_names <- names(fc_title_locales)
+    fc_title_locales <- lapply(fc_title_locales, function(x){paste0(x, " - Feature Catalogue")})
+    names(fc_title_locales) <- fc_title_locale_names
+  }
+  fc$setName(paste0(entity$titles[["title"]], " - Feature Catalogue"), locales = fc_title_locales)
   fc$addFieldOfApplication("FAIR")
   versionDate <- as.POSIXct(Sys.time())
   versionNumber <- format(versionDate, "%Y%m%dT%H%M%S")
   fc$setVersionNumber(versionNumber)
   fc$setVersionDate(versionDate)
   fc$setFunctionalLanguage(entity$language)
+  
+  #locales (i18n/i10n support)
+  if(length(entity$locales)>0){
+    for(locale in entity$locales){
+      a_locale <- ISOLocale$new()
+      a_locale$setId(locale)
+      a_locale$setLanguage(locale)
+      a_locale$setCharacterSet("utf8")
+      fc$addLocale(a_locale)
+    }
+  }
   
   #add scopes
   #--------------------------------------------------------------------------
@@ -77,7 +93,7 @@ function(action, entity, config){
   res$setLinkage(main_entity$websiteUrl)
   res$setName(main_entity$websiteName)
   contact$setOnlineResource(res)
-  producer$setContactInfo(contact) 
+  producer$setContactInfo(contact)
   
   orcid = main_entity$identifiers[["orcid"]]
   if(!is.null(orcid)){
