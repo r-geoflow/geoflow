@@ -27,7 +27,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   
   #file/config
   file <- tools::file_path_as_absolute(file)
-  config <- jsonlite::read_json(file)
+  config <- jsonlite::fromJSON(readLines(file))
   
   #keep the source
   config$src <- file
