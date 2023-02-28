@@ -1741,7 +1741,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           outdata <- paste0(outdata, "sourceZip:", tolower(as.character(self$data$sourceZip)), line_separator)
           outdata <- paste0(outdata, "sourceZipOnly:", tolower(as.character(self$data$sourceZipOnly)), line_separator)
           out_upload_sources <- NULL
-          if(!is.null(self$data$uploadource)){
+          if(!is.null(self$data$uploadSource)){
             for(src in self$data$uploadSource){
               src_uri <- attr(src,"uri")
               attributes(src) <- NULL
