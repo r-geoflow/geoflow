@@ -495,6 +495,25 @@ load_workflow_environment <- function(config, session = NULL){
   return(config)
 }
 
+#from dotenv internal functions - see https://github.com/gaborcsardi/dotenv/issues/11
+#dotenv_ignore_comments
+dotenv_ignore_comments <- function (lines) {
+  grep("^#", lines, invert = TRUE, value = TRUE)
+}
+#dotenv_ignore_empty_lines
+dotenv_ignore_empty_lines <- function (lines) {
+  grep("^\\s*$", lines, invert = TRUE, value = TRUE)
+}
+#dotenv_parse_dot_line
+dotenv_parse_dot_line <- function (line) {
+  match <- regexpr(line_regex, line, perl = TRUE)
+  if (match == -1) 
+    stop("Cannot parse dot-env line: ", substr(line, 1, 40), 
+         call. = FALSE)
+  as.list(extract_match(line, match)[c("key", "value")])
+}
+
+
 #' @name unload_workflow_environment
 #' @aliases unload_workflow_environment
 #' @title unload_workflow_environment
@@ -514,10 +533,10 @@ unload_workflow_environment <- function(config){
   envfile <- config$profile_config$environment$file
   if(!is.null(envfile)){
     tmp <- readLines(envfile)
-    tmp <- dotenv:::ignore_comments(tmp)
-    tmp <- dotenv:::ignore_empty_lines(tmp)
+    tmp <- dotenv_ignore_comments(tmp)
+    tmp <- dotenv_ignore_empty_lines(tmp)
     if (length(tmp) > 0){
-      tmp <- lapply(tmp, dotenv:::parse_dot_line)
+      tmp <- lapply(tmp, dotenv_parse_dot_line)
       tmp <- structure(.Data = lapply(tmp, "[[", "value"), .Names = sapply(tmp, "[[", "key"))
       
       #remove env vars based on .env file
