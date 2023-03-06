@@ -671,6 +671,21 @@ register_software <- function(){
         pwd = list(label = "Password", def = "Password for user authentication", class = "character"),
         logger = list(label = "Logger", def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)", class = "character", choices = c("INFO", "DEBUG"))
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #GEONODE CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "geonode",
+      definition = "GeoNode client powered by 'geonode4R' package",
+      packages = list("geonode4R"),
+      handler = try(geonode4R::GeoNodeManager$new, silent = TRUE),
+      arguments = list(
+        url = list(label = "URL", def = "GeoNode endpoint URL", class = "character"),
+        user = list(label = "Username", def = "Username for user authentication", class = "character"),
+        pwd = list(label = "Password", def = "Password for user authentication", class = "character"),
+        logger = list(label = "Logger", def = "Level for 'geonode4R' logger messages (NULL,INFO or DEBUG)", class = "character", choices = c("INFO", "DEBUG"))
+      )
     )
   )
   .geoflow$software <- software
