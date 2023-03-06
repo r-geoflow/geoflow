@@ -117,8 +117,11 @@ handle_entities_dataverse <- function(config, source, handle = TRUE){
       
       #license / terms of use
       rights <- geoflow::geoflow_right$new()
-      if(ds$termsOfUse == "license") if(ds$license != "NONE"){
+      if(ds$termsOfUse == "license") {
         rights$setKey("useConstraint", ds$termsOfUse)
+        if(!is.null(ds$license)) if(ds$license != "NONE") {
+          rights$setKey("license", ds$license)  
+        }
       }
       
     }
