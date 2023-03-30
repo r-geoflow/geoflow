@@ -506,6 +506,7 @@ dotenv_ignore_empty_lines <- function (lines) {
 }
 #dotenv_parse_dot_line
 dotenv_parse_dot_line <- function (line) {
+  line_regex = "^\\s*(?<export>export\\s+)?(?<key>[^=]+)=(?<q>['\"]?)(?<value>.*)\\g{q}\\s*$"
   match <- regexpr(line_regex, line, perl = TRUE)
   if (match == -1) 
     stop("Cannot parse dot-env line: ", substr(line, 1, 40), 
