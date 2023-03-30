@@ -467,6 +467,17 @@ register_actions <- function(){
       fun = source(system.file("actions", "d4storagehub4R_upload_data.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
+      id = "ocs4R-upload-data",
+      types = list("Data upload"),
+      def = "Upload data to an OCS Cloud (NextCloud/Owncloud) Workspace",
+      target = NA,
+      target_dir = NA,
+      generic_uploader = FALSE,
+      packages = list("ocs4R"),
+      available_options = list(),
+      fun = source(system.file("actions", "ocs4R_upload_data.R", package = "geoflow"))$value
+    ),
+    geoflow_action$new(
       id = "create-metadata-rmd",
       types =  list("Metadata production"),
       def = "Generate a Markdown out of a entity",

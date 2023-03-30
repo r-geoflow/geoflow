@@ -670,6 +670,9 @@ register_software <- function(){
         user = list(label = "Username", def = "Username for user authentication", class = "character"),
         pwd = list(label = "Password", def = "Password for user authentication", class = "character"),
         logger = list(label = "Logger", def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)", class = "character", choices = c("INFO", "DEBUG"))
+      ),
+      attributes = list(
+        workspace = list(label = "Workspace", def = "Cloud workspace name", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------
