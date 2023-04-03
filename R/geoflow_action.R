@@ -320,7 +320,7 @@ register_actions <- function(){
     geoflow_action$new(
       id = "geosapi-publish-ogc-services",
       types = list("Data upload", "Data publication", "Metadata publication"),
-      def = "Publish vector data to GeoServer OGC web-services (WMS/WFS/WCS)",
+      def = "Publish data to GeoServer OGC web-services (WMS/WFS/WCS)",
       target = NA,
       target_dir = NA,
       packages = list("geosapi"),
@@ -337,6 +337,16 @@ register_actions <- function(){
         enrich_with_relation_wcs_download_links = list(def = "When enabled, enrichs entity with WCS format-specific links for download purpose (applies to 'grid' only). Only GeoTIFF at now.", class = "logical", default = TRUE)
       ),
       fun = source(system.file("actions", "geosapi_publish_ogc_services.R", package = "geoflow"))$value
+    ),
+    geoflow_action$new(
+      id = "geonode4R-publish-ogc-services",
+      types = list("Data upload", "Data publication", "Metadata publication"),
+      def = "Publish data to GeoNode OGC web-services (WMS/WFS/WCS)",
+      target = NA,
+      target_dir = NA,
+      packages = list("geonode4R"),
+      available_options = list(),
+      fun = source(system.file("actions", "geonode4R_publish_ogc_services.R", package = "geoflow"))$value
     ),
     geoflow_action$new(
       id = "zen4R-deposit-record",

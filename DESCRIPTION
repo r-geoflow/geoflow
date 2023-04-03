@@ -76,4 +76,4 @@ License: MIT + file LICENSE
 URL: https://github.com/r-geoflow/geoflow
 BugReports: https://github.com/r-geoflow/geoflow
 LazyLoad: yes
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3

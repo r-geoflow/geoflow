@@ -1,12 +1,12 @@
-# test_config_metadata_gsheets_geoserver_shp.R
+# test_config_metadata_gsheets_geonode_shp.R
 # Author: Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 #
-# Description: Integration tests for config_metadata_gsheets_geoserver_shp.json workflow
+# Description: Integration tests for config_metadata_gsheets_geonode_shp.json workflow
 #=======================
 require(geoflow, quietly = TRUE)
 require(testthat)
 
-cfg_file = system.file("extdata/workflows/config_metadata_gsheets_sdi_geoserver_shp.json", package = "geoflow")
+cfg_file = system.file("extdata/workflows/config_metadata_gsheets_sdi_geonode_shp.json", package = "geoflow")
 
 #init
 test_that("init",{
@@ -45,9 +45,6 @@ test_that("execute",{
   entity_dirs <- list.dirs(path = file.path(EXEC, "entities"), full.names = F,recursive = F)
   expect_true(all(entity_dirs %in% c("my-geoflow-shapefile-record1")))
   config <- geoflow::initWorkflow(cfg_file)
-  GS <- config$software$output$geoserver
-  expect_is(GS$getWorkspace("myshp"), "GSWorkspace")
-  expect_is(GS$getDataStore("myshp", "myshpstore"), "GSShapefileDataStore")
-  expect_is(GS$getFeatureType("myshp", "myshpstore", "faoareas"), "GSFeatureType")
-  expect_is(GS$getLayer("faoareas"), "GSLayer")
+  GEONODE <- config$software$output$geonode
+  #TODO
 })

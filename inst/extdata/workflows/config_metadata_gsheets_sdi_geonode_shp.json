@@ -1,0 +1,46 @@
+{
+  "profile": {
+    "id": "my-geonode-shp-workflow",
+    "name": "My GeoNode shp workflow",
+	  "project": "Test geoflow project to publish shapefile in GeoNode",
+	  "organization": "My organization",
+	  "logos": [],
+	  "mode": "entity",
+	  "options": {
+	    "line_separator": "_\n"
+    }
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1H4tNcAzZRadVKf2BZ1C_m7DTAe22nkkXr55HCOjmLn0/edit?usp=sharing"
+      }
+    ],
+    "contacts" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1BqlXwA2fKiRuozNAQhBb_PbQVSPTCfl8_Q9rfM8E2ws/edit?usp=sharing"
+      }
+    ]
+  },
+  "software": [
+	{
+		"id": "my-geonode",
+		"type": "output",
+		"software_type": "geonode",
+		"parameters": {
+			"url": "{{GEONODE_URL}}",
+			"user": "{{GEONODE_USER}}",
+			"pwd": "{{GEONODE_PASSWORD}}",
+			"logger": "DEBUG"
+		}
+	}
+  ],
+  "actions": [
+  	{
+  	  "id": "geonode4R-publish-ogc-services",
+  	  "run": true
+  	}
+  ]
+}
