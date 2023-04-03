@@ -504,6 +504,15 @@ dotenv_ignore_comments <- function (lines) {
 dotenv_ignore_empty_lines <- function (lines) {
   grep("^\\s*$", lines, invert = TRUE, value = TRUE)
 }
+#dotenv_extract_match
+dotenv_extract_match <- function (line, match) {
+  tmp <- mapply(attr(match, "capture.start"), attr(match, "capture.length"), 
+                FUN = function(start, length) {
+                  tmp <- substr(line, start, start + length - 1)
+                })
+  names(tmp) <- attr(match, "capture.names")
+  tmp
+}
 #dotenv_parse_dot_line
 dotenv_parse_dot_line <- function (line) {
   line_regex = "^\\s*(?<export>export\\s+)?(?<key>[^=]+)=(?<q>['\"]?)(?<value>.*)\\g{q}\\s*$"
@@ -511,9 +520,8 @@ dotenv_parse_dot_line <- function (line) {
   if (match == -1) 
     stop("Cannot parse dot-env line: ", substr(line, 1, 40), 
          call. = FALSE)
-  as.list(extract_match(line, match)[c("key", "value")])
+  as.list(dotenv_extract_match(line, match)[c("key", "value")])
 }
-
 
 #' @name unload_workflow_environment
 #' @aliases unload_workflow_environment
