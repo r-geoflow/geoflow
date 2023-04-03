@@ -48,6 +48,6 @@ test_that("execute",{
   GS <- config$software$output$geoserver
   expect_is(GS$getWorkspace("myshp"), "GSWorkspace")
   expect_is(GS$getDataStore("myshp", "myshpstore"), "GSShapefileDataStore")
-  expect_is(GS$getFeatureType("myshp", "myshpstore", "faoareas"), "GSFeatureType")
-  expect_is(GS$getLayer("faoareas"), "GSLayer")
+  expect_is(GS$getFeatureType("myshp", "myshpstore", "shapefile1"), "GSFeatureType")
+  expect_is(GS$getLayer("shapefile1"), "GSLayer")
 })
