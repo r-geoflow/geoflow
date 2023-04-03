@@ -13,6 +13,7 @@ function(action, entity, config){
     stop(errMsg)
   }
   
+  #TODO to check behavior of multiple objects on GeoNode, in principle not elegible to multi-upload
   data_objects <- list()
   if(is.null(entity$data$dir)){
     data_objects <- list(entity$data)
