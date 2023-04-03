@@ -12,7 +12,8 @@ workflows - List of actions and softwares
 | [**geometa-create-iso-19110**](#geometa-create-iso-19110)<br>               | Metadata production                                              | Produce an ISO 19110/19139 metadata object                                 | entity | metadata   | FALSE         | geometa                  |
 | [**ows4R-publish-iso-19139**](#ows4R-publish-iso-19139)<br>                 | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol     | NA     | NA         | FALSE         | ows4R                    |
 | [**geonapi-publish-iso-19139**](#geonapi-publish-iso-19139)<br>             | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API        | NA     | NA         | FALSE         | geonapi                  |
-| [**geosapi-publish-ogc-services**](#geosapi-publish-ogc-services)<br>       | Data upload,Data publication,Metadata publication                | Publish vector data to GeoServer OGC web-services (WMS/WFS/WCS)            | NA     | NA         | FALSE         | geosapi                  |
+| [**geosapi-publish-ogc-services**](#geosapi-publish-ogc-services)<br>       | Data upload,Data publication,Metadata publication                | Publish data to GeoServer OGC web-services (WMS/WFS/WCS)                   | NA     | NA         | FALSE         | geosapi                  |
+| [**geonode4R-publish-ogc-services**](#geonode4R-publish-ogc-services)<br>   | Data upload,Data publication,Metadata publication                | Publish data to GeoNode OGC web-services (WMS/WFS/WCS)                     | NA     | NA         | FALSE         | geonode4R                |
 | [**zen4R-deposit-record**](#zen4R-deposit-record)<br>                       | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metadata in the Zenodo infrastructure         | job    | zenodo     | TRUE          | zen4R                    |
 | [**atom4R-dataverse-deposit-record**](#atom4R-dataverse-deposit-record)<br> | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metetadata on a Dataverse using the Sword API | job    | dataverse  | TRUE          | atom4R                   |
 | [**dataone-upload-datapackage**](#dataone-upload-datapackage)<br>           | Data upload,Data publication,Metadata publication,DOI assignment | Uploads a data package to a DataOne metacat node                           | job    | dataone    | TRUE          | mime,datapack,dataone    |
@@ -21,6 +22,7 @@ workflows - List of actions and softwares
 | [**sf-write-shp**](#sf-write-shp)<br>                                       | Data writing                                                     | Import features data and zip files                                         | entity | data       | FALSE         | sf                       |
 | [**eml-create-eml**](#eml-create-eml)<br>                                   | Metadata production                                              | Produce an EML metadata object                                             | entity | metadata   | FALSE         | EML,emld                 |
 | [**d4storagehub4R-upload-data**](#d4storagehub4R-upload-data)<br>           | Data upload                                                      | Upload data/metadata to a D4Science Workspace                              | NA     | NA         | FALSE         | d4storagehub4R           |
+| [**ocs4R-upload-data**](#ocs4R-upload-data)<br>                             | Data upload                                                      | Upload data to an OCS Cloud (NextCloud/Owncloud) Workspace                 | NA     | NA         | FALSE         | ocs4R                    |
 | [**create-metadata-rmd**](#create-metadata-rmd)<br>                         | Metadata production                                              | Generate a Markdown out of a entity                                        | entity | markdown   | FALSE         | rmarkdown                |
 
 ### 1.1.1 List of geometa-create-iso-19115 options<a name= geometa-create-iso-19115 />
@@ -35,6 +37,7 @@ workflows - List of actions and softwares
 | addfeatures                               | Add entity data features - if defined - as metadata bounding polygon(s)                   | FALSE     |
 | featureid                                 | ID of entity data features used to identify bounding polygon(s) with option ‘addfeatures’ | NA        |
 | subject_geography                         | Identifier of the subject handling a Geographic coverage.                                 | geography |
+| include_service_identification            | Include service identification info metadata block                                        | FALSE     |
 | include_coverage_data_dimension_values    | Include data dimensions’s range values to coverage description                            | FALSE     |
 | include_coverage_service_dimension_values | Include ogc dimensions’s range values to coverage description                             | FALSE     |
 
@@ -58,13 +61,13 @@ workflows - List of actions and softwares
 
 ### 1.1.4 List of geonapi-publish-iso-19139 options<a name= geonapi-publish-iso-19139 />
 
-| name               | definition                                                                                 | default               |
-|:-------------------|:-------------------------------------------------------------------------------------------|:----------------------|
-| geometa_inspire    | Validates ISO 19139 metadata with INSPIRE reference validator before publication           | FALSE                 |
-| privileges         | Geonetwork privileges to set for the metadata to be published                              | view,dynamic,featured |
-| group              | Geonetwork user group to which the metadata should be associated                           | 2                     |
-| category           | Category of metadata resources to which the metadata record should be associated           | datasets              |
-| publish_thumbnails | Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews | TRUE                  |
+| name               | definition                                                                                 | default                        |
+|:-------------------|:-------------------------------------------------------------------------------------------|:-------------------------------|
+| geometa_inspire    | Validates ISO 19139 metadata with INSPIRE reference validator before publication           | FALSE                          |
+| privileges         | Geonetwork privileges to set for the metadata to be published                              | view,dynamic,download,featured |
+| group              | Geonetwork user group to which the metadata should be associated                           | 2                              |
+| category           | Category of metadata resources to which the metadata record should be associated           | datasets                       |
+| publish_thumbnails | Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews | TRUE                           |
 
 ### 1.1.5 List of geosapi-publish-ogc-services options<a name= geosapi-publish-ogc-services />
 
@@ -81,7 +84,11 @@ workflows - List of actions and softwares
 | enrich_with_relation_wcs                | When enabled, enrichs entity with a base WCS link relation (applies to ‘grid’ only)                                                         | TRUE    |
 | enrich_with_relation_wcs_download_links | When enabled, enrichs entity with WCS format-specific links for download purpose (applies to ‘grid’ only). Only GeoTIFF at now.             | TRUE    |
 
-### 1.1.6 List of zen4R-deposit-record options<a name= zen4R-deposit-record />
+### 1.1.6 List of geonode4R-publish-ogc-services options<a name= geonode4R-publish-ogc-services />
+
+*No options available for this action*
+
+### 1.1.7 List of zen4R-deposit-record options<a name= zen4R-deposit-record />
 
 | name                   | definition                                                                                  | default    |
 |:-----------------------|:--------------------------------------------------------------------------------------------|:-----------|
@@ -96,7 +103,7 @@ workflows - List of actions and softwares
 | update_files           | For an existing deposit, indicates if files should be updated                               | TRUE       |
 | communities            | One or more communities to which the deposit should be associated                           | NA         |
 
-### 1.1.7 List of atom4R-dataverse-deposit-record options<a name= atom4R-dataverse-deposit-record />
+### 1.1.8 List of atom4R-dataverse-deposit-record options<a name= atom4R-dataverse-deposit-record />
 
 | name             | definition                                                                                  | default |
 |:-----------------|:--------------------------------------------------------------------------------------------|:--------|
@@ -106,11 +113,11 @@ workflows - List of actions and softwares
 | update_metadata  | For an existing deposit, indicates if metadata elements should be updated                   | TRUE    |
 | update_files     | For an existing deposit, indicates if files should be updated                               | TRUE    |
 
-### 1.1.8 List of dataone-upload-datapackage options<a name= dataone-upload-datapackage />
+### 1.1.9 List of dataone-upload-datapackage options<a name= dataone-upload-datapackage />
 
 *No options available for this action*
 
-### 1.1.9 List of sf-write-generic options<a name= sf-write-generic />
+### 1.1.10 List of sf-write-generic options<a name= sf-write-generic />
 
 | name          | definition                                                                    | default |
 |:--------------|:------------------------------------------------------------------------------|:--------|
@@ -120,7 +127,7 @@ workflows - List of actions and softwares
 | append        | Append policy                                                                 | FALSE   |
 | chunk.size    | Size of DB upload data chunk. Default is 0L, meaning no chunking is operated. | 0       |
 
-### 1.1.10 List of sf-write-dbi options<a name= sf-write-dbi />
+### 1.1.11 List of sf-write-dbi options<a name= sf-write-dbi />
 
 | name          | definition                                                                    | default |
 |:--------------|:------------------------------------------------------------------------------|:--------|
@@ -129,24 +136,28 @@ workflows - List of actions and softwares
 | append        | Append policy                                                                 | FALSE   |
 | chunk.size    | Size of DB upload data chunk. Default is 0L, meaning no chunking is operated. | 0       |
 
-### 1.1.11 List of sf-write-shp options<a name= sf-write-shp />
+### 1.1.12 List of sf-write-shp options<a name= sf-write-shp />
 
 *No options available for this action*
 
-### 1.1.12 List of eml-create-eml options<a name= eml-create-eml />
+### 1.1.13 List of eml-create-eml options<a name= eml-create-eml />
 
 | name             | definition                                                 | default  |
 |:-----------------|:-----------------------------------------------------------|:---------|
 | subject_taxonomy | Identifier of the subject handling the Taxonomic coverage. | taxonomy |
 
-### 1.1.13 List of d4storagehub4R-upload-data options<a name= d4storagehub4R-upload-data />
+### 1.1.14 List of d4storagehub4R-upload-data options<a name= d4storagehub4R-upload-data />
 
 | name               | definition                                                                                                                  | default |
 |:-------------------|:----------------------------------------------------------------------------------------------------------------------------|:--------|
 | depositWithFiles   | Indicates if the action is uploading files                                                                                  | FALSE   |
 | otherUploadFolders | List of Folders (other than ‘data’ and ‘metadata’) to upload and which may contain files which should enrich others actions |         |
 
-### 1.1.14 List of create-metadata-rmd options<a name= create-metadata-rmd />
+### 1.1.15 List of ocs4R-upload-data options<a name= ocs4R-upload-data />
+
+*No options available for this action*
+
+### 1.1.16 List of create-metadata-rmd options<a name= create-metadata-rmd />
 
 | name          | definition                                                       | default |
 |:--------------|:-----------------------------------------------------------------|:--------|
@@ -169,12 +180,14 @@ workflows - List of actions and softwares
 | [**geoserver**](#218-geoserver)<br>                      | GeoServer REST API Client, powered by ‘geosapi’ package                   | geosapi               |
 | [**zenodo**](#219-zenodo)<br>                            | Zenodo client powered by ‘zen4R’ package                                  | zen4R                 |
 | [**sword_for_dataverse**](#2110-sword_for_dataverse)<br> | Dataverse SWORD API Client powered by ‘atom4R’ package                    | atom4R                |
-| [**dataone**](#2111-dataone)<br>                         | DataONe API Client powered by ‘dataone’ package                           | dataone               |
-| [**d4storagehub**](#2112-d4storagehub)<br>               | D4science storage hub API Client powered by ‘d4storagehub4R’ package      | d4storagehub4R        |
-| [**gbif**](#2113-gbif)<br>                               | Gbif API Client powered by ‘rgbif’ package                                | rgbif                 |
-| [**thredds**](#2114-thredds)<br>                         | Thredds data server API Client powered by ‘thredds’ package               | thredds               |
-| [**openapi**](#2115-openapi)<br>                         | OpenAPI client powered by ‘rapiclient’ package                            | rapiclient            |
-| [**ocs**](#2116-ocs)<br>                                 | Open Collaboration Services (OCS) client powered by ‘ocs4R’ package       | ocs4R                 |
+| [**dataverse**](#2111-dataverse)<br>                     | Dataverse Native API Client powered by ‘dataverse’ package                | dataverse             |
+| [**dataone**](#2112-dataone)<br>                         | DataONe API Client powered by ‘dataone’ package                           | dataone               |
+| [**d4storagehub**](#2113-d4storagehub)<br>               | D4science storage hub API Client powered by ‘d4storagehub4R’ package      | d4storagehub4R        |
+| [**gbif**](#2114-gbif)<br>                               | Gbif API Client powered by ‘rgbif’ package                                | rgbif                 |
+| [**thredds**](#2115-thredds)<br>                         | Thredds data server API Client powered by ‘thredds’ package               | thredds               |
+| [**openapi**](#2116-openapi)<br>                         | OpenAPI client powered by ‘rapiclient’ package                            | rapiclient            |
+| [**ocs**](#2117-ocs)<br>                                 | Open Collaboration Services (OCS) client powered by ‘ocs4R’ package       | ocs4R                 |
+| [**geonode**](#2118-geonode)<br>                         | GeoNode client powered by ‘geonode4R’ package                             | geonode4R             |
 
 ### 2.1.1 dbi
 
@@ -202,11 +215,11 @@ workflows - List of actions and softwares
 
 #### 2.1.2.1 List of googledrive parameters<a name= googledrive />
 
-| name  | label      | definition                                                                                                                                                                                                     |
-|:------|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| email | Email      | User email to authenticate in Google Drive                                                                                                                                                                     |
-| path  | Path       | An optional path within the Google drive repository. Default will be the root                                                                                                                                  |
-| token | User token | The user authentication token. To get your token in R: gargle::token_fetch()![credentials](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;credentials "credentials")access_token |
+| name  | label      | definition                                                                                            |
+|:------|:-----------|:------------------------------------------------------------------------------------------------------|
+| email | Email      | User email to authenticate in Google Drive                                                            |
+| path  | Path       | An optional path within the Google drive repository. Default will be the root                         |
+| token | User token | The user authentication token. To get your token in R: gargle::token_fetch()$credentials$access_token |
 
 #### 2.1.2.2 List of googledrive properties
 
@@ -339,9 +352,23 @@ workflows - List of actions and softwares
 |:----------|:-------------|:----------------------------------------------|
 | dataverse | Dataverse ID | Dataverse id where to deposit/publish records |
 
-### 2.1.11 dataone
+### 2.1.11 dataverse
 
-#### 2.1.11.1 List of dataone parameters<a name= dataone />
+#### 2.1.11.1 List of dataverse parameters<a name= dataverse />
+
+| name   | label | definition           |
+|:-------|:------|:---------------------|
+| server | URL   | Dataverse server URL |
+
+#### 2.1.11.2 List of dataverse properties
+
+| name      | label        | definition                                    |
+|:----------|:-------------|:----------------------------------------------|
+| dataverse | Dataverse ID | Dataverse id where to deposit/publish records |
+
+### 2.1.12 dataone
+
+#### 2.1.12.1 List of dataone parameters<a name= dataone />
 
 | name  | label                 | definition               |
 |:------|:----------------------|:-------------------------|
@@ -349,28 +376,28 @@ workflows - List of actions and softwares
 | y     | Member Node URL       | Member Node URL          |
 | token | User token            | User Authorization token |
 
-#### 2.1.11.2 List of dataone properties
+#### 2.1.12.2 List of dataone properties
 
 *No properties available for this software*
 
-### 2.1.12 d4storagehub
+### 2.1.13 d4storagehub
 
-#### 2.1.12.1 List of d4storagehub parameters<a name= d4storagehub />
+#### 2.1.13.1 List of d4storagehub parameters<a name= d4storagehub />
 
 | name   | label      | definition                                                           |
 |:-------|:-----------|:---------------------------------------------------------------------|
 | token  | User token | D4Science storage hub user authentication token                      |
 | logger | Logger     | Level for ‘d4storagehub4R’ logger messages (NULL, ‘INFO’ or ‘DEBUG’) |
 
-#### 2.1.12.2 List of d4storagehub properties
+#### 2.1.13.2 List of d4storagehub properties
 
 | name      | label     | definition                           |
 |:----------|:----------|:-------------------------------------|
 | workspace | Workspace | D4Science storage hub workspace name |
 
-### 2.1.13 gbif
+### 2.1.14 gbif
 
-#### 2.1.13.1 List of gbif parameters<a name= gbif />
+#### 2.1.14.1 List of gbif parameters<a name= gbif />
 
 | name  | label    | definition                             |
 |:------|:---------|:---------------------------------------|
@@ -378,26 +405,26 @@ workflows - List of actions and softwares
 | pwd   | Password | Password for Gbif authentication       |
 | email | Email    | Email address for sending notification |
 
-#### 2.1.13.2 List of gbif properties
+#### 2.1.14.2 List of gbif properties
 
 *No properties available for this software*
 
-### 2.1.14 thredds
+### 2.1.15 thredds
 
-#### 2.1.14.1 List of thredds parameters<a name= thredds />
+#### 2.1.15.1 List of thredds parameters<a name= thredds />
 
 | name   | label       | definition                       |
 |:-------|:------------|:---------------------------------|
 | x      | Catalog URL | url of top level catalog request |
 | prefix | Namespace   | the namespace to examine         |
 
-#### 2.1.14.2 List of thredds properties
+#### 2.1.15.2 List of thredds properties
 
 *No properties available for this software*
 
-### 2.1.15 openapi
+### 2.1.16 openapi
 
-#### 2.1.15.1 List of openapi parameters<a name= openapi />
+#### 2.1.16.1 List of openapi parameters<a name= openapi />
 
 | name          | label              | definition                                                     |
 |:--------------|:-------------------|:---------------------------------------------------------------|
@@ -405,13 +432,13 @@ workflows - List of actions and softwares
 | api_key_name  | Open API key name  | Name of the API key for registered uses                        |
 | api_key_value | Open API key value | Value of the API key for registered uses (typically a token)   |
 
-#### 2.1.15.2 List of openapi properties
+#### 2.1.16.2 List of openapi properties
 
 *No properties available for this software*
 
-### 2.1.16 ocs
+### 2.1.17 ocs
 
-#### 2.1.16.1 List of ocs parameters<a name= ocs />
+#### 2.1.17.1 List of ocs parameters<a name= ocs />
 
 | name   | label    | definition                                             |
 |:-------|:---------|:-------------------------------------------------------|
@@ -420,6 +447,23 @@ workflows - List of actions and softwares
 | pwd    | Password | Password for user authentication                       |
 | logger | Logger   | Level for ‘ows4R’ logger messages (NULL,INFO or DEBUG) |
 
-#### 2.1.16.2 List of ocs properties
+#### 2.1.17.2 List of ocs properties
+
+| name      | label     | definition           |
+|:----------|:----------|:---------------------|
+| workspace | Workspace | Cloud workspace name |
+
+### 2.1.18 geonode
+
+#### 2.1.18.1 List of geonode parameters<a name= geonode />
+
+| name   | label    | definition                                                 |
+|:-------|:---------|:-----------------------------------------------------------|
+| url    | URL      | GeoNode endpoint URL                                       |
+| user   | Username | Username for user authentication                           |
+| pwd    | Password | Password for user authentication                           |
+| logger | Logger   | Level for ‘geonode4R’ logger messages (NULL,INFO or DEBUG) |
+
+#### 2.1.18.2 List of geonode properties
 
 *No properties available for this software*
