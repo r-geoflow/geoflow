@@ -40,6 +40,15 @@ function(action, entity, config){
     #layername/sourcename
     layername <- if(!is.null(data_object$layername)) data_object$layername else entity$identifiers$id
     
+    #check if resources already exists
+    #-------------------------------------------------------------------------------------------------
+    resource = GEONODE$getResourceByUUID(uuid = entity$identifiers$id)
+    if(!is.null(resource)){
+      config$logger.warn(sprintf("Resource '%s' (id = %s) already exists! Deleting it...", resource$uuid, resource$pk))
+      deleted = GEONODE$deleteResource(id = resource$pk)
+      if(deleted) config$logger.warn(sprintf("Resource '%s' (id = %s) deleted!", resource$uuid, resource$pk))
+    }
+    
     #upload
     #-------------------------------------------------------------------------------------------------
     if(data_object$upload){
