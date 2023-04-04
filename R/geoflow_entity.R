@@ -1166,9 +1166,18 @@ geoflow_entity <- R6Class("geoflow_entity",
     enrichWithIdentifiers = function(config){
       geometa_action <- NULL
       actions <- list()
+      
+      #on geometa, set uuid in case geometa is run with option use_uuid is enabled / and no uuid already set
       if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geometa-create-iso-19115",x$id)>0})]
       if(length(actions)>0) geometa_action <- actions[[1]]
       if(!is.null(geometa_action)) if(geometa_action$getOption("use_uuid")) if(is.null(self$identifiers[["uuid"]])){
+        self$identifiers[["uuid"]] <- uuid::UUIDgenerate()
+      }
+      
+      #on geonode4R, set uuid in case action is run / and no uuid already set
+      if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geonode4R-publish-ogc-services",x$id)>0})]
+      if(length(actions)>0) geonode4R_action <- actions[[1]]
+      if(!is.null(geonode4R_action)) if(is.null(self$identifiers[["uuid"]])){
         self$identifiers[["uuid"]] <- uuid::UUIDgenerate()
       }
     },

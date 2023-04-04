@@ -43,7 +43,7 @@ function(action, entity, config){
     
     #check if resources already exists
     #-------------------------------------------------------------------------------------------------
-    resource = GEONODE$getResourceByUUID(uuid = entity$identifiers$id)
+    resource = GEONODE$getResourceByUUID(uuid = entity$identifiers[["uuid"]])
     if(!is.null(resource)){
       config$logger.warn(sprintf("Resource '%s' (id = %s) already exists! Deleting it...", resource$uuid, resource$pk))
       deleted = GEONODE$deleteResource(id = resource$pk)
@@ -67,8 +67,21 @@ function(action, entity, config){
           config$logger.info(sprintf("Upload file '%s' [%s] to GeoNode...", filepath, data_object$uploadType))
           files = list.files(path = "data", pattern = datasource_name, full.names = TRUE)
           files = files[!endsWith(files, ".zip")]
-          created = GEONODE$upload(files)
-          uploaded = created$success
+          dir.create("data/temp")
+          for(file in files){
+            file_ext = unlist(strsplit(file, "\\."))[2]
+            target = file.path(getwd(), "data/temp", paste0(layername, ".", file_ext))
+            file.copy(from = file, to = target, copy.mode = T)
+            if(file_ext == "xml"){
+              #post-process metadata identifier if existing to match entity uuid
+              md = geometa::readISO19139(target)
+              md$fileIdentifier <- entity$identifiers[["uuid"]]
+              md$save(target)
+            }
+          }
+          created = GEONODE$upload(files = list.files(path = "data/temp", pattern = layername, full.names = TRUE))
+          uploaded = !is.null(created$dataset)
+          unlink("data/temp",recursive = TRUE, force = TRUE)
         }else{
           errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", filepath, datasource)
           config$logger.error(errMsg)
