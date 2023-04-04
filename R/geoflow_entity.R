@@ -1165,6 +1165,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@param config geoflow config object
     enrichWithIdentifiers = function(config){
       geometa_action <- NULL
+      geonode4R_action <- NULL
       actions <- list()
       
       #on geometa, set uuid in case geometa is run with option use_uuid is enabled / and no uuid already set
