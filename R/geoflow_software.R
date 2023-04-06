@@ -494,7 +494,8 @@ register_software <- function(){
       ),
       attributes = list(
         workspace = list(label = "Workspace", def = "GeoServer workspace name", class = "character"),
-        store = list(label = "Store", def = "GeoServer data/coverage store name", class = "character")
+        store = list(label = "Store", def = "GeoServer data/coverage store name", class = "character"),
+        publicUrl = list(label = "Public URL", def = "Geoserver public URL", class = "character")
       ),
       actions = list(
         onstart = function(config, software, software_config){

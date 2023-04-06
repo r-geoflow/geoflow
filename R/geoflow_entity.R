@@ -1217,6 +1217,11 @@ geoflow_entity <- R6Class("geoflow_entity",
           layername <- if(!is.null(data_object$layername)) data_object$layername else self$identifiers$id
           config$logger.info(sprintf("Enrich entity with OGC relations for layer = '%s'", layername))
             
+          geoserver_base_url = config$software$output$geoserver_config$parameters$url
+          if(!is.null(config$software$output$geoserver_config$properties$publicUrl)){
+            geoserver_base_url = config$software$output$geoserver_config$properties$publicUrl
+          }
+          
           #Thumbnail
           if(geosapi_action$getOption("enrich_with_relation_wms_thumbnail")){
             config$logger.info(sprintf("Enrich entity with OGC WMS thumbnail for layer = '%s'", layername))
@@ -1225,7 +1230,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             new_thumbnail$setName(layername)
             new_thumbnail$setDescription(sprintf("%s - Map overview", layername))
             new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
-                                          config$software$output$geoserver_config$parameters$url, 
+                                          geoserver_base_url, 
                                           config$software$output$geoserver_config$properties$workspace,
                                           layername, paste(self$spatial_bbox,collapse=","),self$srid))
             self$relations <- c(self$relations, new_thumbnail)
@@ -1240,7 +1245,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             new_wms$setName(layername)
             new_wms$setDescription(sprintf("%s - Map access - OGC Web Map Service (WMS)",layername))
             new_wms$setLink(sprintf("%s/%s/ows?service=WMS", 
-                                    config$software$output$geoserver_config$parameters$url, 
+                                    geoserver_base_url, 
                                     config$software$output$geoserver_config$properties$workspace))
             self$addRelation(new_wms)
           }else{
@@ -1257,7 +1262,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs$setName(layername)
               new_wfs$setDescription(sprintf("%s - Data (features) access - OGC Web Feature Service (WFS)", layername))
               new_wfs$setLink(sprintf("%s/%s/ows?service=WFS", 
-                                      config$software$output$geoserver_config$parameters$url, 
+                                      geoserver_base_url, 
                                       config$software$output$geoserver_config$properties$workspace))
               self$addRelation(new_wfs)
             }else{
@@ -1272,7 +1277,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs_gml$setName(layername)
               new_wfs_gml$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - GML format", layername))
               new_wfs_gml$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s", 
-                                          config$software$output$geoserver_config$parameters$url, 
+                                          geoserver_base_url, 
                                           config$software$output$geoserver_config$properties$workspace,
                                           layername))
               new_wfs_gml$setMimeType("text/xml; subtype=gml/2.1.2")
@@ -1283,7 +1288,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs_geojson$setName(layername)
               new_wfs_geojson$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - GeoJSON format", layername))
               new_wfs_geojson$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=json", 
-                                              config$software$output$geoserver_config$parameters$url, 
+                                              geoserver_base_url, 
                                               config$software$output$geoserver_config$properties$workspace,
                                               layername))
               new_wfs_geojson$setMimeType("application/json;charset=UTF-8")
@@ -1294,7 +1299,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs_shp$setName(layername)
               new_wfs_shp$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - ESRI Shapefile format", layername))
               new_wfs_shp$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=SHAPE-ZIP", 
-                                          config$software$output$geoserver_config$parameters$url, 
+                                          geoserver_base_url, 
                                           config$software$output$geoserver_config$properties$workspace,
                                           layername))
               new_wfs_shp$setMimeType("application/zip")
@@ -1305,7 +1310,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs_csv$setName(layername)
               new_wfs_csv$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - CSV format", layername))
               new_wfs_csv$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=CSV", 
-                                          config$software$output$geoserver_config$parameters$url, 
+                                          geoserver_base_url, 
                                           config$software$output$geoserver_config$properties$workspace,
                                           layername))
               new_wfs_csv$setMimeType("text/csv;charset=UTF-8")
@@ -1324,7 +1329,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wcs$setName(layername)
               new_wcs$setDescription(sprintf("%s - Data (Coverage) access - OGC Web Coverage Service (WCS)", layername))
               new_wcs$setLink(sprintf("%s/%s/ows?service=WCS", 
-                                      config$software$output$geoserver_config$parameters$url, 
+                                      geoserver_base_url, 
                                       config$software$output$geoserver_config$properties$workspace))
               self$addRelation(new_wcs)
             }else{
@@ -1340,7 +1345,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wcs_geotiff$setName(layername)
               new_wcs_geotiff$setDescription(sprintf("%s - Data download - OGC Web Coverage Service (WCS) - GeoTIFF format", layername))
               new_wcs_geotiff$setLink(sprintf("%s/%s/ows?service=WCS&request=GetCoverage&version=2.0.1&CoverageId=%s&format=image/geotiff", 
-                                          config$software$output$geoserver_config$parameters$url, 
+                                          geoserver_base_url, 
                                           config$software$output$geoserver_config$properties$workspace,
                                           layername))
               new_wcs_geotiff$setMimeType("image/tiff")
