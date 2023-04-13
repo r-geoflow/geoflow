@@ -669,7 +669,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                          #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
                          crs_wkt <- sf.crs$wkt
                          if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                           crs_def <- terra:::.srs_describe(crs_wkt)
+                           crs_def <- terra::crs(crs_wkt, describe = TRUE)
                            if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
                              epsgcode <-crs_def$code 
                            }
@@ -735,7 +735,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                          #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
                          crs_wkt <- st_crs(sf.data)$wkt
                          if(nzchar(crs_wkt)){
-                           crs_def <- terra:::.srs_describe(crs_wkt)
+                           crs_def <- terra::crs(crs_wkt, describe = TRUE)
                            if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
                              epsgcode <-crs_def$code 
                            }
@@ -791,7 +791,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                          #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
                          crs_wkt <- sf.crs$wkt
                          if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                           crs_def <- terra:::.srs_describe(crs_wkt)
+                           crs_def <- terra::crs(crs_wkt, describe = TRUE)
                            if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
                              epsgcode <-crs_def$code 
                            }
@@ -836,7 +836,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                            #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
                            crs_wkt <- sf.crs$wkt
                            if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                             crs_def <- terra:::.srs_describe(crs_wkt)
+                             crs_def <- terra::crs(crs_wkt, describe = TRUE)
                              if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
                                epsgcode <-crs_def$code 
                              }
@@ -888,7 +888,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                            #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
                            crs_wkt <- sf.crs$wkt
                            if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                             crs_def <- terra:::.srs_describe(crs_wkt)
+                             crs_def <- terra::crs(crs_wkt, describe = TRUE)
                              if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
                                epsgcode <-crs_def$code 
                              }
@@ -962,7 +962,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                             #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
                             crs_wkt <- sf.crs$wkt
                             if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                              crs_def <- terra:::.srs_describe(crs_wkt)
+                              crs_def <- terra::crs(crs_wkt, describe = TRUE)
                               if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
                                 epsgcode <-crs_def$code 
                               }
@@ -1018,7 +1018,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                    data_object$setCoverages(cov.data)
                    
                    #dynamic srid
-                   cov.crs <- terra:::.srs_describe(cov.data@ptr$get_crs("wkt"))
+                   cov.crs <- terra::crs(cov.data@ptr$get_crs("wkt"), describe = TRUE)
                    if(!is.null(cov.crs$code)) if(!is.na(cov.crs$code)){
                      data_srids <<- c(data_srids, as.integer(cov.crs$code))
                    }
