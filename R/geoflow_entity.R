@@ -1756,9 +1756,9 @@ geoflow_entity <- R6Class("geoflow_entity",
             }
             outdata <- paste0(outdata, "source:", paste0(out_sources, collapse=","), line_separator)
           }
-          outdata <- paste0(outdata, "sourceType:", self$data$sourceType, line_separator)
-          outdata <- paste0(outdata, "sourceZip:", tolower(as.character(self$data$sourceZip)), line_separator)
-          outdata <- paste0(outdata, "sourceZipOnly:", tolower(as.character(self$data$sourceZipOnly)), line_separator)
+          if(!is.null(self$data$sourceType)) outdata <- paste0(outdata, "sourceType:", self$data$sourceType, line_separator)
+          if(!is.null(self$data$sourceZip)) outdata <- paste0(outdata, "sourceZip:", tolower(as.character(self$data$sourceZip)), line_separator)
+          if(!is.null(self$data$sourceZipOnly)) outdata <- paste0(outdata, "sourceZipOnly:", tolower(as.character(self$data$sourceZipOnly)), line_separator)
           out_upload_sources <- NULL
           if(!is.null(self$data$uploadSource)){
             for(src in self$data$uploadSource){
@@ -1772,7 +1772,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           if(!is.null(self$data$uploadType)){
             outdata <- paste0(outdata, "uploadType:", tolower(as.character(self$data$uploadType)), line_separator)
           }
-          outdata <- paste0(outdata, "upload:", tolower(as.character(self$data$upload)), line_separator)
+          if(!is.null(self$data$upload)) outdata <- paste0(outdata, "upload:", tolower(as.character(self$data$upload)), line_separator)
           
           if(!is.null(self$data$featureType)){
             outdata <- paste0(outdata, "featureType:", tolower(as.character(self$data$featureType)), line_separator)
