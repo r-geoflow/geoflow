@@ -1639,7 +1639,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           name <- subject$name
           str <- key
           #if name/uri not null, we add these information (case of an explicit thesaurus)
-          if(!is.null(subject$name)) key <- sprintf("%s[%]", key, name)
+          if(!is.null(subject$name)) key <- sprintf("%s[%s]", key, name)
           if(!is.null(subject$uri)) key <- paste(key, subject$uri, sep = "@")
           kwds <- paste0(sapply(subject$keywords, function(kwd){
             outkwd <- kwd$name
