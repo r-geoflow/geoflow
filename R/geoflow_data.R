@@ -428,6 +428,8 @@ geoflow_data <- R6Class("geoflow_data",
             }else{
               ext_data_files <- list.files(data_dir, full.names = T)
             }
+            #exclude dirs
+            ext_data_files = ext_data_files[!dir.exists(ext_data_files)]
           }else{
             if(!is.null(config)){
               #remote access through custom API accessors
@@ -473,7 +475,8 @@ geoflow_data <- R6Class("geoflow_data",
               ext_data_extension <- unlist(strsplit(ext_data_src, "\\."))[2]
               attr(ext_data_src, "uri") <- data_file
               ext_data$addSource(ext_data_src)
-              ext_data$setUploadSource(basename(data_file))
+              if(ext_data_extension %in% c("shp","gpkg")) uploadSource = paste0(ext_data_name, ".zip")
+              ext_data$setUploadSource(uploadSource)
               sourceType <- self$sourceType
               if(is.null(self$sourceType) || self$sourceType == "other"){
                 sourceType <- switch(ext_data_extension,
