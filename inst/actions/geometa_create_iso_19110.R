@@ -6,8 +6,16 @@ function(action, entity, config){
   
   ISOMetadataNamespace$GML$uri <- "http://www.opengis.net/gml/3.2"
   
+  #manage multiple sources (supposes a common data structure to expose as ISO 19110)
+  data_objects <- list()
+  if(is.null(entity$data$dir)){
+    data_objects <- list(entity$data)
+  }else{
+    data_objects <- entity$data$getData()
+  }
+  
   #features if any
-  features = entity$data$features
+  features = do.call("rbind", lapply(data_objects, function(data_object){data_object$features}))
   if(is.null(features)){
     warnMsg <- sprintf("No data features associated to entity '%s'. Skip feature catalogue creation", entity$identifiers[["id"]])
     config$logger.warn(warnMsg)
@@ -56,13 +64,13 @@ function(action, entity, config){
   #add scopes
   #--------------------------------------------------------------------------
   #-> geoflow scope
-  fc$addScope(paste0("geoflow:", entity$data$uploadType))
+  fc$addScope(paste0("geoflow:", data_objects[[1]]$uploadType))
   #-> ofv (openfairviewer) scope
   ofv_scope <- "ogc_filters"
-  if(length(entity$data$parameters)>0){
+  if(length(data_objects[[1]]$parameters)>0){
     ofv_scope <- "ogc_viewparams"
   }
-  if(length(entity$data$ogc_dimensions)>0){
+  if(length(data_objects[[1]]$ogc_dimensions)>0){
     ofv_scope <- "ogc_dimensions"
   }
   fc$addScope(paste0("openfairviewer:", ofv_scope))
@@ -139,12 +147,11 @@ function(action, entity, config){
   
   #add feature type / attributes
   #--------------------------------------------------------------------------
-  layername <- if(!is.null(entity$data$layername)) entity$data$layername else entity$identifiers$id
   #create featureType
   ft <- ISOFeatureType$new()
-  ft$setTypeName(layername)
+  ft$setTypeName(entity$identifiers$id)
   ft$setDefinition(entity$title)
-  ft$setCode(layername)
+  ft$setCode(entity$identifiers$id)
   ft$setIsAbstract(FALSE)
   
   columns <- c(colnames(features), unlist(extra_attributes))
@@ -164,7 +171,7 @@ function(action, entity, config){
     
     fat_attr <- NULL
     fat_attr_desc <- NULL
-    fto <- entity$data$featureTypeObj
+    fto <- data_objects[[1]]$featureTypeObj
     if(!is.null(fto)) fat_attr <- fto$getMemberById(featureAttrName)
     if(!is.null(fat_attr)){
       fat_attr_desc <- fat_attr$name
