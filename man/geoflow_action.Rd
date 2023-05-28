@@ -28,7 +28,7 @@ geoflow_action
    packages = list(),
    pid_generator = NULL,
    generic_uploader = FALSE,
-   fun = function(config, entity){},
+   fun = function(action, entity, config){},
    available_options = list(
      option_name = list(def = "option description", default = FALSE)
    ),

@@ -568,8 +568,14 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
             stop(errMsg)
           }
           funparams <- unlist(names(formals(customfun)))
-          if(!("entity" %in% funparams)){
+          if(!("action" %in% funparams)){
             config$logger.warn(sprintf("Action '%s' - Custom action arguments: [%s]", action$id, paste(funparams, collapse=",")))
+            errMsg <- sprintf("Missing parameter 'action' in function '%s'", action$id)
+            config$logger.error(errMsg)
+            stop(errMsg)
+          }
+          if(!("entity" %in% funparams)){
+            config$logger.warn(sprintf("Custom action arguments: [%s]", paste(funparams, collapse=",")))
             errMsg <- sprintf("Missing parameter 'entity' in function '%s'", action$id)
             config$logger.error(errMsg)
             stop(errMsg)
@@ -577,12 +583,6 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
           if(!("config" %in% funparams)){
             config$logger.warn(sprintf("Custom action arguments: [%s]", paste(funparams, collapse=",")))
             errMsg <- sprintf("Missing parameter 'config' in function '%s'", action$id)
-            config$logger.error(errMsg)
-            stop(errMsg)
-          }
-          if(!("options" %in% funparams)){
-            config$logger.warn(sprintf("Custom action arguments: [%s]", paste(funparams, collapse=",")))
-            errMsg <- sprintf("Missing parameter 'options' in function '%s'", action$id)
             config$logger.error(errMsg)
             stop(errMsg)
           }
