@@ -592,7 +592,9 @@ geoflow_entity <- R6Class("geoflow_entity",
           data_object = data_objects[[k]]
         
           datasource <- data_object$source[[1]] #TODO we still look at first source
-          datasource_name <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))[1]
+          datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
+          datasource_name <- datasource_parts[1]
+          datasource_ext <- datasource_parts[2]
           datasource_file <- attr(datasource, "uri")
           attributes(datasource) <- NULL
           if(is.null(datasource_file)) datasource_file <- datasource
@@ -613,13 +615,41 @@ geoflow_entity <- R6Class("geoflow_entity",
             #setwd(wd)
             #return(NULL)
           }
-        
-          #config$logger.info(sprintf("Enriching data with features from '%s' (%s) for entity '%s'",
-          #                         datasource, datasource_file, self$identifiers$id))
-        
-          #basefilename for the main source
-          #basefilename <- paste0(self$identifiers$id, "_", data_object$sourceType,"_",datasource_name)
+          
+          #basefilename
           basefilename <- datasource_name
+        
+          #inherit sourceType for source
+          if(datasource_file_needed){
+            data_object$sourceType = switch(datasource_ext,
+              "zip" = {
+                srcType = "other"
+                zip_files = zip::zip_list(file.path(getwd(), paste0(basefilename,".zip")))
+                if(any(endsWith(zip_files$filename, ".gpkg"))){
+                  srcType = "gpkg" 
+                }else if(any(endsWith(zip_files$filename, ".shp"))){
+                  srcType = "shp"
+                }else if(any(endsWith(zip_files$filename, ".csv"))){
+                  srcType = "csv"
+                }else if(any(endsWIth(zip_files$filename, ".tif"))){
+                  srcType = "tif"
+                }
+                config$logger.info(sprintf("Resolving sourceType from zip list: '%s'", srcType))
+                srcType
+              },
+              "shp" = "shp",
+              "gpkg" = "gpkg",
+              "csv" = "csv",
+              "tif" = "tif",
+              "other"
+            )
+            #overwrite top sourceType
+            if(is.null(self$data$dir)){
+              self$data$sourceType = data_object$sourceType 
+            }else{
+              self$data$data[[k]] = data_object$sourceType
+            }
+          }
           
           #encoding mappings
           st_encoding <- switch(options("encoding")[[1]],
