@@ -605,3 +605,23 @@ get_union_bbox <- function(data_objects){
   class(union.bbox) <- "bbox"
   return(union.bbox)
 }
+
+#'@name get_config_resource_path
+#'@aliases get_config_resource_path
+#'@title get_config_resource_path
+#'@usage get_config_resource_path(config, path)
+#'
+#'@param config a \pkg{geoflow} config
+#'@param path a resource path to resolve vs. the config wd
+#'
+#'@author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#'@export
+get_config_resource_path <- function(config, path){
+  is_url <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", path) > 0
+  if(is_url) return(path)
+  if(!is_absolute_path(path)){
+    if(startsWith("./", path)) path = unlist(strsplit(path, "\\./"))[2]
+    path = file.path(config$wd, path)
+  }
+  return(path)
+}

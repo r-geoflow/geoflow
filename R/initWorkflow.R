@@ -556,7 +556,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         action_to_trigger$options <- action$options
       }else{
         if(config$profile$mode == "entity"){
-          customfun <- source(action$script)$value
+          customfun <- source(get_config_resource_path(config, action$script))$value
           if(is(customfun,"try-error")){
             errMsg <- sprintf("Error while trying to evaluate custom function'%s", action$id)
             config$logger.error(errMsg)

@@ -270,7 +270,7 @@ register_software <- function(){
             sql <- NULL
             if(!is.null(software_config$properties$onstart_sql)){
               config$logger.info(sprintf("SQL script = %s", software_config$properties$onstart_sql))
-              sql <- paste0(readLines(software_config$properties$onstart_sql),collapse="\n")
+              sql <- paste0(readLines(get_config_resource_path(config, software_config$properties$onstart_sql)),collapse="\n")
               
             }else if(!is.null(software_config$properties$onstart_r)){
               if(is.null(software_config$properties$onstart_r$script)){
@@ -283,7 +283,7 @@ register_software <- function(){
                 config$logger.error(errMsg)
                 stop(errMsg)
               }
-              src <- try(source(software_config$properties$onstart_r$script))
+              src <- try(source(get_config_resource_path(config, software_config$properties$onstart_r$script)))
               if(is(src,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Error while sourcing script '%s'",
                                   software_config$id, software_config$properties$onstart_r$script)
@@ -291,7 +291,6 @@ register_software <- function(){
                 stop(errMsg)
               }
               onstart_r_fun <- eval(parse(text=software_config$properties$onstart_r$fun))
-              print(class(onstart_r_fun))
               sql <- try(onstart_r_fun(config, software, software_config))
               if(is(sql,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Error while executing function '%s'",
@@ -331,7 +330,7 @@ register_software <- function(){
             sql <- NULL
             if(!is.null(software_config$properties$onend_sql)){
               config$logger.info(sprintf("SQL script = %s", software_config$properties$onend_sql))
-              sql <- paste0(readLines(software_config$properties$onend_sql),collapse="\n")
+              sql <- paste0(readLines(get_config_resource_path(config, software_config$properties$onend_sql)),collapse="\n")
               
             }else if(!is.null(software_config$properties$onend_r)){
               if(is.null(software_config$properties$onend_r$script)){
@@ -344,7 +343,7 @@ register_software <- function(){
                 config$logger.error(errMsg)
                 stop(errMsg)
               }
-              src <- try(source(software_config$properties$onend_r$script))
+              src <- try(source(get_config_resource_path(config, software_config$properties$onend_r$script)))
               if(is(src,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Error while sourcing script '%s'",
                                   software_config$id, software_config$properties$onend_r$script)
