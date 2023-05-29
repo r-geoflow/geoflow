@@ -475,6 +475,7 @@ geoflow_data <- R6Class("geoflow_data",
               ext_data_extension <- unlist(strsplit(ext_data_src, "\\."))[2]
               attr(ext_data_src, "uri") <- data_file
               ext_data$addSource(ext_data_src)
+              uploadSource = paste0(ext_data_name, ".", ext_data_extension)
               if(ext_data_extension %in% c("shp","gpkg")) uploadSource = paste0(ext_data_name, ".zip")
               ext_data$setUploadSource(uploadSource)
               sourceType <- self$sourceType
