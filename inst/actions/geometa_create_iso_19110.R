@@ -67,10 +67,10 @@ function(action, entity, config){
   fc$addScope(paste0("geoflow:", data_objects[[1]]$uploadType))
   #-> ofv (openfairviewer) scope
   ofv_scope <- "ogc_filters"
-  if(length(data_objects[[1]]$parameters)>0){
+  if(length(entity$data$parameters)>0){
     ofv_scope <- "ogc_viewparams"
   }
-  if(length(data_objects[[1]]$ogc_dimensions)>0){
+  if(length(entity$data$ogc_dimensions)>0){
     ofv_scope <- "ogc_dimensions"
   }
   fc$addScope(paste0("openfairviewer:", ofv_scope))
@@ -171,7 +171,7 @@ function(action, entity, config){
     
     fat_attr <- NULL
     fat_attr_desc <- NULL
-    fto <- data_objects[[1]]$featureTypeObj
+    fto <- entity$data$featureTypeObj
     if(!is.null(fto)) fat_attr <- fto$getMemberById(featureAttrName)
     if(!is.null(fat_attr)){
       fat_attr_desc <- fat_attr$name
