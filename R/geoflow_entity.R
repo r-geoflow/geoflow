@@ -643,11 +643,17 @@ geoflow_entity <- R6Class("geoflow_entity",
               "tif" = "tif",
               "other"
             )
+            #additional rule for uploadType
+            if(datasource_ext == "zip") if(!is.null(data_object$uploadType)) if(data_object$uploadType == "other"){
+              data_object$uploadType = data_object$sourceType
+            }
             #overwrite top sourceType
             if(is.null(self$data$dir)){
               self$data$sourceType = data_object$sourceType 
+              self$data$uploadType = data_object$uploadType
             }else{
-              self$data$data[[k]] = data_object$sourceType
+              self$data$data[[k]]$sourceType = data_object$sourceType
+              self$data$data[[k]]$uploadType = data_object$uploadType
             }
           }
           
@@ -1168,7 +1174,8 @@ geoflow_entity <- R6Class("geoflow_entity",
               datasource_ext <- datasource_parts[2]
               
               uploadSourceExt<-switch(data_object$uploadType,
-                                      "shp" = "zip" ,
+                                      "shp" = "zip",
+                                      "gpkg" = "zip",
                                       data_object$uploadType
                                       
               )
