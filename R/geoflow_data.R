@@ -481,10 +481,11 @@ geoflow_data <- R6Class("geoflow_data",
               sourceType <- self$sourceType
               if(is.null(self$sourceType) || self$sourceType == "other"){
                 sourceType <- switch(ext_data_extension,
-                  "zip" = "shp",
+                  "shp" = "shp",
                   "gpkg" = "gpkg",
                   "tif" = "geotiff",
-                  "csv" = "csv"
+                  "csv" = "csv",
+                  "other" #including zip that will be resolved later when entity is enriched with data
                 )
               }
               if(!is.null(sourceType)){
