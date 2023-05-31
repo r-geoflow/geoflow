@@ -108,6 +108,7 @@ function(action, entity, config){
            }
     )
     rm(md)
+    return(mdId)
   }
   
   #geometa ISO 19115
@@ -118,7 +119,7 @@ function(action, entity, config){
     metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_ISO-19115.xml"))
     if(file.exists(metaFile)){
       #publication
-      doPublish(metaFile, geometa_inspire)
+      mdId = doPublish(metaFile, geometa_inspire)
       
       #upload thumbnails?
       if(GN$getClassName() == "GNOpenAPIManager") if(publish_thumbnails){
@@ -164,7 +165,7 @@ function(action, entity, config){
     geometa_inspire <- FALSE
     metaFile <- file.path("metadata", paste0(entity$identifiers[["id"]],"_ISO-19110.xml"))
     if(file.exists(metaFile)){
-      doPublish(metaFile, geometa_inspire)
+      mdId = doPublish(metaFile, geometa_inspire)
     }else{
       config$logger.warn(sprintf("No ISO ISO 19110 XML metadata file to publish for entity '%s, skipping action!", entity$identifiers[["id"]]))
     }
