@@ -313,7 +313,7 @@ register_actions <- function(){
         privileges = list(def = "Geonetwork privileges to set for the metadata to be published", class = "character", choices = c("view","dynamic","download","editing", "notify", "featured"), default = c("view","dynamic","download","featured"), multiple = TRUE),
         group = list(def = "Geonetwork user group to which the metadata should be associated", class = "character", default = "2"),
         category = list(def = "Category of metadata resources to which the metadata record should be associated", class = "character", default = "datasets"),
-        publish_thumbnails = list(def = "Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews", class = "logical", default = TRUE)
+        publish_thumbnails = list(def = "Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews", class = "logical", default = FALSE)
       ),
       fun = source(system.file("actions", "geonapi_publish_iso_19139.R", package = "geoflow"))$value
     ),
@@ -327,7 +327,11 @@ register_actions <- function(){
       available_options = list(
         createWorkspace = list(def = "Create workspace if not already existing", class = "logical", default = FALSE),
         createStore = list(def = "Create data/coverage store if not already existing", class = "logical", default = FALSE),
-        store_description = list(def = "Specify a decription for the new data/coverage store", class = "character", default = ""),
+        store_description = list(def = "Specify a description for the new data/coverage store", class = "character", default = ""),
+        map_thumbnail_template = list(
+          def = "Specify a Mustache/whisker template for a WMS GetMap request to be propagated in metadata (eg. ISO 19115) when the action is used. Only active when enrich_with_relations'/'enrich_with_relation_wms_thumbnail' are TRUE", class = "character",
+          default = "{geoserver_url}/{workspace}/ows?service=WMS&version=1.1.0&request=GetMap&layers={layer}&bbox={bbox}&width=600&height=300&srs=EPSG:{srid}&format=image/png"
+        ),
         enrich_with_relations = list(def = "When enabled, enrichs entity with OGC relations", class = "logical", default = TRUE),
         enrich_with_relation_wms = list(def = "When enabled, enrichs entity with a base WMS link relation", class = "logical", default = TRUE),
         enrich_with_relation_wms_thumbnail = list(def = "When enabled, enrichs entity with a WMS-based thumbnail relation", class = "logical", default = TRUE),

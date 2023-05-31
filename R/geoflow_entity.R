@@ -1266,10 +1266,20 @@ geoflow_entity <- R6Class("geoflow_entity",
             new_thumbnail$setKey("thumbnail")
             new_thumbnail$setName(layername)
             new_thumbnail$setDescription(sprintf("%s - Map overview", layername))
-            new_thumbnail$setLink(sprintf("%s/%s/ows?service=WMS&version=1.1.0&request=GetMap&layers=%s&bbox=%s&width=600&height=300&srs=EPSG:%s&format=image/png", 
-                                          geoserver_base_url, 
-                                          config$software$output$geoserver_config$properties$workspace,
-                                          layername, paste(self$spatial_bbox,collapse=","),self$srid))
+            thumbnail_link_template = geosapi_action$getOption("map_thumbnail_template")
+            thumbnail_link_template = gsub("\\{","\\{{", thumbnail_link_template)
+            thumbnail_link_template = gsub("\\}","\\}}", thumbnail_link_template)
+            thumbnail_link <- whisker::whisker.render(
+              thumbnail_link_template,
+              list(
+                geoserver_url = geoserver_base_url,
+                workspace = config$software$output$geoserver_config$properties$workspace,
+                layer = layername,
+                bbox = paste(self$spatial_bbox,collapse=","),
+                srid = self$srid
+              )
+            )
+            new_thumbnail$setLink(thumbnail_link)
             self$relations <- c(self$relations, new_thumbnail)
           }else{
             config$logger.warn(sprintf("Skip enriching entity with OGC WMS thumbnail for layer = '%s'", layername))
