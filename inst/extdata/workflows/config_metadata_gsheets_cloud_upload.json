@@ -1,0 +1,44 @@
+{
+  "profile": {
+    "id": "my-workflow",
+    "name": "My workflow",
+  	"project": "Test geoflow project",
+  	"organization": "My organization",
+  	"logos": [
+  		"https://via.placeholder.com/300x150.png/09f/fff?text=geoflow"
+  	],
+  	"mode": "entity"
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1KSc_IrM86GrNpUASCIVfq6L9cmML77iwpcSbliynYZk/edit?usp=sharing"
+      }
+    ],
+    "contacts" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1BqlXwA2fKiRuozNAQhBb_PbQVSPTCfl8_Q9rfM8E2ws/edit?usp=sharing"
+      }
+    ]
+  },
+  "software": [
+    {
+		"id": "ocs-cloud",
+		"type": "input",
+		"software_type": "ocs",
+		"parameters": {
+			"url": "http://localhost:8080",
+			"user": "user",
+			"pwd": "pwd",
+			"logger": "DEBUG"
+		}
+  ],
+  "actions": [
+    {
+      "id": "ocs4R-upload-data",
+      "run": true
+    }
+  ]
+}
