@@ -67,22 +67,26 @@ workflows - List of actions and softwares
 | privileges         | Geonetwork privileges to set for the metadata to be published                              | view,dynamic,download,featured |
 | group              | Geonetwork user group to which the metadata should be associated                           | 2                              |
 | category           | Category of metadata resources to which the metadata record should be associated           | datasets                       |
-| publish_thumbnails | Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews | TRUE                           |
+| publish_thumbnails | Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews | FALSE                          |
 
 ### 1.1.5 List of geosapi-publish-ogc-services options<a name= geosapi-publish-ogc-services />
 
-| name                                    | definition                                                                                                                                  | default |
-|:----------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------|:--------|
-| createWorkspace                         | Create workspace if not already existing                                                                                                    | FALSE   |
-| createStore                             | Create data/coverage store if not already existing                                                                                          | FALSE   |
-| store_description                       | Specify a decription for the new data/coverage store                                                                                        |         |
-| enrich_with_relations                   | When enabled, enrichs entity with OGC relations                                                                                             | TRUE    |
-| enrich_with_relation_wms                | When enabled, enrichs entity with a base WMS link relation                                                                                  | TRUE    |
-| enrich_with_relation_wms_thumbnail      | When enabled, enrichs entity with a WMS-based thumbnail relation                                                                            | TRUE    |
-| enrich_with_relation_wfs                | When enabled, enrichs entity with a base WFS link relation (applies to ‘vector’ only)                                                       | TRUE    |
-| enrich_with_relation_wfs_download_links | When enabled, enrichs entity with WFS format-specific (GML, GeoJSON, SHAPE-ZIP, CSV) links for download purpose (applies to ‘vector’ only). | TRUE    |
-| enrich_with_relation_wcs                | When enabled, enrichs entity with a base WCS link relation (applies to ‘grid’ only)                                                         | TRUE    |
-| enrich_with_relation_wcs_download_links | When enabled, enrichs entity with WCS format-specific links for download purpose (applies to ‘grid’ only). Only GeoTIFF at now.             | TRUE    |
+| name                                    | definition                                                                                                                                                                                                                                    | default                                                                                                                                                   |
+|:----------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| createWorkspace                         | Create workspace if not already existing                                                                                                                                                                                                      | FALSE                                                                                                                                                     |
+| createStore                             | Create data/coverage store if not already existing                                                                                                                                                                                            | FALSE                                                                                                                                                     |
+| store_description                       | Specify a description for the new data/coverage store                                                                                                                                                                                         |                                                                                                                                                           |
+| map_thumbnail_template                  | Specify a Mustache/whisker template for a WMS GetMap request to be propagated in metadata (eg. ISO 19115) when the action is used. Only active when enrich_with_relations’/‘enrich_with_relation_wms_thumbnail’ are TRUE                      | {geoserver_url}/{workspace}/ows?service=WMS&version=1.1.0&request=GetMap&layers={layer}&bbox={bbox}&width=600&height=300&srs=EPSG:{srid}&format=image/png |
+| enrich_with_relations                   | When enabled, enrichs entity with OGC relations                                                                                                                                                                                               | TRUE                                                                                                                                                      |
+| enrich_with_relation_wms                | When enabled, enrichs entity with a base WMS link relation                                                                                                                                                                                    | TRUE                                                                                                                                                      |
+| enrich_with_relation_wms_thumbnail      | When enabled, enrichs entity with a WMS-based thumbnail relation                                                                                                                                                                              | TRUE                                                                                                                                                      |
+| enrich_with_relation_wfs                | When enabled, enrichs entity with a base WFS link relation (applies to ‘vector’ only)                                                                                                                                                         | TRUE                                                                                                                                                      |
+| enrich_with_relation_wfs_download_links | When enabled, enrichs entity with WFS format-specific (GML, GeoJSON, SHAPE-ZIP, CSV) links for download purpose (applies to ‘vector’ only).                                                                                                   | TRUE                                                                                                                                                      |
+| enrich_with_relation_wcs                | When enabled, enrichs entity with a base WCS link relation (applies to ‘grid’ only)                                                                                                                                                           | TRUE                                                                                                                                                      |
+| enrich_with_relation_wcs_download_links | When enabled, enrichs entity with WCS format-specific links for download purpose (applies to ‘grid’ only). Only GeoTIFF at now.                                                                                                               | TRUE                                                                                                                                                      |
+| overwrite_upload                        | When set to TRUE (default), in case a layer already exists, data upload will be re-done (if upload is set to true in entity Data).                                                                                                            | TRUE                                                                                                                                                      |
+| overwrite_layer                         | When set to TRUE (default), in case a layer already exists, layer will be republished.                                                                                                                                                        | TRUE                                                                                                                                                      |
+| overwrite                               | When set to TRUE (default), in case a layer already exists, data upload will be re-done (if upload is set to true in entity Data), and layer will be re-published. This option preveals over options ‘overwrite_upload’ and ‘overwrite_layer’ | TRUE                                                                                                                                                      |
 
 ### 1.1.6 List of geonode4R-publish-ogc-services options<a name= geonode4R-publish-ogc-services />
 
@@ -315,10 +319,11 @@ workflows - List of actions and softwares
 
 #### 2.1.8.2 List of geoserver properties
 
-| name      | label     | definition                         |
-|:----------|:----------|:-----------------------------------|
-| workspace | Workspace | GeoServer workspace name           |
-| store     | Store     | GeoServer data/coverage store name |
+| name      | label      | definition                         |
+|:----------|:-----------|:-----------------------------------|
+| workspace | Workspace  | GeoServer workspace name           |
+| store     | Store      | GeoServer data/coverage store name |
+| publicUrl | Public URL | Geoserver public URL               |
 
 ### 2.1.9 zenodo
 
