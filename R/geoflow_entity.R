@@ -744,7 +744,14 @@ geoflow_entity <- R6Class("geoflow_entity",
                    tbl.spec[1]$cols = sapply(tbl.spec[1]$cols, function(x){spec = x;if(is(x, "collector_logical")){spec = readr::col_character()}; return(spec)})
                    tbl.data <- as.data.frame(readr::read_csv(trgCsv, col_types = tbl.spec))
                    if(is(sf.data,"sf")){
-                     sf.data <- st_set_geometry(tbl.data, st_geometry(sf.data))
+                     if(nrow(tbl.data)==nrow(sf.data)){
+                       sf.data <- st_set_geometry(tbl.data, st_geometry(sf.data))
+                     }else if(nrow(sf.data)==0){
+                       if(any(colnames(tbl.data)%in% data_object$getAllowedGeomPossibleNames())){
+                         geom_column_name = colnames(tbl.data)[colnames(tbl.data)%in% data_object$getAllowedGeomPossibleNames()][1]
+                         sf.data <- sf::st_as_sf(tbl.data, wkt = geom_column_name)
+                       }
+                     }
                      if(!"geometry" %in% colnames(tbl.data)){
                        if("geom" %in% colnames(sf.data)) sf.data$geom <- NULL
                        colnames(sf.data)[colnames(sf.data)=="geometry"] <- "geom"
