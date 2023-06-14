@@ -612,7 +612,7 @@ get_union_bbox <- function(data_objects){
 #'@usage get_config_resource_path(config, path)
 #'
 #'@param config a \pkg{geoflow} config
-#'@param path a resource path to resolve vs. the config wd
+#'@param path a resource path to resolve vs. the config root dir
 #'
 #'@author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #'@export
@@ -621,7 +621,7 @@ get_config_resource_path <- function(config, path){
   if(is_url) return(path)
   if(!is_absolute_path(path)){
     if(startsWith("./", path)) path = unlist(strsplit(path, "\\./"))[2]
-    path = file.path(config$wd, path)
+    path = file.path(config$root, path)
   }
   return(path)
 }

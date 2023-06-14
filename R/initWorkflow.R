@@ -46,6 +46,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   
   config_file <- config$src
   #working dir (where jobs will be created)
+  config$root <- dirname(file)
   if(is.null(config$wd)) config$wd <- tools::file_path_as_absolute(dir)
   if(is.null(jobDirPath)) jobDirPath <- initWorkflowJob(dir = dir)
   config$job <- jobDirPath

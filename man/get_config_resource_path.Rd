@@ -9,7 +9,7 @@ get_config_resource_path(config, path)
 \arguments{
 \item{config}{a \pkg{geoflow} config}
 
-\item{path}{a resource path to resolve vs. the config wd}
+\item{path}{a resource path to resolve vs. the config root dir}
 }
 \description{
 get_config_resource_path
