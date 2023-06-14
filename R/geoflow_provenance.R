@@ -52,7 +52,6 @@ geoflow_provenance <- R6Class("geoflow_provenance",
          processes <- kvps[sapply(kvps, function(kvp){kvp$key == "process"})]
          if(length(processes)>0){
             for(process in processes){ #in case processes defined on various lines
-               print(process)
                process_attrs <- attributes(process$values)
                for(i in 1:length(process$values)){ #in case processes defined on same line (eg for i18n)
                   value = if(is.list(process$values)) process$values[[i]] else process$values[i]
