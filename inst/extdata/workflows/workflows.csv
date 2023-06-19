@@ -11,4 +11,4 @@ config_metadata_gsheets_sdi_geoserver_shp.json,Load metadata entities/contacts f
 config_metadata_gsheets_sdi_geoserver_geotiff.json,Load metadata entities/contacts from Google Spreadsheets and publish GeoTIFF based layer on GeoServer
 config_metadata_gsheets_sdi_geoserver_geotiff_view.json,Load metadata entities/contacts from Google Spreadsheets and publish GeoTIFF based view layer on GeoServer
 config_metadata_gsheets_sdi_geoserver_geotiff_directory.json,Load metadata entities/contacts from Google Spreadsheets and publish multiple GeoTIFF based layers on GeoServer for a single entity
-config_metadata_ocs.json,Load metadata entities/contacts/dictionary from CSV files hosted on a cloud supporting OCS API (eg. nextcloud,owncloud)
+config_metadata_ocs.json,Load metadata entities/contacts/dictionary from CSV files hosted on a cloud supporting OCS API (eg. nextcloud/owncloud)
