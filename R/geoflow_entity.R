@@ -769,28 +769,30 @@ geoflow_entity <- R6Class("geoflow_entity",
                    data_object$setFeatures(sf.data)
                    
                    #dynamic srid
-                   sf.crs <- sf::st_crs(sf.data)
-                   if(!is.na(sf.crs)){
-                     #in case data features are geo-referenced we check srid consistency and eventually update self$srid
-                     epsgcode <- sf.crs$epsg
-                     if(!is.null(epsgcode)) {
-                       if(is.na(epsgcode)){
-                         #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                         crs_wkt <- st_crs(sf.data)$wkt
-                         if(nzchar(crs_wkt)){
-                           crs_def <- terra::crs(crs_wkt, describe = TRUE)
-                           if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                             epsgcode <-crs_def$code 
+                   if(is(sf.data, "sf")){
+                     sf.crs <- sf::st_crs(sf.data)
+                     if(!is.na(sf.crs)){
+                       #in case data features are geo-referenced we check srid consistency and eventually update self$srid
+                       epsgcode <- sf.crs$epsg
+                       if(!is.null(epsgcode)) {
+                         if(is.na(epsgcode)){
+                           #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+                           crs_wkt <- st_crs(sf.data)$wkt
+                           if(nzchar(crs_wkt)){
+                             crs_def <- terra::crs(crs_wkt, describe = TRUE)
+                             if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+                               epsgcode <-crs_def$code 
+                             }
                            }
                          }
+                         if(!is.na(epsgcode)){
+                            data_srids <<- c(data_srids, as.integer(epsgcode))
+                         }
                        }
-                       if(!is.na(epsgcode)){
-                          data_srids <<- c(data_srids, as.integer(epsgcode))
-                       }
+                     }else{
+                       #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
+                       if(!is.null(self$srid)) sf::st_crs(data_object$features) <- self$srid 
                      }
-                   }else{
-                     #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
-                     if(!is.null(self$srid)) sf::st_crs(data_object$features) <- self$srid 
                    }
                    
                  }else{
