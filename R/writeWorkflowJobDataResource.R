@@ -210,7 +210,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                  RPostgreSQL::postgresqlCopyInDataframe(config$software$output$dbi, obj)
                  rs <- RPostgreSQL::postgresqlgetResult(config$software$output$dbi)
                  onerec = dbGetQuery(conn=config$software$output$dbi,  sprintf("select * from %s limit 1", resourcename))
-                 if("row.names" %in% colnames(onrec)){#hack, find better solution
+                 if("row.names" %in% colnames(onerec)){#hack, find better solution
                    dbSendQuery(conn=config$software$output$dbi, sprintf("ALTER TABLE %s DROP COLUMN \"row.names\"", resourcename))
                  }
                }else{
