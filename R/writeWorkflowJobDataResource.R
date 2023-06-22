@@ -195,8 +195,29 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
              }else{
                #no chunking
                config$logger.info("Upload data to DB as single chunk")
-               dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj,
-                            overwrite = overwrite, append = append)
+               if(config$software$output$dbi_config$parameters$drv == "PostgreSQL"){
+                 config$logger.info("-> Using RPostgreSQL enhanced methods")
+                 #simple hack to create the table with proper data types
+                 dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj[1,],
+                              overwrite = overwrite, append = append)
+                 dbSendQuery(conn=config$software$output$dbi, sprintf("delete from %s", resourcename) )
+                 requireNamespace("RPostgreSQL")
+                 obj[is.na(obj)] <- "NA"
+                 for(col in colnames(obj)) if(!is(obj[,col],"character")) obj[,col] = as(obj[,col],"character")
+                 sql <- paste0("COPY  ", resourcename, "(",
+                                paste0(names(obj), collapse=", "), ") FROM STDIN NULL 'NA' ")
+                 RPostgreSQL::postgresqlpqExec(config$software$output$dbi, sql)
+                 RPostgreSQL::postgresqlCopyInDataframe(config$software$output$dbi, obj)
+                 rs <- RPostgreSQL::postgresqlgetResult(config$software$output$dbi)
+                 onerec = dbGetQuery(conn=config$software$output$dbi,  sprintf("select * from %s limit 1", resourcename))
+                 if("row.names" %in% colnames(onrec)){#hack, find better solution
+                   dbSendQuery(conn=config$software$output$dbi, sprintf("ALTER TABLE %s DROP COLUMN \"row.names\"", resourcename))
+                 }
+               }else{
+                 config$logger.info("-> Using standard DBI")
+                 dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj,
+                              overwrite = overwrite, append = append)
+               }
              }
              
              #create index for each column
