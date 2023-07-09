@@ -753,6 +753,20 @@ function(action, entity, config){
   
   #distribution
   distrib <- ISODistribution$new()
+  
+  #distribution/contact
+  if(length(entity$contacts)>0){
+    distributors <- entity$contacts[sapply(entity$contacts, function(x){x$role == "distributor"})]
+    if(length(distributors)==0) distributors <- list(entity$contacts[[1]])
+    for(distributor_entity in distributors){
+      dist_ent = ISODistributor$new()
+      dist_rp<-createResponsibleParty(distributor_entity) 
+      dist_ent$setContact(dist_rp)
+      distrib$addDistributor(dist_ent)
+    }
+  }
+  
+  #distribution/transfer options
   dto <- ISODigitalTransferOptions$new()
   
   #add online resource for DOI if existing
