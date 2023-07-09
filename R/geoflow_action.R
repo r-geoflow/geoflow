@@ -313,7 +313,8 @@ register_actions <- function(){
         privileges = list(def = "Geonetwork privileges to set for the metadata to be published", class = "character", choices = c("view","dynamic","download","editing", "notify", "featured"), default = c("view","dynamic","download","featured"), multiple = TRUE),
         group = list(def = "Geonetwork user group to which the metadata should be associated", class = "character", default = "2"),
         category = list(def = "Category of metadata resources to which the metadata record should be associated", class = "character", default = "datasets"),
-        publish_thumbnails = list(def = "Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews", class = "logical", default = FALSE)
+        publish_thumbnails = list(def = "Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews", class = "logical", default = FALSE),
+        create_doi_on_datacite = list(def = "Creates DOIs on DataCite. Requires a DataCite account to be registered in the GeoNetwork administration panel.", class = "logical", default = FALSE)
       ),
       fun = source(system.file("actions", "geonapi_publish_iso_19139.R", package = "geoflow"))$value
     ),

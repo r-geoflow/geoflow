@@ -4,8 +4,9 @@ function(action, entity, config){
     stop("The 'geonapi-publish-iso-19139' action requires the 'geonapi' package")
   }
   
-  #thumbnail upload
+  #action options
   publish_thumbnails <- action$getOption("publish_thumbnails")
+  create_doi_on_datacite <- action$getOption("create_doi_on_datacite")
   
   #INSPIRE metadata validation
   geometa_inspire <- action$getOption("geometa_inspire")
@@ -120,6 +121,23 @@ function(action, entity, config){
     if(file.exists(metaFile)){
       #publication
       mdId = doPublish(metaFile, geometa_inspire)
+      if(create_doi_on_datacite){
+        config$logger.info("Creating DOI on DataCite...")
+        config$logger.info("Checking DOI registration pre-conditions...")
+        checked = GN$doiCheckPreConditions(mdId)
+        if(checked){
+          config$logger.info("DOI registration pre-conditions are met, proceed with DOI registration")
+          created = GN$createDOI(mdId)
+          if(created){
+            doi_report = attr(created, "report")
+            doi = doi_report$doi
+            entity$identifiers$doi = doi
+            config$logger.info(sprintf("DOI '%s' successfuly created for metadata '%s'", doi, mdId))
+          }
+        }else{
+          config$logger.warn("Aborting DOI creation, pre-conditions are not met!")
+        }
+      }
       
       #upload thumbnails?
       if(GN$getClassName() == "GNOpenAPIManager") if(publish_thumbnails){
@@ -149,8 +167,6 @@ function(action, entity, config){
                                         entity_thumbnail$link, mdId))
           }
         }
-        
-        
       }
       
     }else{

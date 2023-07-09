@@ -1,0 +1,53 @@
+{
+  "profile": {
+    "id": "my-workflow",
+    "name": "My workflow",
+  	"project": "Test geoflow project",
+  	"organization": "My organization",
+  	"logos": [
+  		"https://via.placeholder.com/300x150.png/09f/fff?text=geoflow"
+  	],
+  	"mode": "entity"
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1KSc_IrM86GrNpUASCIVfq6L9cmML77iwpcSbliynYZk/edit?usp=sharing"
+      }
+    ],
+    "contacts" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1BqlXwA2fKiRuozNAQhBb_PbQVSPTCfl8_Q9rfM8E2ws/edit?usp=sharing"
+      }
+    ]
+  },
+  "software": [
+    {
+  		"id": "my-geonetwork",
+  		"type": "output",
+  		"software_type": "geonetwork",
+  		"parameters": {
+  			"url": "http://localhost:8181/geonetwork",
+  			"user": "admin",
+  			"pwd": "admin",
+  			"version": "4.0.5",
+  			"logger": "DEBUG"
+  		}
+  	}
+   ],
+  "actions": [
+    {
+      "id": "geometa-create-iso-19115",
+      "run": true
+    },
+    {
+      "id": "geonapi-publish-iso-19139",
+      "run" : true,
+      "options": {
+        "create_doi_on_datacite": true
+      }
+    }
+  ]
+}
