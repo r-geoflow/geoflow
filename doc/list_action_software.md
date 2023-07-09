@@ -61,13 +61,14 @@ workflows - List of actions and softwares
 
 ### 1.1.4 List of geonapi-publish-iso-19139 options<a name= geonapi-publish-iso-19139 />
 
-| name               | definition                                                                                 | default                        |
-|:-------------------|:-------------------------------------------------------------------------------------------|:-------------------------------|
-| geometa_inspire    | Validates ISO 19139 metadata with INSPIRE reference validator before publication           | FALSE                          |
-| privileges         | Geonetwork privileges to set for the metadata to be published                              | view,dynamic,download,featured |
-| group              | Geonetwork user group to which the metadata should be associated                           | 2                              |
-| category           | Category of metadata resources to which the metadata record should be associated           | datasets                       |
-| publish_thumbnails | Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews | FALSE                          |
+| name                   | definition                                                                                                     | default                        |
+|:-----------------------|:---------------------------------------------------------------------------------------------------------------|:-------------------------------|
+| geometa_inspire        | Validates ISO 19139 metadata with INSPIRE reference validator before publication                               | FALSE                          |
+| privileges             | Geonetwork privileges to set for the metadata to be published                                                  | view,dynamic,download,featured |
+| group                  | Geonetwork user group to which the metadata should be associated                                               | 2                              |
+| category               | Category of metadata resources to which the metadata record should be associated                               | datasets                       |
+| publish_thumbnails     | Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews                     | FALSE                          |
+| create_doi_on_datacite | Creates DOIs on DataCite. Requires a DataCite account to be registered in the GeoNetwork administration panel. | FALSE                          |
 
 ### 1.1.5 List of geosapi-publish-ogc-services options<a name= geosapi-publish-ogc-services />
 
