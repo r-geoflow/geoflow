@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-20.04, r: 'release',}
+          - {os: ubuntu-latest,  r: 'release'}
     
     env:
         INSPIRE_API_ENDPOINT: ${{ secrets.INSPIRE_API_ENDPOINT }}
