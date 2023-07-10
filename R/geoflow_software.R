@@ -672,7 +672,7 @@ register_software <- function(){
         logger = list(label = "Logger", def = "Level for 'ows4R' logger messages (NULL,INFO or DEBUG)", class = "character", choices = c("INFO", "DEBUG"))
       ),
       attributes = list(
-        workspace = list(label = "Workspace", def = "Cloud workspace name", class = "character")
+        cloud_path = list(label = "Cloud path", def = "Cloud path", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------

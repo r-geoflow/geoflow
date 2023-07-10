@@ -11,21 +11,21 @@ function(action, entity, config){
     config$logger.error(errMsg)
     stop(errMsg)
   }
-  workspace <- OCS_CONFIG$properties$workspace
-  if(is.null(workspace)) if(!is.null(entity$data$workspaces$ocs)) workspace <- entity$data$workspaces$ocs
-  if(is.null(workspace)){
-    errMsg <- "The OCS configuration requires a workspace for publishing action"
+  cloud_path <- OCS_CONFIG$properties$cloud_path
+  if(is.null(cloud_path)) if(!is.null(entity$data$cloud_path)) cloud_path <- entity$data$cloud_path
+  if(is.null(cloud_path)){
+    errMsg <- "The OCS configuration requires a 'cloud_path' for publishing action"
     config$logger.error(errMsg)
     stop(errMsg)
   }    
-  if(!startsWith(workspace, "/")) workspace = paste0("/", workspace)
+  if(!startsWith(cloud_path, "/")) cloud_path = paste0("/", cloud_path)
 
   #upload
   #-------------------------------------------------------------------------------------------------
   if(entity$data$upload){
     #try to create collection (remote folder)
-    workspace_name = substring(workspace, 2, nchar(workspace))
-    try(OCS$makeCollection(name = workspace_name))
+    cloud_path_name = substring(cloud_path, 2, nchar(cloud_path))
+    try(OCS$makeCollection(name = cloud_path_name))
     
     config$logger.info("Upload mode is set to true")
     fileName = entity$data$uploadSource[[1]]
@@ -35,15 +35,15 @@ function(action, entity, config){
       config$logger.error(errMsg)
       stop(errMsg)
     }else{
-      config$logger.info(sprintf("Trying to upload %s to cloud workspace folder %s", fileName, workspace))
-      OCS$uploadFile(filename = filePath, relPath = workspace, delete_if_existing = FALSE)
-      config$logger.info(sprintf("File %s successfully uploaded to the cloud folder %s", fileName, workspace))
+      config$logger.info(sprintf("Trying to upload %s to cloud folder %s", fileName, cloud_path))
+      OCS$uploadFile(filename = filePath, relPath = cloud_path, delete_if_existing = FALSE)
+      config$logger.info(sprintf("File %s successfully uploaded to the cloud folder %s", fileName, cloud_path))
     }
   }
   
   #enrish with relation
   #-------------------------------------------------------------------------------------------------
-  cloud_link_url = try(OCS$shareAsPublicLink(workspace, filePath, permissions = "read"), silent = TRUE)
+  cloud_link_url = try(OCS$shareAsPublicLink(cloud_path, filePath, permissions = "read"), silent = TRUE)
   if(!is(cloud_link_url, "try-error")){
     new_cloud_link<- geoflow_relation$new()
     new_cloud_link$setKey("http")

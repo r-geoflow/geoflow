@@ -69,6 +69,8 @@ geoflow_data <- R6Class("geoflow_data",
     styleUpload = TRUE,
     #'@field dimensions dimensions
     dimensions = list(),
+    #'@field cloud_path a relative path in a cloud storage (e.g., OCS)
+    cloud_path = "/",
     
     #resource generic fields
     #----------------------------------------------------------------------------
@@ -523,6 +525,10 @@ geoflow_data <- R6Class("geoflow_data",
           }
         }
         
+        #cloud_path
+        cloud_path <- data_props[sapply(data_props, function(x){x$key=="cloud_path"})]
+        if(length(cloud_path)>0) self$setCloudPath(cloud_path[[1]]$values[[1]])
+        
       }
     },
     
@@ -723,6 +729,12 @@ geoflow_data <- R6Class("geoflow_data",
         stop("The argument should be an object of class 'geoflow_dimension'")
       }
       self$dimensions[[name]] <- dimension
+    },
+    
+    #'@description Set cloud path
+    #'@param cloud_path cloud path
+    setCloudPath = function(cloud_path){
+      self$cloud_path = cloud_path
     },
     
     #GENERIC RESOURCE related methods
