@@ -25,7 +25,7 @@ loadMetadataHandler <- function(config, element, type){
   #type of handler
   isHandlerId <- is.null(element$script)
   if(isHandlerId){
-    if(!is.null(config)) config$logger.info("Try to use embedded contacts handler")
+    if(!is.null(config)) config$logger.info(sprintf("Try to use embedded %s handler", type))
     #in case handler id is specified
     md_default_handlers <- switch(type,
                                   "contacts" = list_contact_handlers(raw=TRUE),
