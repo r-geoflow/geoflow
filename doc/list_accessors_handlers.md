@@ -36,3 +36,4 @@ workflows - List of accessors and handlers
 | [**thredds_csv**](#thredds_csv)<br>       | Handle metadata thredds entities from a CSV file                                          |                            |
 | [**thredds_excel**](#thredds_excel)<br>   | Handle metadata thredds entities from a Microsoft Excel (xls,xlsx) file                   | readxl                     |
 | [**thredds_gsheet**](#thredds_gsheet)<br> | Handle metadata thredds entities from a Google spreadsheet                                | gsheet                     |
+| [**ogc_csw**](#ogc_csw)<br>               | Handle metadata entities from an OGC CSW endpoint                                         | ows4R,sf,geometa           |
