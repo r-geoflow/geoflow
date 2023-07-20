@@ -451,20 +451,23 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
             newcontact <- NULL
             if(is(contact,"geoflow_contact")){
               id <- contact$identifiers[["id"]]
+              config$logger.info(id)
               role <- contact$role
-              contact_from_directory <- directory_of_contacts[sapply(directory_of_contacts, function(x){id %in% x$identifiers})]
-              if(!all(is.null(contact_from_directory))){
-                if(length(contact_from_directory)>0){
-                  if(length(contact_from_directory)>1 & length(unique(sapply(contact_from_directory, function(x){x$role})))>1){
-                    config$logger.warn("Warning: 2 contacts identified with same id/role! Check your contacts")
+              if(!is.null(id)) if(!is.na(id)){
+                contact_from_directory <- directory_of_contacts[sapply(directory_of_contacts, function(x){id %in% x$identifiers})]
+                if(!all(is.null(contact_from_directory))){
+                  if(length(contact_from_directory)>0){
+                    if(length(contact_from_directory)>1 & length(unique(sapply(contact_from_directory, function(x){x$role})))>1){
+                      config$logger.warn("Warning: 2 contacts identified with same id/role! Check your contacts")
+                    }
+                    contact_from_directory <- contact_from_directory[[1]]
+                    newcontact <- contact_from_directory$clone(deep=TRUE)
+                    newcontact$setIdentifier(key = "id", id)
+                    newcontact$setRole(role)
                   }
-                  contact_from_directory <- contact_from_directory[[1]]
-                  newcontact <- contact_from_directory$clone(deep=TRUE)
-                  newcontact$setIdentifier(key = "id", id)
-                  newcontact$setRole(role)
+                }else{
+                  config$logger.warn(sprintf("Warning: contact %s is not registered in directory! Contact will be ignored!", id))
                 }
-              }else{
-                config$logger.warn(sprintf("Warning: contact %s is not registered in directory! Contact will be ignored!", id))
               }
             }
             return(newcontact)

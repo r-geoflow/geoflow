@@ -1,0 +1,304 @@
+#handle_entities_csw
+handle_entities_csw <- function(config, source, handle = TRUE){
+  
+  if(!requireNamespace("ows4R", quietly = TRUE)){
+    stop("The OGC CSW handler requires the 'ows4R' package")
+  }
+  if(!requireNamespace("sf", quietly = TRUE)){
+    stop("The OGC CSW handler requires the 'sf' package")
+  }
+  if(!requireNamespace("geometa", quietly = TRUE)){
+    stop("The OGC CSW handler requires the 'geometa' package")
+  }
+  
+  CSW = config$software$input$csw
+  CSW_CONFIG = config$software$input$csw_config
+  if(is.null(CSW)){
+    stop("There is no 'csw' input software configured to handle entities from an CSW service endpoint")
+  }
+  
+  recs = if(is.null(source)){
+    CSW$getRecords()
+  }else{
+    cons <- CSWConstraint$new(cqlText = source)
+    query <- CSWQuery$new(constraint = cons)
+    CSW$getRecords(query = query, outputSchema = "http://www.isotc211.org/2005/gmd")
+  }
+  
+  createContactFromResponsibleParty = function(rp){
+    contact = geoflow_contact$new()
+    contact$identifiers[["id"]] = rp$contactInfo$address$electronicMailAddress
+    contact$setOrganizationName(rp$organisationName)
+    contact$setPositionName(rp$positionName)
+    ind = rp$individualName
+    if(!is.null(ind)) if(!is.na(ind)){
+      ind_parts = unlist(strsplit(ind, " "))
+      contact$setFirstName(ind_parts[1])
+      contact$setLastName(ind_parts[2])
+    }
+    contact$setPostalAddress(rp$contactInfo$address$deliveryPoint)
+    contact$setPostalCode(rp$contactInfo$address$postalCode)
+    contact$setCity(rp$contactInfo$address$city)
+    contact$setCountry(rp$contactInfo$address$country)
+    contact$setEmail(rp$contactInfo$address$electronicMailAddress)
+    contact$setVoice(rp$contactInfo$phone$voice)
+    contact$setFacsimile(rp$contactInfo$phone$facsimile)
+    contact$setWebsiteName(rp$contactInfo$onlineResource$name)
+    contact$setWebsiteUrl(rp$contactInfo$onlineResource$linkage$value)
+    contact$setRole(rp$role$attrs$codeListValue)
+    return(contact$clone(deep = TRUE))
+  }
+  
+  entities = lapply(recs, function(rec){
+    entity = geoflow_entity$new()
+    entity$setIdentifier("id", rec$fileIdentifier)
+    
+    #type
+    if(length(rec$hierarchyLevel)>0) entity$setType(key = "generic", type = rec$hierarchyLevel[[1]]$attrs$codeListValue)
+    #language
+    entity$setLanguage(rec$language$attrs$codeListValue)
+    #srid
+    if(length(rec$referenceSystemInfo)>0){
+      entity$setSrid(rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code)
+    }
+    
+    #creator
+    #metadata contacts
+    for(poc in rec$contact) if(length(poc)>1){
+      entity$addContact(createContactFromResponsibleParty(poc))
+    }
+    
+    #metadata date
+    entity$addDate("metadata", rec$dateStamp)
+    
+    #identificationInfo metadata fields
+    if(length(rec$identificationInfo)>0){
+      
+      #cited responsible party
+      rps = rec$identificationInfo[[1]]$citation$citedResponsibleParty
+      for(rp in rps){
+        entity$addContact(createContactFromResponsibleParty(rp))
+      }
+      
+      #dates
+      dates = rec$identificationInfo[[1]]$citation$date
+      for(date in dates){
+        if(date$dateType$attrs$codeListValue != "edition"){
+          entity$addDate(date$dateType$attrs$codeListValue, date$date)
+        }
+      }
+      editionDates = rec$identificationInfo[[1]]$citation$editionDate
+      if(length(editionDates)>0) for(editionDate in editionDates){
+        if(is(editionDate,"numeric")) editionDate = as.Date(editionDate, origin = "1970-01-01")
+        entity$addDate("edition", editionDate)
+      }
+      
+      #doi (in case available)
+      hasDOI = sapply(rec$identificationInfo[[1]]$citation$identifier, function(identifier){
+        has = !is.character(identifier$code)
+        if(has) has = regexpr(pattern = "dx.doi.org", identifier$code$attrs[["xlink:href"]]) > 0
+        return(has)
+      })
+      if(any(hasDOI)){
+        doi_meta_id = rec$identificationInfo[[1]]$citation$identifier[hasDOI][[1]]
+        doi = unlist(strsplit(doi_meta_id$code$attrs[["xlink:href"]], "dx.doi.org/"))[2]
+        entity$setIdentifier("doi", doi)
+      }
+      #title
+      entity$setTitle("title", rec$identificationInfo[[1]]$citation$title)
+      altitles = rec$identificationInfo[[1]]$citation$alternateTitle
+      if(length(altitles)>0) for(altitle in altitles) entity$setTitle("alternative", altitle)
+      #description
+      entity$setDescription("abstract", rec$identificationInfo[[1]]$abstract)
+      entity$setDescription("purpose", rec$identificationInfo[[1]]$purpose)
+      credits = rec$identificationInfo[[1]]$credit
+      if(length(credits)>0) entity$setDescription("credit", credits[[1]])
+      entity$setDescription("info", rec$identificationInfo[[1]]$supplementalInformation)
+      entity$setDescription("edition", rec$identificationInfo[[1]]$citation$edition)
+      status = rec$identificationInfo[[1]]$status
+      if(length(status)>0) entity$setDescription("status", status[[1]]$attrs$codeListValue)
+      #subject
+      entity$subjects = lapply(rec$identificationInfo[[1]]$descriptiveKeywords, function(dk){
+        subject = geoflow_subject$new()
+        subject$setKey(dk$type$attrs$codeListValue)
+        title = dk$thesaurusName$title
+        if(!is.null(title)){
+          if(is(title, "ISOAnchor")){
+            subject$setName(title$value)
+            subject$setUri(title$attrs[["xlink:href"]])
+          }else{
+            subject$setName(title)
+          }
+        }
+        kwds = dk$keyword
+        for(kwd in kwds){
+          gkwd = kwd
+          if(is(kwd, "ISOAnchor")){
+            gkwd = kwd$value
+            attr(gkwd, "uri") = kwd$attrs[["xlink:href"]]
+          }
+          subject$addKeyword(gkwd)
+        }
+        return(subject)
+      })
+      #extents
+      if(length(rec$identificationInfo[[1]]$extent)>0){
+        extent = rec$identificationInfo[[1]]$extent[[1]]
+        #spatial coverage
+        if(length(extent$geographicElement)>0) {
+          geo_extent = extent$geographicElement[[1]]
+          if(is(geo_extent, "ISOGeographicBoundingBox")){
+            entity$geo_bbox = sf::st_bbox(c(
+                xmin = geo_extent$westBoundLongitude, 
+                xmax = geo_extent$eastBoundLongitude, 
+                ymin = geo_extent$southBoundLatitude, 
+                ymax = geo_extent$northBoundLatitude
+              ), 
+              crs = sf::st_crs(4326)
+            )
+          }
+        }
+        #temporal coverage
+        if(length(extent$temporalElement)>0){
+          time_extent = extent$temporalElement[[1]]
+          if(is(time_extent, "ISOTemporalExtent")){
+            if(is(time_extent$extent, "GMLTimeInstant")){
+              entity$temporal_extent = list(instant = time_extent$extent$timePosition$value)
+            }else if(is(time_extent$extent, "GMLTimePeriod")){
+              entity$temporal_extent = list(
+                start = time_extent$extent$beginPosition$value,
+                end = time_extent$extent$endPosition$value
+              )
+            }
+          }
+        }
+      }
+      #rights
+      constraints = rec$identificationInfo[[1]]$resourceConstraints
+      if(length(constraints)>0){
+        for(constraint in constraints){
+          if(is(constraint, "ISOLegalConstraints")){
+            #use constraints
+            use_values = lapply(constraint$useConstraints, function(x){x$attrs$codeListValue})
+            use_right = geoflow_right$new()
+            use_right$setKey("useConstraints")
+            use_right$setValues(use_values)
+            entity$addRight(use_right)
+            #access constraints
+            access_values = lapply(constraint$accessConstraints, function(x){x$attrs$codeListValue})
+            access_right = geoflow_right$new()
+            access_right$setKey("accessConstraints")
+            access_right$setValues(access_values)
+            entity$addRight(access_right)
+            #other constraints
+            other_right = geoflow_right$new()
+            other_right$setKey("otherConstraints")
+            other_right$setValues(constraint$otherConstraints)
+            entity$addRight(other_right)
+          }
+        }
+      }
+      #resource formats
+      resource_formats = rec$identificationInfo[[1]]$resourceFormat
+      if(length(resource_formats)>0){
+        for(resource_format in resource_formats){
+          format = geoflow_format$new()
+          format$setKey("resource")
+          name = resource_format$name
+          if(is(name, "ISOAnchor")){
+            format$setUri(name$attrs[["xlink:href"]])
+            name = name$value
+          }
+          format$setName(name)
+          entity$addFormat(format)
+        }
+      }
+    }
+    
+    #distributionInfo metadata fields
+    if(length(rec$distributionInfo)>0){
+      #distributors
+      distributors = rec$distributionInfo$distributor
+      for(distributor in distributors){
+        print(distributor$distributorContact)
+        entity$addContact(createContactFromResponsibleParty(distributor$distributorContact))
+      }
+      #distribution formats
+      distrib_formats = rec$distributionInfo$distributionFormat
+      if(length(distrib_formats)>0){
+        for(distrib_format in distrib_formats){
+          format = geoflow_format$new()
+          format$setKey("distribution")
+          name = distrib_format$name
+          if(is(name, "ISOAnchor")){
+            format$setUri(name$attrs[["xlink:href"]])
+            name = name$value
+          }
+          format$setName(name)
+          entity$addFormat(format)
+        }
+      }
+      
+      #relations/online resources
+      if(length(rec$distributionInfo$transferOptions)>0){
+        online_resources = rec$distributionInfo$transferOptions[[1]]$onLine
+        if(length(online_resources)>0) for(online_resource in online_resources){
+          rel = geoflow_relation$new()
+          key <- switch(online_resource$protocol,
+                       "WWW:LINK-1.0-http--link" = "http",
+                       "WWW:DOWNLOAD-1.0-http--download" = "download",
+                       "OGC:WMS" = "wms", #defaut
+                       "OGC:WMS-1.1.0-http-get-map" = "wms110",
+                       "OGC:WMS-1.1.1-http-get-map" = "wms111",
+                       "OGC:WMS-1.3.0-http-get-map" = "wms130",
+                       "OGC:WFS" = "wfs",
+                       "OGC:WFS-1.0.0-http-get-feature" = "wfs100",
+                       "OGC:WFS-1.1.0-http-get-feature" = "wfs110",
+                       "OGC:WFS-2.0.0-http-get-feature" = "wfs200",
+                       "OGC:WCS" = "wcs",
+                       "OGC:WCS-1.0.0-http-get-coverage" = "wcs100",
+                       "OGC:WCS-1.1-http-get-coverage" = "wcs11",
+                       "OGC:WCS-1.1.0-http-get-coverage" = "wcs110",
+                       "OGC:WCS-1.1.1-http-get-coverage" = "wcs111",
+                       "OGC:WCS-2.0.1-http-get-coverage" = "wcs201",
+                       "OGC:WCS-2.1.0-http-get-coverage" = "wcs210", 
+                       "http"
+          )
+          rel$setKey(key)
+          rel$setName(online_resource$name)
+          rel$setDescription(online_resource$description)
+          rel$setLink(online_resource$linkage$value)
+          entity$addRelation(rel)
+        }
+      }
+    }
+    
+    #provenance
+    if(length(rec$dataQualityInfo)>0){
+      dq = rec$dataQualityInfo[[1]]
+      if(is(dq$lineage, "ISOLineage")){
+        prov = geoflow_provenance$new()
+        prov$setStatement(dq$lineage$statement)
+        steps = dq$lineage$processStep
+        if(length(steps)>0) for(i in 1:length(steps)){
+          step = steps[[i]]
+          proc = geoflow_process$new()
+          proc$setRationale(step$rationale)
+          proc$setDescription(step$description)
+          prov$addProcess(proc)
+          #add processor to contacts
+          for(processor in step$processor){
+            processor_entity = createContactFromResponsibleParty(processor)
+            processor_entity$role = paste0(processor_entity$role, i)
+            entity$addContact(processor_entity)
+          }
+        }
+        entity$setProvenance(prov)
+      }
+    }
+    
+    return(entity)
+  })
+  
+  return(entities)
+}

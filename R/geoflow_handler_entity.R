@@ -81,6 +81,12 @@ register_entity_handlers <- function(){
       def = "Handle metadata thredds entities from a Google spreadsheet",
       packages = list("gsheet"),
       fun = source(system.file("metadata/entity", "entity_handler_thredds_gsheet.R", package = "geoflow"))$value
+    ),
+    geoflow_handler$new(
+      id = "ogc_csw",
+      def = "Handle metadata entities from an OGC CSW endpoint",
+      packages = list("ows4R", "sf", "geometa"),
+      fun = source(system.file("metadata/entity", "entity_handler_csw.R", package = "geoflow"))$value
     )
   )
   .geoflow$entity_handlers <- handlers
