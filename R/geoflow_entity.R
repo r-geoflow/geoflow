@@ -427,7 +427,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       
         config$logger.info(sprintf("Copying data to entity job data directory '%s'", getwd()))
         
-        if(!data_object$sourceType %in% c("dbtable", "dbview")) for(i in 1:length(data_object$source)){
+        if(!data_object$sourceType %in% c("dbtable", "dbquery", "dbview")) for(i in 1:length(data_object$source)){
         
           datasource <- data_object$source[[i]]
           datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
@@ -592,12 +592,17 @@ geoflow_entity <- R6Class("geoflow_entity",
           data_object = data_objects[[k]]
         
           datasource <- data_object$source[[1]] #TODO we still look at first source
-          datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
-          datasource_name <- datasource_parts[1]
-          datasource_ext <- datasource_parts[2]
-          datasource_file <- attr(datasource, "uri")
-          attributes(datasource) <- NULL
-          if(is.null(datasource_file)) datasource_file <- datasource
+          datasource_name = NULL
+          datasource_ext = NULL
+          datasource_file = NULL
+          if(!is.null(datasource)){
+            datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
+            datasource_name <- NULLdatasource_parts[1]
+            datasource_ext <- datasource_parts[2]
+            datasource_file <- attr(datasource, "uri")
+            attributes(datasource) <- NULL
+            if(is.null(datasource_file)) datasource_file <- datasource
+          }
           
           if(data_object$sourceType == "other"){
             config$logger.warn("Metadata dynamic handling based on 'data' not implemented for source type 'other'")
@@ -697,26 +702,18 @@ geoflow_entity <- R6Class("geoflow_entity",
                    data_object$setFeatures(sf.data)
                    
                    #dynamic srid
-                   sf.crs <- sf::st_crs(sf.data)
-                   if(!is.na(sf.crs)){
-                     epsgcode <- sf.crs$epsg
-                     if(!is.null(epsgcode)) {
-                       if(is.na(epsgcode)){
-                         #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                         crs_wkt <- sf.crs$wkt
-                         if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                           crs_def <- terra::crs(crs_wkt, describe = TRUE)
-                           if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                             epsgcode <-crs_def$code 
-                           }
-                         }
-                       }
-                       if(!is.na(epsgcode)){
-                         data_srids <<- c(data_srids, as.integer(epsgcode))
-                       }
+                   if(is(sf.data, "sf")){
+                     epsgcode = get_epsg_code(sf.data)
+                     if(!is.na(epsgcode)){
+                       data_srids <<- c(data_srids, epsgcode)
+                     }
+                     sf.crs = sf::st_crs(sf.data)
+                     if(is.na(sf.crs)){
+                       #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
+                       if(!is.null(self$srid)) sf::st_crs(data_object$features) <- self$srid 
                      }
                    }
-                     
+  
                  }else{
                    warnMsg <- sprintf("Cannot read Shapefile data source '%s'. Dynamic metadata computation aborted!", trgShp)
                    config$logger.warn(warnMsg)
@@ -770,26 +767,12 @@ geoflow_entity <- R6Class("geoflow_entity",
                    
                    #dynamic srid
                    if(is(sf.data, "sf")){
-                     sf.crs <- sf::st_crs(sf.data)
-                     if(!is.na(sf.crs)){
-                       #in case data features are geo-referenced we check srid consistency and eventually update self$srid
-                       epsgcode <- sf.crs$epsg
-                       if(!is.null(epsgcode)) {
-                         if(is.na(epsgcode)){
-                           #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                           crs_wkt <- st_crs(sf.data)$wkt
-                           if(nzchar(crs_wkt)){
-                             crs_def <- terra::crs(crs_wkt, describe = TRUE)
-                             if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                               epsgcode <-crs_def$code 
-                             }
-                           }
-                         }
-                         if(!is.na(epsgcode)){
-                            data_srids <<- c(data_srids, as.integer(epsgcode))
-                         }
-                       }
-                     }else{
+                     epsgcode = get_epsg_code(sf.data)
+                     if(!is.na(epsgcode)){
+                        data_srids <<- c(data_srids, epsgcode)
+                     }
+                     sf.crs = sf::st_crs(sf.data)
+                     if(is.na(sf.crs)){
                        #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
                        if(!is.null(self$srid)) sf::st_crs(data_object$features) <- self$srid 
                      }
@@ -828,23 +811,15 @@ geoflow_entity <- R6Class("geoflow_entity",
                    data_object$setFeatures(sf.data)
                    
                    #dynamic srid
-                   sf.crs <- sf::st_crs(sf.data)
-                   if(!is.na(sf.crs)){
-                     epsgcode <- sf.crs$epsg
-                     if(!is.null(epsgcode)) {
-                       if(is.na(epsgcode)){
-                         #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                         crs_wkt <- sf.crs$wkt
-                         if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                           crs_def <- terra::crs(crs_wkt, describe = TRUE)
-                           if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                             epsgcode <-crs_def$code 
-                           }
-                         }
-                       }
-                       if(!is.na(epsgcode)){
-                         data_srids <<- c(data_srids, as.integer(epsgcode))
-                       }
+                   if(is(sf.data, "sf")){
+                     epsgcode = get_epsg_code(sf.data)
+                     if(!is.na(epsgcode)){
+                       data_srids <<- c(data_srids, epsgcode)
+                     }
+                     sf.crs = sf::st_crs(sf.data)
+                     if(is.na(sf.crs)){
+                       #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
+                       if(!is.null(self$srid)) sf::st_crs(data_object$features) <- self$srid 
                      }
                    }
                    
@@ -871,27 +846,19 @@ geoflow_entity <- R6Class("geoflow_entity",
                      sf.data <- filter_sf_by_cqlfilter(sf.data, data_object$cqlfilter)
                    }
                    data_object$setFeatures(sf.data)
+                   
                    if(is(sf.data, "sf")){
                      #dynamic srid
-                     sf.crs <- sf::st_crs(sf.data)
-                     if(!is.na(sf.crs)){
-                       epsgcode <- sf.crs$epsg
-                       if(!is.null(epsgcode)) {
-                         if(is.na(epsgcode)){
-                           #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                           crs_wkt <- sf.crs$wkt
-                           if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                             crs_def <- terra::crs(crs_wkt, describe = TRUE)
-                             if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                               epsgcode <-crs_def$code 
-                             }
-                           }
-                         }
-                         if(!is.na(epsgcode)){
-                           data_srids <<- c(data_srids, as.integer(epsgcode))
-                         }
-                       }
+                     epsgcode = get_epsg_code(sf.data)
+                     if(!is.na(epsgcode)){
+                       data_srids <<- c(data_srids, epsgcode)
                      }
+                     sf.crs = sf::st_crs(sf.data)
+                     if(is.na(sf.crs)){
+                       #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
+                       if(!is.null(self$srid)) sf::st_crs(data_object$features) <- self$srid 
+                     }
+                     
                      #dynamic spatial extent
                      config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
                      if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
@@ -925,25 +892,16 @@ geoflow_entity <- R6Class("geoflow_entity",
                    data_object$setFeatures(sf.data)
                    if(is(sf.data, "sf")){
                      #dynamic srid
-                     sf.crs <- sf::st_crs(sf.data)
-                     if(!is.na(sf.crs)){
-                       epsgcode <- sf.crs$epsg
-                       if(!is.null(epsgcode)) {
-                         if(is.na(epsgcode)){
-                           #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                           crs_wkt <- sf.crs$wkt
-                           if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                             crs_def <- terra::crs(crs_wkt, describe = TRUE)
-                             if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                               epsgcode <-crs_def$code 
-                             }
-                           }
-                         }
-                         if(!is.na(epsgcode)){
-                            data_srids <<- c(data_srids, as.integer(epsgcode))
-                         }
-                       }
+                     epsgcode = get_epsg_code(sf.data)
+                     if(!is.na(epsgcode)){
+                       data_srids <<- c(data_srids, epsgcode)
                      }
+                     sf.crs = sf::st_crs(sf.data)
+                     if(is.na(sf.crs)){
+                       #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
+                       if(!is.null(self$srid)) sf::st_crs(data_object$features) <- self$srid 
+                     }
+                     
                      #dynamic spatial extent
                      config$logger.info("Overwriting entity bounding box with DB spatial view bounding box")
                      if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
@@ -999,25 +957,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                     data_object$setFeatures(sf.data)
                     if(is(sf.data, "sf")){
                       #dynamic srid
-                      sf.crs <- sf::st_crs(sf.data)
-                      if(!is.na(sf.crs)){
-                        epsgcode <- sf.crs$epsg
-                        if(!is.null(epsgcode)) {
-                          if(is.na(epsgcode)){
-                            #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
-                            crs_wkt <- sf.crs$wkt
-                            if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
-                              crs_def <- terra::crs(crs_wkt, describe = TRUE)
-                              if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
-                                epsgcode <-crs_def$code 
-                              }
-                            }
-                          }
-                          if(!is.na(epsgcode)){
-                            data_srids <<- c(data_srids, as.integer(epsgcode))
-                          }
-                        }
+                      epsgcode = get_epsg_code(sf.data)
+                      if(!is.na(epsgcode)){
+                        data_srids <<- c(data_srids, epsgcode)
                       }
+                      
                       #dynamic spatial extent
                       config$logger.info("Overwriting entity bounding box with SQL query output bounding box")
                       if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)

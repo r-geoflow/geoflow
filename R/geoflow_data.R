@@ -146,12 +146,22 @@ geoflow_data <- R6Class("geoflow_data",
           self$setAccess(access) 
         }
         
-        #source
-        if(!any(sapply(data_props, function(x){x$key=="source"})) && !any(sapply(data_props, function(x){x$key=="dir"}))){
-          stop("One or more data 'source' (or 'dir', as directory for sources) is mandatory")
-        }
-        if(any(sapply(data_props, function(x){x$key=="source"}))) self$setSource(data_props$source$values)
         
+        #sourceType
+        if(!any(sapply(data_props, function(x){x$key=="sourceType"}))){
+          self$setSourceType("other")
+        }else{
+          self$setSourceType(data_props$sourceType$values[[1]])
+        }
+        
+        #source
+        if(!self$sourceType %in% c("dbtable", "dbquery", "dbview")){
+          if(!any(sapply(data_props, function(x){x$key=="source"})) && !any(sapply(data_props, function(x){x$key=="dir"}))){
+            stop("One or more data 'source' (or 'dir', as directory for sources) is mandatory")
+          }
+          if(any(sapply(data_props, function(x){x$key=="source"}))) self$setSource(data_props$source$values)
+        }
+          
         #sourceSql
         if(!is.null(data_props$sourceSql)){
           sourceSql <- paste(data_props$sourceSql$values, collapse=",")
@@ -176,13 +186,6 @@ geoflow_data <- R6Class("geoflow_data",
           }
         }else{
           self$setSourceZipOnly(FALSE) 
-        }
-        
-        #sourceType
-        if(!any(sapply(data_props, function(x){x$key=="sourceType"}))){
-          self$setSourceType("other")
-        }else{
-          self$setSourceType(data_props$sourceType$values[[1]])
         }
         
         #uploadSource

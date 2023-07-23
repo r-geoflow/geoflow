@@ -33,7 +33,13 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
     if(is.na(tbl_comment)) tbl_comment = db_table$f_table_name
     entity$setTitle(key = "title", tbl_comment)
     entity$setDescription(key = "abstract", tbl_comment)
-    #TODO to further expand
+    entity$setType(key = "generic", "dataset")
+    entity_data = geoflow_data$new()
+    entity_data$setSourceSql(sprintf("select * from %s.%s", db_table$f_table_schema, db_table$f_table_name))
+    entity_data$setSourceType("dbquery")
+    entity_data$setSpatialRepresentationType("vector")
+    entity$setData(entity_data)
+        
     return(entity)
   })
   return(entities)

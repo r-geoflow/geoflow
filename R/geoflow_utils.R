@@ -606,6 +606,39 @@ get_union_bbox <- function(data_objects){
   return(union.bbox)
 }
 
+#'@name get_epsg_code
+#'@aliases get_epsg_code
+#'@title get_epsg_code
+#'@description \code{get_epsg_code} is a consolidated method to get EPSG code (srid) from a CRS
+#'
+#'@usage get_epsg_code(x)
+#'
+#'@param x an object of class 'sf'
+#'
+#'@author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#'@export
+get_epsg_code = function(x){
+  epsgcode = NA
+  sf.crs <- sf::st_crs(x)
+  if(!is.na(sf.crs)){
+    epsgcode <- sf.crs$epsg
+    if(!is.null(epsgcode)) {
+      if(is.na(epsgcode)){
+        #try to inherit epsg code from WKT definition (thanks to rspatial/terra)
+        crs_wkt <- sf.crs$wkt
+        if(!is.na(crs_wkt)) if(nzchar(crs_wkt)){
+          crs_def <- terra::crs(crs_wkt, describe = TRUE)
+          if(!is.null(crs_def$authority)) if(!is.na(crs_def$authority)) if(crs_def$authority == "EPSG"){
+            epsgcode <-crs_def$code 
+          }
+        }
+      }
+      if(!is.na(epsgcode)) epsgcode = as.integer(epsgcode)
+    }
+  }
+  return(epsgcode)
+}
+
 #'@name get_config_resource_path
 #'@aliases get_config_resource_path
 #'@title get_config_resource_path
