@@ -87,6 +87,16 @@ handle_entities_csw <- function(config, source, handle = TRUE){
     #identificationInfo metadata fields
     if(length(rec$identificationInfo)>0){
       
+      #graphic overviews
+      gos = rec$identificationInfo[[1]]$graphicOverview
+      for(go in gos){
+        thumbnail_rel = geoflow_relation$new()
+        thumbnail_rel$setKey("thumbnail")
+        thumbnail_rel$setName(go$fileDescription)
+        thumbnail_rel$setLink(go$fileName)
+        entity$addRelation(thumbnail_rel)
+      }
+      
       #cited responsible party
       rps = rec$identificationInfo[[1]]$citation$citedResponsibleParty
       for(rp in rps){
