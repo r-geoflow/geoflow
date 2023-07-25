@@ -62,6 +62,19 @@ handle_entities_csw <- function(config, source, handle = TRUE){
       entity$setSrid(rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code)
     }
     
+    #parent identifier
+    if(!is.null(rec$parentIdentifier)){
+      parent_rel = geoflow_relation$new()
+      parent_rel$setKey("parent")
+      if(is(rec$parentIdentifier, "ISOAnchor")){
+        parent_rel$setName(rec$parentIdentifier$value)
+        parent_rel$setLink(rec$parentIdentifier$attrs[["xlink:href"]])
+      }else{
+        parent_rel$setName(rec$parentIdentifier)
+      }
+      entity$addRelation(parent_rel)
+    }
+    
     #creator
     #metadata contacts
     for(poc in rec$contact) if(length(poc)>1){
