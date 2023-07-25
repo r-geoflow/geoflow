@@ -597,7 +597,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           datasource_file = NULL
           if(!is.null(datasource)){
             datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
-            datasource_name <- NULLdatasource_parts[1]
+            datasource_name <- datasource_parts[1]
             datasource_ext <- datasource_parts[2]
             datasource_file <- attr(datasource, "uri")
             attributes(datasource) <- NULL
