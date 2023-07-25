@@ -1,0 +1,38 @@
+{
+  "profile": {
+    "id": "my-dbi-workflow",
+    "name": "My DBI workflow",
+    "project": "Test geoflow project",
+    "organization": "My organization",
+    "logos": [
+      "https://via.placeholder.com/300x150.png/09f/fff?text=geoflow"
+    ],
+    "mode": "entity"
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "dbi"
+      }
+    ]
+  },
+  "software": [
+    {
+      "id": "dbi",
+      "type": "input",
+      "software_type": "dbi",
+      "parameters": {
+        "drv": "Postgres",
+        "host": "host",
+        "port": "5432",
+        "user": "user",
+        "password": "pwd",
+        "dbname": "dbname"
+      },
+      "properties": {
+        "metadata_table": "public.metadata_dcmi"
+      }
+    }
+  ],
+  "actions": []
+}
