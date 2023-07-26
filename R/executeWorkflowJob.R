@@ -289,8 +289,10 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
         
         #save entities
         entities = config$getEntities()
-        entities_df = do.call("rbind", lapply(entities, function(x){x$asDataFrame()}))
-        readr::write_csv(entities_df, file.path(getwd(), "config_geoflow_entities.csv"))
+        if(length(entities)>0){
+          entities_df = do.call("rbind", lapply(entities, function(x){x$asDataFrame()}))
+          readr::write_csv(entities_df, file.path(getwd(), "config_geoflow_entities.csv"))
+        }
       }
     }else if(config$profile$mode == "raw"){
       #execute raw actions (--> not based on metadata entities)
