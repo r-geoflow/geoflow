@@ -64,7 +64,7 @@ handle_entities_csw <- function(config, source, handle = TRUE){
       code = code_parts[length(code_parts)]
       code_parts = unlist(strsplit(code, ":"))
       code = code_parts[length(code_parts)]
-      entity$setSrid(code)
+      entity$setSrid(as.integer(code))
     }
     
     #parent identifier
@@ -306,7 +306,11 @@ handle_entities_csw <- function(config, source, handle = TRUE){
                        "http"
           )
           rel$setKey(key)
-          rel$setName(online_resource$name)
+          if(is(online_resource$name, "ISOMimeFileType")){
+            rel$setName(online_resource$name$value)
+          }else{
+            rel$setName(online_resource$name)
+          }
           rel$setDescription(online_resource$description)
           rel$setLink(online_resource$linkage$value)
           entity$addRelation(rel)
