@@ -75,6 +75,16 @@ handle_entities_csw <- function(config, source, handle = TRUE){
       entity$addRelation(parent_rel)
     }
     
+    #add origin metadata URL (CSW GetRecordById)
+    csw_record_url = sprintf(
+      "%s?service=CSW&request=GetRecordById&Version=%s&elementSetName=full&outputSchema=http%3A//www.isotc211.org/2005/gmd&id=%s",
+       CSW_CONFIG$parameters$url, CSW_CONFIG$parameters$serviceVersion, rec$fileIdentifier
+    )
+    csw_record_rel = geoflow_relation$new()
+    csw_record_rel$setName("Source ISO 19115 metadata (CSW GetRecordById)")
+    csw_record_rel$setLink(csw_record_url)
+    entity$addRelation(csw_record_rel)
+    
     #creator
     #metadata contacts
     for(poc in rec$contact) if(length(poc)>1){
