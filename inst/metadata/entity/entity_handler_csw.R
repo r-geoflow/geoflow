@@ -59,7 +59,12 @@ handle_entities_csw <- function(config, source, handle = TRUE){
     entity$setLanguage(rec$language$attrs$codeListValue)
     #srid
     if(length(rec$referenceSystemInfo)>0){
-      entity$setSrid(rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code)
+      code = rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code
+      code_parts = unlist(strsplit(code, "/"))
+      code = code_parts[length(code_parts)]
+      code_parts = unlist(strsplit(code, ":"))
+      code = code_parts[length(code_parts)]
+      entity$setSrid(code)
     }
     
     #parent identifier
