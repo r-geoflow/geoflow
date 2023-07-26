@@ -1469,7 +1469,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       #enrich relations
       self$relations <- lapply(self$relations, function(relation){
         relation$name <- enrich_text_from_entity(relation$name, self)
-        relation$description <- enrich_text_from_entity(relation$description, self)
+        if(length(relation$description)>0) relation$description <- enrich_text_from_entity(relation$description, self)
         return(relation)
       })
       
