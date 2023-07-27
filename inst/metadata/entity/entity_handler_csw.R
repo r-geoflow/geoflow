@@ -90,7 +90,7 @@ handle_entities_csw <- function(config, source, handle = TRUE){
       rec$fileIdentifier
     )
     csw_record_rel = geoflow_relation$new()
-    csw_record_relsetKey("http")
+    csw_record_rel$setKey("http")
     csw_record_rel$setName("Source ISO 19115 metadata (CSW GetRecordById)")
     csw_record_rel$setLink(csw_record_url)
     entity$addRelation(csw_record_rel)
