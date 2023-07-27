@@ -1683,7 +1683,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           if(length(self$temporal_extent)>0){
             if(names(self$temporal_extent)[1] == "instant"){
               outime <- posix_to_str(self$temporal_extent$instant)
-            }else if(length(names(self$temporal_extent))==2 && names(self$temporal_extent) %in% c("start","end")){
+            }else if(length(names(self$temporal_extent))==2 && all(names(self$temporal_extent) %in% c("start","end"))){
               start <- posix_to_str(self$temporal_extent$start)
               end <- posix_to_str(self$temporal_extent$end)
               outime <- paste0(start,"/",end)
