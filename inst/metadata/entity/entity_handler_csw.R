@@ -59,8 +59,39 @@ handle_entities_csw <- function(config, source, handle = TRUE){
     entity$setLanguage(rec$language$attrs$codeListValue)
     #srid
     if(length(rec$referenceSystemInfo)>0){
-      entity$setSrid(rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code)
+      code = rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code
+      code_parts = unlist(strsplit(code, "/"))
+      code = code_parts[length(code_parts)]
+      code_parts = unlist(strsplit(code, ":"))
+      code = code_parts[length(code_parts)]
+      entity$setSrid(as.integer(code))
     }
+    
+    #parent identifier
+    if(!is.null(rec$parentIdentifier)){
+      parent_rel = geoflow_relation$new()
+      parent_rel$setKey("parent")
+      if(is(rec$parentIdentifier, "ISOAnchor")){
+        parent_rel$setName(rec$parentIdentifier$value)
+        parent_rel$setLink(rec$parentIdentifier$attrs[["xlink:href"]])
+      }else{
+        parent_rel$setName(rec$parentIdentifier)
+      }
+      entity$addRelation(parent_rel)
+    }
+    
+    #add origin metadata URL (CSW GetRecordById)
+    csw_record_url = paste0(
+      CSW_CONFIG$parameters$url,
+      "?service=CSW&request=GetRecordById&Version=",
+      CSW_CONFIG$parameters$serviceVersion,
+      "&elementSetName=full&outputSchema=http%3A//www.isotc211.org/2005/gmd&id=",
+      rec$fileIdentifier
+    )
+    csw_record_rel = geoflow_relation$new()
+    csw_record_rel$setName("Source ISO 19115 metadata (CSW GetRecordById)")
+    csw_record_rel$setLink(csw_record_url)
+    entity$addRelation(csw_record_rel)
     
     #creator
     #metadata contacts
@@ -73,6 +104,16 @@ handle_entities_csw <- function(config, source, handle = TRUE){
     
     #identificationInfo metadata fields
     if(length(rec$identificationInfo)>0){
+      
+      #graphic overviews
+      gos = rec$identificationInfo[[1]]$graphicOverview
+      for(go in gos){
+        thumbnail_rel = geoflow_relation$new()
+        thumbnail_rel$setKey("thumbnail")
+        thumbnail_rel$setName(go$fileDescription)
+        thumbnail_rel$setLink(go$fileName)
+        entity$addRelation(thumbnail_rel)
+      }
       
       #cited responsible party
       rps = rec$identificationInfo[[1]]$citation$citedResponsibleParty
@@ -265,7 +306,11 @@ handle_entities_csw <- function(config, source, handle = TRUE){
                        "http"
           )
           rel$setKey(key)
-          rel$setName(online_resource$name)
+          if(is(online_resource$name, "ISOMimeFileType")){
+            rel$setName(online_resource$name$value)
+          }else{
+            rel$setName(online_resource$name)
+          }
           rel$setDescription(online_resource$description)
           rel$setLink(online_resource$linkage$value)
           entity$addRelation(rel)

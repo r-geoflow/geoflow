@@ -270,7 +270,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           }
         }
         
-        #save entities,contacts and dictionaries used
+        #save source tabular entities,contacts and dictionaries used
         if(length(config$src_entities)>0){
           for(i in 1:length(config$src_entities)){
             readr::write_csv(config$src_entities[[i]], file.path(getwd(), sprintf("config_copyof_entities_%s.csv", i)))
@@ -285,6 +285,13 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           for(i in 1:length(config$src_dictionary)){
             readr::write_csv(config$src_dictionary[[i]], file.path(getwd(), sprintf("config_copyof_dictionary_%s.csv", i)))
           }
+        }
+        
+        #save entities
+        entities = config$getEntities()
+        if(length(entities)>0){
+          entities_df = do.call("rbind", lapply(entities, function(x){x$asDataFrame()}))
+          readr::write_csv(entities_df, file.path(getwd(), "config_geoflow_entities.csv"))
         }
       }
     }else if(config$profile$mode == "raw"){
