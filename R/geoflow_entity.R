@@ -935,7 +935,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                     warnMsg <- sprintf("No SQL file provided as 'source' nor 'sourceSql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
                     config$logger.warn(warnMsg)
                     setwd(wd)
-                    return(FALSE)
+                    return(data_object)
                   }
                 }
                 
@@ -947,7 +947,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                       errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", data_object$sourceSql)
                       config$logger.error(errMsg)
                       setwd(wd)
-                      return(FALSE)
+                      return(data_object)
                     }
                     #we try to apply the cql filter specified as data property
                     #TODO cqlfilter to dismiss in favour of a sourceFilter property
