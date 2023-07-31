@@ -18,16 +18,20 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
       stop(errMsg)
     }
   }else{
-    default_metadata_table = if(!is.null(dbi_config$properties$metadata_table)) dbi_config$properties$metadata_table else "public.metadata"
     if(is.null(source) | (!is.null(source) && source == "")){
-      source = default_metadata_table
+      source = if(!is.null(dbi_config$properties$metadata_table) && nzchar(dbi_config$properties$metadata_table)){
+        dbi_config$properties$metadata_table
+      }else{
+        "public.metadata"
+      }
+      config$logger.info(sprintf("Source is null or empty. Use default metadata table '%s'", source))
       is_default_source = TRUE
     }
     source <- try(DBI::dbGetQuery(dbi, sprintf("select * from %s", source)), silent = TRUE)
     if(is(source,"try-error")){
       if(is_default_source){
         query_all_tables <- TRUE
-        warnMsg <- sprintf("Error while trying to read DB default table '%s' (table not in DB). Switch to generic DBI tables entity handler", source)
+        warnMsg <- sprintf("Error while trying to read DB default table '%s' (table not in DB).", source)
         config$logger.warn(warnMsg)
       }else{
         errMsg <- sprintf("Error while trying to read DB table/view '%s'. Check if it exists in DB.", source)
@@ -38,13 +42,15 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
   }
   if(!handle) return(source)
   
-  #apply generic handler
+  #apply handlers
   entities <- if(query_all_tables){
+    config$logger.info("Switch to DBI tables entity handler")
     #use a generic DBI geometry columns 
     source = dbi_config$parameters$dbname
     handle_entities_dbi_geometry_columns <-  source(system.file("metadata/entity", "entity_handler_dbi_geometry_columns.R", package = "geoflow"))$value
     handle_entities_dbi_geometry_columns(config, source)
   }else{
+    config$logger.info("Use default tabular entity handler")
     #use the df entity handler based on the SQL query/table specified as source
     handle_entities_df <- source(system.file("metadata/entity", "entity_handler_df.R", package = "geoflow"))$value
     handle_entities_df(config, source)
