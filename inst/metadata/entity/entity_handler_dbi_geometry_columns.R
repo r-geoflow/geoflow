@@ -1,5 +1,5 @@
-#handle_entities_dbi
-handle_entities_dbi <- function(config, source, handle = TRUE){
+#handle_entities_dbi_geometry_columns
+handle_entities_dbi_geometry_columns <- function(config, source, handle = TRUE){
   dbi <- config$software$input$dbi
   dbi_config <- config$software$input$dbi_config
   if(is.null(dbi)){
