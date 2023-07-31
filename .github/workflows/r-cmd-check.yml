@@ -25,7 +25,7 @@ jobs:
           - {os: ubuntu-latest,  r: 'release'}
     
     env:
-      PKG_SYSREQS: false
+      PKG_SYSREQS: true
       INSPIRE_API_ENDPOINT: ${{ secrets.INSPIRE_API_ENDPOINT }}
       INSPIRE_API_KEY: ${{ secrets.INSPIRE_API_KEY }}
       ZENODO_SANDBOX_TOKEN: ${{ secrets.ZENODO_SANDBOX_TOKEN }}
@@ -53,9 +53,9 @@ jobs:
           docker run --name pycsw -v $GITHUB_WORKSPACE/tests/resources/pycsw/pycsw.cfg:/etc/pycsw/pycsw.cfg -d -p 8000:8000 geopython/pycsw:latest
       #R tests
       #--------------------------
-      - name: dependencies on Linux
-        if: runner.os == 'Linux'
-        run: sudo apt-get install -y make libicu-dev libxml2-dev libssl-dev pandoc librdf0-dev libnode-dev libcurl4-gnutls-dev
+      #- name: dependencies on Linux
+      #  if: runner.os == 'Linux'
+      #  run: sudo apt-get install -y make libicu-dev libxml2-dev libssl-dev pandoc librdf0-dev libnode-dev libcurl4-gnutls-dev
       #R Set-up
       - name: Set up R ${{ matrix.config.r }}
         uses: r-lib/actions/setup-r@v2
