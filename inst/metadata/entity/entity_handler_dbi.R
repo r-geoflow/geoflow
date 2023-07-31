@@ -11,7 +11,7 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
   query_all_tables = FALSE
   is_query <- if(!is.null(source)) startsWith(tolower(source), "select ") else FALSE
   if(is_query){
-    source <- try(DBI::dbGetQuery(dbi, source))
+    source <- try(DBI::dbGetQuery(dbi, source), silent = TRUE)
     if(is(source,"try-error")){
       errMsg <- sprintf("Error while trying to execute DB query '%s'.", source)
       config$logger.error(errMsg)
@@ -19,9 +19,11 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
     }
   }else{
     default_metadata_table = if(!is.null(dbi_config$properties$metadata_table)) dbi_config$properties$metadata_table else "public.metadata"
-    if(is.null(source)) source = default_metadata_table; is_default_source = TRUE
-    if(source == "") source = default_metadata_table; is_default_source = TRUE
-    source <- try(DBI::dbGetQuery(dbi, sprintf("select * from %s", source)))
+    if(is.null(source) | (!is.null(source) && source == "")){
+      source = default_metadata_table
+      is_default_source = TRUE
+    }
+    source <- try(DBI::dbGetQuery(dbi, sprintf("select * from %s", source)), silent = TRUE)
     if(is(source,"try-error")){
       if(is_default_source){
         query_all_tables <- TRUE
