@@ -35,6 +35,7 @@ handle_entities_dbi_geometry_columns <- function(config, source, handle = TRUE){
     db_table = db_tables[i,]
     
     entity = geoflow_entity$new()
+    entity$addDate(geoflow_date$new())
     
     #base fields
     id = paste0(source, "_", db_table$f_table_schema,"_", db_table$f_table_name)
