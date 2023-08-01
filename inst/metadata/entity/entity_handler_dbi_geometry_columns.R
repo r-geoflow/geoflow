@@ -52,6 +52,8 @@ handle_entities_dbi_geometry_columns <- function(config, source, handle = TRUE){
     entity_data$setSourceSql(sql)
     entity_data$setSourceType("dbquery")
     entity_data$setSpatialRepresentationType("vector")
+    entity_data$setUploadType("dbtable")
+    entity_data$setUploadSource(db_table$f_table_name)
     #data/feature type
     fto = geoflow_featuretype$new(id = id)
     data_sample = sf::st_read(dbi, query = paste(sql, "limit 1;"))
