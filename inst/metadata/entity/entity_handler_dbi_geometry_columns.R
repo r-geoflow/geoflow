@@ -18,14 +18,14 @@ handle_entities_dbi_geometry_columns <- function(config, source, handle = TRUE){
   #getDBTableComment
   getDBTableComment = function(dbi, schema, table){
     get_comment_sql = sprintf("select obj_description('%s.%s'::regclass, 'pg_class')",
-                              schema, table)
+                              paste0('"',schema,'"'), paste0('"',table,'"'))
     get_comment = DBI::dbGetQuery(dbi, get_comment_sql)
     return(get_comment$obj_description)
   }
   #getDBTableColumnComment
   getDBTableColumnComment = function(dbi, schema, table, column_index){
     get_comment_sql = sprintf("select col_description('%s.%s'::regClass, %s)",
-                              schema, table, column_index)
+                              paste0('"',schema,'"'), paste0('"',table,'"'), column_index)
     get_comment = DBI::dbGetQuery(dbi, get_comment_sql)
     return(get_comment$col_description)
   }
