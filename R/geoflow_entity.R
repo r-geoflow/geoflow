@@ -1175,7 +1175,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #'@description This function that will enrich the entity with relations. At now this is essentially related to adding 
     #'    relations if a Geoserver (geosapi) publishing action is enabled. Relations added will depend on the 
-    #'    \code{enrich_with_relation_*} options set in the geosapi action, ie. 
+    #'    \code{enrich_with_relation_*} options set in a) the geosapi action, ie. 
     #'    1) add WMS auto-generated thumbnail (if option \code{enrich_with_relation_wms_thumbnail} is \code{TRUE})
     #'    2) add WMS base URL relation (if option \code{enrich_with_relation_wms} is \code{TRUE})
     #'    3) for vector spatial representation type:
@@ -1183,6 +1183,8 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'      - add WFS auto-generated links as convenience for data download links (if option \code{enrich_with_relation_wfs_download_links} is \code{TRUE})
     #'    4) for grid spatial representation type:
     #'      - add WCS base URL relation (if option \code{enrich_with_relation_wcs} is \code{TRUE})
+    #'  b) in the geonapi action (for adding a CSW metadata URL)
+    #'  b) in the ows4R action (for adding a CSW metadata URL)
     #'@param config geoflow config object
     enrichWithRelations = function(config){
       
@@ -1355,6 +1357,59 @@ geoflow_entity <- R6Class("geoflow_entity",
             }
           }
         }
+      }
+      
+      #dynamic metadata relations
+      #if geonapi action is handled and enabled in workflow
+      geonapi_action <- NULL
+      actions <- list()
+      if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geonapi",x$id)>0})]
+      if(length(actions)>0) geonapi_action <- actions[[1]]
+      if(!is.null(geonapi_action)) if(geonapi_action$getOption("add_metadata_link")) {
+        geonetwork_base_url = config$software$output$geonetwork_config$parameters$url
+        metadata_url <- geoflow_relation$new()
+        metadata_url$setKey("http")
+        metadata_url$setName("ISO 19115 metadata (CSW GetRecordById)")
+        mdId <- self$identifiers[["id"]]
+        geometa_action = config$actions[sapply(config$actions, function(x){x$id == "geometa-create-iso-19115"})]
+        if(length(geometa_action)>0){
+          geometa_action = geometa_action[[1]]
+          if(geometa_action$getOption("use_uuid")) mdId <- self$identifiers[["uuid"]]
+        }
+        csw_record_url = paste0(
+          geonetwork_base_url,
+          "/srv/eng/csw?service=CSW&request=GetRecordById&version=2.0.2",
+          "&elementSetName=full&outputSchema=http%3A//www.isotc211.org/2005/gmd&id=",
+          mdId
+        )
+        metadata_url$setLink(csw_record_url)
+        self$addRelation(metadata_url)
+      }
+      #if ows4R action is handled and enabled in workflow
+      ows4R_action <- NULL
+      actions <- list()
+      if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("ows4R",x$id)>0})]
+      if(length(actions)>0) ows4R_action <- actions[[1]]
+      if(!is.null(ows4R_action)) if(ows4R_action$getOption("add_metadata_link")) {
+        csw_base_url = config$software$output$csw_config$parameters$url
+        metadata_url <- geoflow_relation$new()
+        metadata_url$setKey("http")
+        metadata_url$setName("ISO 19115 metadata (CSW GetRecordById)")
+        mdId <- self$identifiers[["id"]]
+        geometa_action = config$actions[sapply(config$actions, function(x){x$id == "geometa-create-iso-19115"})]
+        if(length(geometa_action)>0){
+          geometa_action = geometa_action[[1]]
+          if(geometa_action$getOption("use_uuid")) mdId <- self$identifiers[["uuid"]]
+        }
+        csw_record_url = paste0(
+          config$software$output$csw_config$parameters$url,
+          "?service=CSW&request=GetRecordById&version=",
+          config$software$output$csw_config$parameters$serviceVersion,
+          "&elementSetName=full&outputSchema=http%3A//www.isotc211.org/2005/gmd&id=",
+          mdId
+        )
+        metadata_url$setLink(csw_record_url)
+        self$addRelation(metadata_url)
       }
     },
     
