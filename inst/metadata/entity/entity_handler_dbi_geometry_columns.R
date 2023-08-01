@@ -74,6 +74,7 @@ handle_entities_dbi_geometry_columns <- function(config, source, handle = TRUE){
       )
       fto$addMember(ftm)
     }
+    entity_data$setFeatureType(id)
     entity_data$setFeatureTypeObj(fto)
   
     entity$setData(entity_data)
