@@ -48,7 +48,7 @@ handle_entities_dbi_geometry_columns <- function(config, source, handle = TRUE){
     
     #data
     entity_data = geoflow_data$new()
-    sql = sprintf("select * from %s.%s", db_table$f_table_schema, db_table$f_table_name)
+    sql = sprintf("select * from %s.%s", paste0('"',db_table$f_table_schema,'"'), paste0('"',db_table$f_table_name,'"'))
     entity_data$setSourceSql(sql)
     entity_data$setSourceType("dbquery")
     entity_data$setSpatialRepresentationType("vector")
