@@ -277,7 +277,8 @@ function(action, entity, config){
     }
   }
   #edition date
-  editionDates = entity$dates[sapply(entity$dates, function(x){x$key == "edition"})]
+  editionDates = list()
+  if(length(entity$dates)>0) entity$dates[sapply(entity$dates, function(x){x$key == "edition"})]
   if(length(editionDates)>0){
     editionDate = editionDates[[1]]$value
     ct$setEditionDate(editionDate)
