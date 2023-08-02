@@ -61,6 +61,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{dimensions}}{dimensions}
 
+\item{\code{cloud_path}}{a relative path in a cloud storage (e.g., OCS)}
+
 \item{\code{spatialRepresentationType}}{spatial representation type eg. "vector", "grid"}
 
 \item{\code{ogc_dimensions}}{OGC dimensions}
@@ -128,6 +130,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_data-setLayername}{\code{geoflow_data$setLayername()}}
 \item \href{#method-geoflow_data-addStyle}{\code{geoflow_data$addStyle()}}
 \item \href{#method-geoflow_data-addDimension}{\code{geoflow_data$addDimension()}}
+\item \href{#method-geoflow_data-setCloudPath}{\code{geoflow_data$setCloudPath()}}
 \item \href{#method-geoflow_data-getAllowedSpatialRepresentationTypes}{\code{geoflow_data$getAllowedSpatialRepresentationTypes()}}
 \item \href{#method-geoflow_data-setSpatialRepresentationType}{\code{geoflow_data$setSpatialRepresentationType()}}
 \item \href{#method-geoflow_data-setOgcDimensions}{\code{geoflow_data$setOgcDimensions()}}
@@ -623,6 +626,23 @@ Adds a dimension
 \item{\code{name}}{dimension name}
 
 \item{\code{dimension}}{object of class \link{geoflow_dimension}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_data-setCloudPath"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data-setCloudPath}{}}}
+\subsection{Method \code{setCloudPath()}}{
+Set cloud path
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setCloudPath(cloud_path)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{cloud_path}}{cloud path}
 }
 \if{html}{\out{</div>}}
 }
