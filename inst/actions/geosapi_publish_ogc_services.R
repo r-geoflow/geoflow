@@ -439,6 +439,9 @@ function(action, entity, config){
                    if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
                  }
                }else{
+                 if(entity$identifiers[["id"]] %in% gs_styles){
+                   layer$setDefaultStyle(entity$identifiers[["id"]])
+                 }
                  layer$setDefaultStyle("generic")
                }
                
@@ -471,6 +474,9 @@ function(action, entity, config){
                      if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
                    }
                  }else{
+                   if(entity$identifiers[["id"]] %in% gs_styles){
+                     layer$setDefaultStyle(entity$identifiers[["id"]])
+                   }
                    layer$setDefaultStyle("generic")
                  }
                  GS$updateLayer(layer)  
