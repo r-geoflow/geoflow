@@ -495,6 +495,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                   data.files <- list.files(pattern = basefilename)
                   if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
                 }else{
+                  config$logger.warn(sprintf("Source type: %s", data_object$sourceType))
                   if(data_object$sourceType != "other"){
                     config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
                     data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
