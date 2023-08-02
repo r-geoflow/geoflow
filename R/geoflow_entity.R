@@ -1360,6 +1360,13 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
       
       #dynamic metadata relations
+      #metadata identifier
+      mdId <- self$identifiers[["id"]]
+      geometa_action = config$actions[sapply(config$actions, function(x){x$id == "geometa-create-iso-19115"})]
+      if(length(geometa_action)>0){
+        geometa_action = geometa_action[[1]]
+        if(geometa_action$getOption("use_uuid")) mdId <- self$identifiers[["uuid"]]
+      }
       #if geonapi action is handled and enabled in workflow
       geonapi_action <- NULL
       actions <- list()
@@ -1367,15 +1374,10 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(length(actions)>0) geonapi_action <- actions[[1]]
       if(!is.null(geonapi_action)) if(geonapi_action$getOption("add_metadata_link")) {
         geonetwork_base_url = config$software$output$geonetwork_config$parameters$url
+        #xml metadata url
         metadata_url <- geoflow_relation$new()
         metadata_url$setKey("http")
         metadata_url$setName("ISO 19115 metadata (CSW GetRecordById)")
-        mdId <- self$identifiers[["id"]]
-        geometa_action = config$actions[sapply(config$actions, function(x){x$id == "geometa-create-iso-19115"})]
-        if(length(geometa_action)>0){
-          geometa_action = geometa_action[[1]]
-          if(geometa_action$getOption("use_uuid")) mdId <- self$identifiers[["uuid"]]
-        }
         csw_record_url = paste0(
           geonetwork_base_url,
           "/srv/eng/csw?service=CSW&request=GetRecordById&version=2.0.2",
@@ -1384,6 +1386,14 @@ geoflow_entity <- R6Class("geoflow_entity",
         )
         metadata_url$setLink(csw_record_url)
         self$addRelation(metadata_url)
+        
+        #html metadata url
+        metadata_url_2 = geoflow_relation$new()
+        metadata_url_2$setKey("http")
+        metadata_url_2$setName("ISO 19115 metadata (HTML)")
+        html_record_url = paste0(geonetwork_base_url, "/srv/api/records/", mdId)
+        metadata_url_2$setLink(html_record_url)
+        self$addRelation(metadata_url_2)
       }
       #if ows4R action is handled and enabled in workflow
       ows4R_action <- NULL
@@ -1392,15 +1402,10 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(length(actions)>0) ows4R_action <- actions[[1]]
       if(!is.null(ows4R_action)) if(ows4R_action$getOption("add_metadata_link")) {
         csw_base_url = config$software$output$csw_config$parameters$url
+        #xml metadata url
         metadata_url <- geoflow_relation$new()
         metadata_url$setKey("http")
         metadata_url$setName("ISO 19115 metadata (CSW GetRecordById)")
-        mdId <- self$identifiers[["id"]]
-        geometa_action = config$actions[sapply(config$actions, function(x){x$id == "geometa-create-iso-19115"})]
-        if(length(geometa_action)>0){
-          geometa_action = geometa_action[[1]]
-          if(geometa_action$getOption("use_uuid")) mdId <- self$identifiers[["uuid"]]
-        }
         csw_record_url = paste0(
           config$software$output$csw_config$parameters$url,
           "?service=CSW&request=GetRecordById&version=",
@@ -1410,6 +1415,17 @@ geoflow_entity <- R6Class("geoflow_entity",
         )
         metadata_url$setLink(csw_record_url)
         self$addRelation(metadata_url)
+        
+        #html metadata url
+        if(regexpr("geonetwork", csw_base_url)>0){
+          geonetwork_base_url = unlist(strsplit(csw_base_url, "/srv"))[1]
+          metadata_url_2 = geoflow_relation$new()
+          metadata_url_2$setKey("http")
+          metadata_url_2$setName("ISO 19115 metadata (HTML)")
+          html_record_url = paste0(geonetwork_base_url, "/srv/api/records/", mdId)
+          metadata_url_2$setLink(html_record_url)
+          self$addRelation(metadata_url_2)
+        }
       }
     },
     
