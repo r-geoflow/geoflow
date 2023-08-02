@@ -712,7 +712,7 @@ Function that will enrich entity with identifiers needed across multiple actions
 \subsection{Method \code{enrichWithRelations()}}{
 This function that will enrich the entity with relations. At now this is essentially related to adding 
    relations if a Geoserver (geosapi) publishing action is enabled. Relations added will depend on the 
-   \code{enrich_with_relation_*} options set in the geosapi action, ie. 
+   \code{enrich_with_relation_*} options set in a) the geosapi action, ie. 
    1) add WMS auto-generated thumbnail (if option \code{enrich_with_relation_wms_thumbnail} is \code{TRUE})
    2) add WMS base URL relation (if option \code{enrich_with_relation_wms} is \code{TRUE})
    3) for vector spatial representation type:
@@ -720,6 +720,8 @@ This function that will enrich the entity with relations. At now this is essenti
      - add WFS auto-generated links as convenience for data download links (if option \code{enrich_with_relation_wfs_download_links} is \code{TRUE})
    4) for grid spatial representation type:
      - add WCS base URL relation (if option \code{enrich_with_relation_wcs} is \code{TRUE})
+ b) in the geonapi action (for adding a CSW metadata URL)
+ b) in the ows4R action (for adding a CSW metadata URL)
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithRelations(config)}\if{html}{\out{</div>}}
 }
