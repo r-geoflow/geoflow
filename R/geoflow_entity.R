@@ -1365,9 +1365,10 @@ geoflow_entity <- R6Class("geoflow_entity",
       #dynamic metadata relations
       #metadata identifier
       mdId <- self$identifiers[["id"]]
-      geometa_action = config$actions[sapply(config$actions, function(x){x$id == "geometa-create-iso-19115"})]
-      if(length(geometa_action)>0){
-        geometa_action = geometa_action[[1]]
+      geometa_action = NULL
+      if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){x$id == "geometa-create-iso-19115"})]
+      if(length(actions)>0) geometa_action <- actions[[1]]
+      if(!is.null(geometa_action)){
         if(geometa_action$getOption("use_uuid")) mdId <- self$identifiers[["uuid"]]
       }
       #if geonapi action is handled and enabled in workflow
