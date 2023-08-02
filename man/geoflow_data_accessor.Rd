@@ -23,7 +23,7 @@ geoflow_data_accessor
    software_type = "some-software",
    definition = "definition",
    packages = list(),
-   download = function(resource, file, path, software){},
+   download = function(resource, file, path, software, unzip){},
    list = function(resource, software){}
  )
 }
@@ -184,7 +184,8 @@ Sets accessor definition
 \if{html}{\out{<a id="method-geoflow_data_accessor-setDownload"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_data_accessor-setDownload}{}}}
 \subsection{Method \code{setDownload()}}{
-Set download handler (a function with arguments \code{resource}, \code{file}, \code{path} and optional \code{software})
+Set download handler (a function with arguments \code{resource},
+\code{file}, \code{path}, \code{unzip} (TRUE/FALSE) and optional \code{software})
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_data_accessor$setDownload(download)}\if{html}{\out{</div>}}
 }
