@@ -1,5 +1,5 @@
-#handle_entities_dbi
-handle_entities_dbi <- function(config, source, handle = TRUE){
+#handle_entities_dbi_geometry_columns
+handle_entities_dbi_geometry_columns <- function(config, source, handle = TRUE){
   dbi <- config$software$input$dbi
   dbi_config <- config$software$input$dbi_config
   if(is.null(dbi)){
@@ -18,14 +18,14 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
   #getDBTableComment
   getDBTableComment = function(dbi, schema, table){
     get_comment_sql = sprintf("select obj_description('%s.%s'::regclass, 'pg_class')",
-                              schema, table)
+                              paste0('"',schema,'"'), paste0('"',table,'"'))
     get_comment = DBI::dbGetQuery(dbi, get_comment_sql)
     return(get_comment$obj_description)
   }
   #getDBTableColumnComment
   getDBTableColumnComment = function(dbi, schema, table, column_index){
     get_comment_sql = sprintf("select col_description('%s.%s'::regClass, %s)",
-                              schema, table, column_index)
+                              paste0('"',schema,'"'), paste0('"',table,'"'), column_index)
     get_comment = DBI::dbGetQuery(dbi, get_comment_sql)
     return(get_comment$col_description)
   }
@@ -35,6 +35,7 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
     db_table = db_tables[i,]
     
     entity = geoflow_entity$new()
+    entity$addDate("creation", Sys.time())
     
     #base fields
     id = paste0(source, "_", db_table$f_table_schema,"_", db_table$f_table_name)
@@ -47,10 +48,12 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
     
     #data
     entity_data = geoflow_data$new()
-    sql = sprintf("select * from %s.%s", db_table$f_table_schema, db_table$f_table_name)
+    sql = sprintf("select * from %s.%s", paste0('"',db_table$f_table_schema,'"'), paste0('"',db_table$f_table_name,'"'))
     entity_data$setSourceSql(sql)
     entity_data$setSourceType("dbquery")
     entity_data$setSpatialRepresentationType("vector")
+    entity_data$setUploadType("dbtable")
+    entity_data$setUploadSource(db_table$f_table_name)
     #data/feature type
     fto = geoflow_featuretype$new(id = id)
     data_sample = sf::st_read(dbi, query = paste(sql, "limit 1;"))
@@ -71,6 +74,7 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
       )
       fto$addMember(ftm)
     }
+    entity_data$setFeatureType(id)
     entity_data$setFeatureTypeObj(fto)
   
     entity$setData(entity_data)

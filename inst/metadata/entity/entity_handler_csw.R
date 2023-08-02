@@ -64,7 +64,8 @@ handle_entities_csw <- function(config, source, handle = TRUE){
       code = code_parts[length(code_parts)]
       code_parts = unlist(strsplit(code, ":"))
       code = code_parts[length(code_parts)]
-      entity$setSrid(as.integer(code))
+      if(code == "WGS 84") code = 4326
+      entity$setSrid(suppressWarnings(as.integer(code)))
     }
     
     #parent identifier
@@ -89,6 +90,7 @@ handle_entities_csw <- function(config, source, handle = TRUE){
       rec$fileIdentifier
     )
     csw_record_rel = geoflow_relation$new()
+    csw_record_rel$setKey("http")
     csw_record_rel$setName("Source ISO 19115 metadata (CSW GetRecordById)")
     csw_record_rel$setLink(csw_record_url)
     entity$addRelation(csw_record_rel)

@@ -260,7 +260,8 @@ register_software <- function(){
         onend_sql = list(label = "SQL 'on-end' script", def = "An SQL script to be run on workflow end", class = "character"),
         onend_r = list(label = "R 'on-end' SQL generating script", def = "R instructions to generate a SQL. It should be made of 2 properties 'script' (name of the R script) 
                        that should include a function standardized with parameter config (being the DBI software config) and will output 
-                       a character representing the SQL. The name of the function is to specify in 'fun' property.")
+                       a character representing the SQL. The name of the function is to specify in 'fun' property."),
+        metadata_table = list(label = "Entities metadata table", def = "Name of a metadata table to read entities from it, if no source is specified.", class = "character")
       ),
       actions = list(
         onstart = function(config, software, software_config){
