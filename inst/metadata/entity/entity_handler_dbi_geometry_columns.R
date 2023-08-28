@@ -2,16 +2,36 @@
 handle_entities_dbi_geometry_columns <- function(config, source, handle = TRUE){
   dbi <- config$software$input$dbi
   dbi_config <- config$software$input$dbi_config
+  dbi_user <- dbi_config$parameters$user
   if(is.null(dbi)){
     stop("There is no database input software configured to handle entities from DB")
   }
   
-  db_tables_query = sprintf("select * from geometry_columns where f_table_catalog = '%s'", source)
+  check_priv_geometry_columns_query <- sprintf("SELECT * FROM information_schema.table_privileges 
+                                                WHERE table_name = 'geometry_columns' AND
+                                                privilege_type = 'SELECT' AND
+                                                grantee IN('%s','PUBLIC')", dbi_user)
+  check_priv_geometry_columns = try(DBI::dbGetQuery(dbi, check_priv_geometry_columns_query))
+  if(nrow(check_priv_geometry_columns)==0){
+    warnMsg = sprintf("The 'geometry_columns' table is not granted for SELECT for public or user '%s'. An empty list of entities is returned!", dbi_user)
+    config$logger.warn(warnMsg)
+    return(list())
+  }
+  
+  db_tables_query = sprintf("SELECT geo.* FROM geometry_columns AS geo 
+                             LEFT JOIN information_schema.table_privileges AS priv on geo.f_table_name = priv.table_name 
+                             WHERE geo.f_table_catalog = '%s' AND priv.privilege_type = 'SELECT' AND priv.grantee IN('%s','PUBLIC')",
+                            source, dbi_user)
   db_tables <- try(DBI::dbGetQuery(dbi, db_tables_query))
   if(is(db_tables,"try-error")){
     errMsg <- sprintf("Error while trying to execute DB query '%s'.", db_tables_query)
     config$logger.error(errMsg)
     stop(errMsg)
+  }
+  if(nrow(db_tables)==0){
+    warnMsg = sprintf("No table granted for SELECT for public or user '%s'. An empty list of entities is returned!", dbi_user)
+    config$logger.warn(warnMsg)
+    return(list())
   }
   
   #DB comment utils
