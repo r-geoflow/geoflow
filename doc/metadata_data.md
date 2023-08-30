@@ -24,9 +24,7 @@ If sourced files are in local directory the complete path of file must be declar
 	* *`gpkg`* for GeoPackage object
 	* *`nc`* for NetCDF4 object
 	* *`other`* for other type of file
-* **sourceSql**: a plain SQL query to use as source 
-* **sourceZip**: a boolean argument whether if a zipped version of data file(s) should be created from source files. Default value is `FALSE`
-* **sourceZipOnly**:a boolean argument whether if a zipped version of data file(s) only should be created from source files. Default value is `FALSE`
+* **sourceSql**: a plain SQL query to use as source
 
 <u>Access to storage and upload data</u>
 If data must be uploaded, the target must be declared in **software** section of the JSON configuration file.

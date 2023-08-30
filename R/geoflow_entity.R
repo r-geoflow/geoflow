@@ -542,22 +542,23 @@ geoflow_entity <- R6Class("geoflow_entity",
         }
       
         #special case of other types to zip all into a single file
-        if(data_object$sourceType == "other" & data_object$sourceZip){
-          config$logger.info("sourceZip = TRUE: Zip sources into single data file")
-          data.files <- list.files()
-          print(data.files)
-          zip::zipr(zipfile = paste0(self$identifiers$id, "_files_for_source_", k, ".zip"), files = data.files)
-          if(data_object$sourceZipOnly){
-            config$logger.info("sourceZipOnly = TRUE: deleting zipped, they will not be uploaded")
-            for(data.file in data.files){
-              unlink(data.file, force = TRUE)
-            }
-          }else{
-            config$logger.info("sourceZipOnly = FALSE: both zip and zipped files will be uploaded")
-          }
-        }else{
-          config$logger.info("sourceZip = FALSE: source files will be uploaded")
-        }
+        #deprecate sourceZip/sourceZipOnly (see #344)
+        #if(data_object$sourceType == "other" & data_object$sourceZip){
+        #  config$logger.info("sourceZip = TRUE: Zip sources into single data file")
+        #  data.files <- list.files()
+        #  print(data.files)
+        #  zip::zipr(zipfile = paste0(self$identifiers$id, "_files_for_source_", k, ".zip"), files = data.files)
+        #  if(data_object$sourceZipOnly){
+        #    config$logger.info("sourceZipOnly = TRUE: deleting zipped, they will not be uploaded")
+        #    for(data.file in data.files){
+        #      unlink(data.file, force = TRUE)
+        #    }
+        #  }else{
+        #    config$logger.info("sourceZipOnly = FALSE: both zip and zipped files will be uploaded")
+        #  }
+        #}else{
+        #  config$logger.info("sourceZip = FALSE: source files will be uploaded")
+        #}
       }
       
       setwd("..")
@@ -1833,8 +1834,9 @@ geoflow_entity <- R6Class("geoflow_entity",
             outdata <- paste0(outdata, "source:", paste0(out_sources, collapse=","), line_separator)
           }
           if(!is.null(self$data$sourceType)) outdata <- paste0(outdata, "sourceType:", self$data$sourceType, line_separator)
-          if(!is.null(self$data$sourceZip)) outdata <- paste0(outdata, "sourceZip:", tolower(as.character(self$data$sourceZip)), line_separator)
-          if(!is.null(self$data$sourceZipOnly)) outdata <- paste0(outdata, "sourceZipOnly:", tolower(as.character(self$data$sourceZipOnly)), line_separator)
+          #deprecate sourceZip/sourceZipOnly with #344
+          #if(!is.null(self$data$sourceZip)) outdata <- paste0(outdata, "sourceZip:", tolower(as.character(self$data$sourceZip)), line_separator)
+          #if(!is.null(self$data$sourceZipOnly)) outdata <- paste0(outdata, "sourceZipOnly:", tolower(as.character(self$data$sourceZipOnly)), line_separator)
           out_upload_sources <- NULL
           if(!is.null(self$data$uploadSource)){
             for(src in self$data$uploadSource){

@@ -40,9 +40,9 @@ geoflow_data <- R6Class("geoflow_data",
     sourceSql = NULL,
     #'@field sourceType source type
     sourceType = "other",
-    #'@field sourceZip create a zip for the sources
+    #'@field sourceZip create a zip for the sources (DEPRECATED with #344)
     sourceZip = FALSE,
-    #'@field sourceZipOnly create a zip only for the sources, remove source files
+    #'@field sourceZipOnly create a zip only for the sources, remove source files (DEPRECATED with #344)
     sourceZipOnly = FALSE,
     
     #UPLOAD related fields
@@ -168,25 +168,25 @@ geoflow_data <- R6Class("geoflow_data",
           self$setSourceSql(sourceSql)
         }
         
-        #sourceZip
-        if(!is.null(data_props$sourceZip)){
-          sourceZip <- as.logical(tolower(data_props$sourceZip$values[[1]]))
-          if(!is.na(sourceZip)){
-            self$setSourceZip(sourceZip) 
-          }
-        }else{
-          self$setSourceZip(FALSE) 
-        }
+        #sourceZip (DEPRECATED with #344)
+        #if(!is.null(data_props$sourceZip)){
+        #  sourceZip <- as.logical(tolower(data_props$sourceZip$values[[1]]))
+        #  if(!is.na(sourceZip)){
+        #    self$setSourceZip(sourceZip) 
+        #  }
+        #}else{
+        #  self$setSourceZip(FALSE) 
+        #}
         
-        #sourceZipOnly
-        if(!is.null(data_props$sourceZipOnly)){
-          sourceZipOnly <- as.logical(tolower(data_props$sourceZipOnly$values[[1]]))
-          if(!is.na(sourceZipOnly)){
-            self$setSourceZipOnly(sourceZipOnly) 
-          }
-        }else{
-          self$setSourceZipOnly(FALSE) 
-        }
+        #sourceZipOnly (DEPRECATED with #344)
+        #if(!is.null(data_props$sourceZipOnly)){
+        #  sourceZipOnly <- as.logical(tolower(data_props$sourceZipOnly$values[[1]]))
+        #  if(!is.na(sourceZipOnly)){
+        #    self$setSourceZipOnly(sourceZipOnly) 
+        #  }
+        #}else{
+        #  self$setSourceZipOnly(FALSE) 
+        #}
         
         #uploadSource
         if(any(sapply(data_props, function(x){x$key=="uploadSource"}))){
@@ -625,12 +625,14 @@ geoflow_data <- R6Class("geoflow_data",
     
     #'@description Sets whether a zipped version of the data file(s) should be created from source files. Default is \code{FALSE}
     #'@param sourceZip zip sources, object of class \code{logical}
+    #'@note deprecated
     setSourceZip = function(sourceZip){
       self$sourceZip <- sourceZip
     },
     
     #'@description Sets whether a zipped version of the data file(s) only should be created from source files. Default is \code{FALSE}
     #'@param sourceZipOnly zip sources only, object of class \code{logical}
+    #'@note deprecated
     setSourceZipOnly = function(sourceZipOnly){
       self$sourceZipOnly <- sourceZipOnly
     },
