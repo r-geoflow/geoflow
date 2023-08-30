@@ -634,17 +634,20 @@ geoflow_entity <- R6Class("geoflow_entity",
             data_object$sourceType = switch(datasource_ext,
               "zip" = {
                 srcType = "other"
-                zip_files = zip::zip_list(file.path(getwd(), paste0(basefilename,".zip")))
-                if(any(endsWith(zip_files$filename, ".gpkg"))){
-                  srcType = "gpkg" 
-                }else if(any(endsWith(zip_files$filename, ".shp"))){
-                  srcType = "shp"
-                }else if(any(endsWith(zip_files$filename, ".csv"))){
-                  srcType = "csv"
-                }else if(any(endsWIth(zip_files$filename, ".tif"))){
-                  srcType = "tif"
+                basefilepath = file.path(getwd(), paste0(basefilename,".zip"))
+                if(file.exists(basefilepath)){ #for srcType != "other"
+                  zip_files = zip::zip_list(basefilepath)
+                  if(any(endsWith(zip_files$filename, ".gpkg"))){
+                    srcType = "gpkg" 
+                  }else if(any(endsWith(zip_files$filename, ".shp"))){
+                    srcType = "shp"
+                  }else if(any(endsWith(zip_files$filename, ".csv"))){
+                    srcType = "csv"
+                  }else if(any(endsWIth(zip_files$filename, ".tif"))){
+                    srcType = "tif"
+                  }
+                  config$logger.info(sprintf("Resolving sourceType from zip list: '%s'", srcType))
                 }
-                config$logger.info(sprintf("Resolving sourceType from zip list: '%s'", srcType))
                 srcType
               },
               "shp" = "shp",
