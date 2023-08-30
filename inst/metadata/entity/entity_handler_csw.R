@@ -27,24 +27,24 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
   
   createContactFromResponsibleParty = function(rp){
     contact = geoflow_contact$new()
-    contact$identifiers[["id"]] = rp$contactInfo$address$electronicMailAddress
-    contact$setOrganizationName(rp$organisationName)
-    contact$setPositionName(rp$positionName)
+    if(!is.null(rp$contactInfo$address$electronicMailAddress)) if(!is.na(rp$contactInfo$address$electronicMailAddress)) contact$identifiers[["id"]] = rp$contactInfo$address$electronicMailAddress
+    if(!is.null(rp$organisationName)) if(!is.na(rp$organisationName)) contact$setOrganizationName(rp$organisationName)
+    if(!is.null(rp$positionName)) if(!is.na(rp$positionName)) contact$setPositionName(rp$positionName)
     ind = rp$individualName
     if(!is.null(ind)) if(!is.na(ind)){
       ind_parts = unlist(strsplit(ind, " "))
       contact$setFirstName(ind_parts[1])
       contact$setLastName(ind_parts[2])
     }
-    contact$setPostalAddress(rp$contactInfo$address$deliveryPoint)
-    contact$setPostalCode(rp$contactInfo$address$postalCode)
-    contact$setCity(rp$contactInfo$address$city)
-    contact$setCountry(rp$contactInfo$address$country)
-    contact$setEmail(rp$contactInfo$address$electronicMailAddress)
-    contact$setVoice(rp$contactInfo$phone$voice)
-    contact$setFacsimile(rp$contactInfo$phone$facsimile)
-    contact$setWebsiteName(rp$contactInfo$onlineResource$name)
-    contact$setWebsiteUrl(rp$contactInfo$onlineResource$linkage$value)
+    if(!is.null(rp$contactInfo$address$deliveryPoint)) if(!is.na(rp$contactInfo$address$deliveryPoint)) contact$setPostalAddress(rp$contactInfo$address$deliveryPoint)
+    if(!is.null(rp$contactInfo$address$postalCode)) if(!is.na(rp$contactInfo$address$postalCode)) contact$setPostalCode(rp$contactInfo$address$postalCode)
+    if(!is.null(rp$contactInfo$address$city)) if(!is.na(rp$contactInfo$address$city)) contact$setCity(rp$contactInfo$address$city)
+    if(!is.null(rp$contactInfo$address$country)) if(!is.na(rp$contactInfo$address$country)) contact$setCountry(rp$contactInfo$address$country)
+    if(!is.null(rp$contactInfo$address$electronicMailAddress)) if(!is.na(rp$contactInfo$address$electronicMailAddress)) contact$setEmail(rp$contactInfo$address$electronicMailAddress)
+    if(!is.null(rp$contactInfo$phone$voice)) if(!is.na(rp$contactInfo$phone$voice)) contact$setVoice(rp$contactInfo$phone$voice)
+    if(!is.null(rp$contactInfo$phone$facsimile)) if(!is.na(rp$contactInfo$phone$facsimile)) contact$setFacsimile(rp$contactInfo$phone$facsimile)
+    if(!is.null(rp$contactInfo$onlineResource$name)) if(!is.na(rp$contactInfo$onlineResource$name)) contact$setWebsiteName(rp$contactInfo$onlineResource$name)
+    if(!is.null(rp$contactInfo$onlineResource$linkage$value)) if(!is.na(rp$contactInfo$onlineResource$linkage$value)) contact$setWebsiteUrl(rp$contactInfo$onlineResource$linkage$value)
     contact$setRole(rp$role$attrs$codeListValue)
     return(contact$clone(deep = TRUE))
   }
