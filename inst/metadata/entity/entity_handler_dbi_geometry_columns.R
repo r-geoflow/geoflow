@@ -34,22 +34,6 @@ handle_entities_dbi_geometry_columns <- function(handler, source, config, handle
     return(list())
   }
   
-  #DB comment utils
-  #getDBTableComment
-  getDBTableComment = function(dbi, schema, table){
-    get_comment_sql = sprintf("select obj_description('%s.%s'::regclass, 'pg_class')",
-                              paste0('"',schema,'"'), paste0('"',table,'"'))
-    get_comment = DBI::dbGetQuery(dbi, get_comment_sql)
-    return(get_comment$obj_description)
-  }
-  #getDBTableColumnComment
-  getDBTableColumnComment = function(dbi, schema, table, column_index){
-    get_comment_sql = sprintf("select col_description('%s.%s'::regClass, %s)",
-                              paste0('"',schema,'"'), paste0('"',table,'"'), column_index)
-    get_comment = DBI::dbGetQuery(dbi, get_comment_sql)
-    return(get_comment$col_description)
-  }
-  
   #entities
   entities = lapply(1:nrow(db_tables), function(i){
     db_table = db_tables[i,]
@@ -67,36 +51,7 @@ handle_entities_dbi_geometry_columns <- function(handler, source, config, handle
     entity$setType(key = "generic", "dataset")
     
     #data
-    entity_data = geoflow_data$new()
-    sql = sprintf("select * from %s.%s", paste0('"',db_table$f_table_schema,'"'), paste0('"',db_table$f_table_name,'"'))
-    entity_data$setSourceSql(sql)
-    entity_data$setSourceType("dbquery")
-    entity_data$setSpatialRepresentationType("vector")
-    entity_data$setUploadType("dbtable")
-    entity_data$setUploadSource(db_table$f_table_name)
-    #data/feature type
-    fto = geoflow_featuretype$new(id = id)
-    data_sample = sf::st_read(dbi, query = paste(sql, "limit 1;"))
-    for(colname in colnames(data_sample)){
-      col_idx = which(colnames(data_sample) == colname)
-      col_comment = getDBTableColumnComment(dbi, db_table$f_table_schema, db_table$f_table_name, col_idx)
-      if(is.na(col_comment)) col_comment = colname
-      
-      ftm = geoflow_featuremember$new(
-        type = if(is(data_sample[[colname]], "character")) "attribute" else "variable",
-        code = colname,
-        name = col_comment,
-        def = col_comment,
-        defSource = NA,
-        minOccurs = 0,
-        maxOccurs = 1,
-        uom = NA
-      )
-      fto$addMember(ftm)
-    }
-    entity_data$setFeatureType(id)
-    entity_data$setFeatureTypeObj(fto)
-  
+    entity_data = create_geoflow_data_from_dbi(dbi, db_table$f_table_schema, db_table$f_table_name)
     entity$setData(entity_data)
         
     return(entity)

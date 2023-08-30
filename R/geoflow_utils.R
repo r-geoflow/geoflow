@@ -658,3 +658,89 @@ get_config_resource_path <- function(config, path){
   }
   return(path)
 }
+
+#'@name getDBTableComment
+#'@aliases getDBTableComment
+#'@title getDBTableComment
+#'
+#'@usage getDBTableComment(dbi, schema, table)
+#'
+#'@param dbi a dbi connection
+#'@param schema schema
+#'@param table table
+#'@return the table comment
+
+#'@author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#'@export
+getDBTableComment = function(dbi, schema, table){
+  get_comment_sql = sprintf("select obj_description('%s.%s'::regclass, 'pg_class')",
+                            paste0('"',schema,'"'), paste0('"',table,'"'))
+  get_comment = DBI::dbGetQuery(dbi, get_comment_sql)
+  return(get_comment$obj_description)
+}
+
+#'@name getDBTableColumnComment
+#'@aliases getDBTableColumnComment
+#'@title getDBTableColumnComment
+#'
+#'@usage getDBTableColumnComment(dbi, schema, table)
+#'
+#'@param dbi a dbi connection
+#'@param schema schema
+#'@param table table
+#'@param column_index table column index
+#'@return the table comment
+
+#'@author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#'@export
+getDBTableColumnComment = function(dbi, schema, table, column_index){
+  get_comment_sql = sprintf("select col_description('%s.%s'::regClass, %s)",
+                            paste0('"',schema,'"'), paste0('"',table,'"'), column_index)
+  get_comment = DBI::dbGetQuery(dbi, get_comment_sql)
+  return(get_comment$col_description)
+}
+
+#'@name create_geoflow_data_from_dbi
+#'@aliases create_geoflow_data_from_dbi
+#'@title create_geoflow_data_from_dbi
+#'
+#'@usage create_geoflow_data_from_dbi(dbi, schema, table)
+#'
+#'@param dbi a dbi connection
+#'@param schema schema
+#'@param table table
+#'
+#'@author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#'@export
+create_geoflow_data_from_dbi <- function(dbi, schema, table){
+  entity_data = geoflow_data$new()
+  sql = sprintf("select * from %s.%s", paste0('"',schema,'"'), paste0('"',table,'"'))
+  entity_data$setSourceSql(sql)
+  entity_data$setSourceType("dbquery")
+  entity_data$setSpatialRepresentationType("vector")
+  entity_data$setUploadType("dbtable")
+  entity_data$setUploadSource(table)
+  #data/feature type
+  fto = geoflow_featuretype$new(id = table)
+  data_sample = sf::st_read(dbi, query = paste(sql, "limit 1;"))
+  for(colname in colnames(data_sample)){
+    col_idx = which(colnames(data_sample) == colname)
+    col_comment = getDBTableColumnComment(dbi, schema, table, col_idx)
+    if(is.na(col_comment)) col_comment = colname
+    
+    ftm = geoflow_featuremember$new(
+      type = if(is(data_sample[[colname]], "character")) "attribute" else "variable",
+      code = colname,
+      name = col_comment,
+      def = col_comment,
+      defSource = NA,
+      minOccurs = 0,
+      maxOccurs = 1,
+      uom = NA
+    )
+    fto$addMember(ftm)
+  }
+  entity_data$setFeatureType(table)
+  entity_data$setFeatureTypeObj(fto)
+  return(entity_data)
+}
