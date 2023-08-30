@@ -77,3 +77,39 @@ list_contact_handlers <- function(raw = FALSE){
   }
   return(handlers)
 }
+
+#' @name list_contact_handler_options
+#' @aliases list_contact_handler_options
+#' @title list_contact_handler_options
+#' @description \code{list_contact_handler_options} lists the options available for a given contact handler supported by geoflow.
+#'
+#' @usage list_contact_handler_options(id, raw)
+#' 
+#' @param id An contact handler identifier
+#' @param raw if raw list should be returned
+#' 
+#' @return an object of class \code{data.frame} (or \code{list} if raw is TRUE) listing the available handler options.
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+list_contact_handler_options <- function(id, raw = FALSE){
+  out <- NULL
+  handlers <- list_contact_handlers(raw = TRUE)
+  handler <- handlers[sapply(handlers, function(x){x$id == id})]
+  if(length(handler)==0) stop(sprintf("No handler with id '%s'!", id))
+  handler <- handler[[1]]
+  if(raw) return(handler$available_options)
+  if(length(handler$available_options)>0){
+    out <- data.frame(
+      name = names(handler$available_options),
+      definition = sapply(handler$available_options, function(x){x$def}),
+      default = sapply(handler$available_options, function(x){paste0(x$default, collapse=",")}),
+      stringsAsFactors = FALSE
+    )
+    row.names(out) <- 1:nrow(out)
+  }else{
+    out <- data.frame(name = character(0), definition = character(0))
+  }
+  return(out)
+}

@@ -1,5 +1,5 @@
 #handle_entities_thredds_csv
-handle_entities_thredds_csv <- function(config, source, handle = TRUE){
+handle_entities_thredds_csv <- function(handler, source, config, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
   source <- read.csv(source,stringsAsFactors = F)
@@ -7,6 +7,6 @@ handle_entities_thredds_csv <- function(config, source, handle = TRUE){
   
   #apply generic handler
   handle_entities_thredds_df <- source(system.file("metadata/entity", "entity_handler_thredds_df.R", package = "geoflow"))$value
-  entities <- handle_entities_thredds_df(config, source)
+  entities <- handle_entities_thredds_df(handler, source, config)
   return(entities)
 }

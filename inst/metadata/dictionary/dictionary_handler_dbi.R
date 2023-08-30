@@ -1,5 +1,5 @@
 #handle_dictionary_dbi
-handle_dictionary_dbi <- function(config, source, handle = TRUE){
+handle_dictionary_dbi <- function(handler, source, config, handle = TRUE){
   dbi <- config$software$input$dbi
   if(is.null(dbi)){
     stop("There is no database input software configured to handle dictionary from DB")
@@ -26,6 +26,6 @@ handle_dictionary_dbi <- function(config, source, handle = TRUE){
   
   #apply generic handler
   handle_dictionary_df <- source(system.file("metadata/dictionary", "dictionary_handler_df.R", package = "geoflow"))$value
-  dictionary <- handle_dictionary_df(config, source)
+  dictionary <- handle_dictionary_df(handler, source, config)
   return(dictionary)
 }

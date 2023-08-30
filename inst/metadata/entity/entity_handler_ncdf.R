@@ -1,5 +1,5 @@
 #handle_entities_ncdf
-handle_entities_ncdf <- function(config, source, handle = TRUE){
+handle_entities_ncdf <- function(handler, source, config, handle = TRUE){
   
   config$logger.info("NCDF Handler")
   if(!requireNamespace("ncdf4", quietly = TRUE)){

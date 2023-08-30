@@ -1,5 +1,5 @@
 #handle_entities_ncml
-handle_entities_ncml <- function(config, source, handle = TRUE){
+handle_entities_ncml <- function(handler, source, config, handle = TRUE){
   
   config$logger.info("NCML Handle")
   

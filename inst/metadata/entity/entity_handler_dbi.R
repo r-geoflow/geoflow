@@ -1,5 +1,5 @@
 #handle_entities_dbi
-handle_entities_dbi <- function(config, source, handle = TRUE){
+handle_entities_dbi <- function(handler, source, config, handle = TRUE){
   dbi <- config$software$input$dbi
   dbi_config <- config$software$input$dbi_config
   if(is.null(dbi)){
@@ -50,12 +50,12 @@ handle_entities_dbi <- function(config, source, handle = TRUE){
     #use a generic DBI geometry columns 
     source = dbi_config$parameters$dbname
     handle_entities_dbi_geometry_columns <-  source(system.file("metadata/entity", "entity_handler_dbi_geometry_columns.R", package = "geoflow"))$value
-    handle_entities_dbi_geometry_columns(config, source)
+    handle_entities_dbi_geometry_columns(handler, source, config)
   }else{
     config$logger.info("Use default tabular entity handler")
     #use the df entity handler based on the SQL query/table specified as source
     handle_entities_df <- source(system.file("metadata/entity", "entity_handler_df.R", package = "geoflow"))$value
-    handle_entities_df(config, source = out_query)
+    handle_entities_df(handler, source = out_query, config)
   }
   return(entities)
 }

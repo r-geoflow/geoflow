@@ -1,5 +1,5 @@
 #handle_entities_thredds
-handle_entities_thredds <- function(config, source){
+handle_entities_thredds <- function(handler, source, config){
   
   if(!requireNamespace("thredds", quietly = TRUE)){
     stop("The Thredds handler requires the 'thredds' package")

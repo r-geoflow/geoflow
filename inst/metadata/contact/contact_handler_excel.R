@@ -1,5 +1,5 @@
 #handle_contacts_excel
-handle_contacts_excel <- function(config, source, handle = TRUE){
+handle_contacts_excel <- function(handler, source, config, handle = TRUE){
   
   isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", source) > 0
   if(isSourceUrl){
@@ -16,6 +16,6 @@ handle_contacts_excel <- function(config, source, handle = TRUE){
   
   #apply generic handler
   handle_contacts_df <- source(system.file("metadata/contact", "contact_handler_df.R", package = "geoflow"))$value
-  contacts <- handle_contacts_df(config, source)
+  contacts <- handle_contacts_df(handler, source, config)
   return(contacts)
 }

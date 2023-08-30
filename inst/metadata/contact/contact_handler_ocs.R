@@ -1,5 +1,5 @@
 #handle_contacts_ocs
-handle_contacts_ocs <- function(config, source, handle = TRUE){
+handle_contacts_ocs <- function(handler, source, config, handle = TRUE){
   
   if(!requireNamespace("ocs4R", quietly = TRUE)){
     stop("The OCS handler requires the 'ocs4R' package")
@@ -15,11 +15,11 @@ handle_contacts_ocs <- function(config, source, handle = TRUE){
   contacts <- switch(mime::guess_type(contacts_file),
                      "text/csv" = {
                        handle_contacts_csv <- source(system.file("metadata/contact", "contact_handler_csv.R", package = "geoflow"))$value
-                       handle_contacts_csv(config = config, source = contacts_file, handle = handle)
+                       handle_contacts_csv(handler = handler, source = contacts_file, config = config, handle = handle)
                       },
                      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = {
                        handle_contacts_excel <- source(system.file("metadata/contact", "contact_handler_excel.R", package = "geoflow"))$value
-                       handle_contacts_excel(config = config, source = contacts_file, handle = handle)
+                       handle_contacts_excel(handler = handler, source = contacts_file, config = config, handle = handle)
                      }
   )
   return(contacts)

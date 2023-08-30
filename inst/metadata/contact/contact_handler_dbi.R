@@ -1,5 +1,5 @@
 #handle_contacts_dbi
-handle_contacts_dbi <- function(config, source, handle = TRUE){
+handle_contacts_dbi <- function(handler, source, config, handle = TRUE){
   dbi <- config$software$input$dbi
   if(is.null(dbi)){
     stop("There is no database input software configured to handle contacts from DB")
@@ -26,7 +26,7 @@ handle_contacts_dbi <- function(config, source, handle = TRUE){
   
   #apply generic handler
   handle_contacts_df <- source(system.file("metadata/contact", "contact_handler_df.R", package = "geoflow"))$value
-  contacts <- handle_contacts_df(config, source)
+  contacts <- handle_contacts_df(handler, source, config)
   return(contacts)
   
 }

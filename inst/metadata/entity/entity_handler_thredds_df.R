@@ -1,13 +1,13 @@
 #handle_entities_thredds_df
-handle_entities_thredds_df = function(config, source){
+handle_entities_thredds_df = function(handler, source, config){
   
-  entities <- handle_entities_df(config, source)
+  entities <- handle_entities_df(handler, source, config)
   
   thredds_entities <- lapply(entities, function(entity){
     
     thredds_source <- entity$data$source[[1]]
     
-    thredds_entity <- handle_entities_thredds(config, thredds_source)[[1]]
+    thredds_entity <- handle_entities_thredds(handle, thredds_source, config)[[1]]
     
     #identifiers (priority to df)
     if(is.null(entity$identifiers$doi)) if(!is.null(thredds_entity$identifiers$doi)) entity$identifiers$doi<-thredds_entity$identifiers$doi

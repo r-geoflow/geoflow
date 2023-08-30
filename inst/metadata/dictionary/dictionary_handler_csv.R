@@ -1,5 +1,5 @@
 #handle_dictionary_csv
-handle_dictionary_csv <- function(config, source, handle = TRUE){
+handle_dictionary_csv <- function(handler, source, config, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
   #source <- read.csv(source)
@@ -8,6 +8,6 @@ handle_dictionary_csv <- function(config, source, handle = TRUE){
   
   #apply generic handler
   handle_dictionary_df <- source(system.file("metadata/dictionary", "dictionary_handler_df.R", package = "geoflow"))$value
-  dictionary <- handle_dictionary_df(config, source)
+  dictionary <- handle_dictionary_df(handler, source, config)
   return(dictionary)
 }

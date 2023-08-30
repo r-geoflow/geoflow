@@ -1,5 +1,5 @@
 #handle_contacts_df
-handle_contacts_df <- function(config, source){
+handle_contacts_df <- function(handler, source, config){
   
   if(!is(source, "data.frame")){
     errMsg <- "Error in 'handle_contact_df': source parameter should be an object of class 'data.frame'"

@@ -1,5 +1,5 @@
 #handle_entities_thredds_excel
-handle_entities_thredds_excel <- function(config, source, handle = TRUE){
+handle_entities_thredds_excel <- function(handler, source, config, handle = TRUE){
   
   #read excel TODO -> options management: sep, encoding etc
   source <- as.data.frame(readxl::read_excel(source))
@@ -7,6 +7,6 @@ handle_entities_thredds_excel <- function(config, source, handle = TRUE){
   
   #apply generic handler
   handle_entities_thredds_df <- source(system.file("metadata/entity", "entity_handler_thredds_df.R", package = "geoflow"))$value
-  entities <- handle_entities_thredds_df(config, source)
+  entities <- handle_entities_thredds_df(handler, source, config)
   return(entities)
 }

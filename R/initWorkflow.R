@@ -277,7 +277,11 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         
         md_dict_handler <- loadMetadataHandler(config, x, type = "dictionary")
         config$logger.info("Execute handler to load dictionary data structures...")
-        dict <- md_dict_handler(config, source = x$source)
+        dict <- md_dict_handler$fun(
+          handler = md_dict_handler,
+          source = x$source,
+          config = config
+        )
         
         if(!is(dict, "geoflow_dictionary")){
           errMsg <- "The output of the dictionary handler should return an object of class 'geoflow_dictionary'"
@@ -392,7 +396,11 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
                                    x$source, x$handler))
         md_contact_handler <- loadMetadataHandler(config, x, type = "contacts")
         config$logger.info("Execute contact handler to load contacts...")
-        contacts <- md_contact_handler(config, source = x$source)
+        contacts <- md_contact_handler$fun(
+          handler = md_contact_handler, 
+          source = x$source,
+          config = config
+        )
         
         if(!is(contacts, "list") | !all(sapply(contacts, is, "geoflow_contact"))){
           errMsg <- "The output of the contacts handler should return a list of objects of class 'geoflow_entity_contact'"
@@ -427,7 +435,11 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
                                    x$source, x$handler))
         md_entity_handler <- loadMetadataHandler(config, x, type = "entities")
         config$logger.info("Execute handler to load entities...")
-        entities <- md_entity_handler(config, source = x$source)
+        entities <- md_entity_handler$fun(
+          handler = md_entity_handler,
+          source = x$source,
+          config = config
+        )
         
         if(!is(entities, "list") | !all(sapply(entities, is, "geoflow_entity"))){
           errMsg <- "The output of the entities handler should return a list of objects of class 'geoflow_entity'"

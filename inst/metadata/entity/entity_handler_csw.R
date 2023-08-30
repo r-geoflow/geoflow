@@ -1,5 +1,5 @@
 #handle_entities_csw
-handle_entities_csw <- function(config, source, handle = TRUE){
+handle_entities_csw <- function(handler, source, config, handle = TRUE){
   
   if(!requireNamespace("ows4R", quietly = TRUE)){
     stop("The OGC CSW handler requires the 'ows4R' package")

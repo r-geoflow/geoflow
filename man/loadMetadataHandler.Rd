@@ -13,6 +13,9 @@ loadMetadataHandler(config, element, type)
 
 \item{type}{either 'contacts', 'entities' or 'dictionnary'}
 }
+\value{
+an object of class \link{geoflow_handler}
+}
 \description{
 \code{loadMetadataHandler} allows to load a metadata handler
 }

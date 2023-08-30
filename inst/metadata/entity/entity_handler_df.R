@@ -1,5 +1,5 @@
 #handle_entities_df
-handle_entities_df <- function(config, source){
+handle_entities_df <- function(handler, source, config){
   
   if(!is(source, "data.frame")){
     errMsg <- "Error in 'handle_entities_df': source parameter should be an object of class 'data.frame'"

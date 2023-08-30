@@ -13,9 +13,10 @@ Object of \code{\link{R6Class}} for modelling a handler
 \description{
 This class models a content handler. An handler is a method to handle
 some content (eg entity or contact). It is mainly driven by a function that takes
-as argument a \code{config} object, as the overall configuration created by geoflow 
-\code{initWorkflow} function, and a source which identifiers the source to be handled,
-that can be of a different type (eg a URL, a file path) depending on the handler.
+as argument the \code{handler} considered (as self accessible object), a \code{source} 
+which identifiers the source to be handled, that can be of a different type (eg a URL, a file path) 
+depending on the handler, and a \code{config} object, as the overall configuration created by geoflow 
+\code{initWorkflow} function.
 }
 \details{
 geoflow_handler
@@ -30,7 +31,8 @@ for entities and contacts.
    id = "some-id",
    def = "some definition",
    packages = list(),
-   fun = function(config, source){}
+   fun = function(handler, source, config){},
+   available_options = list()
  )
 }
 
@@ -51,6 +53,10 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item{\code{fun}}{handler function}
 
 \item{\code{script}}{handler script}
+
+\item{\code{options}}{options}
+
+\item{\code{available_options}}{available options}
 }
 \if{html}{\out{</div>}}
 }
@@ -59,6 +65,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \itemize{
 \item \href{#method-geoflow_handler-new}{\code{geoflow_handler$new()}}
 \item \href{#method-geoflow_handler-checkPackages}{\code{geoflow_handler$checkPackages()}}
+\item \href{#method-geoflow_handler-getOption}{\code{geoflow_handler$getOption()}}
 \item \href{#method-geoflow_handler-clone}{\code{geoflow_handler$clone()}}
 }
 }
@@ -68,7 +75,15 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_handler}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$new(id, def = "", packages = list(), fun = NULL, script = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$new(
+  id,
+  def = "",
+  packages = list(),
+  fun = NULL,
+  script = NULL,
+  options = list(),
+  available_options = list()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -83,6 +98,10 @@ Initializes a \link{geoflow_handler}
 \item{\code{fun}}{the handler \code{function} having 2 arguments \code{config} and \code{source}}
 
 \item{\code{script}}{a handler script}
+
+\item{\code{options}}{action options}
+
+\item{\code{available_options}}{available options for the action}
 }
 \if{html}{\out{</div>}}
 }
@@ -99,6 +118,26 @@ Check that all packages required for the handler are available, if yes,
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$checkPackages()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_handler-getOption"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_handler-getOption}{}}}
+\subsection{Method \code{getOption()}}{
+Get handler option value
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$getOption(option)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{option}}{option id}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the option value, either specified through a workflow, or the default value
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_handler-clone"></a>}}

@@ -8,6 +8,7 @@
 #' @param config a geoflow configuration (as list). Only used to write logs, can be NULL.
 #' @param element a geoflow configuration metadata list element
 #' @param type either 'contacts', 'entities' or 'dictionnary'
+#' @return an object of class \link{geoflow_handler}
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
@@ -42,7 +43,8 @@ loadMetadataHandler <- function(config, element, type){
       errMsg <- sprintf("Missing 'source' for handler '%s'", h)
     }
     
-    md_handler <- md_default_handlers[sapply(md_default_handlers, function(x){x$id==h})][[1]]$fun
+    md_handler <- md_default_handlers[sapply(md_default_handlers, function(x){x$id==h})][[1]]
+    md_handler$options = element$options
     
   }else{
     #in case handler is a script
@@ -55,20 +57,21 @@ loadMetadataHandler <- function(config, element, type){
       stop(errMsg)
     }
     source(h_script) #load script
-    md_handler <- try(eval(parse(text = h)))
-    if(is(md_handler,"try-error")){
+    md_handler_fun <- try(eval(parse(text = h)))
+    if(is(md_handler_fun,"try-error")){
       errMsg <- sprintf("Failed loading function '%s. Please check the script '%s'", h, h_script)
       if(!is.null(config)) config$logger.error(errMsg)
       stop(errMsg)
     }
     
     #check custom handler arguments
-    args <- names(formals(md_handler))
-    if(!all(c("config", "source") %in% args)){
-      errMsg <- "The handler function should at least include the parameters (arguments) 'config' and 'source'"
+    args <- names(formals(md_handler_fun))
+    if(!all(c("handler", "source", "config") %in% args)){
+      errMsg <- "The handler function should at least include the parameters (arguments) 'handler', 'source' and 'config'"
       if(!is.null(config)) config$logger.error(errMsg)
       stop(errMsg)
     }
+    md_handler = geoflow_handler$new(id = h, fun = md_handler_fun, options = element$options)
   }
   return(md_handler)
 }

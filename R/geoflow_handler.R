@@ -8,9 +8,10 @@
 #' @title Geoflow handler class
 #' @description This class models a content handler. An handler is a method to handle
 #' some content (eg entity or contact). It is mainly driven by a function that takes
-#' as argument a \code{config} object, as the overall configuration created by geoflow 
-#' \code{initWorkflow} function, and a source which identifiers the source to be handled,
-#' that can be of a different type (eg a URL, a file path) depending on the handler.
+#' as argument the \code{handler} considered (as self accessible object), a \code{source} 
+#' which identifiers the source to be handled, that can be of a different type (eg a URL, a file path) 
+#' depending on the handler, and a \code{config} object, as the overall configuration created by geoflow 
+#' \code{initWorkflow} function. 
 #' @keywords handler
 #' @return Object of \code{\link{R6Class}} for modelling a handler
 #' @format \code{\link{R6Class}} object.
@@ -21,7 +22,8 @@
 #'    id = "some-id",
 #'    def = "some definition",
 #'    packages = list(),
-#'    fun = function(config, source){}
+#'    fun = function(handler, source, config){},
+#'    available_options = list()
 #'  )
 #' }
 #' 
@@ -42,6 +44,10 @@ geoflow_handler <- R6Class("geoflow_handler",
     fun = NA,
     #'@field script handler script
     script = NA,
+    #'@field options options
+    options = list(),
+    #'@field available_options available options
+    available_options = list(),
     
     #'@description Initializes a \link{geoflow_handler}
     #'@param id id
@@ -49,12 +55,17 @@ geoflow_handler <- R6Class("geoflow_handler",
     #'@param packages list of packages required for the handler
     #'@param fun the handler \code{function} having 2 arguments \code{config} and \code{source}
     #'@param script a handler script
-    initialize = function(id, def = "", packages = list(), fun = NULL, script = NULL){
+    #'@param options action options
+    #'@param available_options available options for the action
+    initialize = function(id, def = "", packages = list(), fun = NULL, script = NULL, 
+                          options = list(), available_options = list()){
       self$id <- id
       self$def <- def
       self$packages <- packages
       self$fun <- fun
       self$script <- script
+      self$options <- options
+      self$available_options <- available_options
     },
     
     #'@description Check that all packages required for the handler are available, if yes,
@@ -77,6 +88,17 @@ geoflow_handler <- R6Class("geoflow_handler",
           print(out_pkgs)
         }
       }
+    },
+    
+    #'@description Get handler option value
+    #'@param option option id
+    #'@return the option value, either specified through a workflow, or the default value
+    getOption = function(option){
+      option_value <- self$options[[option]]
+      if(is.null(option_value)){
+        option_value <- self$available_options[[option]]$default
+      }
+      return(option_value)
     }
   )
 )
