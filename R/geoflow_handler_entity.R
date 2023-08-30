@@ -39,6 +39,24 @@ register_entity_handlers <- function(){
       fun = source(system.file("metadata/entity", "entity_handler_dbi.R", package = "geoflow"))$value
     ),
     geoflow_handler$new(
+      id = "dbi_csv",
+      def = "Handle DBI metadata entities from a CSV file",
+      packages = list("DBI", "RSQLite", "RPostgres"),
+      fun = source(system.file("metadata/entity", "entity_handler_dbi_csv.R", package = "geoflow"))$value
+    ),
+    geoflow_handler$new(
+      id = "dbi_excel",
+      def = "Handle DBI metadata entities from a Microsoft Excel (xls, xlsx) file",
+      packages = list("readxl"),
+      fun = source(system.file("metadata/entity", "entity_handler_dbi_excel.R", package = "geoflow"))$value
+    ),
+    geoflow_handler$new(
+      id = "dbi_gsheet",
+      def = "Handle DBI metadata entities from a Google spreadsheet",
+      packages = list("gsheet"),
+      fun = source(system.file("metadata/entity", "entity_handler_dbi_gsheet.R", package = "geoflow"))$value
+    ),
+    geoflow_handler$new(
       id = "dataverse",
       def = "Handle metadata entities built from a Dataverse source",
       packages = list("dataverse"),
