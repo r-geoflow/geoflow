@@ -625,14 +625,12 @@ geoflow_data <- R6Class("geoflow_data",
     
     #'@description Sets whether a zipped version of the data file(s) should be created from source files. Default is \code{FALSE}
     #'@param sourceZip zip sources, object of class \code{logical}
-    #'@note deprecated
     setSourceZip = function(sourceZip){
       self$sourceZip <- sourceZip
     },
     
     #'@description Sets whether a zipped version of the data file(s) only should be created from source files. Default is \code{FALSE}
     #'@param sourceZipOnly zip sources only, object of class \code{logical}
-    #'@note deprecated
     setSourceZipOnly = function(sourceZipOnly){
       self$sourceZipOnly <- sourceZipOnly
     },

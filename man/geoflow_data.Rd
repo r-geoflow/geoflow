@@ -35,9 +35,9 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{sourceType}}{source type}
 
-\item{\code{sourceZip}}{create a zip for the sources}
+\item{\code{sourceZip}}{create a zip for the sources (DEPRECATED with #344)}
 
-\item{\code{sourceZipOnly}}{create a zip only for the sources, remove source files}
+\item{\code{sourceZipOnly}}{create a zip only for the sources, remove source files (DEPRECATED with #344)}
 
 \item{\code{sql}}{sql}
 
