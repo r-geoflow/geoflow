@@ -185,8 +185,10 @@ function(action, entity, config){
     contact_added <- list()
     zenodo_metadata$metadata$creators <- list()
     contacts <- list()
-    if(length(entity$contacts)>0) contacts <- entity$contacts[sapply(entity$contacts, function(x){x$role == "author"})]
-    if(length(contacts)==0) contacts <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
+    if(length(entity$contacts)>0){
+      contacts <- entity$contacts[sapply(entity$contacts, function(x){x$role == "author"})]
+      if(length(contacts)==0) contacts <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
+    }
     if(length(contacts)>0) for(contact in contacts){
       
       #manage orcid?
