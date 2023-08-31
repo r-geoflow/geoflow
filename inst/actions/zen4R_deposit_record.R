@@ -179,12 +179,14 @@ function(action, entity, config){
         zenodo_metadata$setImageType(entity$types[["zenodoImageType"]])
     }
     
-    #contacts
-    #TODO think if correct handle all contacts (whatever roles) as creators (author/co-authors)
+    #creators
+    #we first look for contacts with 'author' role (that is the most suitable for Zenodo deposition creators)
+    #if there is no 'author', we look for owners
     contact_added <- list()
     zenodo_metadata$metadata$creators <- list()
     contacts <- list()
-    if(length(entity$contacts)>0) contacts <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
+    if(length(entity$contacts)>0) contacts <- entity$contacts[sapply(entity$contacts, function(x){x$role == "author"})]
+    if(length(contacts)==0) contacts <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
     if(length(contacts)>0) for(contact in contacts){
       
       #manage orcid?
