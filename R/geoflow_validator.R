@@ -763,7 +763,7 @@ geoflow_validator_entity_Rights <- R6Class("geoflow_validator_entity_Rights",
       #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
       #'@param str string to validate
       initialize = function(i, j, str){
-        valid_keys <- list("license","use","useLimitation", "useConstraint", "accessConstraint", "otherConstraint")
+        valid_keys <- list("license","use","useLimitation", "useConstraint", "accessConstraint", "otherConstraint", "accessRight")
         super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,TRUE, FALSE, TRUE, i, j, str)
       }
     )
