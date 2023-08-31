@@ -7,6 +7,7 @@ handle_entities_dbi_df = function(handler, source, config){
     stop("There is no database input software configured to handle entities from DB")
   }
   
+  handle_entities_df <- source(system.file("metadata/entity", "entity_handler_df.R", package = "geoflow"))$value
   entities <- handle_entities_df(handler, source, config)
   
   enriched_entities <- lapply(entities, function(entity){
