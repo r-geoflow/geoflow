@@ -99,6 +99,9 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
     if(!skipDataDownload) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
       entity$enrichWithData(config, config$job)
       entity$prepareFeaturesToUpload(config)
+    }else{
+      #alternative behaviors in case we don't download data, applies to DB only
+      entity$enrichSpatialCoverageFromDB(config)
     }
     #extra identifiers to use in entity identification/actions
     entity$enrichWithIdentifiers(config)

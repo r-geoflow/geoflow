@@ -1084,6 +1084,220 @@ geoflow_entity <- R6Class("geoflow_entity",
       
     },
     
+    #'@description This function computes spatial coverage from DB (table, view or query)
+    #'without having to deal with a full data download. It is triggered when the global option 
+    #'\code{skipDataDownload} is enabled.
+    #'@param config geoflow config object
+    enrichSpatialCoverageFromDB = function(config){
+      data_objects <- list()
+      if(is.null(self$data$dir)){
+        data_objects <- list(self$data)
+      }else{
+        data_objects <- self$data$getData()
+      }
+      
+      srid <- if(!is.null(self$srid)) self$srid else ""
+      data_srids <- c()
+      
+      if(length(data_objects)>0){
+        
+        data_objects <- lapply(1:length(data_objects), function(k){
+          
+          data_object = data_objects[[k]]
+          
+          datasource <- data_object$source[[1]] #TODO we still look at first source
+          datasource_name = NULL
+          datasource_ext = NULL
+          datasource_file = NULL
+          if(!is.null(datasource)){
+            datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
+            datasource_name <- datasource_parts[1]
+            datasource_ext <- datasource_parts[2]
+            datasource_file <- attr(datasource, "uri")
+            attributes(datasource) <- NULL
+            if(is.null(datasource_file)) datasource_file <- datasource
+          }
+          
+          types_without_file <- c("dbtable","dbview","dbquery")
+          datasource_file_needed <- !(data_object$sourceType %in% types_without_file)
+          if(datasource_file_needed){
+            config$logger.warn("Spatial metadata dynamic handling not supported without data for data file sources")
+          }
+          
+          switch(data_object$sourceType,
+                 #dbtable - A DB table
+                 #---------------------------------------------------------------------------------
+                 "dbtable" = {
+                   DBI <- config$software$input$dbi
+                   if(!is.null(DBI)){
+                     spatial_table_def_sql = sprintf("SELECT * FROM geometry_columns WHERE f_table_name = '%s'", datasource_name)
+                     spatial_table_def = DBI::dbGetQuery(DBI, spatial_table_def_sql)
+                     if(nrow(spatial_table_def) > 0){
+                       #dynamic srid
+                       epsgcode = spatial_table_def$srid
+                       if(!is.na(epsgcode)){
+                         data_srids <<- c(data_srids, epsgcode)
+                       }
+                       #dynamic bbox
+                       if(!skipDynamicBbox){
+                         spatial_query_sql = sprintf("SELECT 
+                                                        st_xmin(extent.box) as xmin,
+                                                        st_xmax(extent.box) as xmax,
+                                                        st_ymin(extent.box) as ymin,
+                                                        st_ymax(extent.box) as ymax
+                                                     FROM (SELECT st_extent(%s) as box from %s) as extent", 
+                                                     spatial_table_def$f_geometry_column, datasource_name)
+                         spatial_query = try(DBI::dbGetQuery(DBI, spatial_query_sql))
+                         if(!is(spatial_query, "try-error")){
+                           #dynamic spatial extent
+                           config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
+                           self$setSpatialBbox(bbox = spatial_query)
+                         }else{
+                           warnMsg <- sprintf("Cannot interrogate DB table '%s'. Dynamic spatial metadata computation aborted!", datasource_name)
+                           config$logger.warn(warnMsg)
+                         }
+                       }
+                     }else{
+                       warnMsg <- sprintf("DB table '%s' is not spatialized. Dynamic spatial metadata computation aborted!", datasource_name)
+                       config$logger.warn(warnMsg)
+                     }
+                     
+                   }else{
+                     warnMsg <- sprintf("No database configured to run queries on DB table '%s'. Dynamic spatial metadata computation aborted!", datasource_name)
+                     config$logger.warn(warnMsg)
+                   }
+                 },
+                 #dbview
+                 #---------------------------------------------------------------------------------
+                 "dbview" = {
+                   DBI <- config$software$input$dbi
+                   if(!is.null(DBI)){
+                     spatial_table_def_sql = sprintf("SELECT * FROM geometry_columns WHERE f_table_name = '%s'", datasource_name)
+                     spatial_table_def = DBI::dbGetQuery(DBI, spatial_table_def_sql)
+                     if(nrow(spatial_table_def) > 0){
+                       #dynamic srid
+                       epsgcode = spatial_table_def$srid
+                       if(!is.na(epsgcode)){
+                         data_srids <<- c(data_srids, epsgcode)
+                       }
+                       #dynamic bbox
+                       if(!skipDynamicBbox){
+                         spatial_query_sql = sprintf("SELECT 
+                                                        st_xmin(extent.box) as xmin,
+                                                        st_xmax(extent.box) as xmax,
+                                                        st_ymin(extent.box) as ymin,
+                                                        st_ymax(extent.box) as ymax
+                                                     FROM (SELECT st_extent(%s) as box from %s) as extent", 
+                                                     spatial_table_def$f_geometry_column, datasource_name)
+                         spatial_query = try(DBI::dbGetQuery(DBI, spatial_query_sql))
+                         if(!is(spatial_query, "try-error")){
+                           #dynamic spatial extent
+                           config$logger.info("Overwriting entity bounding box with DB spatial view bounding box")
+                           self$setSpatialBbox(bbox = spatial_query)
+                         }else{
+                           warnMsg <- sprintf("Cannot interrogate DB view '%s'. Dynamic spatial metadata computation aborted!", datasource_name)
+                           config$logger.warn(warnMsg)
+                         }
+                       }
+                     }else{
+                       warnMsg <- sprintf("DB view '%s' is not spatialized. Dynamic spatial metadata computation aborted!", datasource_name)
+                       config$logger.warn(warnMsg)
+                     }
+                     
+                   }else{
+                     warnMsg <- sprintf("No database configured to run queries on DB view '%s'. Dynamic spatial metadata computation aborted!", datasource_name)
+                     config$logger.warn(warnMsg)
+                   }
+                 },
+                 #dbquery
+                 #---------------------------------------------------------------------------------
+                 "dbquery" = {
+                   
+                   sqlfile <- file.path(getwd(), paste0(basefilename,".sql"))
+                   if(file.exists(sqlfile)){
+                     config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
+                     sql <- paste(readLines(sqlfile), collapse="")
+                     config$logger.info(sql)
+                     data_object$setSourceSql(sql)
+                   }else{
+                     if(is.null(data_object$sourceSql)){
+                       warnMsg <- sprintf("No SQL file provided as 'source' nor 'sourceSql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
+                       config$logger.warn(warnMsg)
+                       setwd(wd)
+                       return(data_object)
+                     }
+                   }
+                   
+                   DBI <- config$software$input$dbi
+                   if(!is.null(DBI)){
+                     
+                     sql = data_object$sourceSql
+                     if(endsWith(sql, ";")) sql = substr(sql, 1, nchar(sql)-1)
+                     
+                     #dynamic srid
+                     sql_row1 = paste(sql, "limit 1")
+                     sf.data_row1 = sf::st_read(DBI, query = sql_row1)
+                     epsgcode = get_epsg_code(sf::st_crs(sf.data_row1))
+                     if(!is.na(epsgcode)){
+                       data_srids <<- c(data_srids, epsgcode)
+                     }
+                     #dynamic bbox
+                     geom_column_name = names(sf.data_row1)[sapply(names(sf.data_row1), function(x){is(sf.data_row1[[x]],"sfc")})]
+                     if(length(geom_column_name)>0){#condition to detect if spatial
+                       geom_column_name = geom_column_name[1]
+                       if(!skipDynamicBbox){
+                         datasource_name = paste0("(", sql,") as query") #wrap query
+                         spatial_query_sql = sprintf("SELECT 
+                                                          st_xmin(extent.box) as xmin,
+                                                          st_xmax(extent.box) as xmax,
+                                                          st_ymin(extent.box) as ymin,
+                                                          st_ymax(extent.box) as ymax
+                                                       FROM (SELECT st_extent(%s) as box from %s) as extent", 
+                                                     geom_column_name, datasource_name)
+                         spatial_query = try(DBI::dbGetQuery(DBI, spatial_query_sql))
+                         if(!is(spatial_query, "try-error")){
+                           #dynamic spatial extent
+                           config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
+                           self$setSpatialBbox(bbox = spatial_query)
+                         }else{
+                           warnMsg <- sprintf("Cannot interrogate DB table '%s'. Dynamic spatial metadata computation aborted!", datasource_name)
+                           config$logger.warn(warnMsg)
+                         }
+                       }
+                     }
+                     
+                   }else{
+                     warnMsg <- sprintf("No database configured to execute SQL query file '%s'. Dynamic metadata computation aborted!", datasource_file)
+                     config$logger.warn(warnMsg)
+                   }
+                 }
+          )
+          
+          return(data_object)
+          
+        })
+        
+        if(is.null(self$data$dir)){
+          self$data <- data_objects[[1]]
+        }else{
+          self$data$data <- data_objects
+        }
+      }
+      
+      if(length(data_srids)>0){
+        unique_data_srids <- unique(data_srids)
+        if(length(unique_data_srids)==1){
+          if(srid != unique_data_srids[1]){
+            config$logger.info(sprintf("Overwriting entity srid [%s] with data srid [%s]", srid, unique_data_srids[1]))
+            self$srid <- unique_data_srids[1]
+          }
+        }else{
+          config$logger.warn(sprintf("Data objects with mixed SRIDs [%s], aborting overwrite of entity srid [%s] and spatial bounding box", 
+                                     paste0(unique_data_srids, collapse=","), srid))
+        }
+      }
+    },
+    
     #'@description This function will enrich the entity data objects with data features (vector data). This method will overwrite 
     #' spatial metadata such as the bounding box (unless global option \code{skipDynamicBbox} is enabled). Note that the user spatial extent is not overwriten 
     #' since it may contain finer geometries than a bounding box.

@@ -131,7 +131,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           if(!is.null(entity$data)){
             #data features/coverages
             if(!skipDataDownload){
-              #we copy data to job data dir
+              #we copy data to job data dir (for data files)
               entity$copyDataToJobDir(config, jobdir)
               #vector data: we enrich entity with features
               #control is added in case of entity already enriched with features/coverages (when loaded from custom R entity handlers)
@@ -142,7 +142,11 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
               setwd(entity$getEntityJobDirPath(config, jobdir)) #make sure we are in entity jobdir
               #we check if the source and upload are both different file format (csv,shp,gpkg) and process automatically to conversion from source to upload type
               entity$prepareFeaturesToUpload(config)
+            }else{
+              #alternative behaviors in case we don't download data, applies to DB only
+              entity$enrichSpatialCoverageFromDB(config)
             }
+            
             #extra identifiers to use in entity identification/actions
             entity$enrichWithIdentifiers(config)
             #data relations (eg. geosapi & OGC data protocol online resources)
