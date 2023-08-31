@@ -214,11 +214,13 @@ can/should be defined:
 The `options` are by definition optional. The table below defines the
 possible geoflow global options:
 
-| Name               | Definition                                                                                                                               | Default value |
-|--------------------|------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| `line_separator`   | Defines the suite of characters used for splitting metadata components with a single tabular cell of an *entity* (eg. Description field) | \*\*\_\*      |
-| `skipDataDownload` | Indicates whether data associated to an entity should be download                                                                        | **false**     |
-| `skipFileDownload` | Deprecated, use `skipDataDownload` instead.                                                                                              | **false**     |
+| Name                 | Definition                                                                                                                                                                                      | Default value |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| `line_separator`     | Defines the suite of characters used for splitting metadata components with a single tabular cell of an *entity* (eg. Description field)                                                        | \*\*\_\*      |
+| `skipDataDownload`   | Indicates whether data associated to an entity should be download                                                                                                                               | **false**     |
+| `skipFileDownload`   | Deprecated, use `skipDataDownload` instead.                                                                                                                                                     | **false**     |
+| `skipDynamicBbox`    | Indicates whether bbox inherited from data should be ignored.                                                                                                                                   | **false**     |
+| `enrichDataStrategy` | Strategy to use when inheriting spatial bbox from multiple data objects, either “first” (take the first data object for the bbox, or “union” (union of bboxes from the different data objects). | \*\*“first”\* |
 
 Note on the **mode**:
 
