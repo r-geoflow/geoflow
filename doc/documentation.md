@@ -217,7 +217,8 @@ possible geoflow global options:
 | Name               | Definition                                                                                                                               | Default value |
 |--------------------|------------------------------------------------------------------------------------------------------------------------------------------|---------------|
 | `line_separator`   | Defines the suite of characters used for splitting metadata components with a single tabular cell of an *entity* (eg. Description field) | \*\*\_\*      |
-| `skipFileDownload` | Indicates whether data associated to an entity should be download                                                                        | **false**     |
+| `skipDataDownload` | Indicates whether data associated to an entity should be download                                                                        | **false**     |
+| `skipFileDownload` | Deprecated, use `skipDataDownload` instead.                                                                                              | **false**     |
 
 Note on the **mode**:
 

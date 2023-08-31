@@ -5,7 +5,13 @@ function(action, entity, config){
   }
   
   #global options
-  skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
+  #skipDataDownload
+  skipDataDownload = FALSE
+  if(!is.null(config$profile$options$skipFileDownload)){
+    config$logger.warn("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
+    skipDataDownload = config$profile$options$skipFileDownload
+  }
+  skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
   
   #options
   depositWithFiles <- action$getOption("depositWithFiles")
@@ -202,7 +208,7 @@ function(action, entity, config){
   
   #delete/add files
   if(depositWithFiles & (!update | (update & update_files))){
-    if(deleteOldFiles & !skipFileDownload){
+    if(deleteOldFiles & !skipDataDownload){
       config$logger.info("Dataverse: deleting old files...")
       deleted <- SWORD$deleteFilesFromDataverseRecord(paste0("doi:", doi))
       config$logger.info("Dataverse: files deletion status:")

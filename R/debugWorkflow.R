@@ -47,8 +47,13 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
   entity <- entities[[entityIndex]]
   .geoflow$debug$entity <- entity
 
-  #skipFileDownload
-  skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
+  #skipDataDownload
+  skipDataDownload = FALSE
+  if(!is.null(config$profile$options$skipFileDownload)){
+    config$logger.warn("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
+    skipDataDownload = config$profile$options$skipFileDownload
+  }
+  skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
   
   #run software actions?
   if(runSoftwareActions){
@@ -82,16 +87,16 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
   config$logger.info(sprintf("Entity working directory: %s", getwd()))
   
   #copy data?
-  if(skipFileDownload){
-    config$logger.warn("'skipFileDownload' is enabled in the config, copyData set to FALSE!")
-    copyData <- !skipFileDownload
+  if(skipDataDownload){
+    config$logger.warn("'skipDataDownload' is enabled in the config, copyData set to FALSE!")
+    copyData <- !skipDataDownload
   }
   if(copyData && !is.null(entity$data)) entity$copyDataToJobDir(config, config$job)
 
   #enrich metadata with dynamic properties
   if(!is.null(entity$data)){
     #data features/coverages
-    if(!skipFileDownload) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
+    if(!skipDataDownload) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
       entity$enrichWithData(config, config$job)
       entity$prepareFeaturesToUpload(config)
     }

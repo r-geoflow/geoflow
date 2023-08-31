@@ -13,7 +13,13 @@ function(action, entity, config){
   }
   
   #global options
-  skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
+  #skipDataDownload
+  skipDataDownload = FALSE
+  if(!is.null(config$profile$options$skipFileDownload)){
+    config$logger.warn("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
+    skipDataDownload = config$profile$options$skipFileDownload
+  }
+  skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
   
   #options
   depositWithFiles <- action$getOption("depositWithFiles")
@@ -237,7 +243,7 @@ function(action, entity, config){
   #file uploads (for new or edited records)
   #note: for new versions this is managed directly with ZENODO$depositRecordVersion
   if(depositWithFiles & (!update | (update & update_files)) & record_state == "unsubmitted"){
-    if(deleteOldFiles & !skipFileDownload){
+    if(deleteOldFiles & !skipDataDownload){
       config$logger.info("Zenodo: deleting old files...")
       zen_files <- ZENODO$getFiles(zenodo_metadata$id)
       if(length(zen_files)>0){

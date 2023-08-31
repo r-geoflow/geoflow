@@ -216,7 +216,7 @@ geoflow_action <- R6Class("geoflow_action",
       }))
       
       #modifying global option
-      src_config$profile$options$skipFileDownload <- if(pid_publish) FALSE else TRUE
+      src_config$profile$options$skipDataDownload <- if(pid_publish) FALSE else TRUE
       
       #export modified config
       jsonlite::write_json(

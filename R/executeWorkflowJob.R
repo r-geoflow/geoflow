@@ -23,8 +23,13 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
     config$logger.info("Executing workflow job...")
     
     #options
-    skipFileDownload <- if(!is.null(config$profile$options$skipFileDownload)) config$profile$options$skipFileDownload else FALSE
-  
+    skipDataDownload = FALSE
+    if(!is.null(config$profile$options$skipFileDownload)){
+      config$logger.warn("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
+      skipDataDownload = config$profile$options$skipFileDownload
+    }
+    skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
+    
     #Actions onstart
     config$log_separator("-")
     config$logger.info("Executing software actions 'onstart' ...")
@@ -125,7 +130,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           #enrich metadata with dynamic properties
           if(!is.null(entity$data)){
             #data features/coverages
-            if(!skipFileDownload){
+            if(!skipDataDownload){
               #we copy data to job data dir
               entity$copyDataToJobDir(config, jobdir)
               #vector data: we enrich entity with features
