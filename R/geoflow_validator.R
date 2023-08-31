@@ -736,6 +736,7 @@ geoflow_validator_entity_Relation <- R6Class("geoflow_validator_entity_Relation"
       #'@param str string to validate
       initialize = function(i, j, str){
         valid_keys <- list(
+          "ref",
           "ftp", "http", "download",
           "parent","thumbnail",
           "csw", "csw202", "csw30",

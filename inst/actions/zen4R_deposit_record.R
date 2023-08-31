@@ -231,6 +231,19 @@ function(action, entity, config){
     
     #TODO myrec$setAccessRight
     
+    #references
+    if(length(entity$relations)>0){
+      references = entity$references[sapply(entity$references, function(x){tolower(x$key) == "ref"})]
+      if(length(references)>0){
+        for(reference in references){
+          ref = reference$name
+          if(!is.null(reference$description)) ref = reference$description
+          if(!is.null(reference$link)) ref = paste0(ref,". ",reference$link)
+          zenodo_metadata$addReference(ref)
+        }
+      }
+    }
+    
     #communities
     if(length(communities)>0){
       zenodo_metadata$metadata$communities <- list()
