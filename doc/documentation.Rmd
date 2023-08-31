@@ -309,10 +309,13 @@ The JSON configuration snippet for a custom contact LDAP ``handler`` would look 
     ]
 ```
 
-In R, the ``my_ldap_function_to_load_contacts`` function writen by user in ``my_ldap_script.R`` should implement a function having 2 arguments: ``config`` (to access the overall workflow configuration object loaded with ``initWorkflow``), ``source`` (the source as defined in above JSON snippet):
+In R, the ``my_ldap_function_to_load_contacts`` function writen by user in ``my_ldap_script.R`` should implement a function having 3 arguments: 
+* ``handler`` as self object for the created handler
+* ``source`` (the source as defined in above JSON snippet):
+* ``config`` (to access the overall workflow configuration object loaded with ``initWorkflow``)
 
 ```{r, eval = FALSE}
-  my_ldap_function_to_load_contacts <- function(config, source){
+  my_ldap_function_to_load_contacts <- function(handler, source, config){
     contacts <- list()
     #here some custom business logic to load contacts from a LDAP
     #....

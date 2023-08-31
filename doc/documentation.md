@@ -117,7 +117,7 @@ which is the current version in development (likely to be unstable).
 
 ``` r
 require("remotes")
-install_github("eblondel/geoflow", dependencies = c("Depends", "Imports"))
+install_github("r-geoflow/geoflow", dependencies = c("Depends", "Imports"))
 ```
 
 <a name="geoflow_execute"/>
@@ -146,7 +146,7 @@ ready, it is possible to check it with the the function `initWorkflow`:
 config <- initWorkflow("config.json")
 ```
 
-> Note: The [geoflow-shiny](https://github.com/eblondel/geoflow-shiny)
+> Note: The [geoflow-shiny](https://github.com/r-geoflow/geoflow-shiny)
 > offers a graphic interface to help configuring the workflow in a
 > user-friendly manner. If you are not familiar with JSON format, this
 > shiny application can make your life easier.
@@ -171,7 +171,7 @@ below.
 |------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 | [**profile**](#geoflow_config_profile)   | Global metadata workflow. Information that is common to all entities in case of mode *entity*, and that can be exploited in some of the actions. e.g. add a project logo for all dataset descriptions.                                                                             | Required                        |
 | [**metadata**](#geoflow_config_metadata) | Part where the *entity* set is defined, to be used for executing actions in mode *entity*.                                                                                                                                                                                         | Required with *entity* mode     |
-| [**software**](#geoflow_config_software) | Part where the software to interact with will be defined. It can be a software from where the user wants to get data, or a software where to publish data using [geoflow](https://github.com/eblondel/geoflow) e.g. a GeoNetwork metadata catalogue, a GeoServer, etc.             | Required for publishing actions |
+| [**software**](#geoflow_config_software) | Part where the software to interact with will be defined. It can be a software from where the user wants to get data, or a software where to publish data using [geoflow](https://github.com/r-geoflow/geoflow) e.g. a GeoNetwork metadata catalogue, a GeoServer, etc.            | Required for publishing actions |
 | [**actions**](#geoflow_config_actions)   | Part where the *actions* to use are defined. These can be source R scripts in case of the *raw* mode, or entity-based actions in case of mode *entity*. An action put in the list can be enabled/disabled and parameterized with a set of options that is specific to each action. | Required                        |
 
 ###### JSON
@@ -221,7 +221,7 @@ possible geoflow global options:
 
 Note on the **mode**:
 
-At its earliest stage, [geoflow](https://github.com/eblondel/geoflow)
+At its earliest stage, [geoflow](https://github.com/r-geoflow/geoflow)
 was designed to chain a set of processings handled by different scripts.
 This is known as *raw* mode, where the user just wants to use geoflow to
 chain some tasks with a set of R scripts.
@@ -280,45 +280,53 @@ spreadsheets, `csv`, `excel` files, or a `dbi` source). The list of
 `entity` and `contact` handlers can be retrieved in R with
 `list_entity_handlers()`, `list_contact_handlers()` and
 `list_dictionary_handlers()`. For the time being,
-[geoflow](https://github.com/eblondel/geoflow) provides basic format
+[geoflow](https://github.com/r-geoflow/geoflow) provides basic format
 handlers.
 
--   List of `entity` handlers supported by geoflow:
+- List of `entity` handlers supported by geoflow:
 
-| id             | definition                                                              | packages                   |
-|:---------------|:------------------------------------------------------------------------|:---------------------------|
-| csv            | Handle metadata entities from a CSV file                                |                            |
-| excel          | Handle metadata entities from a Microsoft Excel (xls,xlsx) file         | readxl                     |
-| gsheet         | Handle metadata entities from a Google spreadsheet                      | gsheet                     |
-| dbi            | Handle metadata entities from a DB source                               | DBI,RSQLite,RPostgres      |
-| ncdf           | Handle metadata entities from a Netcdf source                           | ncdf4                      |
-| ncml           | Handle metadata entities from a NCML source                             | XML                        |
-| thredds        | Handle metadata entities from a Thredds server source                   | ncdf4,thredds,XML,png,curl |
-| thredds_csv    | Handle metadata thredds entities from a CSV file                        |                            |
-| thredds_excel  | Handle metadata thredds entities from a Microsoft Excel (xls,xlsx) file | readxl                     |
-| thredds_gsheet | Handle metadata thredds entities from a Google spreadsheet              | gsheet                     |
+| id             | definition                                                                                | packages                   |
+|:---------------|:------------------------------------------------------------------------------------------|:---------------------------|
+| csv            | Handle metadata entities from a CSV file                                                  |                            |
+| excel          | Handle metadata entities from a Microsoft Excel (xls,xlsx) file                           | readxl                     |
+| gsheet         | Handle metadata entities from a Google spreadsheet                                        | gsheet                     |
+| dbi            | Handle metadata entities from a DB source                                                 | DBI,RSQLite,RPostgres      |
+| dbi_csv        | Handle DBI metadata entities from a CSV file                                              | DBI,RSQLite,RPostgres      |
+| dbi_excel      | Handle DBI metadata entities from a Microsoft Excel (xls, xlsx) file                      | readxl                     |
+| dbi_gsheet     | Handle DBI metadata entities from a Google spreadsheet                                    | gsheet                     |
+| dataverse      | Handle metadata entities built from a Dataverse source                                    | dataverse                  |
+| ocs            | Handle metadata entities from a tabulat data source (csv or excel) hosted on an OCS cloud | ocs4R                      |
+| ncdf           | Handle metadata entities from a Netcdf source                                             | ncdf4                      |
+| ncml           | Handle metadata entities from a NCML source                                               | XML                        |
+| thredds        | Handle metadata entities from a Thredds server source                                     | ncdf4,thredds,XML,png,curl |
+| thredds_csv    | Handle metadata thredds entities from a CSV file                                          |                            |
+| thredds_excel  | Handle metadata thredds entities from a Microsoft Excel (xls,xlsx) file                   | readxl                     |
+| thredds_gsheet | Handle metadata thredds entities from a Google spreadsheet                                | gsheet                     |
+| ogc_csw        | Handle metadata entities from an OGC CSW endpoint                                         | ows4R,sf,geometa           |
 
 List of entity handlers supported by geoflow
 
--   List of `contact` handlers supported by geoflow:
+- List of `contact` handlers supported by geoflow:
 
-| id     | definition                                                      | packages              |
-|:-------|:----------------------------------------------------------------|:----------------------|
-| csv    | Handle metadata contacts from a CSV file                        |                       |
-| excel  | Handle metadata contacts from a Microsoft Excel (xls,xlsx) file | readxl                |
-| gsheet | Handle metadata contacts from a Google spreadsheet              | gsheet                |
-| dbi    | Handle metadata contacts from a DB source                       | DBI,RSQLite,RPostgres |
+| id     | definition                                                                                | packages              |
+|:-------|:------------------------------------------------------------------------------------------|:----------------------|
+| csv    | Handle metadata contacts from a CSV file                                                  |                       |
+| excel  | Handle metadata contacts from a Microsoft Excel (xls,xlsx) file                           | readxl                |
+| gsheet | Handle metadata contacts from a Google spreadsheet                                        | gsheet                |
+| dbi    | Handle metadata contacts from a DB source                                                 | DBI,RSQLite,RPostgres |
+| ocs    | Handle metadata contacts from a tabulat data source (csv or excel) hosted on an OCS cloud | ocs4R                 |
 
 List of contact handlers supported by geoflow
 
--   List of `dictionary` handlers supported by geoflow:
+- List of `dictionary` handlers supported by geoflow:
 
-| id     | definition                                               | packages              |
-|:-------|:---------------------------------------------------------|:----------------------|
-| csv    | Handle dictionary from a CSV file                        |                       |
-| excel  | Handle dictionary from a Microsoft Excel (xls,xlsx) file | readxl                |
-| gsheet | Handle dictionary from a Google spreadsheet              | gsheet                |
-| dbi    | Handle dictionary from a DB source                       | DBI,RSQLite,RPostgres |
+| id     | definition                                                                         | packages              |
+|:-------|:-----------------------------------------------------------------------------------|:----------------------|
+| csv    | Handle dictionary from a CSV file                                                  |                       |
+| excel  | Handle dictionary from a Microsoft Excel (xls,xlsx) file                           | readxl                |
+| gsheet | Handle dictionary from a Google spreadsheet                                        | gsheet                |
+| dbi    | Handle dictionary from a DB source                                                 | DBI,RSQLite,RPostgres |
+| ocs    | Handle dictionary from a tabulat data source (csv or excel) hosted on an OCS cloud | ocs4R                 |
 
 List of dictionary handlers supported by geoflow
 
@@ -327,7 +335,7 @@ List of dictionary handlers supported by geoflow
 
 ###### JSON
 
--   JSON snippet for *entities* handled with a Google spreadsheet:
+- JSON snippet for *entities* handled with a Google spreadsheet:
 
 ``` json
     "entities": [
@@ -338,7 +346,7 @@ List of dictionary handlers supported by geoflow
     ]
 ```
 
--   JSON snippet for *contacts* handled with a Google spreadsheet:
+- JSON snippet for *contacts* handled with a Google spreadsheet:
 
 ``` json
     "contacts" : [
@@ -349,8 +357,8 @@ List of dictionary handlers supported by geoflow
     ]
 ```
 
--   JSON snippet for the metadata part (including *entities* and
-    *contacts*)
+- JSON snippet for the metadata part (including *entities* and
+  *contacts*)
 
 ``` json
   "metadata": {
@@ -369,7 +377,7 @@ List of dictionary handlers supported by geoflow
   }
 ```
 
--   JSON snippet for custom handlers
+- JSON snippet for custom handlers
 
 It is possible to use a custom `handler` function provided by the user.
 For this, the `handler` should be the *name* of the R function to be
@@ -393,13 +401,13 @@ look like this:
 ```
 
 In R, the `my_ldap_function_to_load_contacts` function writen by user in
-`my_ldap_script.R` should implement a function having 2 arguments:
-`config` (to access the overall workflow configuration object loaded
-with `initWorkflow`), `source` (the source as defined in above JSON
-snippet):
+`my_ldap_script.R` should implement a function having 3 arguments: \*
+`handler` as self object for the created handler \* `source` (the source
+as defined in above JSON snippet): \* `config` (to access the overall
+workflow configuration object loaded with `initWorkflow`)
 
 ``` r
-  my_ldap_function_to_load_contacts <- function(config, source){
+  my_ldap_function_to_load_contacts <- function(handler, source, config){
     contacts <- list()
     #here some custom business logic to load contacts from a LDAP
     #....
@@ -416,9 +424,9 @@ snippet):
 The `software` part of the configuration consists in listing the pieces
 of software needed for the workflow.
 
--   **List of software managed by geoflow**
+- **List of software managed by geoflow**
 
-By default [geoflow](https://github.com/eblondel/geoflow) manages
+By default [geoflow](https://github.com/r-geoflow/geoflow) manages
 specific `software` to interact with. These software are essentially R
 *interfaces* to common tools (databases, web-applications, APIs). The
 list of \``software` managed by geoflow can be retrieved in R with
@@ -436,15 +444,18 @@ list of \``software` managed by geoflow can be retrieved in R with
 | geoserver           | GeoServer REST API Client, powered by ‘geosapi’ package                   | geosapi               |
 | zenodo              | Zenodo client powered by ‘zen4R’ package                                  | zen4R                 |
 | sword_for_dataverse | Dataverse SWORD API Client powered by ‘atom4R’ package                    | atom4R                |
+| dataverse           | Dataverse Native API Client powered by ‘dataverse’ package                | dataverse             |
 | dataone             | DataONe API Client powered by ‘dataone’ package                           | dataone               |
 | d4storagehub        | D4science storage hub API Client powered by ‘d4storagehub4R’ package      | d4storagehub4R        |
 | gbif                | Gbif API Client powered by ‘rgbif’ package                                | rgbif                 |
 | thredds             | Thredds data server API Client powered by ‘thredds’ package               | thredds               |
 | openapi             | OpenAPI client powered by ‘rapiclient’ package                            | rapiclient            |
+| ocs                 | Open Collaboration Services (OCS) client powered by ‘ocs4R’ package       | ocs4R                 |
+| geonode             | GeoNode client powered by ‘geonode4R’ package                             | geonode4R             |
 
 List of software supported by geoflow
 
--   **How to configure a software**
+- **How to configure a software**
 
 To configure a piece of software, the latter should be provided with
 various elements: \* an **id**: it should be a user string id to
@@ -487,14 +498,15 @@ publication in Geoserver:
 geoflow::list_software_properties("geoserver")
 ```
 
-    ##        name     label                         definition
-    ## 1 workspace Workspace           GeoServer workspace name
-    ## 2     store     Store GeoServer data/coverage store name
+    ##        name      label                         definition
+    ## 1 workspace  Workspace           GeoServer workspace name
+    ## 2     store      Store GeoServer data/coverage store name
+    ## 3 publicUrl Public URL               Geoserver public URL
 
 ###### JSON
 
--   JSON snippet for declaring a `database` (*input* software) for data
-    fetching:
+- JSON snippet for declaring a `database` (*input* software) for data
+  fetching:
 
 ``` json
   {
@@ -512,8 +524,8 @@ geoflow::list_software_properties("geoserver")
   }
 ```
 
--   JSON snippet for declaring a `geoserver` (*output* software) for
-    data publishing:
+- JSON snippet for declaring a `geoserver` (*output* software) for data
+  publishing:
 
 ``` json
   {
@@ -533,7 +545,7 @@ geoflow::list_software_properties("geoserver")
     }
 ```
 
--   JSON snippet for the overall “software” component
+- JSON snippet for the overall “software” component
 
 Since it is a list of software, the base JSON definition will be an
 *array* (using square brackets `[ ]`):
@@ -544,8 +556,8 @@ Since it is a list of software, the base JSON definition will be an
 ]
 ```
 
--   JSON snippet for the overall “software” component (including one
-    *input* - a database - and one *output* - a geoserver -)
+- JSON snippet for the overall “software” component (including one
+  *input* - a database - and one *output* - a geoserver -)
 
 ``` json
 "software": [
@@ -580,7 +592,7 @@ Since it is a list of software, the base JSON definition will be an
 ]
 ```
 
--   **How to use a user’s custom software**
+- **How to use a user’s custom software**
 
 DOCUMENTATION IN PREPARATION
 
@@ -605,9 +617,9 @@ trigger `initWorkflow` as follows:
   config <- initWorkflow("config.json")
 ```
 
--   **List of actions managed by geoflow**
+- **List of actions managed by geoflow**
 
-By default [geoflow](https://github.com/eblondel/geoflow) manages
+By default [geoflow](https://github.com/r-geoflow/geoflow) manages
 specific `actions` to run. These *actions* are essentially R turnkey
 functions to interact with common tools (databases, web-applications,
 APIs). The list of `actions` managed by geoflow can be retrieved in R
@@ -619,7 +631,8 @@ with `list_actions()`. The list of actions managed by `geoflow` are:
 | geometa-create-iso-19110        | Metadata production                                              | Produce an ISO 19110/19139 metadata object                                 | entity | metadata   | FALSE         | geometa                  |
 | ows4R-publish-iso-19139         | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol     | NA     | NA         | FALSE         | ows4R                    |
 | geonapi-publish-iso-19139       | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API        | NA     | NA         | FALSE         | geonapi                  |
-| geosapi-publish-ogc-services    | Data upload,Data publication,Metadata publication                | Publish vector data to GeoServer OGC web-services (WMS/WFS/WCS)            | NA     | NA         | FALSE         | geosapi                  |
+| geosapi-publish-ogc-services    | Data upload,Data publication,Metadata publication                | Publish data to GeoServer OGC web-services (WMS/WFS/WCS)                   | NA     | NA         | FALSE         | geosapi                  |
+| geonode4R-publish-ogc-services  | Data upload,Data publication,Metadata publication                | Publish data to GeoNode OGC web-services (WMS/WFS/WCS)                     | NA     | NA         | FALSE         | geonode4R                |
 | zen4R-deposit-record            | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metadata in the Zenodo infrastructure         | job    | zenodo     | TRUE          | zen4R                    |
 | atom4R-dataverse-deposit-record | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metetadata on a Dataverse using the Sword API | job    | dataverse  | TRUE          | atom4R                   |
 | dataone-upload-datapackage      | Data upload,Data publication,Metadata publication,DOI assignment | Uploads a data package to a DataOne metacat node                           | job    | dataone    | TRUE          | mime,datapack,dataone    |
@@ -628,11 +641,12 @@ with `list_actions()`. The list of actions managed by `geoflow` are:
 | sf-write-shp                    | Data writing                                                     | Import features data and zip files                                         | entity | data       | FALSE         | sf                       |
 | eml-create-eml                  | Metadata production                                              | Produce an EML metadata object                                             | entity | metadata   | FALSE         | EML,emld                 |
 | d4storagehub4R-upload-data      | Data upload                                                      | Upload data/metadata to a D4Science Workspace                              | NA     | NA         | FALSE         | d4storagehub4R           |
+| ocs4R-upload-data               | Data upload                                                      | Upload data to an OCS Cloud (NextCloud/Owncloud) Workspace                 | NA     | NA         | FALSE         | ocs4R                    |
 | create-metadata-rmd             | Metadata production                                              | Generate a Markdown out of a entity                                        | entity | markdown   | FALSE         | rmarkdown                |
 
 List of actions supported by geoflow
 
--   **How to configure an action**
+- **How to configure an action**
 
 To configure an `action`, various elements should be provided: \* an
 **id**: it should be the identifier of the `action` in question \*
@@ -658,8 +672,9 @@ geoflow::list_action_options("geometa-create-iso-19115")
     ## 6                                addfeatures
     ## 7                                  featureid
     ## 8                          subject_geography
-    ## 9     include_coverage_data_dimension_values
-    ## 10 include_coverage_service_dimension_values
+    ## 9             include_service_identification
+    ## 10    include_coverage_data_dimension_values
+    ## 11 include_coverage_service_dimension_values
     ##                                                                                   definition
     ## 1                  Use UUID as metadata identifier, if not defined the UUID is pre-generated
     ## 2                   Add entity DOI - if defined - as metadata identifier and online resource
@@ -669,8 +684,9 @@ geoflow::list_action_options("geometa-create-iso-19115")
     ## 6                    Add entity data features - if defined - as metadata bounding polygon(s)
     ## 7  ID of entity data features used to identify bounding polygon(s) with option 'addfeatures'
     ## 8                                  Identifier of the subject handling a Geographic coverage.
-    ## 9                             Include data dimensions's range values to coverage description
-    ## 10                             Include ogc dimensions's range values to coverage description
+    ## 9                                         Include service identification info metadata block
+    ## 10                            Include data dimensions's range values to coverage description
+    ## 11                             Include ogc dimensions's range values to coverage description
     ##      default
     ## 1      FALSE
     ## 2      FALSE
@@ -682,11 +698,12 @@ geoflow::list_action_options("geometa-create-iso-19115")
     ## 8  geography
     ## 9      FALSE
     ## 10     FALSE
+    ## 11     FALSE
 
 ###### JSON
 
--   JSON snippet for an action (eg “geometa-create-iso-19115”) with an
-    option enabled:
+- JSON snippet for an action (eg “geometa-create-iso-19115”) with an
+  option enabled:
 
 ``` json
   {
@@ -698,7 +715,7 @@ geoflow::list_action_options("geometa-create-iso-19115")
   }
 ```
 
--   JSON snippet for the overall list of *actions*
+- JSON snippet for the overall list of *actions*
 
 Since it is a list of *actions*, the base JSON definition will be an
 *array* (using square brackets `[ ]`):
@@ -721,13 +738,13 @@ data (eg. list of species names, list of countries, etc) that the user
 want to exploit in actions, to enrich subjects or to enrich ISO 19110
 feature attribute values with labels.
 
--   **List of registers managed by geoflow**
+- **List of registers managed by geoflow**
 
-By default [geoflow](https://github.com/eblondel/geoflow) does not yet
+By default [geoflow](https://github.com/r-geoflow/geoflow) does not yet
 handle registers but it’s planned to handle common standard registers
 (e.g. list of ISO countries).
 
--   **How to configure a register**
+- **How to configure a register**
 
 To configure a register, the latter should be provided with various
 elements: \* an **id** (mandatory): it should be a user string id to
@@ -740,7 +757,7 @@ handle his custom register.
 
 ###### JSON
 
--   JSON snippet for the overall “registers” component
+- JSON snippet for the overall “registers” component
 
 Since it is a list of registers, the base JSON definition will be an
 *array* (using square brackets `[ ]`):
@@ -751,7 +768,7 @@ Since it is a list of registers, the base JSON definition will be an
 ]
 ```
 
--   **How to use a user’s custom register**
+- **How to use a user’s custom register**
 
 As described above, each `register` should have an `id` and
 `definition`. For embed geoflow registers, these are the only
@@ -779,11 +796,11 @@ register item URI (if existing) \* **label**: handles each register item
 label \* **definition**: handles each register item definition
 
 If this structure is not fulfilled,
-[geoflow](https://github.com/eblondel/geoflow) will return an error at
+[geoflow](https://github.com/r-geoflow/geoflow) will return an error at
 initialization time. To make sure that your registers are well defined,
 you can then test to initialize the configuratinon with `initWorkflow`.
 
--   Where/How registers are used in geoflow
+- Where/How registers are used in geoflow
 
 For the time being, the registers are exploited as EXPERIMENTAL FEATURE
 to enrich feature attribute (if annotated with the register id) listed
@@ -800,14 +817,14 @@ values in the action to create an ISO 19110 feature catalogue
 
 The above documentation gives you JSON snippets that help you preparing
 your configuration file. In addition you may have a look at the
-[examples](https://github.com/eblondel/geoflow/tree/master/inst/extdata)
+[examples](https://github.com/r-geoflow/geoflow/tree/master/inst/extdata)
 provided with geoflow.
 
 <a name="geoflow_config_shiny"/>
 
 ##### 4.4.2 Use the geoflow-shiny R Shiny application
 
-The [geoflow-shiny](https://github.com/eblondel/geoflow-shiny) R Shiny
+The [geoflow-shiny](https://github.com/r-geoflow/geoflow-shiny) R Shiny
 application can be used to ease the configuration of a workflow.
 
 <a name="package_issues"/>
@@ -816,4 +833,4 @@ application can be used to ease the configuration of a workflow.
 
 ------------------------------------------------------------------------
 
-Issues can be reported at <https://github.com/eblondel/geoflow/issues>
+Issues can be reported at <https://github.com/r-geoflow/geoflow/issues>
