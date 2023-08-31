@@ -125,7 +125,7 @@ function(action, entity, config){
   licenses <- entity$rights[sapply(entity$rights, function(x){x$key == "license"})]
   if(length(license)>0){
     dataset$licensed <- lapply(licenses, function(license){
-      licensed = EML::eml$licensed(identifier = license$value, licenseName = license$value)
+      licensed = EML::eml$licensed(identifier = license$values[[1]], licenseName = license$values[[1]])
       return(licensed)
     })
   }

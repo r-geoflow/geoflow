@@ -152,7 +152,7 @@ function(action, entity, config){
     if(length(licenses)>0){
       #check if CCO is the license then we add it as DC License
       hasCCOLicense <- FALSE
-      license <- licenses[[1]]$value
+      license <- licenses[[1]]$values[[1]]
       if(license == "CCO"){
         hasCCOLicense <- TRUE
         dcentry$addDCLicense(license)

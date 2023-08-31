@@ -218,9 +218,9 @@ function(action, entity, config){
     if(length(entity$rights)>0){
       licenses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "license"})]
       if(length(licenses)>0){
-        license <- licenses[[1]]$value
+        license <- licenses[[1]]$values[[1]]
         accepted_licenses <- ZENODO$getLicenses()$id
-        if(license%in%accepted_licenses){
+        if(license %in% accepted_licenses){
           zenodo_metadata$setLicense(license)
         }else{
           config$logger.warn(sprintf("Zenodo :license specified (%s) in entity doesn't match Zenodo accepted list of licenses. license %s ignored!", 
