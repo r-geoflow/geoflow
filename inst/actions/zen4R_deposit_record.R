@@ -238,7 +238,7 @@ function(action, entity, config){
     
     #references
     if(length(entity$relations)>0){
-      references = entity$references[sapply(entity$references, function(x){tolower(x$key) == "ref"})]
+      references = entity$relations[sapply(entity$relations, function(x){tolower(x$key) == "ref"})]
       if(length(references)>0){
         for(reference in references){
           ref = reference$name
