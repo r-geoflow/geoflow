@@ -8,7 +8,7 @@
 "Description","abstract","x","x","x",,,,"x","x","x","x",
 "Description","purpose","x","x","x",,,,,,,,
 "Description","credit","x","x","x",,,,,,,,
-"Description","info","x","x","x",,,,,,,,
+"Description","info","x","x","x",,,,,x,,,
 "Description","edition","x","x","x",,,,,"x",,,
 "Description","status",,,"x",,,,,,,,
 "Subject","[free key, best practice to use ISO keyword types, see `geometa::ISOKeywordType$values()` ]","x","x","x",,,,"x",,,,
