@@ -139,9 +139,12 @@ function(action, entity, config){
           "function" = switch(relation$key,
                               "thumbnail" = "information",
                               "parent" = "information",
+                              "ftp" = "information",
                               "http" = "information",
+                              "download" = "download",
                               "wms" = "information",
                               "wfs" = "download",
+                              "wcs" = "download",
                               "information"
           )
         )
