@@ -249,6 +249,16 @@ function(action, entity, config){
       }
     }
     
+    #grants
+    if(length(entity$relations)){
+      grants = entity$relations[sapply(entity$relations, function(x){tolower(x$key) == "grant"})]
+      if(length(grants)>0){
+        for(grant in grants){
+          zenodo_metadata$addGrant(grant)
+        }
+      }
+    }
+    
     #communities
     if(length(communities)>0){
       zenodo_metadata$metadata$communities <- list()
