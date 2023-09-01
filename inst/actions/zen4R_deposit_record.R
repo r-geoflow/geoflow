@@ -226,7 +226,7 @@ function(action, entity, config){
         license <- licenses[[1]]$values[[1]]
         accepted_licenses <- ZENODO$getLicenses()$id
         if(license %in% accepted_licenses){
-          zenodo_metadata$setLicense(license)
+          zenodo_metadata$setLicense(license, sandbox = ZENODO$sandbox)
         }else{
           config$logger.warn(sprintf("Zenodo :license specified (%s) in entity doesn't match Zenodo accepted list of licenses. license %s ignored!", 
                                      license,license))
@@ -254,7 +254,7 @@ function(action, entity, config){
       grants = entity$relations[sapply(entity$relations, function(x){tolower(x$key) == "grant"})]
       if(length(grants)>0){
         for(grant in grants){
-          zenodo_metadata$addGrant(grant)
+          zenodo_metadata$addGrant(grant, sandbox = ZENODO$sandbox)
         }
       }
     }
@@ -262,7 +262,7 @@ function(action, entity, config){
     #communities
     if(length(communities)>0){
       zenodo_metadata$metadata$communities <- list()
-      for(community in communities) zenodo_metadata$addCommunity(community)
+      for(community in communities) zenodo_metadata$addCommunity(community, sandbox = ZENODO$sandbox)
     }
   }else{
     config$logger.info("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")
