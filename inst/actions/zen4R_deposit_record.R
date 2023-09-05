@@ -262,7 +262,7 @@ function(action, entity, config){
     #communities
     if(length(communities)>0){
       zenodo_metadata$metadata$communities <- list()
-      for(community in communities) zenodo_metadata$addCommunity(community, sandbox = ZENODO$sandbox)
+      for(community in communities) if(!is.na(community)) zenodo_metadata$addCommunity(community, sandbox = ZENODO$sandbox)
     }
   }else{
     config$logger.info("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")
