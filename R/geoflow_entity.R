@@ -2010,7 +2010,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         }),collapse=line_separator),
         #Rights
         Rights = paste0(sapply(self$rights, function(right){
-          value <- right$value
+          value <- right$values[[1]]
           if(!endsWith(right$key, "Constraint")) value <- paste0("\"", value,"\"")
           outright <- paste0(right$key, ":", value)
           return(outright)
