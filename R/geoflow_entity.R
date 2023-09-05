@@ -496,13 +496,22 @@ geoflow_entity <- R6Class("geoflow_entity",
                   if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
                 }else{
                   config$logger.warn(sprintf("Source type: %s", data_object$sourceType))
-                  if(data_object$sourceType != "other"){
-                    config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
-                    data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
-                    if(length(data.files)>0) for(data.file in data.files){
+                  if(data_object$sourceType == "other") {
+                    #copy files only
+                    config$logger.info("Copying data local file(s): copying zip files to job data directory")
+                    for(data.file in data.files){
                       file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
                     }
-                    if(length(data.files)>0) zip::zipr(zipfile = file.path(getwd(), paste0(basefilename,".zip")), files = data.files)
+                  }else{
+                    #unzip files to copy
+                    config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
+                    data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
+                    if(length(data.files)>0){
+                      for(data.file in data.files){
+                        file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
+                      }
+                      zip::zipr(zipfile = file.path(getwd(), paste0(basefilename,".zip")), files = data.files)
+                    }
                   }
                 }
               }else{
