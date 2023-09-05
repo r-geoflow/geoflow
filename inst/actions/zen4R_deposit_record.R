@@ -139,7 +139,7 @@ function(action, entity, config){
     #basic record description
     zenodo_metadata$setTitle(entity$titles[["title"]])
     zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
-    zenod_metadata$setNotes(entity$descriptions[["info"]])
+    zenodo_metadata$setNotes(entity$descriptions[["info"]])
     
     #keywords (free text) & subjects
     zenodo_metadata$metadata$keywords <- list()
