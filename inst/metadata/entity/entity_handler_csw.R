@@ -224,18 +224,18 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
             #use constraints
             use_values = lapply(constraint$useConstraints, function(x){x$attrs$codeListValue})
             use_right = geoflow_right$new()
-            use_right$setKey("useConstraints")
+            use_right$setKey("useConstraint")
             use_right$setValues(use_values)
             entity$addRight(use_right)
             #access constraints
             access_values = lapply(constraint$accessConstraints, function(x){x$attrs$codeListValue})
             access_right = geoflow_right$new()
-            access_right$setKey("accessConstraints")
+            access_right$setKey("accessConstraint")
             access_right$setValues(access_values)
             entity$addRight(access_right)
             #other constraints
             other_right = geoflow_right$new()
-            other_right$setKey("otherConstraints")
+            other_right$setKey("otherConstraint")
             other_right$setValues(constraint$otherConstraints)
             entity$addRight(other_right)
           }
