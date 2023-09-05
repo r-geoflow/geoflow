@@ -1994,6 +1994,13 @@ geoflow_entity <- R6Class("geoflow_entity",
           }
           outime
         },
+        #Format
+        Format = paste0(sapply(self$formats, function(format){
+          outformat = paste0(format$key, ":\"", format$name, "\"")
+          if(!is.null(format$description)) outformat <- paste0(outformat, "[\"", format$description, "\"]")
+          if(!is.null(format$uri)) outformat <- paste(outformat, format$uri, sep = "@")
+          return(outformat)
+        })),
         #Relation
         Relation = paste0(sapply(self$relations,function(relation){
           outrel <- paste0(relation$key,":\"",relation$name,"\"")
