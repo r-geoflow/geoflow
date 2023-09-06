@@ -19,6 +19,7 @@
 "Creator","processor",,,"x",,,,,,,,
 "Date","publication",,,"x",,,,,"x","x",,
 "Date","creation",,,"x",,,,,,,"x",
+"Date","creation",,,,,,,,,,"x",
 "Date","edition",,,"x",,,,,,,,
 "Type","generic",,,"x",,,,,"x",,"x",
 "Type","zenodoUploadType",,,,,,,,"x",,,
@@ -42,6 +43,8 @@
 "Rights","accessConstraint",,,"x",,,,,,"x",,
 "Rights","otherConstraint","x","x","x",,,,,,"x",,
 "Rights","license","x","x","x",,,,,"x","x",,"x"
+"Rights","accessRight",,,,,,,,,,"x",
+"Rights","accessConditions",,,,,,,,,,"x",
 "Provenance","statement","x","x","x",,,,,,,,
 "Provenance","process","x","x","x",,,,,,,,
 "Format","ressource",,,"x",,,,,,,,
