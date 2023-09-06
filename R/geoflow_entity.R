@@ -1222,7 +1222,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                  #---------------------------------------------------------------------------------
                  "dbquery" = {
                    
-                   sqlfile <- file.path(getwd(), paste0(basefilename,".sql"))
+                   sqlfile <- file.path(getwd(), paste0(datasource_name,".sql"))
                    if(file.exists(sqlfile)){
                      config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
                      sql <- paste(readLines(sqlfile), collapse="")
