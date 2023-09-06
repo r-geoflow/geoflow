@@ -233,8 +233,37 @@ function(action, entity, config){
         }  
       }
     }
-    
-    #TODO myrec$setAccessRight
+
+    # AccessRight  
+    # Access right with the following values: 'open','embargoed', 'restricted','closed'
+    if(length(entity$rights)>0){
+        accessRights <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "accessright"})]
+        config$logger.info(sprintf("accessRight: '%s'", accessRights))
+        if(length(accessRights)>0){
+        accessRight <- accessRights[[1]]$values[[1]]
+        config$logger.info(sprintf("accessRight Value: '%s'", accessRight))
+        zenodo_metadata$setAccessRight(accessRight)
+          if ("embargoed" %in% accessRight) {
+            config$logger.info(sprintf("Embargoed! Looking for embargoed date..."))
+            embargoDates <- entity$dates[sapply(entity$dates, function(date){date$key == "embargo"})]
+            embargoDate <- if(length(embargoDates)>0) embargoDates[[1]]$value else config$logger.error(sprintf("Zenodo: 'embargo' not set in entity$dates whereas 'embargoed' is set in entity$rights. Please check your entities !"))
+            zenodo_metadata$setEmbargoDate(embargoDate)
+            }
+          else if ("restricted" %in% accessRight) {
+            config$logger.info(sprintf("Restricted! :/ :/ Looking for accessConditions..."))
+            accessConditions <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "accessconditions"})][[1]]$values[[1]]
+            zenodo_metadata$setAccessConditions(accessConditions)
+          }
+      }
+      else{
+        config$logger.info(sprintf("Zenodo: accessRight specified in entity not available. accessRight will be set to open!"))
+        zenodo_metadata$setAccessRight("open")
+                                     }
+    }
+    else{
+        config$logger.info(sprintf("Zenodo: Rights is empty. accessRight will be set to open!"))
+        zenodo_metadata$setAccessRight("open")
+                                     }
     
     #references
     if(length(entity$relations)>0){
