@@ -245,7 +245,7 @@ function(action, entity, config){
         zenodo_metadata$setAccessRight(accessRight)
           if ("embargoed" %in% accessRight) {
             config$logger.info(sprintf("Embargoed! Looking for embargoed date..."))
-            embargoDate <- as.Date(entity$date[sapply(entity$date, function(x){tolower(x$key) == "embargo"})][[1]]$values[[1]])
+            embargoDate <- as.Date(entity$dates[sapply(entity$dates, function(x){tolower(x$key) == "embargo"})][[1]]$values[[1]])
             zenodo_metadata$setEmbargoDate(embargoDate)
             }
           else if ("restricted" %in% accessRight) {
