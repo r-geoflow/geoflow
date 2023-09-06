@@ -139,6 +139,7 @@ function(action, entity, config){
     #basic record description
     zenodo_metadata$setTitle(entity$titles[["title"]])
     zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
+    zenodo_metadata$setNotes(entity$descriptions[["info"]])
     
     #keywords (free text) & subjects
     zenodo_metadata$metadata$keywords <- list()
@@ -225,7 +226,7 @@ function(action, entity, config){
         license <- licenses[[1]]$values[[1]]
         accepted_licenses <- ZENODO$getLicenses()$id
         if(license %in% accepted_licenses){
-          zenodo_metadata$setLicense(license)
+          zenodo_metadata$setLicense(license, sandbox = ZENODO$sandbox)
         }else{
           config$logger.warn(sprintf("Zenodo :license specified (%s) in entity doesn't match Zenodo accepted list of licenses. license %s ignored!", 
                                      license,license))
@@ -265,7 +266,7 @@ function(action, entity, config){
     
     #references
     if(length(entity$relations)>0){
-      references = entity$references[sapply(entity$references, function(x){tolower(x$key) == "ref"})]
+      references = entity$relations[sapply(entity$relations, function(x){tolower(x$key) == "ref"})]
       if(length(references)>0){
         for(reference in references){
           ref = reference$name
@@ -276,10 +277,20 @@ function(action, entity, config){
       }
     }
     
+    #grants
+    if(length(entity$relations)){
+      grants = entity$relations[sapply(entity$relations, function(x){tolower(x$key) == "grant"})]
+      if(length(grants)>0){
+        for(grant in grants){
+          zenodo_metadata$addGrant(grant, sandbox = ZENODO$sandbox)
+        }
+      }
+    }
+    
     #communities
     if(length(communities)>0){
       zenodo_metadata$metadata$communities <- list()
-      for(community in communities) zenodo_metadata$addCommunity(community)
+      for(community in communities) if(!is.na(community)) zenodo_metadata$addCommunity(community, sandbox = ZENODO$sandbox)
     }
   }else{
     config$logger.info("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")

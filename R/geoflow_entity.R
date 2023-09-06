@@ -496,13 +496,22 @@ geoflow_entity <- R6Class("geoflow_entity",
                   if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
                 }else{
                   config$logger.warn(sprintf("Source type: %s", data_object$sourceType))
-                  if(data_object$sourceType != "other"){
-                    config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
-                    data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
-                    if(length(data.files)>0) for(data.file in data.files){
+                  if(data_object$sourceType == "other") {
+                    #copy files only
+                    config$logger.info("Copying data local file(s): copying zip files to job data directory")
+                    for(data.file in data.files){
                       file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
                     }
-                    if(length(data.files)>0) zip::zipr(zipfile = file.path(getwd(), paste0(basefilename,".zip")), files = data.files)
+                  }else{
+                    #unzip files to copy
+                    config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
+                    data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
+                    if(length(data.files)>0){
+                      for(data.file in data.files){
+                        file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
+                      }
+                      zip::zipr(zipfile = file.path(getwd(), paste0(basefilename,".zip")), files = data.files)
+                    }
                   }
                 }
               }else{
@@ -1985,6 +1994,13 @@ geoflow_entity <- R6Class("geoflow_entity",
           }
           outime
         },
+        #Format
+        Format = paste0(sapply(self$formats, function(format){
+          outformat = paste0(format$key, ":\"", format$name, "\"")
+          if(!is.null(format$description)) outformat <- paste0(outformat, "[\"", format$description, "\"]")
+          if(!is.null(format$uri)) outformat <- paste(outformat, format$uri, sep = "@")
+          return(outformat)
+        })),
         #Relation
         Relation = paste0(sapply(self$relations,function(relation){
           outrel <- paste0(relation$key,":\"",relation$name,"\"")
@@ -1994,7 +2010,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         }),collapse=line_separator),
         #Rights
         Rights = paste0(sapply(self$rights, function(right){
-          value <- right$value
+          value <- right$values[[1]]
           if(!endsWith(right$key, "Constraint")) value <- paste0("\"", value,"\"")
           outright <- paste0(right$key, ":", value)
           return(outright)

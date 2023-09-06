@@ -1,4 +1,4 @@
-,"key","i18n_elegible","i18n_supported","geometa_create_iso_19115","geometa_create_iso_19110","geonapi_publish_iso_19139","ows4R_publish_iso_19139","geosapi_publish_ogc_services","zen4R_deposit_record","eml_create_eml","atom4R_dataverse_deposit_record","dataone_upload_datapackage"
+"element","key","i18n_elegible","i18n_supported","geometa_create_iso_19115","geometa_create_iso_19110","geonapi_publish_iso_19139","ows4R_publish_iso_19139","geosapi_publish_ogc_services","zen4R_deposit_record","eml_create_eml","atom4R_dataverse_deposit_record","dataone_upload_datapackage"
 "Identifier","id",,,"x","x","x","x","x","x","x","x",
 "Identifier","doi",,,"x",,,,,"x","x","x",
 "Identifier","uuid",,,,,"x","x",,,,,
@@ -33,10 +33,13 @@
 "Relation","thumbnail","x",,"x",,,,,,"x",,
 "Relation","resource","x",,"x",,,,,,,,
 "Relation","parent",,,"x",,,,,,"x",,
+"Relation","ftp","x",,"x",,,,,,"x",,
 "Relation","http","x",,"x",,,,,,"x",,
 "Relation","wms",,,"x",,,,,,"x",,
 "Relation","wfs",,,"x",,,,,,"x",,
 "Relation","wcs",,,"x",,,,,,,,
+"Relation","ref","x",,,,,,,"x",,,
+"Relation","grant",,,,,,,,"x",,,
 "Rights","use","x","x","x",,,,,,,,
 "Rights","useLimitation","x","x","x",,,,,,,,
 "Rights","useConstraint",,,"x",,,,,,"x","x",
