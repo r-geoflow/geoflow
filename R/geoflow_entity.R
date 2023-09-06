@@ -1105,6 +1105,9 @@ geoflow_entity <- R6Class("geoflow_entity",
         data_objects <- self$data$getData()
       }
       
+      skipDynamicBbox <- if(!is.null(config$profile$options$skipDynamicBbox)) config$profile$options$skipDynamicBbox else FALSE
+      enrichDataStrategy <- if(!is.null(config$profile$options$enrichDataStrategy)) config$profile$options$enrichDataStrategy else "first"
+      
       srid <- if(!is.null(self$srid)) self$srid else ""
       data_srids <- c()
       
