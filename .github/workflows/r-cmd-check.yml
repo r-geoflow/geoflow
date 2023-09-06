@@ -25,13 +25,15 @@ jobs:
           - {os: ubuntu-latest,  r: 'release'}
     
     env:
-      PKG_SYSREQS: true
+      PKG_SYSREQS: false
       INSPIRE_API_ENDPOINT: ${{ secrets.INSPIRE_API_ENDPOINT }}
       INSPIRE_API_KEY: ${{ secrets.INSPIRE_API_KEY }}
       ZENODO_SANDBOX_TOKEN: ${{ secrets.ZENODO_SANDBOX_TOKEN }}
     
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      
+      - uses: r-lib/actions/setup-pandoc@v2
       #SDI integration tests
       #-------------------------
       #Docker Geoserver set-up
@@ -64,12 +66,15 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
       #Install dependencies
+      #Install dependencies on Linux
+      - name: Install dependencies on Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y make libmysqlclient-dev libpq-dev libnode-dev libxml2-dev libcurl4-openssl-dev libssl-dev zlib1g-dev make libjq-dev libsecret-1-dev pandoc libnetcdf-dev libpng-dev librdf0-dev libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev libsodium-dev libicu-dev libudunits2-dev
       - name: Install dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck, any::XML
           needs: check
-          cache-version: 5
       #Check R Package
       - name: Check R package
         uses: r-lib/actions/check-r-package@v2
