@@ -456,7 +456,7 @@ geoflow_validator_entity_Date <- R6Class("geoflow_validator_entity_Date",
      #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
      #'@param str string to validate
      initialize = function(i, j, str){
-       valid_keys <- list("creation","publication","edition")
+       valid_keys <- list("creation","publication","edition","embargo")
        super$initialize(TRUE,TRUE, TRUE, valid_keys, "creation",FALSE, TRUE, TRUE, i, j, as(str,"character"))
      },
      
@@ -763,7 +763,7 @@ geoflow_validator_entity_Rights <- R6Class("geoflow_validator_entity_Rights",
       #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
       #'@param str string to validate
       initialize = function(i, j, str){
-        valid_keys <- list("license","use","useLimitation", "useConstraint", "accessConstraint", "otherConstraint", "accessRight", "accessConditions", "embargoDate")
+        valid_keys <- list("license","use","useLimitation", "useConstraint", "accessConstraint", "otherConstraint", "accessRight", "accessConditions")
         super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,TRUE, FALSE, TRUE, i, j, str)
       }
     )
