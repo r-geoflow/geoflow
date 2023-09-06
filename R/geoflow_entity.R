@@ -644,7 +644,10 @@ geoflow_entity <- R6Class("geoflow_entity",
               "zip" = {
                 srcType = "other"
                 basefilepath = file.path(getwd(), paste0(basefilename,".zip"))
-                if(file.exists(basefilepath)){ #for srcType != "other"
+                if(file.exists(basefilepath)){ 
+                  #for srcType != "other"
+                  #(re-zipped files on 'basefinename' with 'other' sourceType do not exist, 
+                  #but are just copied, not unzipped/rezipped with different name)
                   zip_files = zip::zip_list(basefilepath)
                   if(any(endsWith(zip_files$filename, ".gpkg"))){
                     srcType = "gpkg" 
@@ -668,14 +671,17 @@ geoflow_entity <- R6Class("geoflow_entity",
             #additional rule for uploadType
             if(datasource_ext == "zip") if(!is.null(data_object$uploadType)) if(data_object$uploadType == "other"){
               data_object$uploadType = data_object$sourceType
+              if(data_object$uploadType == "geotiff") data_object$setSpatialRepresentationType("grid")
             }
             #overwrite top sourceType
             if(is.null(self$data$dir)){
               self$data$sourceType = data_object$sourceType 
               self$data$uploadType = data_object$uploadType
+              self$data$setSpatialRepresentationType(data_object$spatialRepresentationType)
             }else{
               self$data$data[[k]]$sourceType = data_object$sourceType
               self$data$data[[k]]$uploadType = data_object$uploadType
+              self$data$data[[k]]$setSpatialRepresentationType(data_object$spatialRepresentationType)
             }
           }
           

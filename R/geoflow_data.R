@@ -15,8 +15,8 @@
 #'
 geoflow_data <- R6Class("geoflow_data",
   private = list(
-    supportedSourceTypes = c("dbtable", "dbview", "dbquery","shp", "csv", "gpkg", "other","nc", "geotiff"),
-    supportedUploadTypes = c("dbtable", "dbview", "dbquery","shp", "gpkg", "other","nc", "geotiff"),
+    supportedSourceTypes = c("dbtable", "dbview", "dbquery", "zip", "shp", "csv", "gpkg", "other","nc", "geotiff"),
+    supportedUploadTypes = c("dbtable", "dbview", "dbquery", "shp", "gpkg", "other","nc", "geotiff"),
     supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"),
     supportedXPossibleNames = c("x","lon","long","longitude","decimalLongitude"),
     supportedYPossibleNames = c("y","lat","lati","latitude","decimalLatitude"),
@@ -497,8 +497,8 @@ geoflow_data <- R6Class("geoflow_data",
                 ext_data$setSourceType(sourceType)
               }
               if((is.null(self$uploadType) || self$uploadType == "other") && !is.null(sourceType)){
-                ext_data$setUploadType(sourceType)
-                if(ext_data$uploadType == "geotiff") ext_data$setSpatialRepresentationType("grid")
+                if(sourceType != "zip") ext_data$setUploadType(sourceType)
+                if(!is.null(ext_data$uploadType)) if(ext_data$uploadType == "geotiff") ext_data$setSpatialRepresentationType("grid")
               }
               
               hasStoreDeclared <- FALSE
