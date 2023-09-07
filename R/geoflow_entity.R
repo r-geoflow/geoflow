@@ -2009,7 +2009,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           if(!is.null(format$description)) outformat <- paste0(outformat, "[\"", format$description, "\"]")
           if(!is.null(format$uri)) outformat <- paste(outformat, format$uri, sep = "@")
           return(outformat)
-        })),
+        }),collapse=line_separator),
         #Relation
         Relation = paste0(sapply(self$relations,function(relation){
           outrel <- paste0(relation$key,":\"",relation$name,"\"")
