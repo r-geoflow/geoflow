@@ -131,6 +131,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           if(!is.null(entity$data)){
             #data features/coverages
             if(!skipDataDownload){
+              config$logger.info("SkipDataDownload is false: copying and fetching data...")
               #we copy data to job data dir (for data files)
               entity$copyDataToJobDir(config, jobdir)
               #vector data: we enrich entity with features
@@ -143,6 +144,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
               #we check if the source and upload are both different file format (csv,shp,gpkg) and process automatically to conversion from source to upload type
               entity$prepareFeaturesToUpload(config)
             }else{
+              config$logger.info("SkipDataDownload is true: fetching spatial coverage from data (for DB sources only)...")
               #alternative behaviors in case we don't download data, applies to DB only
               entity$enrichSpatialCoverageFromDB(config)
             }
