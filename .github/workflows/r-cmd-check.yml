@@ -55,10 +55,7 @@ jobs:
           docker run --name pycsw -v $GITHUB_WORKSPACE/tests/resources/pycsw/pycsw.cfg:/etc/pycsw/pycsw.cfg -d -p 8000:8000 geopython/pycsw:latest
       #R tests
       #--------------------------
-      #- name: dependencies on Linux
-      #  if: runner.os == 'Linux'
-      #  run: sudo apt-get install -y make libicu-dev libxml2-dev libssl-dev pandoc librdf0-dev libnode-dev libcurl4-gnutls-dev
-      #R Set-up
+       #R Set-up
       - name: Set up R ${{ matrix.config.r }}
         uses: r-lib/actions/setup-r@v2
         with:
@@ -69,7 +66,7 @@ jobs:
       #Install dependencies on Linux
       - name: Install dependencies on Linux
         if: runner.os == 'Linux'
-        run: sudo apt-get install -y make libsodium-dev libicu-dev libxml2-dev libssl-dev pandoc librdf0-dev libnode-dev libcurl4-gnutls-dev libmysqlclient-dev libpq-dev libcurl4-openssl-dev zlib1g-dev make libjq-dev libsecret-1-dev libnetcdf-dev libpng-dev libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev libudunits2-dev
+        run: sudo apt-get install -y make libsodium-dev libicu-dev libxml2-dev libssl-dev pandoc librdf0-dev libnode-dev libcurl4-gnutls-dev libmysqlclient-dev libpq-dev zlib1g-dev make libjq-dev libsecret-1-dev libnetcdf-dev libpng-dev libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev libudunits2-dev
       - name: Install dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
