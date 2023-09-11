@@ -199,7 +199,7 @@ function(action, entity, config){
     #upload
     #-------------------------------------------------------------------------------------------------
     proceed_with_upload = data_object$upload
-    if(!is.null(layer) & !overwrite_upload) proceed_with_upload = FALSE
+    if(!overwrite_upload) proceed_with_upload = FALSE
     if(proceed_with_upload){
       
       config$logger.info("Upload mode is set to true")
