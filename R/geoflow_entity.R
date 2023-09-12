@@ -655,7 +655,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                     srcType = "shp"
                   }else if(any(endsWith(zip_files$filename, ".csv"))){
                     srcType = "csv"
-                  }else if(any(endsWIth(zip_files$filename, ".tif"))){
+                  }else if(any(endsWith(zip_files$filename, ".tif"))){
                     srcType = "tif"
                   }
                   config$logger.info(sprintf("Resolving sourceType from zip list: '%s'", srcType))
