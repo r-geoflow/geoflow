@@ -81,8 +81,8 @@ Examples cover both:
 | **Need**                     | Recommended                                                  |
 | **Default key (if omitted)** | *Not applicable* : <br />Note: To add one subject, the key used will be the type of key word. The subjet name ca be added as bracket |
 | **Examples**                 |                                                              |
-| Simple usage                 | theme[general]:@() |
-| Advanced usages              | |
+| Simple usage                 | theme[general]:keyword1,keyword2 |
+| Advanced usages              | theme[general]@https://mythesaurus:environment@https://mythesaurus/environment,soil@https://mythesaurus/soil|
 |                              |  |
 
 #### Creator
