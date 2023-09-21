@@ -61,7 +61,7 @@ require(testthat)
    setwd(wd)
    
    zenodo_published_records <- as.data.frame(readr::read_csv(file.path(EXEC2, "zenodo", "zenodo_pids.csv")))
-   expect_equal(zenodo_published_records$Identifier, c("my-geoflow-zenodo-record-test1", "my-geoflow-zenodo-record-test2"))
+   expect_equal(zenodo_published_records$Identifier, c("my-geoflow-zenodo-record-testnew1", "my-geoflow-zenodo-record-testnew2"))
    expect_equal(zenodo_published_records$Status, c("published", "published"))
    for(id in zenodo_published_records$Identifier){
      conceptdoi <- zenodo_published_records[zenodo_published_records$Identifier == id, "DOI_for_allversions"]
