@@ -233,9 +233,16 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           }
           
           #run sequence of global actions
+          to_publish = FALSE
           if(length(actions)>0) for(i in 1:length(actions)){
             action <- actions[[i]]
             config$logger.info(sprintf("Executing Action %s: %s - for entity %s", i, action$id, entity$identifiers[["id"]]))
+            if(action$id == "zen4R-deposit-record"){
+              if(!is.null(action$options$publish)) if(action$options$publish){
+                to_publish <- TRUE
+                action$options$publish <- FALSE
+              }
+            }
             action$run(entity = entity, config = config)
             
             #monitor global action
@@ -262,6 +269,9 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
                 #behavior for generic uploaders, we set depositWithFiles = TRUE and proceed with all resource uploads
                 generic_uploader_options <- generic_uploader$options
                 generic_uploader_options$depositWithFiles <- TRUE
+                if(generic_uploader$id == "zen4R-deposit-record"){
+                  generic_uploader_options$publish <- to_publish
+                }
                 generic_uploader$options <- generic_uploader_options
                 generic_uploader$run(entity, config)
               }
