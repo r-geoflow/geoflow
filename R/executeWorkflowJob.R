@@ -262,6 +262,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
                 #behavior for generic uploaders, we set depositWithFiles = TRUE and proceed with all resource uploads
                 generic_uploader_options <- generic_uploader$options
                 generic_uploader_options$depositWithFiles <- TRUE
+                generic_uploader$options <- generic_uploader_options
                 generic_uploader$run(entity, config)
               }
             }
