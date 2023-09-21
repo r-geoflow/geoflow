@@ -35,7 +35,7 @@
 		  },
 		  "properties": {
 		    "clean": {
-		      "run": true
+		      "run": false
 		    }
 		  }
 		}
