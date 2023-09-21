@@ -381,11 +381,12 @@ function(action, entity, config){
                   switch(strategy,
                          "edition" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
                          "newversion" = {
-                           data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern)
+                           data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern, full.names = T)
                            
                            if(zipEachDataFile){
                              config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
                              data_files <- lapply(data_files, function(data_file){
+                               data_file = basename(data_file)
                                config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
                                fileparts <- unlist(strsplit(data_file, "\\."))
                                if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
@@ -396,7 +397,7 @@ function(action, entity, config){
                              })
                            }
                            
-                           metadata_files <- list.files(file.path(getwd(),"metadata"))
+                           metadata_files <- list.files(file.path(getwd(),"metadata"), full.names = TRUE)
                            files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
                            ZENODO$depositRecordVersion(
                              record = zenodo_metadata, 
