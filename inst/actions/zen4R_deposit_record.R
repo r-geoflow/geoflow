@@ -401,7 +401,7 @@ function(action, entity, config){
                            files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
                            ZENODO$depositRecordVersion(
                              record = zenodo_metadata, 
-                             delete_latest_files = TRUE,
+                             delete_latest_files = deleteOldFiles,
                              files = files_to_upload,
                              publish = publish
                            )
