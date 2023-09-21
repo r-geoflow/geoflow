@@ -61,7 +61,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
   switch(type,
          "csv" = {
           config$logger.info(sprintf("Format type: %s", type))
-          st_write(obj = obj, paste0("./data/",resourcename,".csv"))
+          sf::st_write(obj = obj, paste0("./data/",resourcename,".csv"))
           config$logger.info("write csv file to data job directory")
          },
          "shp" = {
@@ -69,7 +69,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
            if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
            
            config$logger.info(sprintf("Format type: %s", type))
-           st_write(obj = obj, paste0("./data/",resourcename,".shp"), delete_layer = TRUE)
+           sf::st_write(obj = obj, paste0("./data/",resourcename,".shp"), delete_layer = TRUE)
            config$logger.info("write shp file to data job directory")
            zip::zipr(zipfile = paste0("./data/",resourcename, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = resourcename)))
            config$logger.info("zip datafiles for server export")
@@ -89,7 +89,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
            if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
            
            config$logger.info(sprintf("Format type: %s", type))
-           st_write(obj = obj, dsn=paste0("./data/",resourcename,".gpkg"))
+           sf::st_write(obj = obj, dsn=paste0("./data/",resourcename,".gpkg"))
            config$logger.info("write gpkg file to data job directory")
          },
          "dbtable" = {
@@ -120,7 +120,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                
                #1st chunk with overwrite param applied
                config$logger.info(sprintf("Upload data to DB: chunk 1 of %s", length(chunks)))
-               st_write(obj = chunks[[1]], dsn = config$software$output$dbi, layer =resourcename , 
+               sf::st_write(obj = chunks[[1]], dsn = config$software$output$dbi, layer =resourcename , 
                         layer_options = paste0('OVERWRITE=',ifelse(overwrite,'YES','NO')),
                         append = append)
                
@@ -129,7 +129,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                  chunk_idx = 2
                  outchunk = lapply(chunks[2:length(chunks)], function(chunk){
                    config$logger.info(sprintf("Upload data to DB: chunk %s of %s", chunk_idx, length(chunks)))
-                   st_write(obj = chunk, dsn = config$software$output$dbi, layer = resourcename, 
+                   sf::st_write(obj = chunk, dsn = config$software$output$dbi, layer = resourcename, 
                             append = TRUE)
                    chunk_idx <<- chunk_idx+1
                  })
@@ -137,7 +137,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
              }else{
                #no chunking
                config$logger.info("Upload data to DB as single chunk")
-               st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , 
+               sf::st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , 
                         layer_options = paste0('OVERWRITE=',ifelse(overwrite,'YES','NO')),
                         append = append)
              }
@@ -198,9 +198,9 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                if(config$software$output$dbi_config$parameters$drv == "PostgreSQL"){
                  config$logger.info("-> Using RPostgreSQL enhanced methods")
                  #simple hack to create the table with proper data types
-                 dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj[1,],
+                 DBI::dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj[1,],
                               overwrite = overwrite, append = append)
-                 dbSendQuery(conn=config$software$output$dbi, sprintf("delete from %s", resourcename) )
+                 DBI::dbSendQuery(conn=config$software$output$dbi, sprintf("delete from %s", resourcename) )
                  requireNamespace("RPostgreSQL")
                  obj[is.na(obj)] <- "NA"
                  for(col in colnames(obj)) if(!is(obj[,col],"character")) obj[,col] = as(obj[,col],"character")
@@ -209,13 +209,13 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                  RPostgreSQL::postgresqlpqExec(config$software$output$dbi, sql)
                  RPostgreSQL::postgresqlCopyInDataframe(config$software$output$dbi, obj)
                  rs <- RPostgreSQL::postgresqlgetResult(config$software$output$dbi)
-                 onerec = dbGetQuery(conn=config$software$output$dbi,  sprintf("select * from %s limit 1", resourcename))
+                 onerec = DBI::dbGetQuery(conn=config$software$output$dbi,  sprintf("select * from %s limit 1", resourcename))
                  if("row.names" %in% colnames(onerec)){#hack, find better solution
-                   dbSendQuery(conn=config$software$output$dbi, sprintf("ALTER TABLE %s DROP COLUMN \"row.names\"", resourcename))
+                   DBI::dbSendQuery(conn=config$software$output$dbi, sprintf("ALTER TABLE %s DROP COLUMN \"row.names\"", resourcename))
                  }
                }else{
                  config$logger.info("-> Using standard DBI")
-                 dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj,
+                 DBI::dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj,
                               overwrite = overwrite, append = append)
                }
              }

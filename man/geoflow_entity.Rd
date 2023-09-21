@@ -98,6 +98,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_entity-prepareEntityJobDir}{\code{geoflow_entity$prepareEntityJobDir()}}
 \item \href{#method-geoflow_entity-copyDataToJobDir}{\code{geoflow_entity$copyDataToJobDir()}}
 \item \href{#method-geoflow_entity-enrichWithData}{\code{geoflow_entity$enrichWithData()}}
+\item \href{#method-geoflow_entity-enrichSpatialCoverageFromDB}{\code{geoflow_entity$enrichSpatialCoverageFromDB()}}
 \item \href{#method-geoflow_entity-enrichWithFeatures}{\code{geoflow_entity$enrichWithFeatures()}}
 \item \href{#method-geoflow_entity-enrichWithCoverages}{\code{geoflow_entity$enrichWithCoverages()}}
 \item \href{#method-geoflow_entity-prepareFeaturesToUpload}{\code{geoflow_entity$prepareFeaturesToUpload()}}
@@ -625,6 +626,25 @@ since it may contain finer geometries than a bounding box.
 \item{\code{config}}{geoflow config object}
 
 \item{\code{jobdir}}{relative path of the job directory}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-enrichSpatialCoverageFromDB"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-enrichSpatialCoverageFromDB}{}}}
+\subsection{Method \code{enrichSpatialCoverageFromDB()}}{
+This function computes spatial coverage from DB (table, view or query)
+without having to deal with a full data download. It is triggered when the global option 
+\code{skipDataDownload} is enabled.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichSpatialCoverageFromDB(config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
 }
 \if{html}{\out{</div>}}
 }
