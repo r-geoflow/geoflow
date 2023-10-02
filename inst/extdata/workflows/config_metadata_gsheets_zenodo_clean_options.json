@@ -1,0 +1,52 @@
+{
+  "profile": {
+    "id": "my-workflow",
+    "name": "My workflow",
+  	"project": "Test geoflow project",
+  	"organization": "My organization",
+  	"logos": [
+  		"https://via.placeholder.com/300x150.png/09f/fff?text=geoflow"
+  	],
+  	"mode": "entity"
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1ef9dX1VOj8RtV7Qdeuth2l1sGkW3qBNkPCL4v-WRAOs/edit?usp=sharing"
+      }
+    ],
+    "contacts" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1BqlXwA2fKiRuozNAQhBb_PbQVSPTCfl8_Q9rfM8E2ws/edit?usp=sharing"
+      }
+    ]
+  },
+  "software": [
+    {
+  		"id": "my-zenodo",
+		  "type": "output",
+		  "software_type": "zenodo",
+		  "parameters": {
+    		"url": "https://sandbox.zenodo.org/api",
+    		"token": "{{ ZENODO_SANDBOX_TOKEN }}",
+    		"logger": "DEBUG"
+		  },
+		  "properties": {
+		    "clean": {
+		      "run": true,
+		      "query": "<your ElasticSearch query>",
+		      "doi": ["doi1", "doi2", "doi3"],
+		      "community": ["community1", "community2"]
+		    }
+		  }
+		}
+  ],
+  "actions": [
+    {
+      "id": "zen4R-deposit-record",
+      "run": true
+    }
+  ]
+}
