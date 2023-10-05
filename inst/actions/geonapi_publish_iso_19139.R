@@ -122,20 +122,24 @@ function(action, entity, config){
       #publication
       mdId = doPublish(metaFile, geometa_inspire)
       if(create_doi_on_datacite){
-        config$logger.info("Creating DOI on DataCite...")
-        config$logger.info("Checking DOI registration pre-conditions...")
-        checked = GN$doiCheckPreConditions(mdId)
-        if(checked){
-          config$logger.info("DOI registration pre-conditions are met, proceed with DOI registration")
-          created = GN$createDOI(mdId)
-          if(created){
-            doi_report = attr(created, "report")
-            doi = doi_report$doi
-            entity$identifiers$doi = doi
-            config$logger.info(sprintf("DOI '%s' successfuly created for metadata '%s'", doi, mdId))
+        if(is.null(entity$identifiers[["doi"]])){
+          config$logger.info("Creating DOI on DataCite...")
+          config$logger.info("Checking DOI registration pre-conditions...")
+          checked = GN$doiCheckPreConditions(mdId)
+          if(checked){
+            config$logger.info("DOI registration pre-conditions are met, proceed with DOI registration")
+            created = GN$createDOI(mdId)
+            if(created){
+              doi_report = attr(created, "report")
+              doi = doi_report$doi
+              entity$identifiers$doi = doi
+              config$logger.info(sprintf("DOI '%s' successfuly created for metadata '%s'", doi, mdId))
+            }
+          }else{
+            config$logger.warn("Aborting DOI creation, pre-conditions are not met!")
           }
         }else{
-          config$logger.warn("Aborting DOI creation, pre-conditions are not met!")
+          config$logger.warn("A DOI is already declared as entity identifier, skip DOI creation on DataCite")
         }
       }
       
