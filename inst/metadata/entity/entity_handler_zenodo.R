@@ -7,16 +7,16 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
   
   ZENODO <- config$software$input$zenodo
   if(is.null(ZENODO)){
-    stop("There is no Zenodo input software configured to handle entities from Dataverse")
+    stop("There is no 'zenodo' input software configured to handle entities from Zenodo")
   }
   ZENODO_CONFIG <- config$software$input$zenodo_config
   
-  results <- zen4R::getDepositions(q = source)
+  results <- ZENODO$getDepositions(q = source)
   if(length(results)==0) return(list())
   
   entities <- lapply(1:length(results), function(i){
     result <- results[[i]]
-    config$logger.info(sprintf("Creating entity (%s out of %s) from Zenodo deposit/record with DOI '%s'", i, nrow(results), ds_doi))
+    config$logger.info(sprintf("Creating entity (%s out of %s) from Zenodo deposit/record with DOI '%s'", i, length(results), result$doi))
     
     #create entity
     entity <- geoflow::geoflow_entity$new()
@@ -47,41 +47,21 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
     subj$setKey("theme")
     subj$setName("General")
     for(kwd in result$metadata$keywords){
-      keyword = geoflow_keyword$new()
-      keyword$setName(kwd)
-      subj$addKeyword(keyword)
+      subj$addKeyword(kwd)
     }
     for(sbj in result$metadata$subjects){
-      keyword = geoflow_keyword$new()
-      keyword$setName(sbj$term)
-      keyword$setUri(sbj$identifier)
-      subj$addKeyword(keyword)
+      subj$addKeyword(sbj$term, uri = sbj$identifier)
     }
     entity$addSubject(subj)
   
     #entity Contacts/roles
-    #pointOfContact
-    datasetContacts <- citation$fields[citation$fields$typeName == "datasetContact",]$value
-    for(datasetContact in datasetContacts){
-      datasetContactNames <- unlist(strsplit(datasetContact$datasetContactName$value," "))
-      poc <- geoflow::geoflow_contact$new()
-      poc$setIdentifier(key = "id", datasetContact$datasetContactEmail$value)
-      poc$setFirstName(datasetContactNames[1])
-      poc$setLastName(datasetContactNames[2])
-      poc$setRole("pointOfContact")
-      entity$addContact(poc)
-      #metadata
-      meta <- poc$clone()
-      meta$setRole("metadata")
-      entity$addContact(meta)
-    }
     #creator(s)
     creators <- result$metadata$creators
     for(creator in creators){
       creatorNames <- unlist(strsplit(creator$name, ", "))
       creator_c <- geoflow::geoflow_contact$new()
-      creator_c$setFirstName(authorNames[2])
-      creator_c$setLastName(authorNames[1])
+      creator_c$setFirstName(creatorNames[2])
+      creator_c$setLastName(creatorNames[1])
       if(!is.null(creator$affiliation)) creator_c$setOrganizationName(creator$affiliation)
       if(!is.null(creator$orcid)) creator_c$setIdentifier("orcid", creator$orcid)
       if(!is.null(creator$gnd)) creator_c$setIdentifier("gnd", creator$gnd)
@@ -125,7 +105,7 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
     rights <- geoflow::geoflow_right$new()
     if(!is.null(result$metadata$license)) {
       rights$setKey("license")
-      rights$setValues(ds$license)
+      rights$setValues(result$metadata$license)
       entity$addRight(rights)
     }
     if(result$metadata$access_right != "open"){

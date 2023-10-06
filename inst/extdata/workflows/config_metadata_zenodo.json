@@ -21,7 +21,7 @@
   "software": [
      {
   		"id": "my-zenodo",
-  	  "type": "output",
+  	  "type": "input",
   	  "software_type": "zenodo",
   	  "parameters": {
     		"url": "https://sandbox.zenodo.org/api",
