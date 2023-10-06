@@ -218,6 +218,7 @@ function(action, entity, config){
         contact_added <- c(contact_added, contact$identifiers[["id"]])
       }
     }
+    #TODO contributors
     
     #Licenses
     if(length(entity$rights)>0){
