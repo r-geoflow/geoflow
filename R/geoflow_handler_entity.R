@@ -108,6 +108,12 @@ register_entity_handlers <- function(){
       def = "Handle metadata entities from an OGC CSW endpoint",
       packages = list("ows4R", "sf", "geometa"),
       fun = source(system.file("metadata/entity", "entity_handler_csw.R", package = "geoflow"))$value
+    ),
+    geoflow_handler$new(
+      id = "zenodo",
+      def = "Handle metadata entities built from a Zenodo source",
+      packages = list("zen4R"),
+      fun = source(system.file("metadata/entity", "entity_handler_zenodo.R", package = "geoflow"))$value
     )
   )
   .geoflow$entity_handlers <- handlers
