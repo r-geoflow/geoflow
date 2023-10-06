@@ -1,0 +1,34 @@
+{
+  "profile": {
+    "id": "my-workflow",
+    "name": "My workflow",
+    "project": "Test geoflow project",
+    "organization": "My organization",
+    "logos": [
+      "https://via.placeholder.com/300x150.png/09f/fff?text=geoflow"
+      ],
+    "mode": "entity"
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "zenodo",
+        "source": "conceptdoi:\"10.5072/zenodo.1243458\""
+      }
+    ],
+    "contacts" : []
+  },
+  "software": [
+     {
+  		"id": "my-zenodo",
+  	  "type": "output",
+  	  "software_type": "zenodo",
+  	  "parameters": {
+    		"url": "https://sandbox.zenodo.org/api",
+    		"token": "{{ ZENODO_SANDBOX_TOKEN }}",
+    		"logger": "DEBUG"
+  	   }
+  	 }
+    ],
+  "actions": []
+}
