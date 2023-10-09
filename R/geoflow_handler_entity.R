@@ -113,7 +113,13 @@ register_entity_handlers <- function(){
       id = "zenodo",
       def = "Handle metadata entities built from a Zenodo source",
       packages = list("zen4R"),
-      fun = source(system.file("metadata/entity", "entity_handler_zenodo.R", package = "geoflow"))$value
+      fun = source(system.file("metadata/entity", "entity_handler_zenodo.R", package = "geoflow"))$value,
+      available_options = list(
+        resource_type = list(def = "Type resource. By default 'deposit', use this if you are the owner of the records you fetch.
+                             Alternative option value is 'record' that can be used for third-party record handling (as anonymous user", default = "deposit"),
+        source_type = list(def = "Type of source for handling Zenodo input deposits/records. Possible values are ['query': an ElasticSearch query, 
+                           'doi': one or more DOIs]", default = 'query')
+      )
     )
   )
   .geoflow$entity_handlers <- handlers

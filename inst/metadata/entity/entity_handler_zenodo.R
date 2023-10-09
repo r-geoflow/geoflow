@@ -11,7 +11,56 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
   }
   ZENODO_CONFIG <- config$software$input$zenodo_config
   
-  results <- ZENODO$getDepositions(q = source)
+  resource_type <- handler$getOption("resource_type") #for this handler default is "deposit"
+  source_type <- handler$getOption("source_type") #for this handler default is "query"
+  
+  #fetch results depending on resource and source types
+  config$logger.info(sprintf("Zenodo entity handler: resource type '%s'", resource_type))
+  config$logger.info(sprintf("Zenodo entity handler: source type '%s'", source_type))
+  results <- switch(resource_type,
+    "deposit" = {
+      switch(source_type,
+        "query" = {
+          ZENODO$getDepositions(q = source)
+        },
+        "doi" = {
+          recs = lapply(source, function(doi){
+            rec = ZENODO$getDepositionByDOI(doi)
+            if(is.null(rec)) rec = ZENODO$getDepositionByConceptDOI(doi)
+            return(rec)
+          })
+          recs = recs[!sapply(recs, is.null)]
+          recs
+        },{
+          config$logger.warn(sprintf("Unknown source type '%s' in Zenodo entity handler", source_type))
+          list()
+        }
+      )
+     },
+    "record" = {
+     switch(source_type,
+      "query" = {
+         ZENODO$getRecords(q = source) 
+       },
+       "doi" = {
+         recs = lapply(source, function(doi){
+           rec = ZENODO$getRecordByDOI(doi)
+           if(is.null(rec)) rec = ZENODO$getRecordByConceptDOI(doi)
+           return(rec)
+         })
+         recs = recs[!sapply(recs, is.null)]
+         recs
+       },{
+         config$logger.warn(sprintf("Unknown source type '%s' in Zenodo entity handler", source_type))
+         list()
+       }
+     )  
+    },{
+      config$logger.warn(sprintf("Unknown resource type '%s' in Zenodo entity handler. Valid values ['deposit','record']", resource_type))
+      list()
+    }
+  )
+  if(length(results)==1) if(is(results, "ZenodoRecord")) results = list(results)
   if(length(results)==0) return(list())
   
   entities <- lapply(1:length(results), function(i){
@@ -27,6 +76,8 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
     if(length(identifiers)>0){
       identifier = identifiers[[1]]$identifier
       entity$setIdentifier("id", substr(identifier, 5,nchar(identifier)))
+    }else{
+      entity$setIdentifier("id", gsub("/", "_", result$doi))
     }
     
     #entity Date

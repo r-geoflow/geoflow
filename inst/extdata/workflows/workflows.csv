@@ -16,3 +16,4 @@ config_metadata_gsheets_sdi_geoserver_geotiff_directory.json,Load metadata entit
 config_metadata_ocs.json,Load metadata entities/contacts/dictionary from CSV files hosted on a cloud supporting OCS API (eg. nextcloud/owncloud)
 config_metadata_dataverse.json,Load metadata entities/contacts from Dataverse records
 config_metadata_zenodo.json,Load metadata entities/contacts from Zenodo deposits/records
+config_metadata_zenodo_with_options.json,Load metadata entities/contacts from Zenodo deposits/records (with options declared to fetch from public records and by DOI)
