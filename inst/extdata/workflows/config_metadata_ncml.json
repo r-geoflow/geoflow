@@ -1,0 +1,23 @@
+{
+  "profile": {
+    "id": "my-workflow",
+    "name": "My workflow",
+    "project": "Test geoflow project",
+    "organization": "My organization",
+    "logos": [
+      "https://via.placeholder.com/300x150.png/09f/fff?text=geoflow"
+      ],
+    "mode": "entity"
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "ncml",
+        "source": "https://galilee.univ-reunion.fr/thredds/ncml/dataStations/La_Reunion/saintjosephmairie/saintjosephmairie_aggregated.ncml?catalog=https%3A%2F%2Fgalilee.univ-reunion.fr%2Fthredds%2Fcatalog%2FdataStations%2FLa_Reunion%2Fsaintjosephmairie%2Fcatalog.html&dataset=station%2FLa_Reunion%2Fsaintjosephmairie%2Fsaintjosephmairie_aggregated.ncml"
+      }
+    ],
+    "contacts" : []
+  },
+  "software": [],
+  "actions": []
+}

@@ -86,7 +86,7 @@ handle_entities_ncml <- function(handler, source, config, handle = TRUE){
   
   
   #identifiers
-  entity$setIdentifier("id", basename(source_name))
+  entity$setIdentifier("id", basename(attr$full_name$value))
   
   doi <- attr$identifier_product_doi$value
   if(!is.null(doi)){
@@ -98,7 +98,7 @@ handle_entities_ncml <- function(handler, source, config, handle = TRUE){
   if(!is.null(title)){
     entity$setTitle("title", title)
   }else{
-    entity$setTitle("title",basename(source_name))  
+    entity$setTitle("title",basename(attr$full_name$value))  
   }
   
   #description
