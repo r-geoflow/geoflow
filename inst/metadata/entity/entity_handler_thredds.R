@@ -50,10 +50,10 @@ handle_entities_thredds <- function(handler, source, config){
     
     if(!is.null(ncml_uri)){
       config$logger.info(sprintf("NCML URL for '%s': %s", data$url, ncml_uri))
-      entity <- handle_entities_ncml(config,ncml_uri)[[1]]
+      entity <- handle_entities_ncml(handler,ncml_uri,config)[[1]]
     } else if (!is.null(odap_uri)){
       config$logger.info(sprintf("OpenDAP URL for '%s': %s", data$url, odap_uri))
-      entity <- handle_entities_ncdf(config,odap_uri)[[1]]
+      entity <- handle_entities_ncdf(handler,odap_uri,config)[[1]]
     }else{
       errMsg <- sprintf("No OpenDAP or NCML service for Thredds '%s'", thredds$url)
       config$logger.error(errMsg)
