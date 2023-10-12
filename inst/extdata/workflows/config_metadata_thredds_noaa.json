@@ -1,0 +1,34 @@
+{
+  "id": "thredds",
+  "profile": {
+  	"project": "geoflow-thredds",
+  	"organization": "geoflow",
+  	"logos": [],
+  	"options": {
+  	  "line_separator": "_\n"
+    },
+    "mode": "entity"
+  },
+  
+  
+ 
+  "metadata": {
+    "entities": [
+      {
+        "handler": "thredds",
+        "source": "oisst-avhrr-v02r01.20210518.nc"
+      }
+    ]
+  },
+ "software": [
+  	{
+  		"id": "thredds",
+  		"type": "input",
+  		"software_type": "thredds",
+  		"parameters": {
+  			"x": "https://www.ncei.noaa.gov/thredds/catalog/OisstBase/NetCDF/V2.1/AVHRR/202105/catalog.xml"
+  		}
+  	}
+  ],
+ "actions": []
+}
