@@ -5,6 +5,9 @@ handle_entities_ncdf <- function(handler, source, config, handle = TRUE){
   if(!requireNamespace("ncdf4", quietly = TRUE)){
     stop("The NCDF handler requires the 'ncdf4' package")
   }
+  if(!requireNamespace("XML", quietly = TRUE)){
+    stop("The NCDF handler requires the 'XML' package")
+  }
   
   #if(!mime::guess_type(source)=="application/x-netcdf"){
   #  errMsg <- "Error in 'handle_entities_df': source parameter should be an 'netcdf' file"

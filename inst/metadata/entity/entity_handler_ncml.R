@@ -3,6 +3,10 @@ handle_entities_ncml <- function(handler, source, config, handle = TRUE){
   
   config$logger.info("NCML Handle")
   
+  if(!requireNamespace("XML", quietly = TRUE)){
+    stop("The NCML handler requires the 'XML' package")
+  }
+  
   getNCML <- function(file){
     
     xml <- XML::xmlParse(httr::content(httr::GET(file),"text"))

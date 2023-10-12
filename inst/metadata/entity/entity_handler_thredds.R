@@ -5,7 +5,10 @@ handle_entities_thredds <- function(handler, source, config){
     stop("The Thredds handler requires the 'thredds' package")
   }
   if(!requireNamespace("ncdf4", quietly = TRUE)){
-    stop("The NCDF handler requires the 'ncdf4' package")
+    stop("The Thredds handler requires the 'ncdf4' package")
+  }
+  if(!requireNamespace("XML", quietly = TRUE)){
+    stop("The Thredds handler requires the 'XML' package")
   }
   
   thredds <- config$software$input$thredds
