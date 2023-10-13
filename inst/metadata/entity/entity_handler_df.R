@@ -75,18 +75,12 @@ handle_entities_df <- function(handler, source, config){
     #types
     src_type <- geoflow::sanitize_str(source_entity[,"Type"])
     types <- if(!is.na(src_type)) geoflow::extract_cell_components(src_type) else list()
-    if(length(types)>0){
-      if(length(types)==1){
-        entity$setType("generic", types)
+    for(type in types){
+      if(regexpr(":",type) == -1){
+        entity$setType("generic", type)
       }else{
-        for(type in types){
-          if(regexpr(":",type) == -1){
-            entity$setType("generic", type)
-          }else{
-            type_kvp <- geoflow::extract_kvp(type)
-            entity$setType(type_kvp$key, type_kvp$values[[1]])
-          }
-        }
+        type_kvp <- geoflow::extract_kvp(type)
+        entity$setType(type_kvp$key, type_kvp$values[[1]])
       }
     }
     
