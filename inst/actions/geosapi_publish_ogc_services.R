@@ -278,9 +278,12 @@ function(action, entity, config){
       if(data_object$uploadType == "dbquery") nativename <- layername
       if(data_object$spatialRepresentationType == "grid") nativename <- store
       resource$setNativeName(nativename)
-      resource$setAbstract(entity$descriptions$abstract)
+      abstract <- entity$descriptions$abstract
+      if(!is.null(data_object$layerdesc)) abstract = data_object$layerdesc
+      resource$setAbstract(abstract)
       title <- entity$titles[["title"]]
       if(length(data_objects)>1) title <- paste0(title, " - ", layername)
+      if(!is.null(data_object$layertitle)) title = data_object$layertitle
       resource$setTitle(title)
       resource$setSrs(epsgCode)
       resource$setNativeCRS(epsgCode)

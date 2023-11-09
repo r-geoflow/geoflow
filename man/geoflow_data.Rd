@@ -55,6 +55,13 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{layername}}{layer name}
 
+\item{\code{layertitle}}{layer title}
+
+\item{\code{layerdesc}}{layer description}
+
+\item{\code{layeruri}}{layer URI
+layeruri layer URI}
+
 \item{\code{styles}}{styles}
 
 \item{\code{styleUpload}}{upload styles}
@@ -128,6 +135,9 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_data-setStore}{\code{geoflow_data$setStore()}}
 \item \href{#method-geoflow_data-setDatastore}{\code{geoflow_data$setDatastore()}}
 \item \href{#method-geoflow_data-setLayername}{\code{geoflow_data$setLayername()}}
+\item \href{#method-geoflow_data-setLayertitle}{\code{geoflow_data$setLayertitle()}}
+\item \href{#method-geoflow_data-setLayerdesc}{\code{geoflow_data$setLayerdesc()}}
+\item \href{#method-geoflow_data-setLayeruri}{\code{geoflow_data$setLayeruri()}}
 \item \href{#method-geoflow_data-addStyle}{\code{geoflow_data$addStyle()}}
 \item \href{#method-geoflow_data-addDimension}{\code{geoflow_data$addDimension()}}
 \item \href{#method-geoflow_data-setCloudPath}{\code{geoflow_data$setCloudPath()}}
@@ -590,6 +600,57 @@ Sets a layername, object of class \code{character}. Used as target layer name fo
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{layername}}{layername}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_data-setLayertitle"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data-setLayertitle}{}}}
+\subsection{Method \code{setLayertitle()}}{
+Sets a layer title, object of class \code{character}. If available, used as target layer title in SDI-related action.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setLayertitle(layertitle)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{layertitle}}{layertitle}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_data-setLayerdesc"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data-setLayerdesc}{}}}
+\subsection{Method \code{setLayerdesc()}}{
+Sets a layer description, object of class \code{character}. If available, used as target layer description/abstract in SDI-related actions.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setLayerdesc(layerdesc)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{layerdesc}}{layerdesc}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_data-setLayeruri"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data-setLayeruri}{}}}
+\subsection{Method \code{setLayeruri()}}{
+Sets a layer URI, object of class \code{character}. If available, used as annotating URI for layer metadata (eg. in ISO 19115 action).
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setLayeruri(layeruri)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{layeruri}}{layeruri}
 }
 \if{html}{\out{</div>}}
 }

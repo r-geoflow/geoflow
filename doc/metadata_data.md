@@ -65,7 +65,10 @@ If data must be uploaded, the target must be declared in **software** section of
 * **uploadStyle**: a specific boolean argument whether SLD style files (if listed/available in `source`) should be uploaded (specific to GeoServer publishing action).
 * **style**: Used as layer style name(s) for GeoServer action. When using multiple styles, the first one will be used as layer default style.
 * **store** : name of target store in the target GeoServer (can also be specified in json configuration)
-* **layername**: name given to layer. If omitted, the entity `id` identifier will be used.
+* **layername**: name given to layer. Optional. If omitted, the entity `id` identifier will be used.
+* **layertitle**: title given to layer. Optional. If omitted, the entity `title` will be used
+* **layerdesc**: description/abstract given to layer. Optional. If omitted, the entity `abstract` will be used
+* **layeruri**: URI given to layer. Optional. May be used to add additional URI to layer online resource in ISO 19115
 * **for a 'dbquery' upload type**
 	* **sql**: a sql query applicable on SQL source to upload.
 	* **parameters**: Set parameters definition for setting SQL view parameterized layers. It is compound by a name (alias) matching the one declared in the SQL query, a regular expression for validation of parameter values and a default value.These three arguments must be declared of the order described upper and separated by `,`. e.g. `parameter:high,^[\d]+$,100000`

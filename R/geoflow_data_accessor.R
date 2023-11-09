@@ -384,7 +384,7 @@ register_data_accessors <- function(){
           stop(errMsg)
         }
         cat(sprintf("[geoflow] OCS data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
-        software$downloadFile(relPath = dirname(resource), filename = basename(resource), outdir = getwd())
+        software$downloadFile(relPath = dirname(resource), filename = basename(resource), outdir = dirname(path))
         if(unzip & endsWith(path, "zip")){
           utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
         }

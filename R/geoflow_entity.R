@@ -1485,7 +1485,14 @@ geoflow_entity <- R6Class("geoflow_entity",
             new_wms <- geoflow_relation$new()
             new_wms$setKey("wms")
             new_wms$setName(layername)
-            new_wms$setDescription(sprintf("%s - Map access - OGC Web Map Service (WMS)",layername))
+            new_wms$setDescription(
+              describeOGCRelation(
+                self, data_object, service = "WMS", download = FALSE, format = NULL,
+                handle_category = geosapi_action$getOption("describe_wms_relation_with_category"), 
+                handle_ogc_service_description = geosapi_action$getOption("describe_wms_relation_with_ogc_service_description"), 
+                handle_format = FALSE
+              )
+            )
             new_wms$setLink(sprintf("%s/%s/ows?service=WMS", 
                                     geoserver_base_url, 
                                     config$software$output$geoserver_config$properties$workspace))
@@ -1502,7 +1509,14 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs <- geoflow_relation$new()
               new_wfs$setKey("wfs")
               new_wfs$setName(layername)
-              new_wfs$setDescription(sprintf("%s - Data (features) access - OGC Web Feature Service (WFS)", layername))
+              new_wfs$setDescription(
+                describeOGCRelation(
+                  self, data_object, service = "WFS", download = FALSE, format = NULL,
+                  handle_category = geosapi_action$getOption("describe_wfs_relation_with_category"), 
+                  handle_ogc_service_description = geosapi_action$getOption("describe_wfs_relation_with_ogc_service_description"), 
+                  handle_format = FALSE
+                )
+              )
               new_wfs$setLink(sprintf("%s/%s/ows?service=WFS", 
                                       geoserver_base_url, 
                                       config$software$output$geoserver_config$properties$workspace))
@@ -1517,7 +1531,14 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs_gml <- geoflow_relation$new()
               new_wfs_gml$setKey("download")
               new_wfs_gml$setName(layername)
-              new_wfs_gml$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - GML format", layername))
+              new_wfs_gml$setDescription(
+                describeOGCRelation(
+                  self, data_object, service = "WFS", download = TRUE, format = "GML",
+                  handle_category = geosapi_action$getOption("describe_wfs_relation_with_category"), 
+                  handle_ogc_service_description = geosapi_action$getOption("describe_wfs_relation_with_ogc_service_description"), 
+                  handle_format = geosapi_action$getOption("describe_wfs_relation_with_format")
+                )
+              )
               new_wfs_gml$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s", 
                                           geoserver_base_url, 
                                           config$software$output$geoserver_config$properties$workspace,
@@ -1528,7 +1549,14 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs_geojson <- geoflow_relation$new()
               new_wfs_geojson$setKey("download")
               new_wfs_geojson$setName(layername)
-              new_wfs_geojson$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - GeoJSON format", layername))
+              new_wfs_geojson$setDescription(
+                describeOGCRelation(
+                  self, data_object, service = "WFS", download = TRUE, format = "GeoJSON",
+                  handle_category = geosapi_action$getOption("describe_wfs_relation_with_category"), 
+                  handle_ogc_service_description = geosapi_action$getOption("describe_wfs_relation_with_ogc_service_description"), 
+                  handle_format = geosapi_action$getOption("describe_wfs_relation_with_format")
+                )
+              )
               new_wfs_geojson$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=json", 
                                               geoserver_base_url, 
                                               config$software$output$geoserver_config$properties$workspace,
@@ -1539,7 +1567,14 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs_shp <- geoflow_relation$new()
               new_wfs_shp$setKey("download")
               new_wfs_shp$setName(layername)
-              new_wfs_shp$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - ESRI Shapefile format", layername))
+              new_wfs_shp$setDescription(
+                describeOGCRelation(
+                  self, data_object, service = "WFS", download = TRUE, format = "ESRI Shapefile",
+                  handle_category = geosapi_action$getOption("describe_wfs_relation_with_category"), 
+                  handle_ogc_service_description = geosapi_action$getOption("describe_wfs_relation_with_ogc_service_description"), 
+                  handle_format = geosapi_action$getOption("describe_wfs_relation_with_format")
+                )
+              )
               new_wfs_shp$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=SHAPE-ZIP", 
                                           geoserver_base_url, 
                                           config$software$output$geoserver_config$properties$workspace,
@@ -1550,7 +1585,14 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs_csv <- geoflow_relation$new()
               new_wfs_csv$setKey("download")
               new_wfs_csv$setName(layername)
-              new_wfs_csv$setDescription(sprintf("%s - Data download - OGC Web Feature Service (WFS) - CSV format", layername))
+              new_wfs_csv$setDescription(
+                describeOGCRelation(
+                  self, data_object, service = "WFS", download = TRUE, format = "CSV",
+                  handle_category = geosapi_action$getOption("describe_wfs_relation_with_category"), 
+                  handle_ogc_service_description = geosapi_action$getOption("describe_wfs_relation_with_ogc_service_description"), 
+                  handle_format = geosapi_action$getOption("describe_wfs_relation_with_format")
+                )
+              )
               new_wfs_csv$setLink(sprintf("%s/%s/ows?service=WFS&request=GetFeature&version=1.0.0&typeName=%s&outputFormat=CSV", 
                                           geoserver_base_url, 
                                           config$software$output$geoserver_config$properties$workspace,
@@ -1569,7 +1611,14 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wcs <- geoflow_relation$new()
               new_wcs$setKey("wcs")
               new_wcs$setName(layername)
-              new_wcs$setDescription(sprintf("%s - Data (Coverage) access - OGC Web Coverage Service (WCS)", layername))
+              new_wcs$setDescription(
+                describeOGCRelation(
+                  self, data_object, service = "WCS", download = FALSE, format = NULL,
+                  handle_category = geosapi_action$getOption("describe_wcs_relation_with_category"), 
+                  handle_ogc_service_description = geosapi_action$getOption("describe_wcs_relation_with_ogc_service_description"), 
+                  handle_format = FALSE
+                )
+              )
               new_wcs$setLink(sprintf("%s/%s/ows?service=WCS", 
                                       geoserver_base_url, 
                                       config$software$output$geoserver_config$properties$workspace))
@@ -1585,7 +1634,14 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wcs_geotiff <- geoflow_relation$new()
               new_wcs_geotiff$setKey("download")
               new_wcs_geotiff$setName(layername)
-              new_wcs_geotiff$setDescription(sprintf("%s - Data download - OGC Web Coverage Service (WCS) - GeoTIFF format", layername))
+              new_wcs_geotiff$setDescription(
+                describeOGCRelation(
+                  self, data_object, service = "WCS", download = TRUE, format = "GeoTIFF",
+                  handle_category = geosapi_action$getOption("describe_wcs_relation_with_category"), 
+                  handle_ogc_service_description = geosapi_action$getOption("describe_wcs_relation_with_ogc_service_description"), 
+                  handle_format = geosapi_action$getOption("describe_wcs_relation_with_format")
+                )
+              )
               new_wcs_geotiff$setLink(sprintf("%s/%s/ows?service=WCS&request=GetCoverage&version=2.0.1&CoverageId=%s&format=image/geotiff", 
                                           geoserver_base_url, 
                                           config$software$output$geoserver_config$properties$workspace,

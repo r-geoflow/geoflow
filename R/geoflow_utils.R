@@ -746,3 +746,52 @@ create_geoflow_data_from_dbi <- function(dbi, schema, table){
   entity_data$setFeatureTypeObj(fto)
   return(entity_data)
 }
+
+#'@name describeOGCRelation
+#'@aliases describeOGCRelation
+#'@title describeOGCRelation
+#'
+#'@usage describeOGCRelation(entity, data_object, service, download, format,
+#'                           handle_category, handle_ogc_service_description, handle_format)
+#'
+#'@param entity the entity considered
+#'@param data_object data object
+#'@param service service acronym
+#'@param download whether the relation should be a download one or not
+#'@param format format
+#'@param handle_category append the relation category
+#'@param handle_ogc_service_description append the OGC service description
+#'@param handle_format append the download format
+#'
+#'@author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#'@export
+describeOGCRelation <- function(entity, data_object, service, download = FALSE, format = NULL,
+                                handle_category = TRUE, handle_ogc_service_description = TRUE, handle_format = TRUE){
+  
+  layername <- if(!is.null(data_object$layername)) data_object$layername else entity$identifiers$id
+  layertitle = if(!is.null(data_object$layertitle)) data_object$layertitle else layername
+  
+  out <- switch(tolower(service),
+                "wms" = {
+                  out_wms_link = layertitle
+                  if(handle_category) out_wms_link = sprintf("%s - %s", out_wms_link, "Map access")
+                  if(handle_ogc_service_description) out_wms_link = sprintf("%s - %s", out_wms_link, "OGC Web Map Service (WMS)")
+                  out_wms_link
+                },
+                "wfs" = {
+                  out_wfs_link = layertitle
+                  if(handle_category) out_wfs_link = sprintf("%s - %s", out_wfs_link, if(download) "Data download" else "Data (features) access")
+                  if(handle_ogc_service_description) out_wfs_link = sprintf("%s - %s", out_wfs_link, "OGC Web Feature Service (WFS)")
+                  if(handle_format && !is.null(format)) out_wfs_link = sprintf("%s - %s", out_wfs_link, format)
+                  out_wfs_link
+                },
+                "wcs" = {
+                  out_wcs_link = layertitle
+                  if(handle_category) out_wcs_link = sprintf("%s - %s", out_wcs_link, if(download) "Data download" else "Data (coverage) access")
+                  if(handle_ogc_service_description) out_wcs_link = sprintf("%s - %s", out_wcs_link, "OGC Web Coverage Service (WCS)")
+                  if(handle_format && !is.null(format)) out_wcs_link = sprintf("%s - %s", out_wcs_link, format)
+                  out_wcs_link
+                }
+  )
+  return(out)
+}

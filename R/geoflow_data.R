@@ -63,6 +63,13 @@ geoflow_data <- R6Class("geoflow_data",
     store = NULL,
     #'@field layername layer name
     layername = NULL,
+    #'@field layertitle layer title
+    layertitle = NULL,
+    #'@field layerdesc layer description
+    layerdesc = NULL,
+    #'@field layeruri layer URI
+    #'layeruri layer URI
+    layeruri = NULL,
     #'@field styles styles
     styles = list(),
     #'@field styleUpload upload styles
@@ -222,9 +229,20 @@ geoflow_data <- R6Class("geoflow_data",
         }
         
         #layername (if any)
-        #not mandatory, can be used for subset layers
         if(!is.null(data_props$layername)){
           self$setLayername(data_props$layername$values[[1]])
+        }
+        #layertitle (if any)
+        if(!is.null(data_props$layertitle)){
+          self$setLayertitle(data_props$layertitle$values[[1]])
+        }
+        #layerdesc (if any)
+        if(!is.null(data_props$layerdesc)){
+          self$setLayerdesc(data_props$layerdesc$values[[1]])
+        }
+        #layeruri (if any)
+        if(!is.null(data_props$layeruri)){
+          self$setLayeruri(data_props$layeruri$values[[1]])
         }
         
         #sql
@@ -411,6 +429,8 @@ geoflow_data <- R6Class("geoflow_data",
         
         #datadir
         if(any(sapply(data_props, function(x){x$key=="dir"}))){
+          accessor <- NULL
+          accessor_software <- NULL
           data_dir <- data_props$dir$values[[1]]
           self$dir <- data_dir
           ext_data_files <- list()
@@ -470,7 +490,31 @@ geoflow_data <- R6Class("geoflow_data",
             ext_data_files <-ext_data_files[!endsWith(ext_data_files,".sld")]
           }
  
+          #detect presence of data files register
+          data_files_register <- NULL
+          data_files_register_file = ext_data_files[basename(ext_data_files) == "register.csv"]
+          if(length(data_files_register_file)>0){
+            data_files_register_file = data_files_register_file[1]
+            target_register_file = data_files_register_file
+            if(!is.null(accessor)){
+              target_register_file <- file.path(tempdir(), "register.csv")
+              accessor$download(
+                resource = data_files_register_file,
+                file = "register.csv", 
+                path = target_register_file,
+                software = accessor_software,
+                unzip = FALSE
+              )
+            }
+            data_files_register = as.data.frame(readr::read_csv(target_register_file))
+            register_colnames = c("code","uri","label","definition")
+            if(!all(register_colnames %in% colnames(data_files_register))){
+             stop("A data files register has been found but doesn't follow the standard structure (code,uri,label,definition)") 
+            }
+          }
+          
           #geoflow build children
+          ext_data_files = ext_data_files[basename(ext_data_files) != "register.csv"]
           if(length(ext_data_files)>0){
             self$data <- lapply(ext_data_files, function(data_file){
               ext_data <- self$clone(deep = TRUE) #clone parent geoflow_data to inherit all needed properties
@@ -497,6 +541,7 @@ geoflow_data <- R6Class("geoflow_data",
                 ext_data$setSourceType(sourceType)
               }
               if((is.null(self$uploadType) || self$uploadType == "other") && !is.null(sourceType)){
+                print(sourceType)
                 if(sourceType != "zip") ext_data$setUploadType(sourceType)
                 if(!is.null(ext_data$uploadType)) if(ext_data$uploadType == "geotiff") ext_data$setSpatialRepresentationType("grid")
               }
@@ -506,6 +551,17 @@ geoflow_data <- R6Class("geoflow_data",
               if(!is.null(self$store)) hasStoreDeclared <- TRUE
               if(!hasStoreDeclared) ext_data$setStore(ext_data_name)
               ext_data$setLayername(ext_data_name)
+              
+              #inherit layer metadata from data file register (if any)
+              if(!is.null(data_files_register)){
+                register_entry = data_files_register[data_files_register$code == ext_data_name,]
+                if(nrow(register_entry)>0){
+                  register_entry = register_entry[1L,]
+                  if(!is.na(register_entry$uri)) ext_data$setLayeruri(register_entry$uri)
+                  if(!is.na(register_entry$label)) ext_data$setLayertitle(register_entry$label)
+                  if(!is.na(register_entry$definition)) ext_data$setLayerdesc(register_entry$definition)
+                }
+              }
               
               if(self$styleUpload){
                 #we add all sld files to each child so they can be downloaded if needed
@@ -716,6 +772,24 @@ geoflow_data <- R6Class("geoflow_data",
     #'@param layername layername
     setLayername = function(layername){
       self$layername <- layername
+    },
+    
+    #'@description Sets a layer title, object of class \code{character}. If available, used as target layer title in SDI-related action.
+    #'@param layertitle layertitle
+    setLayertitle = function(layertitle){
+      self$layertitle = layertitle
+    },
+    
+    #'@description Sets a layer description, object of class \code{character}. If available, used as target layer description/abstract in SDI-related actions.
+    #'@param layerdesc layerdesc
+    setLayerdesc = function(layerdesc){
+      self$layerdesc = layerdesc
+    },
+    
+    #'@description Sets a layer URI, object of class \code{character}. If available, used as annotating URI for layer metadata (eg. in ISO 19115 action).
+    #'@param layeruri layeruri
+    setLayeruri = function(layeruri){
+      self$layeruri = layeruri
     },
     
     #'@description Adds a style name, object of class \code{character}. Used as layer style name(s) for GeoServer action.
