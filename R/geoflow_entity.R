@@ -656,7 +656,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                   }else if(any(endsWith(zip_files$filename, ".csv"))){
                     srcType = "csv"
                   }else if(any(endsWith(zip_files$filename, ".tif"))){
-                    srcType = "tif"
+                    srcType = "geotiff"
                   }
                   config$logger.info(sprintf("Resolving sourceType from zip list: '%s'", srcType))
                 }
@@ -665,7 +665,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               "shp" = "shp",
               "gpkg" = "gpkg",
               "csv" = "csv",
-              "tif" = "tif",
+              "tif" = "geotiff",
               "other"
             )
             #additional rule for uploadType
