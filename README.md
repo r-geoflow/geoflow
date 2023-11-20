@@ -54,9 +54,9 @@ The following projects have contributed to strenghten ``geoflow``:
 
 * **G2OI** project, cofinanced by the European Union, the Reunion region, and the French Republic.
 <div align="center">
-
 <img src="https://github.com/IRDG2OI/geoflow-g2oi/blob/main/img/logos_partenaires.png?raw=True" height="80px">
-
+<div align="left">
+  
 ## Sponsoring
 
 For geoflow sponsoring/funding new developments, enhancements, support requests, please contact me by [e-mail](mailto:eblondel.pro@gmail.com)
