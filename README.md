@@ -52,6 +52,13 @@ The following projects have contributed to strenghten ``geoflow``:
 
 <a href="https://www6.inrae.fr/cc-safe"><img height=100 width=300 src="https://www6.inrae.fr/var/internet6_national_cc_safe/storage/images/configuration-graphique/haut/logo-cc-safe/34567-1-fre-FR/Logo-cc-safe_inra_logo.png"/></a>
 
+* **G2OI** project, cofinanced by the European Union, the Reunion region, and the French Republic.
+<div align="center">
+
+<img src="https://github.com/IRDG2OI/geoflow-g2oi/blob/main/img/logos_partenaires.png?raw=True" height="80px">
+
+## Sponsoring
+
 For geoflow sponsoring/funding new developments, enhancements, support requests, please contact me by [e-mail](mailto:eblondel.pro@gmail.com)
 
 ## Citation
