@@ -6,6 +6,8 @@ function(action, entity, config){
   
   ISOMetadataNamespace$GML$uri <- "http://www.opengis.net/gml/3.2"
   
+  skipEnrichWithData = if(!is.null(config$profile$options$skipEnrichWithData)) config$profile$options$skipEnrichWithData else FALSE
+  
   #manage multiple sources (supposes a common data structure to expose as ISO 19110)
   data_objects <- list()
   if(is.null(entity$data$dir)){
@@ -15,11 +17,25 @@ function(action, entity, config){
   }
   
   #features if any
+  build_catalog_from_features = TRUE
   features = do.call("rbind", lapply(data_objects, function(data_object){data_object$features}))
   if(is.null(features)){
-    warnMsg <- sprintf("No data features associated to entity '%s'. Skip feature catalogue creation", entity$identifiers[["id"]])
-    config$logger.warn(warnMsg)
-    return(FALSE)
+    if(!skipEnrichWithData){
+      warnMsg <- sprintf("No data features associated to entity '%s' and global option 'skipEnrichWithData' is false. Skip feature catalogue creation", entity$identifiers[["id"]])
+      config$logger.warn(warnMsg)
+      return(FALSE)
+    }else{
+      fto <- entity$data$featureTypeObj
+      if(!is.null(fto)){
+        infoMsg <- "Global option 'skipEnrichWithData' is true. Feature catalogue will be created based on the dictionary only"
+        config$logger.info(infoMsg)
+        build_catalog_from_features = FALSE
+      }else{
+        warnMsg <- "Global option 'skipEnrichWithData' is true, but no dictionary available. Skip feature catalogue creation"
+        config$logger.warn(warnMsg)
+        return(FALSE)
+      }
+    }
   }
   
   #options
@@ -154,7 +170,14 @@ function(action, entity, config){
   ft$setCode(entity$identifiers$id)
   ft$setIsAbstract(FALSE)
   
-  columns <- c(colnames(features), unlist(extra_attributes))
+  columns <- if(build_catalog_from_features){
+    #from data features
+    c(colnames(features), unlist(extra_attributes))
+  }else{
+    #from dictionary
+    fto <- entity$data$featureTypeObj
+    sapply(fto$getMembers(), function(x){x$id})
+  }
   for(featureAttrName in columns){
     
     if(featureAttrName %in% exclude_attributes){
@@ -221,13 +244,12 @@ function(action, entity, config){
     }
     
     #add listed values
-    if(featureAttrName %in% colnames(features)){
+    featureAttrValues <- fat_attr_register$data$code
+    if(build_catalog_from_features) if(featureAttrName %in% colnames(features)){
       featureAttrValues <- switch(class(features)[1],
                                   "sf" = features[,featureAttrName][[1]],
                                   "data.frame" = features[,featureAttrName]
       )
-    }else{
-      featureAttrValues <- fat_attr_register$data$code
     }
     
     addValues <- TRUE
@@ -242,7 +264,7 @@ function(action, entity, config){
         if(fat_attr$type == "variable") addValues <- FALSE
       }
     }
-    if(addValues){
+    if(!is.null(featureAttrValues) & addValues){
       config$logger.info(sprintf("Listing values for feature Attribute '%s'...", featureAttrName)) 
       featureAttrValues <- unique(featureAttrValues)
       featureAttrValues <- featureAttrValues[order(featureAttrValues)]
@@ -273,26 +295,40 @@ function(action, entity, config){
     }
     
     #add primitive type + data type (attribute or variable) as valueType
-    fat_type <- switch(class(featureAttrValues[1])[1],
-                       "integer" = "xsd:int",
-                       "numeric" = "xsd:decimal",
-                       "character" = "xsd:string",
-                       "logical" = "xsd:boolean",
-                       "Date" = "xsd:date",
-                       "POSIXct" = "xsd:datetime",
-                       "sfc_POINT" = "gml:PointPropertyType",
-                       "sfc_MULTIPOINT" = "gml:MultiPointPropertyType",
-                       "sfc_LINESTRING" = "gml:LineStringPropertyType",
-                       "sfc_MULTILINESTRING" = "gml:MultiLineStringPropertyType",
-                       "sfc_POLYGON" = "gml:PolygonPropertyType",
-                       "sfc_MULTIPOLYGON" = "gml:MultiPolygonPropertyType"
-    )
+    fat_type <- if(build_catalog_from_features){
+      switch(class(featureAttrValues[1])[1],
+       "integer" = "xsd:int",
+       "numeric" = "xsd:decimal",
+       "character" = "xsd:string",
+       "logical" = "xsd:boolean",
+       "Date" = "xsd:date",
+       "POSIXct" = "xsd:datetime",
+       "sfc_POINT" = "gml:PointPropertyType",
+       "sfc_MULTIPOINT" = "gml:MultiPointPropertyType",
+       "sfc_LINESTRING" = "gml:LineStringPropertyType",
+       "sfc_MULTILINESTRING" = "gml:MultiLineStringPropertyType",
+       "sfc_POLYGON" = "gml:PolygonPropertyType",
+       "sfc_MULTIPOLYGON" = "gml:MultiPolygonPropertyType"
+      )
+    }else{
+      type = if(!is.null(fto)) fto$getMemberById(featureAttrName)$type else "attribute"
+      switch(type,
+        "attribute" = "xsd:string",
+        "variable" = "xsd:decimal",
+        type
+      )
+    }
     config$logger.info(sprintf("Set primitive type '%s' for feature Attribute '%s'...", fat_type, featureAttrName))
-    fat_generic_type <- switch(class(featureAttrValues[1])[1],
-                               "integer" = "variable",
-                               "numeric" = "variable",
-                               "attribute"
-    )
+    fat_generic_type <- if(build_catalog_from_features){
+      switch(class(featureAttrValues[1])[1],
+       "integer" = "variable",
+       "numeric" = "variable",
+       "attribute"
+      )
+    }else{
+      if(!is.null(fto)) fto$getMemberById(featureAttrName)$type else "attribute"
+    }
+    config$logger.info(sprintf("Feature member generic type for '%s': %s", featureAttrName, fat_generic_type))
     if(!is.null(fat_attr)) fat_generic_type <- fat_attr$type
     fat_type_anchor <- ISOAnchor$new(name = fat_type, href = fat_generic_type)
     fat$setValueType(fat_type_anchor)

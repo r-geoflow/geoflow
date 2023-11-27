@@ -29,6 +29,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
       skipDataDownload = config$profile$options$skipFileDownload
     }
     skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
+    skipEnrichWithData = if(!is.null(config$profile$options$skipEnrichWithData)) config$profile$options$skipEnrichWithData else FALSE
     
     #Actions onstart
     config$log_separator("-")
@@ -136,7 +137,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
               entity$copyDataToJobDir(config, jobdir)
               #vector data: we enrich entity with features
               #control is added in case of entity already enriched with features/coverages (when loaded from custom R entity handlers)
-              if(is.null(entity$data$features) && is.null(entity$data$coverages)){
+              if(!skipEnrichWithData) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
                 entity$enrichWithData(config, jobdir)
               }
               
@@ -144,9 +145,14 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
               #we check if the source and upload are both different file format (csv,shp,gpkg) and process automatically to conversion from source to upload type
               entity$prepareFeaturesToUpload(config)
             }else{
-              config$logger.info("SkipDataDownload is true: fetching spatial coverage from data (for DB sources only)...")
-              #alternative behaviors in case we don't download data, applies to DB only
-              entity$enrichSpatialCoverageFromDB(config)
+              config$logger.info("SkipDataDownload is true:")
+              if(!skipEnrichWithData){
+                config$logger.info("SkipEnrichWithData is false: Fetching spatial coverage from data (for DB sources only)...")
+                #alternative behaviors in case we don't download data, applies to DB only
+                entity$enrichSpatialCoverageFromDB(config)
+              }else{
+                config$logger.info("SkipEnrichWithData is true")
+              }
             }
             
             #extra identifiers to use in entity identification/actions
