@@ -429,6 +429,7 @@ function(action, entity, config){
           }
         }
         GS$reload()
+        gs_styles <- GS$getStyleNames()
       }
       
       #layer build and publication
@@ -439,7 +440,9 @@ function(action, entity, config){
                if(length(data_object$styles)>0){
                  for(i in 1:length(data_object$styles)){
                    style <- data_object$styles[[i]]
-                   if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
+                   if(style %in% gs_styles){
+                    if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
+                   }
                  }
                }else{
                  if(entity$identifiers[["id"]] %in% gs_styles){
@@ -474,7 +477,9 @@ function(action, entity, config){
                    layer$styles <- list()
                    for(i in 1:length(data_object$styles)){
                      style <- data_object$styles[[i]]
-                     if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
+                     if(style %in% gs_styles){
+                      if(i==1) layer$setDefaultStyle(style) else layer$addStyle(style)
+                     }
                    }
                  }else{
                    if(entity$identifiers[["id"]] %in% gs_styles){
