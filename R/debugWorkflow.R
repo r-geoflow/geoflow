@@ -54,6 +54,7 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
     skipDataDownload = config$profile$options$skipFileDownload
   }
   skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
+  skipEnrichWithData = if(!is.null(config$profile$options$skipEnrichWithData)) config$profile$options$skipEnrichWithData else FALSE
   
   #run software actions?
   if(runSoftwareActions){
@@ -81,27 +82,37 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
   }
   
   #create entity jobdir
-  entity$prepareEntityJobDir(config, config$job)
+  jobdir = config$job
+  entity$prepareEntityJobDir(config, jobdir)
   #let's work in entity jobdir
-  setwd(entity$getEntityJobDirPath(config, config$job))
+  setwd(entity$getEntityJobDirPath(config, jobdir))
   config$logger.info(sprintf("Entity working directory: %s", getwd()))
-  
-  #copy data?
-  if(skipDataDownload){
-    config$logger.warn("'skipDataDownload' is enabled in the config, copyData set to FALSE!")
-    copyData <- !skipDataDownload
-  }
-  if(copyData && !is.null(entity$data)) entity$copyDataToJobDir(config, config$job)
 
   #enrich metadata with dynamic properties
   if(!is.null(entity$data)){
     #data features/coverages
-    if(!skipDataDownload) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
-      entity$enrichWithData(config, config$job)
+    if(!skipDataDownload){
+      config$logger.info("SkipDataDownload is false: copying and fetching data...")
+      #we copy data to job data dir (for data files)
+      entity$copyDataToJobDir(config, jobdir)
+      #vector data: we enrich entity with features
+      #control is added in case of entity already enriched with features/coverages (when loaded from custom R entity handlers)
+      if(!skipEnrichWithData) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
+        entity$enrichWithData(config, jobdir)
+      }
+      
+      setwd(entity$getEntityJobDirPath(config, jobdir)) #make sure we are in entity jobdir
+      #we check if the source and upload are both different file format (csv,shp,gpkg) and process automatically to conversion from source to upload type
       entity$prepareFeaturesToUpload(config)
     }else{
-      #alternative behaviors in case we don't download data, applies to DB only
-      entity$enrichSpatialCoverageFromDB(config)
+      config$logger.info("SkipDataDownload is true:")
+      if(!skipEnrichWithData){
+        config$logger.info("SkipEnrichWithData is false: Fetching spatial coverage from data (for DB sources only)...")
+        #alternative behaviors in case we don't download data, applies to DB only
+        entity$enrichSpatialCoverageFromDB(config)
+      }else{
+        config$logger.info("SkipEnrichWithData is true")
+      }
     }
     #extra identifiers to use in entity identification/actions
     entity$enrichWithIdentifiers(config)
