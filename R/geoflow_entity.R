@@ -1369,11 +1369,12 @@ geoflow_entity <- R6Class("geoflow_entity",
               uploadSourceExt<-switch(data_object$uploadType,
                                       "shp" = "zip",
                                       "gpkg" = "zip",
-                                      data_object$uploadType
+                                      NULL
                                       
               )
               writeWorkflowJobDataResource(entity=self,config=config,type=data_object$uploadType,useFeatures=TRUE,resourcename=datasource_name)
-              data_object$uploadSource<-list(paste0(datasource_name,".",uploadSourceExt))
+              data_object$uploadSource<-list(datasource_name)
+              if(!is.null(uploadSourceExt)) data_object$uploadSource<-list(paste0(datasource_name,".",uploadSourceExt))
               
             }else{
               config$logger.info("sourceType and uploadType are identical, no conversion required")		
