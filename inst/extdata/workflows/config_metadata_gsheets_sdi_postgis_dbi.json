@@ -1,0 +1,50 @@
+{
+  "profile": {
+    "id": "my-workflow",
+    "name": "My workflow",
+  	"project": "Test geoflow project",
+  	"organization": "My organization",
+  	"logos": [
+  		"https://via.placeholder.com/300x150.png/09f/fff?text=geoflow"
+  	],
+  	"mode": "entity"
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1BJEMagysqwekNKSn11228eIEN7wDUNFMyT0ssmNHmgc/edit?usp=sharing"
+      }
+    ],
+    "contacts" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1BqlXwA2fKiRuozNAQhBb_PbQVSPTCfl8_Q9rfM8E2ws/edit?usp=sharing"
+      }
+    ]
+  },
+  "software": [
+    {
+      "type": "input",
+      "software_type": "dbi",
+      "parameters": {
+        "drv": "Postgres",
+        "host": "host",
+        "port": "5432",
+        "user": "user",
+        "password": "pwd",
+        "dbname": "dbname"
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "sf-write-dbi",
+      "run": true,
+      "options":{
+        "createIndexes": true,
+        "overwrite": true
+      }
+    }
+  ]
+}
