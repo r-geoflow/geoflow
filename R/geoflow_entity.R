@@ -574,6 +574,120 @@ geoflow_entity <- R6Class("geoflow_entity",
       
     },
     
+    #'@description Function that will scan zip data files and resolve data objects sourceType and uploadType
+    #'@param config geoflow config object
+    #'@param jobdir relative path of the job directory
+    enrichWithDatatypes = function(config, jobdir = NULL){
+      
+      if(is.null(jobdir)) jobdir <- config$job
+      wd <- getwd()
+      setwd("./data")
+      
+      data_objects <- list()
+      if(is.null(self$data$dir)){
+        data_objects <- list(self$data)
+      }else{
+        data_objects <- self$data$getData()
+      }
+      
+      if(length(data_objects)>0){
+        
+        data_objects <- lapply(1:length(data_objects), function(k){
+          
+          data_object = data_objects[[k]]
+          
+          datasource <- data_object$source[[1]] #TODO we still look at first source
+          datasource_name = NULL
+          datasource_ext = NULL
+          datasource_file = NULL
+          if(!is.null(datasource)){
+            datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
+            datasource_name <- datasource_parts[1]
+            datasource_ext <- datasource_parts[2]
+            datasource_file <- attr(datasource, "uri")
+            attributes(datasource) <- NULL
+            if(is.null(datasource_file)) datasource_file <- datasource
+          }
+          
+          if(data_object$sourceType == "other"){
+            config$logger.warn("Metadata dynamic handling based on 'data' not implemented for source type 'other'")
+            #setwd(wd)
+            #return(NULL)
+          }
+          
+          #in case of a datasource type requiring a file we check its presence
+          #if absent we abort the function enrich With features
+          types_without_file <- c("dbtable","dbview","dbquery")
+          datasource_file_needed <- !(data_object$sourceType %in% types_without_file)
+          if(datasource_file_needed && is.null(datasource_file)){
+            warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
+            config$logger.warn(warnMsg)
+            #setwd(wd)
+            #return(NULL)
+          }
+          
+          #basefilename
+          basefilename <- datasource_name
+          
+          #inherit sourceType for source
+          if(datasource_file_needed){
+            data_object$sourceType = switch(datasource_ext,
+              "zip" = {
+                srcType = "other"
+                basefilepath = file.path(getwd(), paste0(basefilename,".zip"))
+                if(file.exists(basefilepath)){ 
+                  #for srcType != "other"
+                  #(re-zipped files on 'basefilename' with 'other' sourceType do not exist, 
+                  #but are just copied, not unzipped/rezipped with different name)
+                  zip_files = zip::zip_list(basefilepath)
+                  if(any(endsWith(zip_files$filename, ".gpkg"))){
+                    srcType = "gpkg" 
+                  }else if(any(endsWith(zip_files$filename, ".shp"))){
+                    srcType = "shp"
+                  }else if(any(endsWith(zip_files$filename, ".csv"))){
+                    srcType = "csv"
+                  }else if(any(endsWith(zip_files$filename, ".tif"))){
+                    srcType = "geotiff"
+                  }
+                  config$logger.info(sprintf("Resolving sourceType from zip list: '%s'", srcType))
+                }
+                srcType
+              },
+              "shp" = "shp",
+              "gpkg" = "gpkg",
+              "csv" = "csv",
+              "tif" = "geotiff",
+              "other"
+            )
+            #additional rule for uploadType
+            if(datasource_ext == "zip") if(!is.null(data_object$uploadType)) if(data_object$uploadType == "other"){
+              config$logger.info(sprintf("Zip data archived scanned, setting uploadType based on sourceType '%s'", data_object$sourceType))
+              data_object$setUploadType(data_object$sourceType)
+              if(data_object$uploadType == "geotiff") data_object$setSpatialRepresentationType("grid")
+            }
+            #overwrite top sourceType
+            if(is.null(self$data$dir)){
+              self$data$sourceType = data_object$sourceType 
+              self$data$uploadType = data_object$uploadType
+              self$data$setSpatialRepresentationType(data_object$spatialRepresentationType)
+            }else{
+              self$data$data[[k]]$sourceType = data_object$sourceType
+              self$data$data[[k]]$uploadType = data_object$uploadType
+              self$data$data[[k]]$setSpatialRepresentationType(data_object$spatialRepresentationType)
+            }
+          }
+          return(data_object)
+        })
+        
+        if(is.null(self$data$dir)){
+          self$data <- data_objects[[1]]
+        }else{
+          self$data$data <- data_objects
+        }
+      }
+      setwd(self$getEntityJobDirPath(config, jobdir))
+    },
+    
     #'@description This function will enrich the entity data objects with data features (vector data) or coverages (grid data). This method will overwrite 
     #' spatial metadata such as the bounding box (unless global option \code{skipDynamicBbox} is enabled). Note that the user spatial extent is not overwriten 
     #' since it may contain finer geometries than a bounding box.
@@ -637,53 +751,6 @@ geoflow_entity <- R6Class("geoflow_entity",
           
           #basefilename
           basefilename <- datasource_name
-        
-          #inherit sourceType for source
-          if(datasource_file_needed){
-            data_object$sourceType = switch(datasource_ext,
-              "zip" = {
-                srcType = "other"
-                basefilepath = file.path(getwd(), paste0(basefilename,".zip"))
-                if(file.exists(basefilepath)){ 
-                  #for srcType != "other"
-                  #(re-zipped files on 'basefinename' with 'other' sourceType do not exist, 
-                  #but are just copied, not unzipped/rezipped with different name)
-                  zip_files = zip::zip_list(basefilepath)
-                  if(any(endsWith(zip_files$filename, ".gpkg"))){
-                    srcType = "gpkg" 
-                  }else if(any(endsWith(zip_files$filename, ".shp"))){
-                    srcType = "shp"
-                  }else if(any(endsWith(zip_files$filename, ".csv"))){
-                    srcType = "csv"
-                  }else if(any(endsWith(zip_files$filename, ".tif"))){
-                    srcType = "geotiff"
-                  }
-                  config$logger.info(sprintf("Resolving sourceType from zip list: '%s'", srcType))
-                }
-                srcType
-              },
-              "shp" = "shp",
-              "gpkg" = "gpkg",
-              "csv" = "csv",
-              "tif" = "geotiff",
-              "other"
-            )
-            #additional rule for uploadType
-            if(datasource_ext == "zip") if(!is.null(data_object$uploadType)) if(data_object$uploadType == "other"){
-              data_object$uploadType = data_object$sourceType
-              if(data_object$uploadType == "geotiff") data_object$setSpatialRepresentationType("grid")
-            }
-            #overwrite top sourceType
-            if(is.null(self$data$dir)){
-              self$data$sourceType = data_object$sourceType 
-              self$data$uploadType = data_object$uploadType
-              self$data$setSpatialRepresentationType(data_object$spatialRepresentationType)
-            }else{
-              self$data$data[[k]]$sourceType = data_object$sourceType
-              self$data$data[[k]]$uploadType = data_object$uploadType
-              self$data$data[[k]]$setSpatialRepresentationType(data_object$spatialRepresentationType)
-            }
-          }
           
           #encoding mappings
           st_encoding <- switch(options("encoding")[[1]],

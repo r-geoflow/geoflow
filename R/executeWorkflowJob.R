@@ -135,6 +135,8 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
               config$logger.info("SkipDataDownload is false: copying and fetching data...")
               #we copy data to job data dir (for data files)
               entity$copyDataToJobDir(config, jobdir)
+              #enrich with data types
+              entity$enrichWithDatatypes(config, jobdir)
               #vector data: we enrich entity with features
               #control is added in case of entity already enriched with features/coverages (when loaded from custom R entity handlers)
               if(!skipEnrichWithData) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
