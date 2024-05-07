@@ -166,8 +166,8 @@ geoflow_data <- R6Class("geoflow_data",
           if(!any(sapply(data_props, function(x){x$key=="source"})) && !any(sapply(data_props, function(x){x$key=="dir"}))){
             stop("One or more data 'source' (or 'dir', as directory for sources) is mandatory")
           }
-          if(any(sapply(data_props, function(x){x$key=="source"}))) self$setSource(data_props$source$values)
         }
+        if(any(sapply(data_props, function(x){x$key=="source"}))) self$setSource(data_props$source$values)
           
         #sourceSql
         if(!is.null(data_props$sourceSql)){
