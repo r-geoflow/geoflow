@@ -295,7 +295,7 @@ function(action, entity, config){
     }
     
     #add primitive type + data type (attribute or variable) as valueType
-    fat_type <- if(build_catalog_from_features){
+    fat_type <- if(build_catalog_from_features & !is.null(featureAttrValues[1])){
       switch(class(featureAttrValues[1])[1],
        "integer" = "xsd:int",
        "numeric" = "xsd:decimal",
