@@ -438,8 +438,9 @@ function(action, entity, config){
   #bounding polygons from data (if any features & 'addfeatures' option is enabled)
   if(!is.null(features) && addfeatures){
     bp <- ISOBoundingPolygon$new()
+    geom_field = colnames(features)[sapply(colnames(features), function(x){is(features[[x]],"sfc")})][1]
     for(i in 1:nrow(features)){
-      geom <- GMLAbstractGeometry$fromSimpleFeatureGeometry(features[i,]$geometry[[1]])
+      geom <- GMLAbstractGeometry$fromSimpleFeatureGeometry(features[i,][geom_field][[1]])
       geom$attrs["gml:id"] <- paste0("fid.",as.character(features[i,][featureid])[1])
       bp$polygon <- c(bp$polygon, geom)
     }
