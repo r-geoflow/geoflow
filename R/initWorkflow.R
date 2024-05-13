@@ -276,6 +276,10 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
                                    x$source, x$handler))
         
         md_dict_handler <- loadMetadataHandler(config, x, type = "dictionary")
+        if(md_dict_handler$status == "deprecated"){
+          config$logger.warn(sprintf("Dictionary handler '%s' is deprecated. Notes: %s", 
+                                     md_dict_handler$id, ifelse(nzchar(md_dict_handler$notes), md_dict_handler$notes, "-")))
+        }
         config$logger.info("Execute handler to load dictionary data structures...")
         dict <- md_dict_handler$fun(
           handler = md_dict_handler,
@@ -395,6 +399,10 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         config$logger.info(sprintf("Loading metadata contacts from '%s' [with '%s' handler]...", 
                                    x$source, x$handler))
         md_contact_handler <- loadMetadataHandler(config, x, type = "contacts")
+        if(md_contact_handler$status == "deprecated"){
+          config$logger.warn(sprintf("Contact handler '%s' is deprecated. Notes: %s", 
+                                     md_contact_handler$id, ifelse(nzchar(md_contact_handler$notes), md_contact_handler$notes, "-")))
+        }
         config$logger.info("Execute contact handler to load contacts...")
         contacts <- md_contact_handler$fun(
           handler = md_contact_handler, 
@@ -434,6 +442,10 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         config$logger.info(sprintf("Loading metadata entities from '%s' [with '%s' handler]...", 
                                    x$source, x$handler))
         md_entity_handler <- loadMetadataHandler(config, x, type = "entities")
+        if(md_entity_handler$status == "deprecated"){
+          config$logger.warn(sprintf("Entity handler '%s' is deprecated. Notes: %s", 
+                                     md_entity_handler$id, ifelse(nzchar(md_entity_handler$notes), md_entity_handler$notes, "-")))
+        }
         config$logger.info("Execute handler to load entities...")
         entities <- md_entity_handler$fun(
           handler = md_entity_handler,
