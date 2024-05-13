@@ -48,6 +48,10 @@ geoflow_handler <- R6Class("geoflow_handler",
     options = list(),
     #'@field available_options available options
     available_options = list(),
+    #'@field status status
+    status = "active",
+    #'@field notes notes
+    notes = "",
     
     #'@description Initializes a \link{geoflow_handler}
     #'@param id id
@@ -57,8 +61,11 @@ geoflow_handler <- R6Class("geoflow_handler",
     #'@param script a handler script
     #'@param options action options
     #'@param available_options available options for the action
+    #'@param status status (active/deprecated)
+    #'@param notes notes
     initialize = function(id, def = "", packages = list(), fun = NULL, script = NULL, 
-                          options = list(), available_options = list()){
+                          options = list(), available_options = list(),
+                          status = "active", notes = ""){
       self$id <- id
       self$def <- def
       self$packages <- packages
@@ -66,6 +73,8 @@ geoflow_handler <- R6Class("geoflow_handler",
       self$script <- script
       self$options <- options
       self$available_options <- available_options
+      self$status = status
+      self$notes = notes
     },
     
     #'@description Check that all packages required for the handler are available, if yes,

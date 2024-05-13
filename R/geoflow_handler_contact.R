@@ -71,6 +71,8 @@ list_contact_handlers <- function(raw = FALSE){
         id = handler$id,
         definition = handler$def,
         packages = paste(handler$packages, collapse=","),
+        status = handler$status,
+        notes = handler$notes,
         stringsAsFactors = FALSE
       ))
     }))

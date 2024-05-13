@@ -17,20 +17,27 @@ register_entity_handlers <- function(){
       def = "Handle metadata entities from a CSV file",
       fun = source(system.file("metadata/entity", "entity_handler_csv.R", package = "geoflow"))$value,
       available_options = list(
-        guess_max = list(def = "Guess max argument, see readr::read_csv", default = 0)
+        guess_max = list(def = "Guess max argument, see readr::read_csv", default = 0),
+        enrich_from_dbi = list(def = "Enrich entity data from DBI software", default = FALSE)
       )
     ),
     geoflow_handler$new(
       id = "excel",
       def = "Handle metadata entities from a Microsoft Excel (xls,xlsx) file",
       packages = list("readxl"),
-      fun = source(system.file("metadata/entity", "entity_handler_excel.R", package = "geoflow"))$value
+      fun = source(system.file("metadata/entity", "entity_handler_excel.R", package = "geoflow"))$value,
+      available_options = list(
+        enrich_from_dbi = list(def = "Enrich entity data from DBI software", default = FALSE)
+      )
     ),
     geoflow_handler$new(
       id = "gsheet",
       def = "Handle metadata entities from a Google spreadsheet",
       packages = list("gsheet"),
-      fun = source(system.file("metadata/entity", "entity_handler_gsheet.R", package = "geoflow"))$value
+      fun = source(system.file("metadata/entity", "entity_handler_gsheet.R", package = "geoflow"))$value,
+      available_options = list(
+        enrich_from_dbi = list(def = "Enrich entity data from DBI software", default = FALSE)
+      )
     ),
     geoflow_handler$new(
       id = "dbi",
@@ -42,19 +49,25 @@ register_entity_handlers <- function(){
       id = "dbi_csv",
       def = "Handle DBI metadata entities from a CSV file",
       packages = list("DBI", "RSQLite", "RPostgres"),
-      fun = source(system.file("metadata/entity", "entity_handler_dbi_csv.R", package = "geoflow"))$value
+      fun = source(system.file("metadata/entity", "entity_handler_dbi_csv.R", package = "geoflow"))$value,
+      status = "deprecated",
+      notes = "Use 'csv' handler enabling option 'enrich_from_dbi"
     ),
     geoflow_handler$new(
       id = "dbi_excel",
       def = "Handle DBI metadata entities from a Microsoft Excel (xls, xlsx) file",
       packages = list("readxl"),
-      fun = source(system.file("metadata/entity", "entity_handler_dbi_excel.R", package = "geoflow"))$value
+      fun = source(system.file("metadata/entity", "entity_handler_dbi_excel.R", package = "geoflow"))$value,
+      status = "deprecated",
+      notes = "Use 'excel' handler enabling option 'enrich_from_dbi"
     ),
     geoflow_handler$new(
       id = "dbi_gsheet",
       def = "Handle DBI metadata entities from a Google spreadsheet",
       packages = list("gsheet"),
-      fun = source(system.file("metadata/entity", "entity_handler_dbi_gsheet.R", package = "geoflow"))$value
+      fun = source(system.file("metadata/entity", "entity_handler_dbi_gsheet.R", package = "geoflow"))$value,
+      status = "deprecated",
+      notes = "Use 'gsheet' handler enabling option 'enrich_from_dbi"
     ),
     geoflow_handler$new(
       id = "dataverse",
@@ -66,7 +79,10 @@ register_entity_handlers <- function(){
       id = "ocs",
       def = "Handle metadata entities from a tabulat data source (csv or excel) hosted on an OCS cloud",
       packages = list("ocs4R"),
-      fun = source(system.file("metadata/entity", "entity_handler_ocs.R", package = "geoflow"))$value
+      fun = source(system.file("metadata/entity", "entity_handler_ocs.R", package = "geoflow"))$value,
+      available_options = list(
+        enrich_from_dbi = list(def = "Enrich entity data from DBI software", default = FALSE)
+      )
     ),
     geoflow_handler$new(
       id = "ncdf",
@@ -151,6 +167,8 @@ list_entity_handlers <- function(raw = FALSE){
         id = handler$id,
         definition = handler$def,
         packages = paste(handler$packages, collapse=","),
+        status = handler$status,
+        notes = handler$notes,
         stringsAsFactors = FALSE
       ))
     }))
