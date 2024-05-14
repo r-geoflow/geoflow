@@ -19,7 +19,7 @@ handle_entities_ocs <- function(handler, source, config, handle = TRUE){
                       },
                      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = {
                        handle_entities_excel <- source(system.file("metadata/entity", "entity_handler_excel.R", package = "geoflow"))$value
-                       handle_entities_excel(handler = , source = entities_file, config = config, handle = handle)
+                       handle_entities_excel(handler = handler, source = entities_file, config = config, handle = handle)
                      }
   )
   return(entities)
