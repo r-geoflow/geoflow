@@ -3,7 +3,9 @@ handle_entities_csv <- function(handler, source, config, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
   #source <- read.csv(source,stringsAsFactors = F)
-  source <- as.data.frame(readr::read_csv(source, guess_max = handler$getOption("guess_max")))
+  guess_max = handler$getOption("guess_max")
+  if(is.null(guess_max)) guess_max = 0
+  source <- as.data.frame(readr::read_csv(source, guess_max = guess_max))
   if(!handle) return(source)
   
   #apply generic handler
