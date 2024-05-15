@@ -29,6 +29,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
       skipDataDownload = config$profile$options$skipFileDownload
     }
     skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
+    skipEnrichWithDatatypes <- if(!is.null(config$profile$options$skipEnrichWithDatatypes)) config$profile$options$skipEnrichWithDatatypes else FALSE
     skipEnrichWithData = if(!is.null(config$profile$options$skipEnrichWithData)) config$profile$options$skipEnrichWithData else FALSE
     
     #Actions onstart
@@ -136,7 +137,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
               #we copy data to job data dir (for data files)
               entity$copyDataToJobDir(config, jobdir)
               #enrich with data types
-              entity$enrichWithDatatypes(config, jobdir)
+              if(!skipEnrichWithDatatypes) entity$enrichWithDatatypes(config, jobdir)
               #vector data: we enrich entity with features
               #control is added in case of entity already enriched with features/coverages (when loaded from custom R entity handlers)
               if(!skipEnrichWithData) if(is.null(entity$data$features) && is.null(entity$data$coverages)){

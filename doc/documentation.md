@@ -220,6 +220,8 @@ possible geoflow global options:
 | `skipDataDownload`   | Indicates whether data associated to an entity should be download                                                                                                                               | **false**     |
 | `skipFileDownload`   | Deprecated, use `skipDataDownload` instead.                                                                                                                                                     | **false**     |
 | `skipDynamicBbox`    | Indicates whether bbox inherited from data should be ignored.                                                                                                                                   | **false**     |
+| `skipEnrichWithData`   | Indicates whether the entity should be enriched with data                                                                                                                               | **false**     |
+| `skipEnrichWithDatatypes`   | Indicates whether the entity data should be enriched with datatypes (case where a zip archive needs to be scanneed to inherit source/upload types)                                                                                                                               | **false**     |
 | `enrichDataStrategy` | Strategy to use when inheriting spatial bbox from multiple data objects, either “first” (take the first data object for the bbox, or “union” (union of bboxes from the different data objects). | \*\*“first”\* |
 
 Note on the **mode**:
