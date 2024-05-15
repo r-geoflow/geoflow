@@ -41,7 +41,7 @@ function(action, entity, config){
   #if nothing is found, we use the default get depositions by identifier, used if no DOI is specified
   #this approach is possible because the Zenodo record has a related identifier as URN, specified when
   #creating the record. For existing record we also check the presence of the URN as related identifier
-  #e.g. urn:my-metadata-identifier
+  #e.g. my-metadata-identifier
   deposits <- NULL
   if(!is.null(entity$identifiers[["doi"]])){
     #TODO review if getting deposit with concept DOI we don't inherit bucket link for doing file upload with new API
@@ -68,10 +68,9 @@ function(action, entity, config){
       related_identifiers <- deposit$metadata$related_identifiers
       if(!is.null(related_identifiers)){
         for(related_identifier in related_identifiers){
-          if(startsWith(related_identifier$identifier,"urn")){
-            related_id <- unlist(strsplit(related_identifier$identifier, "urn:"))[2]
-            if(related_id == entity$identifiers[["id"]] &
-               related_identifier$relation == "isIdenticalTo"){
+          if(related_identifier$scheme == "urn"){
+            if(related_identifier$identifier == entity$identifiers[["id"]] &
+               related_identifier$relation_type$id == "isidenticalto"){
               zenodo_metadata <<- deposit
               break
             }
@@ -86,23 +85,34 @@ function(action, entity, config){
   
   #action to perform: create empty record or update existing record
   update <- FALSE
-  record_state <- NULL
+  record_status <- NULL
   if(is.null(zenodo_metadata)){
-    config$logger.info(sprintf("Zenodo: No existing Zenodo record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
+    config$logger.info(sprintf("Zenodo: No existing Zenodo record with related identifier '%s'", entity$identifiers[["id"]]))
     config$logger.info("Zenodo: creating a new deposit empty record")
-    zenodo_metadata <- ZENODO$createEmptyRecord()
+    reserveDOI = TRUE
+    if(!is.null(entity$identifiers[["doi"]])) if(regexpr("zenodo", entity$identifiers[["doi"]])<0){
+      reserveDOI = FALSE
+    }
+    zenodo_metadata <- ZENODO$createEmptyRecord(reserveDOI = reserveDOI)
     if("bucket" %in% names(zenodo_metadata$links)){
       entity$addResource("zenodo_bucket", zenodo_metadata$links$bucket) #attempt to keep bucket since zenodo seems not to retrieve always bucket link
     }
-    zenodo_metadata$addRelatedIdentifier("isIdenticalTo", paste("urn", entity$identifiers[["id"]], sep=":"))
-    record_state <- zenodo_metadata$state
+    zenodo_metadata$addRelatedIdentifier(
+      identifier = entity$identifiers[["id"]],
+      scheme = "urn",
+      relation_type = "isidenticalto"
+    )
+    record_status <- zenodo_metadata$status
   }else{
-    config$logger.info(sprintf("Zenodo: Existing record with related identifier '%s'", paste0("urn:",entity$identifiers[["id"]])))
+    config$logger.info(sprintf("Zenodo: Existing record with related identifier '%s' (URN scheme)", entity$identifiers[["id"]]))
     update <- TRUE
-    record_state <- zenodo_metadata$state
+    record_status <- zenodo_metadata$status
     
-    #case of submitted records and 'edition' strategy, need to unlock record
-    if(zenodo_metadata$state == "done" && strategy == "edition"){
+    #case of published records and 'edition' strategy, need to unlock record
+    if(record_status == "published" &&
+       zenodo_metadata$is_published &&
+       !zenodo_metadata$is_draft &&
+       strategy == "edition"){
       config$logger.info(sprintf("Zenodo: record '%s' already published. Need to unlock it for edition", zenodo_metadata$id))
       unlocked_rec <- ZENODO$editRecord(zenodo_metadata$id)
       if(is(unlocked_rec, "ZenodoRecord")){
@@ -116,7 +126,7 @@ function(action, entity, config){
     }
   }
   
-  doi <- zenodo_metadata$metadata$prereserve_doi$doi
+  doi <- zenodo_metadata$pids$doi$identifier
   
   #if entity already comes with a DOI, we set it (this might be a preset DOI from Zenodo or elsewhere)
   if(!is.null(entity$identifiers[["doi"]])){
@@ -138,20 +148,20 @@ function(action, entity, config){
     }
     #basic record description
     zenodo_metadata$setTitle(entity$titles[["title"]])
+    if(!is.null(entity$titles[["alternative"]])){
+      zenodo_metadata$addAdditionalTitle(entity$titles[["alternative"]], type = "alternative-title")
+    }
     zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
-    zenodo_metadata$setNotes(entity$descriptions[["info"]])
-    
+    if(!is.null(entity$descriptions[["info"]])){
+      zenodo_metadata$addAdditionalDescription(entity$descriptions[["info"]], type = "technical-info")
+    }
+      
     #keywords (free text) & subjects
     zenodo_metadata$metadata$keywords <- list()
     zenodo_metadata$metadata$subjects <- list()
     for(subject in entity$subjects){
       for(kwd in subject$keywords){
-        kwd_name <- kwd$name
-        kwd_uri <- kwd$uri
-        if(is.null(kwd_uri))
-          zenodo_metadata$addKeyword(kwd_name)
-        else
-          zenodo_metadata$addSubject(kwd_name, kwd_uri)
+        zenodo_metadata$addSubject(kwd$name)
       }
     }
     
@@ -164,20 +174,19 @@ function(action, entity, config){
     if(!is.null(edition)){
       zenodo_metadata$setVersion(edition)
     }
-    #upload type
-    #TODO think on how to map upload types between Dublin core, ISO/OGC metadata, Zenodo  
-    if(!is.null(entity$types[["generic"]])) zenodo_metadata$setUploadType(tolower(entity$types[["generic"]]))
-    if(!is.null(entity$types[["zenodoUploadType"]])) zenodo_metadata$setUploadType(entity$types[["zenodoUploadType"]])
+    #resource type
+    #TODO think on how to map resource types between Dublin core, ISO/OGC metadata, Zenodo  
+    if(!is.null(entity$types[["generic"]])) zenodo_metadata$setResourceType(tolower(entity$types[["generic"]]))
+    if(!is.null(entity$types[["zenodoResourceType"]])) zenodo_metadata$setResourceType(entity$types[["zenodoResourceType"]])
     
-    #publication type
-    if(zenodo_metadata$metadata$upload_type == "publication"){
-      if(!is.null(entity$types[["zenodoPublicationType"]]))
-        zenodo_metadata$setPublicationType(entity$types[["zenodoPublicationType"]])
-    }
-    #image type
-    if(zenodo_metadata$metadata$upload_type == "image"){
-      if(!is.null(entity$types[["zenodoImageType"]]))
-        zenodo_metadata$setImageType(entity$types[["zenodoImageType"]])
+    #publisher
+    if(length(entity$contacts)>0){
+      publisher <- "Zenodo"
+      publishers <- entity$contacts[sapply(entity$contacts, function(x){x$role == "publisher"})]
+      if(length(publishers)>0){
+        publisher = publishers[[1]]$organizationName #we assume publisher is an organization
+      }
+      zenodo_metadata$setPublisher(publisher)
     }
     
     #creators
@@ -204,14 +213,14 @@ function(action, entity, config){
         if(is.na(contact$firstName) || is.na(contact$lastName)){
           zenodo_metadata$addCreator(
             name = contact$organizationName,
-            affiliation = contact$organizationName,
+            affiliations = contact$organizationName, 
             orcid = orcid
           )
         }else{
           zenodo_metadata$addCreator(
             firstname = contact$firstName, 
             lastname = contact$lastName, 
-            affiliation = contact$organizationName,
+            affiliations = contact$organizationName,
             orcid = orcid
           )
         }
@@ -225,8 +234,8 @@ function(action, entity, config){
       licenses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "license"})]
       if(length(licenses)>0){
         license <- licenses[[1]]$values[[1]]
-        accepted_licenses <- ZENODO$getLicenses()$id
-        if(license %in% accepted_licenses){
+        the_license <- ZENODO$getLicenseById(license)
+        if(!is.null(the_license)){
           zenodo_metadata$setLicense(license, sandbox = ZENODO$sandbox)
         }else{
           config$logger.warn(sprintf("Zenodo :license specified (%s) in entity doesn't match Zenodo accepted list of licenses. license %s ignored!", 
@@ -236,35 +245,44 @@ function(action, entity, config){
     }
 
     # AccessRight  
-    # Access right with the following values: 'open','embargoed', 'restricted','closed'
+    zenodo_metadata$setAccessPolicyRecord("public") #always the case for Zenodo (at least for now)
+    # Access right with the following values: 'public','restricted'
     if(length(entity$rights)>0){
         accessRights <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "accessright"})]
         config$logger.info(sprintf("accessRight: '%s'", accessRights))
         if(length(accessRights)>0){
         accessRight <- accessRights[[1]]$values[[1]]
         config$logger.info(sprintf("accessRight Value: '%s'", accessRight))
-        zenodo_metadata$setAccessRight(accessRight)
-          if ("embargoed" %in% accessRight) {
-            config$logger.info(sprintf("Embargoed! Looking for embargoed date..."))
-            embargoDates <- entity$dates[sapply(entity$dates, function(date){date$key == "embargo"})]
-            embargoDate <- if(length(embargoDates)>0) embargoDates[[1]]$value else config$logger.error(sprintf("Zenodo: 'embargo' not set in entity$dates whereas 'embargoed' is set in entity$rights. Please check your entities !"))
-            zenodo_metadata$setEmbargoDate(embargoDate)
+        zenodo_metadata$setAccessPolicyFiles(accessRight)
+        if(accessRight == "restricted"){
+          #manage embargo
+          embargoDates <- entity$dates[sapply(entity$dates, function(date){date$key == "embargo"})]
+          if(length(embargoDates)>0){
+            embargoDate = embargoDates[[1]]$value
+            config$logger.info(sprintf("Setting embargo date '%s'", embargoDate))
+            embargoReason = ""
+            embargoReasons = entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "embargoreason"})]
+            if(length(embargoReasons)>0){
+              embargoReason = embargoReasons[[1]]$values[[1]]
+              config$logger.info(sprintf("Setting embargo reason: %s", embargoReason))
             }
-          else if ("restricted" %in% accessRight) {
-            config$logger.info(sprintf("Restricted! :/ :/ Looking for accessConditions..."))
-            accessConditions <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "accessconditions"})][[1]]$values[[1]]
-            zenodo_metadata$setAccessConditions(accessConditions)
+            zenodo_metadata$setAccessPolicyEmbargo(active = TRUE, until = as.Date(embargoDate), reason = embargoReason)
           }
+          #access conditions
+          #TODO to review if available through new Zeonod API
+          # accessConditions <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "accessconditions"})]
+          # if(length(accessConditions)>0){
+          #   zenodo_metadata$setAccessConditions(accessConditions[[1]]$values[[1]])
+          # }
+        }
+      }else{
+        config$logger.info(sprintf("Zenodo: accessRight specified in entity not available. accessRight will be set to public!"))
+        zenodo_metadata$setAccessPolicyFiles("public")
       }
-      else{
-        config$logger.info(sprintf("Zenodo: accessRight specified in entity not available. accessRight will be set to open!"))
-        zenodo_metadata$setAccessRight("open")
-                                     }
+    }else{
+        config$logger.info(sprintf("Zenodo: Rights is empty. accessRight will be set to public!"))
+      zenodo_metadata$setAccessPolicyFiles("public")
     }
-    else{
-        config$logger.info(sprintf("Zenodo: Rights is empty. accessRight will be set to open!"))
-        zenodo_metadata$setAccessRight("open")
-                                     }
     
     #references
     if(length(entity$relations)>0){
@@ -290,17 +308,18 @@ function(action, entity, config){
     }
     
     #communities
-    if(length(communities)>0){
-      zenodo_metadata$metadata$communities <- list()
-      for(community in communities) if(!is.na(community)) zenodo_metadata$addCommunity(community, sandbox = ZENODO$sandbox)
-    }
+    #TODO to analyze if this can be done with new Zenodo API
+    # if(length(communities)>0){
+    #   zenodo_metadata$metadata$communities <- list()
+    #   for(community in communities) if(!is.na(community)) zenodo_metadata$addCommunity(community, sandbox = ZENODO$sandbox)
+    # }
   }else{
     config$logger.info("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")
   }
   
   #file uploads (for new or edited records)
   #note: for new versions this is managed directly with ZENODO$depositRecordVersion
-  if(depositWithFiles & (!update | (update & update_files)) & record_state == "unsubmitted"){
+  if(depositWithFiles & (!update | (update & update_files)) & record_status == "draft" & zenodo_metadata$is_draft){
     if(deleteOldFiles & !skipDataDownload){
       config$logger.info("Zenodo: deleting old files...")
       zen_files <- ZENODO$getFiles(zenodo_metadata$id)
@@ -375,10 +394,9 @@ function(action, entity, config){
     }
   }
   config$logger.info(sprintf("Deposit record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
-  out <- switch(record_state,
-                "unsubmitted" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
-                "inprogress" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
-                "done" = {
+  out <- switch(record_status,
+                "draft" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
+                "published" = {
                   switch(strategy,
                          "edition" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
                          "newversion" = {
@@ -417,21 +435,21 @@ function(action, entity, config){
   }
   
   #we set the (prereserved) doi to the entity in question
-  doi_to_save <- try(out$metadata$prereserve_doi$doi, silent = TRUE)
-  if(is(doi_to_save, "try-error")) doi_to_save <- entity$identifiers[["doi"]]
-  config$logger.info(sprintf("Setting DOI '%s' to save and export for record",out$metadata$prereserve_doi$doi))
+  doi_to_save <- out$pids$doi$identifier
+  if(!is.null(entity$identifiers[["doi"]])) doi_to_save <- entity$identifiers[["doi"]]
+  config$logger.info(sprintf("Setting DOI '%s' to save and export for record",doi_to_save))
   for(i in 1:length(config$metadata$content$entities)){
     ent <- config$metadata$content$entities[[i]]
     if(ent$identifiers[["id"]]==entity$identifiers[["id"]]){
       if(regexpr("zenodo", doi)>0){
-        config$metadata$content$entities[[i]]$identifiers[["zenodo_doi_to_save"]] <- out$metadata$prereserve_doi$doi
+        config$metadata$content$entities[[i]]$identifiers[["zenodo_doi_to_save"]] <- out$getDOI()
         config$metadata$content$entities[[i]]$identifiers[["zenodo_conceptdoi_to_save"]] <- out$getConceptDOI()
         config$metadata$content$entities[[i]]$setStatus("zenodo", ifelse(publish, "published", "draft"))
       }
       break;
     }
   }
-  entity$identifiers[["zenodo_doi_to_save"]] <- out$metadata$prereserve_doi$doi
+  entity$identifiers[["zenodo_doi_to_save"]] <- out$getDOI()
   entity$identifiers[["zenodo_conceptdoi_to_save"]] <- out$getConceptDOI()
   entity$setStatus("zenodo", ifelse(publish, "published", "draft"))
   

@@ -34,6 +34,7 @@ test_that("debug",{
   expect_equal(names(DEBUG), c("config", "entity"))
   expect_is(DEBUG$config, "list")
   expect_is(DEBUG$entity, "geoflow_entity")
+  closeWorkflow(DEBUG$config)
 })
 
 #execute

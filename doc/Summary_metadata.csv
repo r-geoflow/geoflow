@@ -22,9 +22,7 @@
 "Date","edition",,,"x",,,,,,,,
 "Date","embargo",,,,,,,,"x",,,
 "Type","generic",,,"x",,,,,"x",,"x",
-"Type","zenodoUploadType",,,,,,,,"x",,,
-"Type","zenodoPublicationType",,,,,,,,"x",,,
-"Type","zenodoImageType",,,,,,,,"x",,,
+"Type","zenodoResourceType",,,,,,,,"x",,,
 "Language",,,,"x",,,,,,"x",,
 "SpatialCoverage","ewkt",,,"x",,,,"x",,,,
 "SpatialCoverage","wkt",,,"x",,,,"x",,,,
@@ -48,6 +46,7 @@
 "Rights","license","x","x","x",,,,,"x","x",,"x"
 "Rights","accessRight",,,,,,,,"x",,,
 "Rights","accessConditions",,,,,,,,"x",,,
+"Rights","embargoReason",,,,,,,,"x",,,
 "Provenance","statement","x","x","x",,,,,,,,
 "Provenance","process","x","x","x",,,,,,,,
 "Format","ressource",,,"x",,,,,,,,
