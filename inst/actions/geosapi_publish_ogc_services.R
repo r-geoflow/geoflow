@@ -414,7 +414,7 @@ function(action, entity, config){
       )
       
       #styles publication if needed
-      gs_styles <- GS$getStyleNames()
+      gs_styles <- c(GS$getStyleNames(), GS$getStyleNames(ws = workspace))
       if(data_object$styleUpload) if(length(data_object$styles)>0){
         for(i in 1:length(data_object$styles)){
           style <- data_object$styles[i]
@@ -424,12 +424,12 @@ function(action, entity, config){
             config$logger.warn(sprintf("No style '%s' in Geoserver", style))
             if(style_sldfile %in% data_object$source){
               config$logger.info(sprintf("Creating GeoServer style '%s' from SLD style file '%s' available as source", style, style_sldfile))
-              created <- GS$createStyle(file = file.path(getwd(), "data", style_sldfile), name = style)
+              created <- GS$createStyle(file = file.path(getwd(), "data", style_sldfile), name = style, ws = workspace)
             }
           }
         }
         GS$reload()
-        gs_styles <- GS$getStyleNames()
+        gs_styles <- c(GS$getStyleNames(), GS$getStyleNames(ws = workspace))
       }
       
       #layer build and publication
