@@ -17,6 +17,14 @@ actions will allow to cross-share (meta)data resources in each action performed,
 standardized configuration files allows fully reproducible workflows, in compliance with FAIR (Findable, Accessible, Interoperable, Reusable) 
 principles.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/r-geoflow/geoflow}
+  \item Report bugs at \url{https://github.com/r-geoflow/geoflow}
+}
+
+}
 \author{
 Emmanuel Blondel \email{emmanuel.blondel1@gmail.com}
 }

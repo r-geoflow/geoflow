@@ -1,7 +1,6 @@
 #' @name geoflow
 #' @aliases geoflow-package
 #' @aliases geoflow
-#' @docType package
 #' 
 #' @import R6
 #' @import methods
@@ -49,4 +48,4 @@
 #'  
 #'@author Emmanuel Blondel \email{emmanuel.blondel1@@gmail.com}
 #'
-NULL
+"_PACKAGE"

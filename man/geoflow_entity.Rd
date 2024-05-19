@@ -97,6 +97,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_entity-getEntityJobDirPath}{\code{geoflow_entity$getEntityJobDirPath()}}
 \item \href{#method-geoflow_entity-prepareEntityJobDir}{\code{geoflow_entity$prepareEntityJobDir()}}
 \item \href{#method-geoflow_entity-copyDataToJobDir}{\code{geoflow_entity$copyDataToJobDir()}}
+\item \href{#method-geoflow_entity-enrichWithDatatypes}{\code{geoflow_entity$enrichWithDatatypes()}}
 \item \href{#method-geoflow_entity-enrichWithData}{\code{geoflow_entity$enrichWithData()}}
 \item \href{#method-geoflow_entity-enrichSpatialCoverageFromDB}{\code{geoflow_entity$enrichSpatialCoverageFromDB()}}
 \item \href{#method-geoflow_entity-enrichWithFeatures}{\code{geoflow_entity$enrichWithFeatures()}}
@@ -597,6 +598,25 @@ This function will look at data object(s) associated to the entity (previously s
 geoflow job directory.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$copyDataToJobDir(config, jobdir = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+
+\item{\code{jobdir}}{relative path of the job directory}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-enrichWithDatatypes"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-enrichWithDatatypes}{}}}
+\subsection{Method \code{enrichWithDatatypes()}}{
+Function that will scan zip data files and resolve data objects sourceType and uploadType
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithDatatypes(config, jobdir = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

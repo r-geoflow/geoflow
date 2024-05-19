@@ -57,6 +57,10 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item{\code{options}}{options}
 
 \item{\code{available_options}}{available options}
+
+\item{\code{status}}{status}
+
+\item{\code{notes}}{notes}
 }
 \if{html}{\out{</div>}}
 }
@@ -82,7 +86,9 @@ Initializes a \link{geoflow_handler}
   fun = NULL,
   script = NULL,
   options = list(),
-  available_options = list()
+  available_options = list(),
+  status = "active",
+  notes = ""
 )}\if{html}{\out{</div>}}
 }
 
@@ -102,6 +108,10 @@ Initializes a \link{geoflow_handler}
 \item{\code{options}}{action options}
 
 \item{\code{available_options}}{available options for the action}
+
+\item{\code{status}}{status (active/deprecated)}
+
+\item{\code{notes}}{notes}
 }
 \if{html}{\out{</div>}}
 }

@@ -692,7 +692,6 @@ getDBTableComment = function(dbi, schema, table){
 #'@param table table
 #'@param column_index table column index
 #'@return the table comment
-
 #'@author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #'@export
 getDBTableColumnComment = function(dbi, schema, table, column_index){
