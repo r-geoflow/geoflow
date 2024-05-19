@@ -13,7 +13,7 @@
     "entities": [
       {
         "handler": "zenodo",
-        "source": "conceptdoi:\"10.5072/zenodo.1243458\""
+        "source": "conceptdoi:\"10.5072/zenodo.54893\""
       }
     ],
     "contacts" : []
