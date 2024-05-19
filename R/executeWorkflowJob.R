@@ -244,7 +244,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           #run sequence of global actions
           to_publish = FALSE
           if(length(actions)>0) for(i in 1:length(actions)){
-            action <- actions[[i]]
+            action <- actions[[i]]$clone(deep = TRUE)
             config$logger.info(sprintf("Executing Action %s: %s - for entity %s", i, action$id, entity$identifiers[["id"]]))
             if(action$id == "zen4R-deposit-record"){
               if(!is.null(action$options$publish)) if(action$options$publish){
@@ -264,7 +264,8 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           if(length(actions)>0) {
             generic_uploaders <- actions[sapply(actions, function(x){x$isGenericUploader()})]
             if(length(generic_uploaders)>0){
-              for(generic_uploader in generic_uploaders){
+              for(i in 1:length(generic_uploaders)){
+                generic_uploader = generic_uploaders[[i]]$clone(deep = TRUE)
                 config$logger.info(sprintf("Last trigger for action '%s' (generic upload behavior)", generic_uploader$id))
                 #For Zenodo: 
                 #if Zenodo is the only action then let's sleep to avoid latence issues when listing depositions
@@ -295,7 +296,8 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
         if(length(actions)>0){
           pid_generators <- actions[sapply(actions, function(x){x$isPIDGenerator()})]
           if(length(pid_generators)>0){
-            for(pid_generator in pid_generators){
+            for(i in 1:length(pid_generators)){
+              pid_generator = pid_generators[[i]]$clone(deep = TRUE)
               pid_generator$exportPIDs(config, entities)
             }
           }
