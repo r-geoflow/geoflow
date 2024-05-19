@@ -1,6 +1,6 @@
 Package: geoflow
-Version: 0.20240513
-Date: 2024-05-13
+Version: 0.20240520
+Date: 2024-05-20
 Title: Tools to Orchestrate Geospatial (Meta)Data Management Workflows and Manage FAIR Services
 Description: An engine to facilitate the orchestration and execution of metadata-driven data management workflows, in compliance with FAIR 
   (Findable, Accessible, Interoperable and Reusable) data management principles. By means of a pivot metadata model, relying on the DublinCore standard (<https://dublincore.org/>), 
@@ -77,4 +77,4 @@ License: MIT + file LICENSE
 URL: https://github.com/r-geoflow/geoflow
 BugReports: https://github.com/r-geoflow/geoflow
 LazyLoad: yes
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
