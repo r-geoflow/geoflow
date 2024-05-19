@@ -113,9 +113,11 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
       creator_c$setLastName(creatorNames[1])
       if(!is.null(creator_poo$affiliations)) creator_c$setOrganizationName(creator_poo$affiliations[[1]]$id)
       ids = creator_poo$identifiers
-      names(ids) = sapply(ids, function(x){x$scheme})
-      if(!is.null(ids$orcid)) creator_c$setIdentifier("orcid", ids$orcid$identifier)
-      if(!is.null(ids$gnd)) creator_c$setIdentifier("gnd", ids$gnd$identifier)
+      if(!is.null(ids)){
+        names(ids) = sapply(ids, function(x){x$scheme})
+        if(!is.null(ids$orcid)) creator_c$setIdentifier("orcid", ids$orcid$identifier)
+        if(!is.null(ids$gnd)) creator_c$setIdentifier("gnd", ids$gnd$identifier)
+      }
       creator_c$setRole("creator")
       entity$addContact(creator_c)
     }
@@ -129,9 +131,11 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
       contrib_c$setLastName(contribNames[1])
       if(!is.null(contrib_poo$affiliations)) contrib_c$setOrganizationName(contrib_poo$affiliations[[1]]$id)
       ids = contrib_poo$identifiers
-      names(ids) = sapply(ids, function(x){x$scheme})
-      if(!is.null(ids$orcid)) contrib_c$setIdentifier("orcid", ids$orcid$identifier)
-      if(!is.null(ids$gnd)) contrib_c$setIdentifier("gnd", ids$gnd$identifier)
+      if(!is.null(ids)){
+        names(ids) = sapply(ids, function(x){x$scheme})
+        if(!is.null(ids$orcid)) contrib_c$setIdentifier("orcid", ids$orcid$identifier)
+        if(!is.null(ids$gnd)) contrib_c$setIdentifier("gnd", ids$gnd$identifier)
+      }
       contrib_c$setRole("contributor")
       entity$addContact(contrib_c)
     }

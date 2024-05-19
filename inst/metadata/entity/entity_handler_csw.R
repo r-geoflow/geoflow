@@ -223,21 +223,42 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
           if(is(constraint, "ISOLegalConstraints")){
             #use constraints
             use_values = lapply(constraint$useConstraints, function(x){x$attrs$codeListValue})
-            use_right = geoflow_right$new()
-            use_right$setKey("useConstraint")
-            use_right$setValues(use_values)
-            entity$addRight(use_right)
+            if(length(use_values)>0){
+              for(use_value in use_values){
+                use_right = geoflow_right$new()
+                use_right$setKey("useConstraint")
+                use_right$setValues(use_value)
+                entity$addRight(use_right) 
+              }
+            }
             #access constraints
             access_values = lapply(constraint$accessConstraints, function(x){x$attrs$codeListValue})
-            access_right = geoflow_right$new()
-            access_right$setKey("accessConstraint")
-            access_right$setValues(access_values)
-            entity$addRight(access_right)
+            if(length(access_values)>0){
+              for(access_value in access_values){
+                access_right = geoflow_right$new()
+                access_right$setKey("accessConstraint")
+                access_right$setValues(access_value)
+                entity$addRight(access_right)  
+              }
+            }
             #other constraints
-            other_right = geoflow_right$new()
-            other_right$setKey("otherConstraint")
-            other_right$setValues(constraint$otherConstraints)
-            entity$addRight(other_right)
+            if(length(constraint$otherConstraints)>0){
+              for(otherConstraint in constraint$otherConstraints){
+                other_right = geoflow_right$new()
+                other_right$setKey("otherConstraint")
+                other_right$setValues(otherConstraint)
+                entity$addRight(other_right) 
+              }
+            }
+            #use limitations
+            if(length(constraint$useLimitation)>0){
+              for(useLimitation in constraint$useLimitation){
+                use_right = geoflow_right$new()
+                use_right$setKey("useLimitation")
+                use_right$setValues(useLimitation)
+                entity$addRight(use_right)
+              }
+            }
           }
         }
       }
