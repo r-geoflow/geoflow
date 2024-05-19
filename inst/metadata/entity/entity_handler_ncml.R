@@ -11,13 +11,13 @@ handle_entities_ncml <- function(handler, source, config, handle = TRUE){
     
     xml <- XML::xmlParse(httr::content(httr::GET(file),"text"))
     
-    ncml_str <- XML::xmlChildren(xmlChildren(xml)[[1]])
+    ncml_str <- XML::xmlChildren(XML::xmlChildren(xml)[[1]])
     
     #global attributes
     global_attributes_xml <- ncml_str[names(ncml_str) == "attribute"]
-    global_attributes_names <- sapply(global_attributes_xml, xmlGetAttr, "name")
+    global_attributes_names <- sapply(global_attributes_xml, XML::xmlGetAttr, "name")
     global_attributes <- lapply(global_attributes_xml, function(x){
-      out_attr <- list(value = xmlGetAttr(x,"value"), type = xmlGetAttr(x, "type"))
+      out_attr <- list(value = XML::xmlGetAttr(x,"value"), type = XML::xmlGetAttr(x, "type"))
       return(out_attr)
     })
     names(global_attributes) <- global_attributes_names
@@ -26,10 +26,10 @@ handle_entities_ncml <- function(handler, source, config, handle = TRUE){
     #global attributes (in groups)
     global_attributes_ingroup_xml <- ncml_str[names(ncml_str) == "group"]
     global_attributes_ingroup <- sapply(global_attributes_ingroup_xml, function(x){
-      group_attrs_xml <- xmlChildren(x)
-      group_attrs_names <- sapply(group_attrs_xml, xmlGetAttr, "name")
+      group_attrs_xml <- XML::xmlChildren(x)
+      group_attrs_names <- sapply(group_attrs_xml, XML::xmlGetAttr, "name")
       group_attrs <- lapply(group_attrs_xml, function(node){
-        out_attr <- list(value = xmlGetAttr(node, "value"), type = xmlGetAttr(node, "type"))
+        out_attr <- list(value = XML::xmlGetAttr(node, "value"), type = XML::xmlGetAttr(node, "type"))
         return(out_attr)
       })
       names(group_attrs) <- group_attrs_names
@@ -42,27 +42,27 @@ handle_entities_ncml <- function(handler, source, config, handle = TRUE){
     
     #dimensions
     dimensions_xml <- ncml_str[names(ncml_str)=="dimension"]
-    dimensions_names <- sapply(dimensions_xml, xmlGetAttr, "name")
+    dimensions_names <- sapply(dimensions_xml, XML::xmlGetAttr, "name")
     dimensions <- lapply(dimensions_xml, function(x){
-      out_dim <- list(name = xmlGetAttr(x, "value"), length = xmlGetAttr(x, "length"))
+      out_dim <- list(name = XML::xmlGetAttr(x, "value"), length = XML::xmlGetAttr(x, "length"))
       return(out_dim)
     })
     names(dimensions) <- dimensions_names
     
     #variables
     variables_xml <- ncml_str[names(ncml_str)=="variable"]
-    variables_names <- sapply(variables_xml, xmlGetAttr, "name")
+    variables_names <- sapply(variables_xml, XML::xmlGetAttr, "name")
     variables <- lapply(variables_xml, function(x){
       
       out_var <- list(
-        name = xmlGetAttr(x, "name"),
-        shape = xmlGetAttr(x, "shape"),
-        type = xmlGetAttr(x, "type")
+        name = XML::xmlGetAttr(x, "name"),
+        shape = XML::xmlGetAttr(x, "shape"),
+        type = XML::xmlGetAttr(x, "type")
       )
-      var_attributes_xml <- xmlChildren(x)
-      var_attributes_names <- sapply(var_attributes_xml, xmlGetAttr, "name")
+      var_attributes_xml <- XML::xmlChildren(x)
+      var_attributes_names <- sapply(var_attributes_xml, XML::xmlGetAttr, "name")
       var_attributes <- lapply(var_attributes_xml, function(x){
-        out_var_attr <- list(value = xmlGetAttr(x,"value"), type = xmlGetAttr(x, "type"))
+        out_var_attr <- list(value = XML::xmlGetAttr(x,"value"), type = XML::xmlGetAttr(x, "type"))
         return(out_var_attr)
       })
       names(var_attributes) <- var_attributes_names
