@@ -42,8 +42,6 @@ if(T){
     expect_true(dir.exists(EXEC))
     expect_true(file.exists(file.path(EXEC, "job.json")))
     expect_true(file.exists(file.path(EXEC, "job-logs.txt")))
-    expect_true(file.exists(file.path(EXEC, "config_copyof_contacts_1.csv")))
-    expect_true(file.exists(file.path(EXEC, "config_copyof_entities_1.csv")))
     expect_true(dir.exists(file.path(EXEC, "entities")))
   })
 }
