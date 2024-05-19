@@ -4,7 +4,7 @@
 \alias{getDBTableColumnComment}
 \title{getDBTableColumnComment}
 \usage{
-getDBTableColumnComment(dbi, schema, table)
+getDBTableColumnComment(dbi, schema, table, column_index)
 }
 \arguments{
 \item{dbi}{a dbi connection}

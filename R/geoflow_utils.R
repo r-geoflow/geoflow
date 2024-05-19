@@ -685,7 +685,7 @@ getDBTableComment = function(dbi, schema, table){
 #'@aliases getDBTableColumnComment
 #'@title getDBTableColumnComment
 #'
-#'@usage getDBTableColumnComment(dbi, schema, table)
+#'@usage getDBTableColumnComment(dbi, schema, table, column_index)
 #'
 #'@param dbi a dbi connection
 #'@param schema schema
