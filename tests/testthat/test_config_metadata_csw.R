@@ -14,8 +14,8 @@ if(T){
     testthat::skip_on_cran()
     CFG <- geoflow::initWorkflow(cfg_file)
     expect_is(CFG$metadata$content, "list")
-    expect_equal(length(CFG$metadata$content), 2L)
-    expect_equal(names(CFG$metadata$content), c("contacts", "entities"))
+    expect_equal(length(CFG$metadata$content), 1L)
+    expect_equal(names(CFG$metadata$content), c("entities"))
     expect_equal(length(CFG$metadata$content$entities), 7L)
     expect_equal(length(CFG$getEntities()), 7L)
     expect_equal(length(CFG$actions), 0L)
@@ -32,7 +32,7 @@ if(T){
     expect_equal(names(DEBUG), c("config", "entity"))
     expect_is(DEBUG$config, "list")
     expect_is(DEBUG$entity, "geoflow_entity")
-    expect_equal(DEBUG$entity$identifiers$id, "fao_global_capture_production")
+    expect_equal(DEBUG$entity$identifiers$id, "cwp-grid-map-30deg_x_30deg")
   })
   
   #execute
