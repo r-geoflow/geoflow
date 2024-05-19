@@ -65,19 +65,20 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
   
   entities <- lapply(1:length(results), function(i){
     result <- results[[i]]
-    config$logger.info(sprintf("Creating entity (%s out of %s) from Zenodo deposit/record with DOI '%s'", i, length(results), result$metadata$doi))
+    result_doi = result$pids$doi$identifier
+    config$logger.info(sprintf("Creating entity (%s out of %s) from Zenodo deposit/record with DOI '%s'", i, length(results), result_doi))
     
     #create entity
     entity <- geoflow::geoflow_entity$new()
     #entity Identifier
-    entity$setIdentifier("doi", result$metadata$doi)
+    entity$setIdentifier("doi", result_doi)
     #semantic identifier
     identifiers = result$metadata$related_identifiers[sapply(result$metadata$related_identifiers, function(x){x$scheme == "urn" && x$relation == "isIdenticalTo"})]
     if(length(identifiers)>0){
       identifier = identifiers[[1]]$identifier
       entity$setIdentifier("id", substr(identifier, 5,nchar(identifier)))
     }else{
-      entity$setIdentifier("id", gsub("/", "_", result$metadata$doi))
+      entity$setIdentifier("id", gsub("/", "_", result_doi))
     }
     
     #entity Date
@@ -183,7 +184,7 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
       data$source <- lapply(1:length(result$files), function(i){
         z_file <- result$files[[i]]
         z_filename <- z_file$filename
-        attr(z_filename, "uri") <- result$metadata$doi
+        attr(z_filename, "uri") <- result_doi
         return(z_filename)
       })
       data$upload <- TRUE
