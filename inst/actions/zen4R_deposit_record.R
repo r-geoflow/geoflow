@@ -33,52 +33,59 @@ function(action, entity, config){
   update_files <- action$getOption("update_files")
   communities <- action$getOption("communities")
   
-  #zenodo object
-  zenodo_metadata <- NULL
-  
-  #how to deal with existing records / new versions
-  #we try first to use DOI if existing, assuming it's a concept DOI, if not a simple DOI
-  #if nothing is found, we use the default get depositions by identifier, used if no DOI is specified
-  #this approach is possible because the Zenodo record has a related identifier as URN, specified when
-  #creating the record. For existing record we also check the presence of the URN as related identifier
-  #e.g. my-metadata-identifier
-  deposits <- NULL
-  if(!is.null(entity$identifiers[["doi"]])){
-    #TODO review if getting deposit with concept DOI we don't inherit bucket link for doing file upload with new API
-    deposit <- try(ZENODO$getDepositionByConceptDOI(entity$identifiers[["doi"]]), silent = TRUE) #try to get latest record with concept DOI
-    if(is(deposit, "try-error")) deposit = NULL
-    if(is.null(deposit)) deposit <- ZENODO$getDepositionByDOI(entity$identifiers[["doi"]]) #try to get record with specific DOI
-    if(!is.null(deposit)) deposits <- list(deposit)
-  }
-  
-  if(is.null(deposits)){
-    deposit <- NULL
-    if(!is.null(entity$identifiers[["zenodo_doi_to_save"]])){
-      deposit <- ZENODO$getDepositionByDOI(entity$identifiers[["zenodo_doi_to_save"]]) #try to get record with specific DOI
+  #get_zenodo_metadata
+  get_zenodo_metadata = function(){
+    #zenodo object
+    zen_meta <- NULL
+    
+    #how to deal with existing records / new versions
+    #we try first to use DOI if existing, assuming it's a concept DOI, if not a simple DOI
+    #if nothing is found, we use the default get depositions by identifier, used if no DOI is specified
+    #this approach is possible because the Zenodo record has a related identifier as 'other', specified when
+    #creating the record. For existing record we also check the presence of the 'other' as related identifier
+    #e.g. my-metadata-identifier
+    deposits <- NULL
+    if(!is.null(entity$identifiers[["doi"]])){
+      #TODO review if getting deposit with concept DOI we don't inherit bucket link for doing file upload with new API
+      deposit <- try(ZENODO$getDepositionByConceptDOI(entity$identifiers[["doi"]]), silent = TRUE) #try to get latest record with concept DOI
+      if(is(deposit, "try-error")) deposit = NULL
+      if(is.null(deposit)) deposit <- ZENODO$getDepositionByDOI(entity$identifiers[["doi"]]) #try to get record with specific DOI
+      if(!is.null(deposit)) deposits <- list(deposit)
     }
-    if(!is.null(deposit)) deposits <- list(deposit)
-  }
-  
-  if(is.null(deposits)){
-    deposits <- ZENODO$getDepositions(q = entity$identifiers[["id"]], size = 1000L)
-  }
-  #check related identifier
-  if(length(deposits)>0){
-    invisible(lapply(deposits, function(deposit){
-      related_identifiers <- deposit$metadata$related_identifiers
-      if(!is.null(related_identifiers)){
-        for(related_identifier in related_identifiers){
-          if(related_identifier$scheme == "urn"){
-            if(related_identifier$identifier == entity$identifiers[["id"]] &
-               related_identifier$relation_type$id == "isidenticalto"){
-              zenodo_metadata <<- deposit
-              break
+    
+    if(is.null(deposits)){
+      deposit <- NULL
+      if(!is.null(entity$identifiers[["zenodo_doi_to_save"]])){
+        deposit <- ZENODO$getDepositionByDOI(entity$identifiers[["zenodo_doi_to_save"]]) #try to get record with specific DOI
+      }
+      if(!is.null(deposit)) deposits <- list(deposit)
+    }
+    
+    if(is.null(deposits)){
+      deposits <- ZENODO$getDepositions(q = entity$identifiers[["id"]], size = 1000L)
+    }
+    #check related identifier
+    if(length(deposits)>0){
+      invisible(lapply(deposits, function(deposit){
+        related_identifiers <- deposit$metadata$related_identifiers
+        if(!is.null(related_identifiers)){
+          for(related_identifier in related_identifiers){
+            if(related_identifier$scheme == "other"){
+              if(related_identifier$identifier == entity$identifiers[["id"]] &
+                 related_identifier$relation_type$id == "isidenticalto"){
+                zen_meta <<- deposit
+                break
+              }
             }
           }
         }
-      }
-    }))
+      }))
+    }
+    return(zen_meta)
   }
+  
+  #zenodo_metadata
+  zenodo_metadata = get_zenodo_metadata()
   
   #doi
   doi <- NULL
@@ -99,12 +106,12 @@ function(action, entity, config){
     }
     zenodo_metadata$addRelatedIdentifier(
       identifier = entity$identifiers[["id"]],
-      scheme = "urn",
+      scheme = "other",
       relation_type = "isidenticalto"
     )
     record_status <- zenodo_metadata$status
   }else{
-    config$logger.info(sprintf("Zenodo: Existing record with related identifier '%s' (URN scheme)", entity$identifiers[["id"]]))
+    config$logger.info(sprintf("Zenodo: Existing record with related identifier '%s' ('other' scheme)", entity$identifiers[["id"]]))
     update <- TRUE
     record_status <- zenodo_metadata$status
     
@@ -118,6 +125,24 @@ function(action, entity, config){
       if(is(unlocked_rec, "ZenodoRecord")){
         zenodo_metadata <- unlocked_rec
       }
+    }
+    
+    if(length(zenodo_metadata$getVersions())>0 && strategy == "newversion"){
+      #to know if the record has been already published, we check if there is at least one version set
+      #the property "is_published" is transient to the record and can't be used
+      if(!depositWithFiles){
+        #the first run of the action will be skipped and we will wait for the final generic_uploader run
+        #with depositWithFiles=TRUE to run the version to avoid two versions to be created
+        config$logger.info(sprintf("Zenodo: record '%s' already published. Skip 1st run to create version with generic uploader at the end of the workflow", zenodo_metadata$id))
+        return(TRUE)
+      }
+    }
+    
+    if(record_status == "new_version_draft"){
+      config$logger.info("Draft version already set. Discard initial changes before publishing new version...")
+      ZENODO$discardChanges(zenodo_metadata$id)
+      zenodo_metadata = get_zenodo_metadata()
+      record_status = zenodo_metadata$status
     }
     
     #case where bucket is not kept by zenodo we try to get it from added resource
@@ -393,38 +418,80 @@ function(action, entity, config){
       }
     }
   }
-  config$logger.info(sprintf("Deposit record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+  print(record_status)
   out <- switch(record_status,
-                "draft" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
+                "draft" = {
+                  config$logger.info(sprintf("Deposit draft record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+                  ZENODO$depositRecord(zenodo_metadata, publish = publish)
+                },
                 "published" = {
                   switch(strategy,
-                         "edition" = ZENODO$depositRecord(zenodo_metadata, publish = publish),
-                         "newversion" = {
-                           data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern, full.names = T)
-                           
-                           if(zipEachDataFile){
-                             config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
-                             data_files <- lapply(data_files, function(data_file){
-                               data_file = basename(data_file)
-                               config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
-                               fileparts <- unlist(strsplit(data_file, "\\."))
-                               if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
-                               filename <- paste0(fileparts, collapse = ".")
-                               outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
-                               zip::zipr(zipfile = outfilename, files = data_file)
-                               return(outfilename)
-                             })
-                           }
-                           
-                           metadata_files <- list.files(file.path(getwd(),"metadata"), full.names = TRUE)
-                           files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
-                           ZENODO$depositRecordVersion(
-                             record = zenodo_metadata, 
-                             delete_latest_files = deleteOldFiles,
-                             files = files_to_upload,
-                             publish = publish
-                           )
-                         }
+                   "edition" = {
+                     config$logger.info(sprintf("Edit published record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+                     ZENODO$depositRecord(zenodo_metadata, publish = publish)
+                    },
+                   "newversion" = {
+                     config$logger.info(sprintf("Deposit record version with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+                     data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern, full.names = T)
+                     
+                     if(zipEachDataFile){
+                       config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
+                       data_files <- lapply(data_files, function(data_file){
+                         data_file = basename(data_file)
+                         config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
+                         fileparts <- unlist(strsplit(data_file, "\\."))
+                         if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
+                         filename <- paste0(fileparts, collapse = ".")
+                         outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
+                         zip::zipr(zipfile = outfilename, files = data_file)
+                         return(outfilename)
+                       })
+                     }
+                     
+                     metadata_files <- list.files(file.path(getwd(),"metadata"), full.names = TRUE)
+                     files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
+                     
+                     config$logger.info("Deposit record version...")
+                     ZENODO$depositRecordVersion(
+                       record = zenodo_metadata, 
+                       delete_latest_files = deleteOldFiles,
+                       files = files_to_upload,
+                       publish = publish
+                     )
+                   }
+                  )
+                },
+                "new_version_draft" = {
+                  switch(strategy,
+                    "newversion" = {
+                     config$logger.info(sprintf("Deposit record version with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+                     data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern, full.names = T)
+                     
+                     if(zipEachDataFile){
+                       config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
+                       data_files <- lapply(data_files, function(data_file){
+                         data_file = basename(data_file)
+                         config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
+                         fileparts <- unlist(strsplit(data_file, "\\."))
+                         if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
+                         filename <- paste0(fileparts, collapse = ".")
+                         outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
+                         zip::zipr(zipfile = outfilename, files = data_file)
+                         return(outfilename)
+                       })
+                     }
+                     
+                     metadata_files <- list.files(file.path(getwd(),"metadata"), full.names = TRUE)
+                     files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
+                     
+                     config$logger.info("Deposit record version...")
+                     ZENODO$depositRecordVersion(
+                       record = zenodo_metadata, 
+                       delete_latest_files = deleteOldFiles,
+                       files = files_to_upload,
+                       publish = publish
+                     )
+                   }
                   )
                 }
   )
