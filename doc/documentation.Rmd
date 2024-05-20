@@ -179,6 +179,7 @@ Name|Definition|Default value
 ``skipDataDownload``|Indicates whether downloading data associated to an entity should be skipped|**false**
 ``skipFileDownload``|Deprecated, use `skipDataDownload` instead.|**false**
 ``skipEnrichWithData``|Indicates whether actual data objects (features/coverages) reading and association with entity data should be skipped or not|**false**
+``skipEnrichWithDatatypes``|Indicates whether entity data object should be enriched with data types. Applies to zip archives that are scanned to detect which file extension should be used as `sourceType` / `uploadType`|**false**
 ``skipDynamicBbox``|Indicates whether bbox inherited from data should be ignored.|**false**
 ``enrichDataStrategy``|Strategy to use when inheriting spatial bbox from multiple data objects, either "first" (take the first data object for the bbox, or "union" (union of bboxes from the different data objects).|**"first"*
 
