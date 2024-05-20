@@ -39,19 +39,13 @@ Many thanks to the following organizations that have provided fundings for stren
 <div style="float:left;">
   <a href="http://www.cnrs.fr"><img src="http://www.cnrs.fr/themes/custom/cnrs/logo.svg" height=100 width=100/></a>
   <a href="https://inee.cnrs.fr/fr/zones-ateliers"><img src="https://inee.cnrs.fr/sites/institut_inee/files/inline-images/logo-za_0_0.jpg" height=100 width=200/></a>
-  <a href="https://letg.cnrs.fr"><img height=100 width=50 src="https://letg.cnrs.fr/plugins/letg/images/letg.png"></a>
+  <a href="https://letg.cnrs.fr"><img height=100 width=50 src="https://letg.cnrs.fr/wp-content/uploads/2023/05/logo_letg.png"></a>
 </div>
 
 The following projects have contributed to strenghten ``geoflow``:
 
-* **Blue-Cloud** _Blue-Cloud has received funding from the European Union's Horizon programme call BG-07-2019-2020, topic: [A] 2019 - Blue Cloud services, Grant Agreement No.862409._ 
-
-<a href="https://www.blue-cloud.org"><img height=100 width=300 src="https://hackathon.blue-cloud.org/wp-content/uploads/2021/11/Blue-cloud_extended_color.png"/></a> 
-
+* **Blue-Cloud** _Blue-Cloud has received funding from the European Union's Horizon programme call BG-07-2019-2020, topic: [A] 2019 - Blue Cloud services, Grant Agreement No.862409._
 * **CCSAFE** 
-
-<a href="https://www6.inrae.fr/cc-safe"><img height=100 width=300 src="https://www6.inrae.fr/var/internet6_national_cc_safe/storage/images/configuration-graphique/haut/logo-cc-safe/34567-1-fre-FR/Logo-cc-safe_inra_logo.png"/></a>
-
 * **G2OI** project, cofinanced by the European Union, the Reunion region, and the French Republic.
 <div align="center">
 <img src="https://github.com/IRDG2OI/geoflow-g2oi/blob/main/img/logos_partenaires.png?raw=True" height="80px">

@@ -180,13 +180,13 @@ register_data_accessors <- function(){
     #------------------------------------------------------------------------------------------------------- 
     geoflow_data_accessor$new(
       id = "zenodo",
-      software_type = NA,
+      software_type = "zenodo",
       definition = "A Zenodo public data accessor",
       packages = list("zen4R"),
       download = function(resource, file, path, software = NULL, unzip = TRUE){
         if(startsWith(resource, "https://dx.doi.org/")) resource <- unlist(strsplit(resource, "https://dx.doi.org/"))[2]
         cat(sprintf("[geoflow] Zenodo data accessor: Download data '%s' from '%s' to '%s'\n", file, resource, path))
-        zen4R::download_zenodo(doi = resource, files = file, path = dirname(path))
+        zen4R::download_zenodo(doi = resource, files = file, path = dirname(path), sandbox = if(!is.null(software)) software$sandbox else FALSE)
         file.rename(from = file.path(getwd(), file), to = path)
         if(unzip & endsWith(path, "zip")){
           utils::unzip(zipfile = path, exdir = getwd(), unzip = getOption("unzip"))
