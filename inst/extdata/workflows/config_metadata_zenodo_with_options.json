@@ -13,7 +13,7 @@
     "entities": [
       {
         "handler": "zenodo",
-        "source": ["10.5281/zenodo.2547036"],
+        "source": ["10.5281/zenodo.7552287"],
         "options": {
           "resource_type": "record",
           "source_type": "doi"

@@ -26,7 +26,7 @@
   	  "parameters": {
     		"url": "https://sandbox.zenodo.org/api",
     		"token": "{{ ZENODO_SANDBOX_TOKEN }}",
-    		"logger": "DEBUG"
+    		"logger": "INFO"
   	   }
   	 }
     ],

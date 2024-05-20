@@ -2,7 +2,7 @@
 handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
   
   if(!requireNamespace("zen4R", quietly = TRUE)){
-    stop("The Dataverse handler requires the 'zen4R' package")
+    stop("The ZENODo handler requires the 'zen4R' package")
   }
   
   ZENODO <- config$software$input$zenodo
@@ -65,7 +65,8 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
   
   entities <- lapply(1:length(results), function(i){
     result <- results[[i]]
-    result_doi = result$pids$doi$identifier
+    print(result)
+    result_doi = result$getDOI()
     config$logger.info(sprintf("Creating entity (%s out of %s) from Zenodo deposit/record with DOI '%s'", i, length(results), result_doi))
     
     #create entity
@@ -73,12 +74,12 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
     #entity Identifier
     entity$setIdentifier("doi", result_doi)
     #semantic identifier
-    identifiers = result$metadata$related_identifiers[sapply(result$metadata$related_identifiers, function(x){x$scheme == "urn" && x$relation == "isIdenticalTo"})]
+    identifiers = result$metadata$related_identifiers[sapply(result$metadata$related_identifiers, function(x){x$scheme == "other" && x$relation_type$id == "isidenticalto"})]
     if(length(identifiers)>0){
       identifier = identifiers[[1]]$identifier
       entity$setIdentifier("id", substr(identifier, 5,nchar(identifier)))
     }else{
-      entity$setIdentifier("id", gsub("/", "_", result_doi))
+      entity$setIdentifier("id", gsub("/", "_", result$getDOI()))
     }
     
     #entity Date
