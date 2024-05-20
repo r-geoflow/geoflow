@@ -72,7 +72,7 @@ Suggests:
   rmarkdown,
   dataverse
 Remotes:
-  eblondel/geonode4R
+  eblondel/geonode4R,
   eblondel/zen4R
 License: MIT + file LICENSE
 URL: https://github.com/r-geoflow/geoflow
