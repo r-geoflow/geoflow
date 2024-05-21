@@ -55,6 +55,7 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
   }
   skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
   skipEnrichWithData = if(!is.null(config$profile$options$skipEnrichWithData)) config$profile$options$skipEnrichWithData else FALSE
+  skipEnrichWithDatatypes = if(!is.null(config$profile$options$skipEnrichWithDatatypes)) config$profile$options$skipEnrichWithDatatypes else FALSE
   
   #run software actions?
   if(runSoftwareActions){
@@ -96,11 +97,12 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
       #we copy data to job data dir (for data files)
       entity$copyDataToJobDir(config, jobdir)
       #vector data: we enrich entity with features
+      #enrich with data types
+      if(!skipEnrichWithDatatypes) entity$enrichWithDatatypes(config, jobdir)
       #control is added in case of entity already enriched with features/coverages (when loaded from custom R entity handlers)
       if(!skipEnrichWithData) if(is.null(entity$data$features) && is.null(entity$data$coverages)){
         entity$enrichWithData(config, jobdir)
       }
-      
       setwd(entity$getEntityJobDirPath(config, jobdir)) #make sure we are in entity jobdir
       #we check if the source and upload are both different file format (csv,shp,gpkg) and process automatically to conversion from source to upload type
       entity$prepareFeaturesToUpload(config)
