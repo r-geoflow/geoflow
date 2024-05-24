@@ -332,12 +332,6 @@ function(action, entity, config){
       }
     }
     
-    #communities
-    #TODO to analyze if this can be done with new Zenodo API
-    # if(length(communities)>0){
-    #   zenodo_metadata$metadata$communities <- list()
-    #   for(community in communities) if(!is.na(community)) zenodo_metadata$addCommunity(community, sandbox = ZENODO$sandbox)
-    # }
   }else{
     config$logger.info("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")
   }
@@ -499,6 +493,33 @@ function(action, entity, config){
     errMsg <- sprintf("Zenodo: %s", out$errors[[1]]$message)
     config$logger.error(errMsg)
     stop(errMsg)
+  }else{
+    #business logic for communities
+    #check that record is not yet associated to community
+    #If ok, then check there is no pending request
+    #If ok, we submit it to the community
+    #If the geoflow user is maintainer of this community, make possible to accept immediatly the record
+    if(length(communities)>0){
+      for(community in communities){
+        config$logger.info(sprintf("-> Processing community %s", community))
+        zen_com = ZENODO$getCommunityById(community)
+        #we check the comunity exists
+        if(!is.null(zen_com)){
+          #we check if the record is already in community
+          rec_coms = ZENODO$getRecordCommunities(out)
+          has_com = FALSE
+          if(length(rec_coms)>0) has_com = any(sapply(rec_coms, function(x){x$id == zen_com$id}))
+          if(!has_com){
+            #if record is not in community we check pending requests
+            pending_reqs = ZENODO$getRequests(q = sprintf("status:submitted AND receiver.community:%s AND topic.record:%s", zen_com$id, out$id))
+            if(length(pending_reqs)==0){
+              ZENODO$submitToCommunities(record, communities = community)
+              #TODO in case the geoflow user is manager for the community, give action option to accept it immediatly
+            }
+          }
+        }
+      }
+    }
   }
   
   #we set the (prereserved) doi to the entity in question
