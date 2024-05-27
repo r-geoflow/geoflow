@@ -500,26 +500,31 @@ function(action, entity, config){
     #If ok, we submit it to the community
     #If the geoflow user is maintainer of this community, make possible to accept immediatly the record
     if(length(communities)>0){
-      for(community in communities){
-        config$logger.info(sprintf("-> Processing community %s", community))
-        zen_com = ZENODO$getCommunityById(community)
-        #we check the comunity exists
-        if(!is.null(zen_com)){
-          #we check if the record is already in community
-          rec_coms = ZENODO$getRecordCommunities(out)
-          has_com = FALSE
-          if(length(rec_coms)>0) has_com = any(sapply(rec_coms, function(x){x$id == zen_com$id}))
-          if(!has_com){
-            #if record is not in community we check pending requests
-            pending_reqs = ZENODO$getRequests(q = sprintf("status:submitted AND receiver.community:%s AND topic.record:%s", zen_com$id, out$id))
-            if(length(pending_reqs)==0){
-              #!! This code assumes the record has been published and is not in draft stage
-              #TODO investigate the API method to assign community to draft
-              ZENODO$submitRecordToCommunities(record, communities = community)
-              #TODO in case the geoflow user is manager for the community, give action option to accept it immediatly
+      if(out$metadata$status == "published"){
+        config$logger.info("Adding published record to communities")
+        for(community in communities){
+          config$logger.info(sprintf("-> Processing community %s", community))
+          zen_com = ZENODO$getCommunityById(community)
+          #we check the comunity exists
+          if(!is.null(zen_com)){
+            #we check if the record is already in community
+            rec_coms = ZENODO$getRecordCommunities(out)
+            has_com = FALSE
+            if(length(rec_coms)>0) has_com = any(sapply(rec_coms, function(x){x$id == zen_com$id}))
+            if(!has_com){
+              #if record is not in community we check pending requests
+              pending_reqs = ZENODO$getRequests(q = sprintf("status:submitted AND receiver.community:%s AND topic.record:%s", zen_com$id, out$id))
+              if(length(pending_reqs)==0){
+                #!! This code assumes the record has been published and is not in draft stage
+                #TODO investigate the API method to assign community to draft
+                ZENODO$submitRecordToCommunities(record, communities = community)
+                #TODO in case the geoflow user is manager for the community, give action option to accept it immediatly
+              }
             }
           }
         }
+      }else{
+        config$logger.info("Record is not published, abort addition to communities!")
       }
     }
   }
