@@ -513,6 +513,8 @@ function(action, entity, config){
             #if record is not in community we check pending requests
             pending_reqs = ZENODO$getRequests(q = sprintf("status:submitted AND receiver.community:%s AND topic.record:%s", zen_com$id, out$id))
             if(length(pending_reqs)==0){
+              #!! This code assumes the record has been published and is not in draft stage
+              #TODO investigate the API method to assign community to draft
               ZENODO$submitRecordToCommunities(record, communities = community)
               #TODO in case the geoflow user is manager for the community, give action option to accept it immediatly
             }
