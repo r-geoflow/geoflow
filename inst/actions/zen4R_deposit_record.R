@@ -513,7 +513,7 @@ function(action, entity, config){
             #if record is not in community we check pending requests
             pending_reqs = ZENODO$getRequests(q = sprintf("status:submitted AND receiver.community:%s AND topic.record:%s", zen_com$id, out$id))
             if(length(pending_reqs)==0){
-              ZENODO$submitToCommunities(record, communities = community)
+              ZENODO$submitRecordToCommunities(record, communities = community)
               #TODO in case the geoflow user is manager for the community, give action option to accept it immediatly
             }
           }
