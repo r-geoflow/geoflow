@@ -27,6 +27,7 @@ function(action, entity, config){
   depositMetadataPattern <- action$getOption("depositMetadataPattern")
   zipEachDataFile <- action$getOption("zipEachDataFile")
   publish <- action$getOption("publish")
+  review <- action$getOption("review")
   strategy <- action$getOption("strategy")
   deleteOldFiles <- action$getOption("deleteOldFiles")
   update_metadata <- action$getOption("update_metadata")
@@ -416,7 +417,10 @@ function(action, entity, config){
   out <- switch(record_status,
                 "draft" = {
                   config$logger.info(sprintf("Deposit draft record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
-                  ZENODO$depositRecord(zenodo_metadata, publish = publish)
+                  ZENODO$depositRecord(
+                    zenodo_metadata,
+                    publish = FALSE #management of publication later
+                  )
                 },
                 "published" = {
                   switch(strategy,
@@ -450,7 +454,7 @@ function(action, entity, config){
                        record = zenodo_metadata, 
                        delete_latest_files = deleteOldFiles,
                        files = files_to_upload,
-                       publish = publish
+                       publish = FALSE #management of publication later
                      )
                    }
                   )
@@ -483,7 +487,7 @@ function(action, entity, config){
                        record = zenodo_metadata, 
                        delete_latest_files = deleteOldFiles,
                        files = files_to_upload,
-                       publish = publish
+                       publish = FALSE #management of publication later
                      )
                    }
                   )
@@ -494,7 +498,40 @@ function(action, entity, config){
     config$logger.error(errMsg)
     stop(errMsg)
   }else{
-    #business logic for communities
+    
+    if(publish){
+      if(review){
+        #publication is delegated to a review procedure by a community
+        config$logger.info("Delegated record publication (through community review)")
+        goReview = FALSE
+        if(length(communities)>0){
+          zen_com = ZENODO$getCommunityById(communities[1])
+          if(!is.null(zen_com)){
+            goReview = TRUE
+          }else{
+            config$logger.warn(sprintf("Community '%s' doesn't exist, aborting submission of record for review", communities[1]))
+          }
+        }else{
+          config$logger.warn(sprintf("No community defined, aborting submission of record for review"))
+        }
+        
+        if(goReview){
+          ZENODO$createReviewRequest(out, community = communities[1])
+          submitted_for_review = ZENODO$submitRecordForReview(out$id)
+          if(!submitted_for_review){
+            config$logger.warn(sprintf("Record submission for review to community '%s' didn't work as expected, aborting...", communities[1]))
+            ZENDO$deleteReviewRequest(out)
+          }
+        }
+      }else{
+        #direct publication without review by a community
+        config$logger.info("Direct record publication (without review)")
+        out = ZENODO$publishRecord(out$id)
+      }
+    }
+    
+    
+    #business logic for communities linkage to published records
     #check that record is not yet associated to community
     #If ok, then check there is no pending request
     #If ok, we submit it to the community
@@ -539,14 +576,14 @@ function(action, entity, config){
       if(regexpr("zenodo", doi)>0){
         config$metadata$content$entities[[i]]$identifiers[["zenodo_doi_to_save"]] <- out$getDOI()
         config$metadata$content$entities[[i]]$identifiers[["zenodo_conceptdoi_to_save"]] <- out$getConceptDOI()
-        config$metadata$content$entities[[i]]$setStatus("zenodo", ifelse(publish, "published", "draft"))
+        config$metadata$content$entities[[i]]$setStatus("zenodo", ifelse(publish, if(review) "under review" else "published", "draft"))
       }
       break;
     }
   }
   entity$identifiers[["zenodo_doi_to_save"]] <- out$getDOI()
   entity$identifiers[["zenodo_conceptdoi_to_save"]] <- out$getConceptDOI()
-  entity$setStatus("zenodo", ifelse(publish, "published", "draft"))
+  entity$setStatus("zenodo", ifelse(publish, if(review) "under review" else "published", "draft"))
   
   #if publish, we save all
   if(publish){

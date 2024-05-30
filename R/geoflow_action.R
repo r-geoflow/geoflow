@@ -386,6 +386,7 @@ register_actions <- function(){
         depositMetadataPattern = list(def = "A regular expression to filter metadata files to upload in Zenodo", class = "character", default = ""),
         zipEachDataFile = list(def = "Indicates if each data file should be zipped (to be used in case of large data files", class = "logical", default = FALSE),
         publish = list(def = "Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE", class = "logical", default = FALSE),
+        review = list(def = "Indicates if the action should submit the record to a review/publication by a community. Requires 'publish' set to TRUE, and a community", class = "logical", default = FALSE),
         strategy = list(def = "Strategy to use when handling published records, either 'newversion' (default) or 'edition'", class = "character", choices = list("newversion", "edition"), default = "newversion"),
         deleteOldFiles = list(def = "Indicates if the action should delete old files prior upload new files", class = "logical", default = TRUE),
         update_metadata = list(def = "For an existing deposit, indicates if metadata elements should be updated", class = "logical", default = TRUE),
