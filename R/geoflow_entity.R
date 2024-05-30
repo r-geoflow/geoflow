@@ -608,6 +608,8 @@ geoflow_entity <- R6Class("geoflow_entity",
             datasource_file <- attr(datasource, "uri")
             attributes(datasource) <- NULL
             if(is.null(datasource_file)) datasource_file <- datasource
+          }else{
+            return(data_object)
           }
           
           if(data_object$sourceType == "other"){
