@@ -430,6 +430,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         if(!data_object$sourceType %in% c("dbtable", "dbquery", "dbview")) for(i in 1:length(data_object$source)){
         
           datasource <- data_object$source[[i]]
+          if(is.null(datasource)) next;
           datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
           if(length(datasource_parts)<2)if(data_object$sourceType != "nc") stop("Source data file should include a file extension")
           datasource_name <- datasource_parts[1]
