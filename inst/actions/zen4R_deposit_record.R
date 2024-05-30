@@ -33,6 +33,7 @@ function(action, entity, config){
   update_metadata <- action$getOption("update_metadata")
   update_files <- action$getOption("update_files")
   communities <- action$getOption("communities")
+  if(is.na(communities)) communities = list()
   
   #get_zenodo_metadata
   get_zenodo_metadata = function(){
@@ -413,9 +414,16 @@ function(action, entity, config){
       }
     }
   }
-  print(record_status)
+  config$logger.info(sprintf("Current record status: %s", record_status))
   out <- switch(record_status,
                 "draft" = {
+                  config$logger.info(sprintf("Deposit draft record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+                  ZENODO$depositRecord(
+                    zenodo_metadata,
+                    publish = FALSE #management of publication later
+                  )
+                },
+                "draft_with_review" = {
                   config$logger.info(sprintf("Deposit draft record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
                   ZENODO$depositRecord(
                     zenodo_metadata,
@@ -537,7 +545,7 @@ function(action, entity, config){
     #If ok, we submit it to the community
     #If the geoflow user is maintainer of this community, make possible to accept immediatly the record
     if(length(communities)>0){
-      if(out$metadata$status == "published"){
+      if(out$status == "published"){
         config$logger.info("Adding published record to communities")
         for(community in communities){
           config$logger.info(sprintf("-> Processing community %s", community))
