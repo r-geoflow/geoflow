@@ -30,9 +30,9 @@
 		"type": "output",
 		"software_type": "geonode",
 		"parameters": {
-			"url": "{{GEONODE_URL}}",
-			"user": "{{GEONODE_USER}}",
-			"pwd": "{{GEONODE_PASSWORD}}",
+			"url": "{{ GEONODE_URL }}",
+			"user": "{{ GEONODE_USER }}",
+			"pwd": "{{ GEONODE_PASSWORD }}",
 			"logger": "DEBUG"
 		}
 	}
