@@ -117,6 +117,17 @@ function(action, entity, config){
     update <- TRUE
     record_status <- zenodo_metadata$status
     
+    if(length(zenodo_metadata$getVersions())>0){
+      #to know if the record has been already published, we check if there is at least one version set
+      #the property "is_published" is transient to the record and can't be used
+      if(!depositWithFiles){
+        #the first run of the action will be skipped and we will wait for the final generic_uploader run
+        #with depositWithFiles=TRUE to run the version to avoid two versions to be created
+        config$logger.info(sprintf("Zenodo: record '%s' already published. Skip 1st run to create version with generic uploader at the end of the workflow", zenodo_metadata$id))
+        return(TRUE)
+      }
+    }
+    
     #case of published records and 'edition' strategy, need to unlock record
     if(record_status == "published" &&
        zenodo_metadata$is_published &&
@@ -126,17 +137,6 @@ function(action, entity, config){
       unlocked_rec <- ZENODO$editRecord(zenodo_metadata$id)
       if(is(unlocked_rec, "ZenodoRecord")){
         zenodo_metadata <- unlocked_rec
-      }
-    }
-    
-    if(length(zenodo_metadata$getVersions())>0 && strategy == "newversion"){
-      #to know if the record has been already published, we check if there is at least one version set
-      #the property "is_published" is transient to the record and can't be used
-      if(!depositWithFiles){
-        #the first run of the action will be skipped and we will wait for the final generic_uploader run
-        #with depositWithFiles=TRUE to run the version to avoid two versions to be created
-        config$logger.info(sprintf("Zenodo: record '%s' already published. Skip 1st run to create version with generic uploader at the end of the workflow", zenodo_metadata$id))
-        return(TRUE)
       }
     }
     
@@ -174,6 +174,7 @@ function(action, entity, config){
       config$logger.info("Setting Zenodo record metadata properties")
     }
     #language
+    zenodo_metadata$metadata$languages = list()
     if(!is.null(entity$language)){
       zenodo_metadata$addLanguage(entity$language)
     }
@@ -182,10 +183,27 @@ function(action, entity, config){
     if(!is.null(entity$titles[["alternative"]])){
       zenodo_metadata$addAdditionalTitle(entity$titles[["alternative"]], type = "alternative-title")
     }
+    zenodo_metadata$metadata$additional_descriptions = list()
     abstract = gsub("\n", "<br>", entity$descriptions[["abstract"]])
     zenodo_metadata$setDescription(abstract)
     if(!is.null(entity$descriptions[["info"]])){
       zenodo_metadata$addAdditionalDescription(entity$descriptions[["info"]], type = "technical-info")
+    }
+    if(!is.null(entity$provenance)){
+      prov = paste0("<p>", gsub("\n", "<br>", entity$provenance$statement), "</p>")
+      if(length(entity$provenance$processes)>0){
+        prov = c(prov, "<ol>")
+        for(process in entity$provenance$processes){
+          prov = c(prov, paste0(
+            "<li>", 
+            "<strong>", process$rationale, "</strong>",
+            if(!is.null(process$description)) paste0(": ", process$description) else "",
+            "</li>"))
+        }
+      }
+      prov = c(prov, "</ol>")
+      prov = paste0(prov, collapse="\n")
+      zenodo_metadata$addAdditionalDescription(prov, type = "methods")
     }
       
     #keywords (free text) & subjects
@@ -309,6 +327,7 @@ function(action, entity, config){
     }
     
     #Licenses
+    zenodo_metadata$metadata$rights = list()
     if(length(entity$rights)>0){
       licenses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "license"})]
       if(length(licenses)>0){
@@ -487,7 +506,7 @@ function(action, entity, config){
                   switch(strategy,
                    "edition" = {
                      config$logger.info(sprintf("Edit published record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
-                     ZENODO$depositRecord(zenodo_metadata, publish = publish)
+                     ZENODO$depositRecord(zenodo_metadata, publish = FALSE) #management of publication later
                     },
                    "newversion" = {
                      config$logger.info(sprintf("Deposit record version with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
