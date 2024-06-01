@@ -1840,7 +1840,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                   if (nrow(matchAttrValues)>0){
                     #Extract label[code] of this values
                     for(i in 1:nrow(matchAttrValues)){
-                      matchAttrValues$keyword[i]<-paste0("\'",matchAttrValues$label[i],"[",matchAttrValues$code[i],"]\'",if(!is.na(matchAttrValues$uri[i])){paste0("@",matchAttrValues$uri[i])}else{""})
+                      matchAttrValues$keyword[i]<-paste0(matchAttrValues$label[i]," [",matchAttrValues$code[i],"]",if(!is.na(matchAttrValues$uri[i])){paste0("@",matchAttrValues$uri[i])}else{""})
                     }
                     keywords<-unique(matchAttrValues$keyword)
                     
