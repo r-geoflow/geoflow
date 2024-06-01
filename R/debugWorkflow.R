@@ -128,6 +128,9 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
     entity$enrichWithSubjects(config)
   }
   
+  #enrich with metadata
+  entity$enrichWithMetadata(config)
+  
   #runLocalActions?
   if(runLocalActions){
     if(!is.null(entity$data)) {
@@ -140,7 +143,7 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
             .geoflow$debug$options <- entity_action$options
           }
           #we trigger entity enrichment (in case entity data action involved modification of entity)
-          entity$enrichWithMetadata()
+          entity$enrichWithMetadata(config)
         }
       }else{
         config$logger.info("Execution of entity data actions is disabled")
