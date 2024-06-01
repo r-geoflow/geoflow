@@ -173,12 +173,17 @@ function(action, entity, config){
     }else{
       config$logger.info("Setting Zenodo record metadata properties")
     }
+    #language
+    if(!is.null(entity$language)){
+      zenodo_metadata$addLanguage(entity$language)
+    }
     #basic record description
     zenodo_metadata$setTitle(entity$titles[["title"]])
     if(!is.null(entity$titles[["alternative"]])){
       zenodo_metadata$addAdditionalTitle(entity$titles[["alternative"]], type = "alternative-title")
     }
-    zenodo_metadata$setDescription(entity$descriptions[["abstract"]])
+    abstract = gsub("\n", "<\br>", entity$descriptions[["abstract"]])
+    zenodo_metadata$setDescription(abstract)
     if(!is.null(entity$descriptions[["info"]])){
       zenodo_metadata$addAdditionalDescription(entity$descriptions[["info"]], type = "technical-info")
     }
@@ -254,7 +259,54 @@ function(action, entity, config){
         contact_added <- c(contact_added, contact$identifiers[["id"]])
       }
     }
-    #TODO contributors
+    #contributors
+    zenodo_metadata$metadata$contributors <- list()
+    zenodo_role_types = c("contactperson", "datacollector", "datacurator", "datamanager", 
+                                 "distributor", "editor", "funder", "hostinginstitution", "producer", 
+                                 "projectleader", "projectmanager", "projectmember", "registrationagency", 
+                                 "registrationauthority", "relatedperson", "researcher", "researchgroup", 
+                                 "rightsholder", "supervisor", "sponsor", "workpackageleader", 
+                                 "other")
+    for(zenodo_role_type in zenodo_role_types){
+      contrib_added <- list()
+      contacts <- list()
+      if(length(entity$contacts)>0){
+        contacts <- entity$contacts[sapply(entity$contacts, function(x){x$role == zenodo_role_type})]
+        if(length(contacts)>0){
+          config$logger.info(sprintf("Adding contributors with role '%s'", zenodo_role_type))
+          for(contact in contacts){
+          
+            #manage orcid?
+            orcid <- NULL
+            contrib_ids <- contact$identifiers
+            if(any(names(contrib_ids)=="orcid")){
+              contrib_ids <- contrib_ids[names(contrib_ids)=="orcid"]
+              if(length(contrib_ids)>0) orcid <- contrib_ids[[1]]
+            }
+            #add/update creators
+            if(!(contact$identifiers[["id"]] %in% contrib_added)){
+              if(is.na(contact$firstName) || is.na(contact$lastName)){
+                zenodo_metadata$addContributor(
+                  name = contact$organizationName,
+                  affiliations = contact$organizationName,
+                  role = zenodo_role_type,
+                  orcid = orcid
+                )
+              }else{
+                zenodo_metadata$addContributor(
+                  firstname = contact$firstName, 
+                  lastname = contact$lastName, 
+                  affiliations = contact$organizationName,
+                  role = zenodo_role_type,
+                  orcid = orcid
+                )
+              }
+              contrib_added <- c(contrib_added, contact$identifiers[["id"]])
+            }
+          }
+        }
+      } 
+    }
     
     #Licenses
     if(length(entity$rights)>0){
@@ -325,14 +377,15 @@ function(action, entity, config){
     }
     
     #grants
-    if(length(entity$relations)){
-      grants = entity$relations[sapply(entity$relations, function(x){tolower(x$key) == "grant"})]
-      if(length(grants)>0){
-        for(grant in grants){
-          zenodo_metadata$addGrant(grant, sandbox = ZENODO$sandbox)
-        }
-      }
-    }
+    #TODO missing support in zen4R
+    # if(length(entity$relations)){
+    #   grants = entity$relations[sapply(entity$relations, function(x){tolower(x$key) == "grant"})]
+    #   if(length(grants)>0){
+    #     for(grant in grants){
+    #       zenodo_metadata$addGrant(grant, sandbox = ZENODO$sandbox)
+    #     }
+    #   }
+    # }
     
   }else{
     config$logger.info("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")
