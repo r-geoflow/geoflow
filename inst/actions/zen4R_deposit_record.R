@@ -182,7 +182,7 @@ function(action, entity, config){
     if(!is.null(entity$titles[["alternative"]])){
       zenodo_metadata$addAdditionalTitle(entity$titles[["alternative"]], type = "alternative-title")
     }
-    abstract = gsub("\n", "<\br>", entity$descriptions[["abstract"]])
+    abstract = gsub("\n", "<br>", entity$descriptions[["abstract"]])
     zenodo_metadata$setDescription(abstract)
     if(!is.null(entity$descriptions[["info"]])){
       zenodo_metadata$addAdditionalDescription(entity$descriptions[["info"]], type = "technical-info")
