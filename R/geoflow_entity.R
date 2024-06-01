@@ -1838,20 +1838,21 @@ geoflow_entity <- R6Class("geoflow_entity",
                   matchAttrValues <- subset(fat_attr_register$data, code %in% featureAttrValues)
                   
                   if (nrow(matchAttrValues)>0){
-                    #Extract label[code] of this values
-                    for(i in 1:nrow(matchAttrValues)){
-                      matchAttrValues$keyword[i]<-paste0(matchAttrValues$label[i]," [",matchAttrValues$code[i],"]",if(!is.na(matchAttrValues$uri[i])){paste0("@",matchAttrValues$uri[i])}else{""})
-                    }
-                    keywords<-unique(matchAttrValues$keyword)
-                    
                     defSource <- fat_attr$defSource
                     if(is.na(defSource)){desc_name<-paste0("[",fat_attr$name,"]")}else{
                       desc_name<-paste0("[",defSource[1],"]")
                       if(!is.null(attr(defSource,"description"))) desc_name<-paste0("[",attr(defSource,"description"),"]")
                       if(!is.null(attr(defSource,"uri"))) desc_name<-paste0(desc_name,"@",attr(defSource,"uri"))
                     }
-                    subject <- paste0("theme",desc_name,":",paste0(keywords,collapse=","))
-                    subject_obj <- geoflow_subject$new(str = subject)
+                    subject_obj <- geoflow_subject$new()
+                    subject_obj$setKey("theme")
+                    subject_obj$setName(desc_name)
+                    for(i in 1:nrow(matchAttrValues)){
+                      subject_obj$addKeyword(
+                        keyword = paste0(matchAttrValues$label[i]," [",matchAttrValues$code[i],"]"),
+                        uri = if(!is.na(matchAttrValues$uri[i])) matchAttrValues$uri[i] else NULL
+                      )
+                    }
                     self$addSubject(subject_obj)  
                     
                   }
