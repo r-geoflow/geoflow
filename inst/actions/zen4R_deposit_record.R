@@ -396,15 +396,14 @@ function(action, entity, config){
     }
     
     #grants
-    #TODO missing support in zen4R
-    # if(length(entity$relations)){
-    #   grants = entity$relations[sapply(entity$relations, function(x){tolower(x$key) == "grant"})]
-    #   if(length(grants)>0){
-    #     for(grant in grants){
-    #       zenodo_metadata$addGrant(grant, sandbox = ZENODO$sandbox)
-    #     }
-    #   }
-    # }
+    if(length(entity$relations)){
+      grants = entity$relations[sapply(entity$relations, function(x){tolower(x$key) == "grant"})]
+      if(length(grants)>0){
+        for(grant in grants){
+          zenodo_metadata$addGrant(grant, sandbox = ZENODO$sandbox)
+        }
+      }
+    }
     
   }else{
     config$logger.info("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")
