@@ -11,7 +11,7 @@
 
 At first, default actions of the library were meant to focus on providing turn-key actions for geospatial (meta)data:
 
-* by creating manage geospatial (meta)data complying with [ISO/TC211](https://committee.iso.org/home/tc211) and [OGC](https://www.ogc.org/standards) geographic information standards (eg 19115/19119/19110/19139) and related best practices (eg. INSPIRE); and
+* by creating manage geospatial (meta)data complying with [ISO/TC211](https://committee.iso.org/home/tc211) and [OGC](https://www.ogc.org/standards/) geographic information standards (eg 19115/19119/19110/19139) and related best practices (eg. INSPIRE); and
 * by facilitating extraction, reading and publishing of standard geospatial (meta)data within widely used software that compound a Spatial Data Infrastructure (SDI), including spatial databases (eg. 'PostGIS'), metadata catalogues (eg. 'GeoNetwork', CSW servers), data servers (eg. GeoServer). 
 
 The library was then extended to actions for other domains:
