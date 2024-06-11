@@ -6,7 +6,7 @@
 require(geoflow, quietly = TRUE)
 require(testthat)
 
-cfg_file = system.file("extdata/workflows/config_metadata_gsheets_metadataeditr.json", package = "geoflow")
+cfg_file = system.file("extdata/workflows/config_metadataeditr_from_gsheets.json", package = "geoflow")
 
 #init
 test_that("init",{

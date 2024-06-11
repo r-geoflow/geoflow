@@ -29,10 +29,17 @@
         "api_url": "{{ WB_METADATAEDITOR_API_URL }}",
         "api_key": "{{ WB_METADATAEDITOR_API_KEY }}",
         "verbose": true
+      },
+      "properties": {
+        "collection_names": "geoflow"
       }
     }
   ],
   "actions": [
+    {
+      "id": "geometa-create-iso-19115",
+      "run": true
+    },
     {
       "id": "metadataeditr-create-project",
       "run": true
