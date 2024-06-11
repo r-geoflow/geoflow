@@ -350,6 +350,33 @@ function(action, entity, config){
     }
   }
   
+  #DOI resource
+  if(!is.null(entity$identifiers[["doi"]])){
+    metadataeditr::resources_add(
+      idno = entity$identifiers[["id"]],
+      dctype = "web",
+      title = "DOI",
+      description = "Digital Object Identifier",
+      file_path = paste0("http://dx.doi.org/", entity$identifiers[["doi"]])
+    )
+  }
+  
+  #entity HTTP(S) resources
+  if(length(entity$relations)>0){
+    http_relations <- entity$relations[sapply(entity$relations, function(x){
+      x$key %in% c("ftp","http", "download") | any(startsWith(x$key, c("wfs", "wms", "wcs", "csw")))
+    })]
+    for(http_relation in http_relations){
+      metadataeditr::resources_add(
+        idno = entity$identifiers[["id"]],
+        dctype = "web",
+        title = http_relation$name,
+        description = http_relation$description,
+        file_path = http_relation$link
+      )
+    }
+  }
+  
   #files
   if(depositWithFiles){
     #data
