@@ -18,11 +18,11 @@ test_that("init",{
   expect_equal(length(CFG$getContacts()), 4L)
   expect_equal(length(CFG$metadata$content$entities), 1L)
   expect_equal(length(CFG$getEntities()), 1L)
-  expect_equal(length(CFG$actions), 0L)
+  expect_equal(length(CFG$actions), 1L)
   expect_equal(length(CFG$software), 2L)
   expect_equal(names(CFG$software), c("input", "output"))
   expect_equal(length(CFG$software$input), 0L)
-  expect_equal(length(CFG$software$output), 0L)
+  expect_equal(length(CFG$software$output), 2L)
 })
 
 #debug
