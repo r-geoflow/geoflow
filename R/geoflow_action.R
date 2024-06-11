@@ -527,7 +527,11 @@ register_actions <- function(){
       target = "entity",
       target_dir = "metadata",
       packages = list("metadataeditr"),
-      available_options = list(),
+      available_options = list(
+        depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = TRUE),
+        depositDataPattern = list(def = "A regular expression to filter data files to upload in metadata editor", class = "character", default = ""),
+        depositMetadataPattern = list(def = "A regular expression to filter metadata files to upload in metadata editor", class = "character", default = "")
+      ),
       fun = source(system.file("actions", "metadataeditr_create_project.R", package = "geoflow"))$value
     )
   )

@@ -15,6 +15,11 @@ function(action, entity, config){
     collection_names = as.list(strsplit(MD_EDITOR_CONFIG$properties$collection_names, ",")[[1]])
   }
   
+  #options
+  depositWithFiles <- action$getOption("depositWithFiles")
+  depositDataPattern <- action$getOption("depositDataPattern")
+  depositMetadataPattern <- action$getOption("depositMetadataPattern")
+  
   #basic function to map a geoflow_contact to a metadata editor contact
   produce_md_contact = function(x){
     
@@ -343,5 +348,31 @@ function(action, entity, config){
         file_path = file.path(getwd(), "thumbnails", thumbnail$link)
       )   
     }
+  }
+  
+  #files
+  if(depositWithFiles){
+    #data
+    data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern)
+    for(data_file in data_files){
+      config$logger.info(sprintf("Upload data file '%s'", data_file))
+      metadataeditr::resources_add(
+        idno = entity$identifiers[["id"]],
+        dctype = "dat",
+        title = data_file,
+        file_path = file.path(getwd(), "data", data_file)
+      )
+    }
+    #metadata
+    # metadata_files <- list.files(file.path(getwd(),"metadata"), pattern = depositMetadataPattern)
+    # for(metadata_file in metadata_files){
+    #   config$logger.info(sprintf("Upload metadata file '%s'", metadata_file))
+    #   metadataeditr::resources_add(
+    #     idno = entity$identifiers[["id"]],
+    #     dctype = "dat",
+    #     title = metadata_file,
+    #     file_path = file.path(getwd(), "metadata", metadata_file)
+    #   )
+    # }
   }
 }
