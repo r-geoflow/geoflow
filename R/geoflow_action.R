@@ -519,7 +519,17 @@ register_actions <- function(){
         output_format = list(def = "output format generate by Rmarkdown template (e.g. 'html','pdf')", class = "character",choices = list("html","pdf","word","odt","rtf","md","github"), add_choices = FALSE, multiple = FALSE, default = "html")
       ),
       fun = source(system.file("actions", "rmarkdown_create_metadata.R", package = "geoflow"))$value
-    )    
+    ),
+    geoflow_action$new(
+      id="metadataeditr-create-project",
+      types = list("Metadata publication"),
+      def = "Create and publish a geospatial project in the World bank metadata editor",
+      target = "entity",
+      target_dir = "metadata",
+      packages = list("metadataeditr"),
+      available_options = list(),
+      fun = source(system.file("actions", "metadataeditr_create_project.R", package = "geoflow"))$value
+    )
   )
   .geoflow$actions <- objs
 }

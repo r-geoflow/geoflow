@@ -1,0 +1,41 @@
+{
+  "profile": {
+    "id": "my-workflow",
+    "name": "My workflow",
+  	"project": "Test geoflow project",
+  	"organization": "My organization",
+  	"mode": "entity"
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1KSc_IrM86GrNpUASCIVfq6L9cmML77iwpcSbliynYZk/edit?gid=1962881097#gid=1962881097"
+      }
+    ],
+    "contacts" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1BqlXwA2fKiRuozNAQhBb_PbQVSPTCfl8_Q9rfM8E2ws/edit?usp=sharing"
+      }
+    ]
+  },
+  "software": [
+    {
+      "id": "wb-metadataeditr",
+      "type": "output",
+      "software_type": "metadataeditr",
+      "parameters": {
+        "api_url": "{{ WB_METADATAEDITOR_API_URL }}",
+        "api_key": "{{ WB_METADATAEDITOR_API_KEY }}",
+        "verbose": true
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "metadataeditr-create-project",
+      "run": true
+    }
+  ]
+}
