@@ -42,21 +42,6 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
   .geoflow$debug = list()
   .geoflow$debug$config = config
   
-  #entities
-  entities <- config$getEntities()
-  entity <- entities[[entityIndex]]
-  .geoflow$debug$entity <- entity
-
-  #skipDataDownload
-  skipDataDownload = FALSE
-  if(!is.null(config$profile$options$skipFileDownload)){
-    config$logger.warn("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
-    skipDataDownload = config$profile$options$skipFileDownload
-  }
-  skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
-  skipEnrichWithData = if(!is.null(config$profile$options$skipEnrichWithData)) config$profile$options$skipEnrichWithData else FALSE
-  skipEnrichWithDatatypes = if(!is.null(config$profile$options$skipEnrichWithDatatypes)) config$profile$options$skipEnrichWithDatatypes else FALSE
-  
   #run software actions?
   if(runSoftwareActions){
     #function to run software actions
@@ -81,6 +66,25 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
     runSoftwareActions(config, "input", "onstart")
     runSoftwareActions(config, "output", "onstart")
   }
+  
+  #if raw mode we end here
+  if(config$profile$mode == "raw") return(.geoflow$debug)
+  
+  #skipDataDownload
+  skipDataDownload = FALSE
+  if(!is.null(config$profile$options$skipFileDownload)){
+    config$logger.warn("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
+    skipDataDownload = config$profile$options$skipFileDownload
+  }
+  skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
+  skipEnrichWithData = if(!is.null(config$profile$options$skipEnrichWithData)) config$profile$options$skipEnrichWithData else FALSE
+  skipEnrichWithDatatypes = if(!is.null(config$profile$options$skipEnrichWithDatatypes)) config$profile$options$skipEnrichWithDatatypes else FALSE
+  
+  
+  #entities
+  entities <- config$getEntities()
+  entity <- entities[[entityIndex]]
+  .geoflow$debug$entity <- entity
   
   #create entity jobdir
   jobdir = config$job
