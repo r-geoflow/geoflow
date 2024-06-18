@@ -18,10 +18,10 @@ Description: An engine to facilitate the orchestration and execution of metadata
   standardized configuration files (JSON format) allows fully reproducible workflows to facilitate the work of data and information managers.
 Authors@R: c(
   person("Emmanuel", "Blondel", role = c("aut", "cre", "cph"), email = "emmanuel.blondel1@gmail.com", comment = c(ORCID = "0000-0002-5870-5762")),
-  person("Julien", "Barde", role = c("aut"), comment = c(ORCID = "0000-0002-3519-6141")),
-  person("Wilfried", "Heintz", role = c("aut"), comment = c(ORCID = "0000-0002-9244-9766")),
-  person("Alexandre", "Bennici", role = c("aut"), comment = c(ORCID = "0000-0003-2160-3487")),
-  person("Sylvain", "Poulain", role = c("ctb")),
+  person("Julien", "Barde", role = c("ctb"), comment = c(ORCID = "0000-0002-3519-6141")),
+  person("Wilfried", "Heintz", role = c("ctb"), comment = c(ORCID = "0000-0002-9244-9766")),
+  person("Alexandre", "Bennici", role = c("ctb"), comment = c(ORCID = "0000-0003-2160-3487")),
+  person("Sylvain", "Poulain", role = c("ctb"), comment = c(ORCID = "0009-0005-9789-9095")),
   person("Bastien", "Grasset",role = c("ctb")),
   person("Jeroen", "Ooms", role = c("ctb")),
   person("Yvan", "Le Bras", role = c("ctb")),
