@@ -652,9 +652,11 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   
   if(config$profile$mode == "raw"){
     config$logger.info("Copying raw action scripts to job directory")
-    for(action in config$actions){
+    if(length(config$actions)>0) for(i in 1:length(config$actions)){
+      action = config$actions[[i]]
       config$logger.info(sprintf("Copying %s ...", action$script))
       file.copy(from = file.path(config$wd, action$script), to = jobDirPath)
+      config$actions[[i]]$script = basename(action$script)
     }
   }
 
