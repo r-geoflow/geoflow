@@ -48,11 +48,19 @@
     },
     {
       "id": "geometa-create-iso-19110",
-      "run": true
+      "run": true,
+      "options" : {
+        "exclude_values_for_attributes": ["id"],
+        "default_max_occurs": 1
+      }    
     },
     {
       "id": "metadataeditr-create-project",
-      "run": true
+      "run": true,
+      "options" : {
+        "fc_exclude_values_for_attributes": ["id"],
+        "fc_default_max_occurs": 1
+      }   
     }
   ]
 }
