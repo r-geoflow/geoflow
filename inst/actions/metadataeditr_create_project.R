@@ -1,5 +1,7 @@
 function(action, entity, config){
   
+  skipEnrichWithData = if(!is.null(config$profile$options$skipEnrichWithData)) config$profile$options$skipEnrichWithData else FALSE
+  
   if(!requireNamespace("metadataeditr", quietly = TRUE)){
     stop("The 'metadataeditr-create-project' action requires the 'metadataeditr' package")
   }
@@ -69,23 +71,23 @@ function(action, entity, config){
     if(is.null(x$firstName)) x$firstName = NA
     if(is.null(x$lastName)) x$lastName = NA
     if(!is.na(x$firstName) && !is.na(x$lastName)) md_contact$individualName = paste(x$firstName, x$lastName)
-    if(!is.na(x$organizationName)) md_contact$organisationName = x$organizationName
-    if(!is.na(x$positionName)) md_contact$positionName = x$positionName
-    if(!is.na(x$role)) md_contact$role = x$role
+    if(!is.null(x$organizationName)) if(!is.na(x$organizationName)) md_contact$organisationName = x$organizationName
+    if(!is.null(x$positionName)) if(!is.na(x$positionName)) md_contact$positionName = x$positionName
+    if(!is.null(x$role)) if(!is.na(x$role)) md_contact$role = x$role
     
     md_contact$contactInfo = list()
     md_contact$contactInfo$address = list()
-    if(!is.na(x$email)) md_contact$contactInfo$address$electronicMailAddress = x$email
-    if(!is.na(x$postalAddress)) md_contact$contactInfo$address$deliveryPoint = x$postalAddress
-    if(!is.na(x$city)) md_contact$contactInfo$address$city = x$city
-    if(!is.na(x$postalCode)) md_contact$contactInfo$address$postalCode = x$postalCode
-    if(!is.na(x$country)) md_contact$contactInfo$address$country = x$country
+    if(!is.null(x$email)) if(!is.na(x$email)) md_contact$contactInfo$address$electronicMailAddress = x$email
+    if(!is.null(x$postalAddress)) if(!is.na(x$postalAddress)) md_contact$contactInfo$address$deliveryPoint = x$postalAddress
+    if(!is.null(x$city)) if(!is.na(x$city)) md_contact$contactInfo$address$city = x$city
+    if(!is.null(x$postalCode)) if(!is.na(x$postalCode)) md_contact$contactInfo$address$postalCode = x$postalCode
+    if(!is.null(x$country)) if(!is.na(x$country)) md_contact$contactInfo$address$country = x$country
     md_contact$contactInfo$phone = list()
-    if(!is.na(x$voice)) md_contact$contactInfo$phone$voice = x$voice
-    if(!is.na(x$facsimile)) md_contact$contactInfo$phone$facsimile = x$facsimile
+    if(!is.null(x$country)) if(!is.na(x$voice)) md_contact$contactInfo$phone$voice = x$voice
+    if(!is.null(x$facsimile)) if(!is.na(x$facsimile)) md_contact$contactInfo$phone$facsimile = x$facsimile
     md_contact$contactInfo$onlineResource = list()
-    if(!is.na(x$websiteUrl)) md_contact$contactInfo$onlineResource$linkage = x$websiteUrl
-    if(!is.na(x$websiteName)) md_contact$contactInfo$onlineResource$name = x$websiteName
+    if(!is.null(x$websiteUrl)) if(!is.na(x$websiteUrl)) md_contact$contactInfo$onlineResource$linkage = x$websiteUrl
+    if(!is.null(x$websiteName)) if(!is.na(x$websiteName)) md_contact$contactInfo$onlineResource$name = x$websiteName
     
     return(md_contact)
   }
@@ -123,6 +125,10 @@ function(action, entity, config){
   production_date = Sys.Date()
   
   #metadata_information
+  edition = ""
+  if(!is.null(entity$descriptions$edition)) if(!is.na(entity$descriptions$edition)){
+    edition = entity$descriptions$edition
+  }
   project$metadata_information = list(
     title = entity$titles[["title"]],
     producers = lapply(producers, function(x){ 
@@ -132,7 +138,7 @@ function(action, entity, config){
       list(name = name) 
     }),
     production_date = production_date,
-    version = entity$descriptions$edition
+    version = edition
   )
   
   #description (~ ISO 19115)
@@ -242,7 +248,7 @@ function(action, entity, config){
       date = lapply(entity$dates, function(x){
         list(date = x$value, type = x$key)
       }),
-      edition = entity$descriptions$edition,
+      edition = edition,
       editionDate = if(any(sapply(entity$dates, function(x){x$key == "edition"}))){
         entity$dates[sapply(entity$dates, function(x){x$key == "edition"})][[1]]$value
       }else "",
@@ -264,30 +270,40 @@ function(action, entity, config){
       if(!is.null(thumbnail$description)) th$fileDescription = thumbnail$description
       return(th)
     }) else list(),
-    resourceFormat = lapply(entity$formats[sapply(entity$formats, function(x){x$key == "resource"})], function(resourceFormat){
-      rf = list(name = resourceFormat$name)
-      if(!is.null(resourceFormat$description)) rf$specification = resourceFormat$description
-      return(rf)
-    }),
-    descriptiveKeywords = do.call(c, lapply(entity$subjects[sapply(entity$subjects, function(x){return(x$key != "topic")})], function(subject){
-      lapply(subject$keywords, function(kwd){
-        out_kwd = list(type = subject$key, keyword = kwd$name)
-        if(!is.null(subject$name)) out_kwd$thesaurusName = subject$name
-        return(out_kwd)
+    resourceFormat = if(length(entity$formats)>0){
+      lapply(entity$formats[sapply(entity$formats, function(x){x$key == "resource"})], function(resourceFormat){
+        rf = list(name = resourceFormat$name)
+        if(!is.null(resourceFormat$description)) rf$specification = resourceFormat$description
+        return(rf)
       })
-    })),
+    }else{ list() },
+    descriptiveKeywords = if(length(entity$subjects)>0){
+      do.call(c, lapply(entity$subjects[sapply(entity$subjects, function(x){return(x$key != "topic")})], function(subject){
+        lapply(subject$keywords, function(kwd){
+          out_kwd = list(type = subject$key, keyword = kwd$name)
+          if(!is.null(subject$name)) out_kwd$thesaurusName = subject$name
+          return(out_kwd)
+        })
+      }))
+    }else{list()},
     resourceConstraints = list(
       list(
         legalConstraints = list(
-          useLimitation = lapply(entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "uselimitation"})], function(cons){
-            cons$values[[1]]
-          }),
-          accessConstraints = lapply(entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "accessconstraint"})], function(cons){
-            cons$values[[1]]
-          }),
-          useConstraints = lapply(entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "useconstraint"})], function(cons){
-            cons$values[[1]]
-          })
+          useLimitation = if(length(entity$rights)>0){
+            lapply(entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "uselimitation"})], function(cons){
+              cons$values[[1]]
+            })
+          }else{list()},
+          accessConstraints = if(length(entity$rights)>0){
+            lapply(entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "accessconstraint"})], function(cons){
+              cons$values[[1]]
+            })
+          }else{list()},
+          useConstraints = if(length(entity$rights)>0){
+            lapply(entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "useconstraint"})], function(cons){
+              cons$values[[1]]
+            })
+          }else{list()}
         )
       )
     ),
@@ -297,10 +313,10 @@ function(action, entity, config){
       geographicElement = list(
         list(
           geographicBoundingBox = list(
-            southBoundLatitude = entity$spatial_bbox$ymin,
-            westBoundLongitude = entity$spatial_bbox$xmin,
-            northBoundLatitude = entity$spatial_bbox$ymax,
-            eastBoundLongitude = entity$spatial_bbox$xmax
+            southBoundLatitude = entity$geo_bbox$ymin,
+            westBoundLongitude = entity$geo_bbox$xmin,
+            northBoundLatitude = entity$geo_bbox$ymax,
+            eastBoundLongitude = entity$geo_bbox$xmax
           )
         )
       ),
@@ -312,7 +328,11 @@ function(action, entity, config){
         }
       )
     ),
-    spatialRepresentationType = entity$data$spatialRepresentationType,
+    spatialRepresentationType = if(!is.null(entity$data$spatialRepresentationType)){
+      entity$data$spatialRepresentationType
+    }else{
+      
+    },
     language = list(entity$language),
     characterSet = list(
       list(codeListValue = "utf8")
@@ -322,11 +342,13 @@ function(action, entity, config){
 
   #description/distributionInfo
   project$description$distributionInfo = list(
-    distributionFormat = lapply(entity$formats[sapply(entity$formats, function(x){x$key == "distribution"})], function(distFormat){
-      df = list(name = distFormat$name)
-      if(!is.null(distFormat$description)) df$specification = distFormat$description
-      return(df)
-    }),
+    distributionFormat = if(length(entity$formats)>0){
+      lapply(entity$formats[sapply(entity$formats, function(x){x$key == "distribution"})], function(distFormat){
+        df = list(name = distFormat$name)
+        if(!is.null(distFormat$description)) df$specification = distFormat$description
+        return(df)
+      })
+    }else{list()},
     distributor = lapply(distributors, produce_md_contact)
   )
   
@@ -336,7 +358,7 @@ function(action, entity, config){
     project$description$dataQualityInfo = list(
       list(
         lineage = list(
-          statement = entity$provenance$statement,
+          statement = if(!is.null(entity$provenance$statement)) entity$provenance$statement else "",
           processStep = lapply(entity$provenance$processes, function(process){
             list(
               description = process$description,

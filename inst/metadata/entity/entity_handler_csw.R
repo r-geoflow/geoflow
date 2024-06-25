@@ -56,7 +56,13 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     #type
     if(length(rec$hierarchyLevel)>0) entity$setType(key = "generic", type = rec$hierarchyLevel[[1]]$attrs$codeListValue)
     #language
-    entity$setLanguage(rec$language$attrs$codeListValue)
+    lang = rec$language
+    if(is.list(lang)) if(!is.null(lang$attrs$codeListValue)){
+      entity$setLanguage(rec$language$attrs$codeListValue)
+    }else if(is.character(lang)){
+      entity$setLanguage(lang)
+    }
+   
     #srid
     if(length(rec$referenceSystemInfo)>0){
       code = rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code
@@ -64,7 +70,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       code = code_parts[length(code_parts)]
       code_parts = unlist(strsplit(code, ":"))
       code = code_parts[length(code_parts)]
-      if(code == "WGS 84") code = 4326
+      if(startsWith(code,"WGS 84")|startsWith(code,"WGS84")) code = 4326
       entity$setSrid(suppressWarnings(as.integer(code)))
     }
     
@@ -363,6 +369,15 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
         }
         entity$setProvenance(prov)
       }
+    }
+    
+    #spatialRepresentationInfo
+    if(length(rec$spatialRepresentationInfo)>0){
+      if(is.null(entity$data)) entity$data = geoflow_data$new()
+      entity$data$spatialRepresentationType = switch(class(rec$spatialRepresentationInfo[[1]])[1],
+        "ISOVectorSpatialRepresentation" = "vector",
+        "ISOGridSpatialRepresentation" = "grid"
+      )
     }
     
     return(entity)

@@ -1,0 +1,51 @@
+{
+  "profile": {
+    "id": "my-csw-workflow",
+    "name": "My CSW workflow",
+  	"project": "Test geoflow project",
+  	"organization": "My organization",
+  	"logos": [
+  		"https://via.placeholder.com/300x150.png/09f/fff?text=geoflow"
+  	],
+  	"mode": "entity"
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "ogc_csw",
+        "source": "dc:title like '%fishery purpose%'"
+      }
+    ]
+  },
+  "software": [
+    {
+    	"id": "csw",
+    	"type": "input",
+    	"software_type": "csw",
+    	"parameters": {
+    		"url": "https://www.fao.org/fishery/geonetwork/srv/eng/csw",
+    		"serviceVersion": "2.0.2",
+    		"logger": "DEBUG"
+    	}
+    },
+    {
+      "id": "wb-metadataeditr",
+      "type": "output",
+      "software_type": "metadataeditr",
+      "parameters": {
+        "api_url": "{{ WB_METADATAEDITOR_API_URL }}",
+        "api_key": "{{ WB_METADATAEDITOR_API_KEY }}",
+        "verbose": true
+      },
+      "properties": {
+        "collection_names": "geoflow"
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "metadataeditr-create-project",
+      "run": true
+    }
+  ]
+}
