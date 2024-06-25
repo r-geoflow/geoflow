@@ -523,11 +523,18 @@ register_actions <- function(){
     geoflow_action$new(
       id="metadataeditr-create-project",
       types = list("Metadata publication"),
-      def = "Create and publish a geospatial project in the World bank metadata editor",
+      def = "Create and publish a geospatial project in the World Bank metadata editor",
       target = "entity",
       target_dir = "metadata",
       packages = list("metadataeditr"),
       available_options = list(
+        fc = list(def = "Whether the feature catalog has to be produced", class = "logical", default = TRUE),
+        fc_exclude_attributes = list(def = "Attributes that should be excluded from the ISO 19110 production", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = c()),
+        fc_exclude_attributes_not_in_dictionary = list(def = "Feature catalog - Enable to exclude all attributes/variables not referenced as dictionary/featuretype", class="logical", default = FALSE),
+        fc_exclude_values_for_attributes = list(def = "Feature catalog - Attribute names for which listed values should not be produced", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = c()),
+        fc_extra_attributes = list(def = "Feature catalog - Extra attributes to add as feature catalog attributes although not in data", class = "character", choices = list(), add_choices = TRUE, multiple = TRUE, default = c()),
+        fc_default_min_occurs = list(def = "Feature catalog - The default min occurs value for feature attributes cardinality", class = "integer", default = 0L),
+        fc_default_max_occurs = list(def = "Feature catalog - The default max occurs value for feature attribute cardinality", class = "numeric", default = Inf),
         depositWithFiles = list(def = "Indicates if the action is uploading files", class = "logical", default = TRUE),
         depositDataPattern = list(def = "A regular expression to filter data files to upload in metadata editor", class = "character", default = ""),
         depositMetadataPattern = list(def = "A regular expression to filter metadata files to upload in metadata editor", class = "character", default = "")

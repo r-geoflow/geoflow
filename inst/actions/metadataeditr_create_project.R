@@ -16,9 +16,50 @@ function(action, entity, config){
   }
   
   #options
+  #feature catalog related options
+  fc <- action$getOption("fc")
+  fc_exclude_attributes <- action$getOption("fc_exclude_attributes")
+  fc_exclude_attributes_not_in_dictionary <- action$getOption("fc_exclude_attributes_not_in_dictionary")
+  fc_exclude_values_for_attributes <- action$getOption("fc_exclude_values_for_attributes")
+  fc_extra_attributes <- action$getOption("fc_extra_attributes")
+  fc_default_min_occurs <- action$getOption("fc_default_min_occurs")
+  fc_default_max_occurs <- action$getOption("fc_default_max_occurs")
+  #file upload related options
   depositWithFiles <- action$getOption("depositWithFiles")
   depositDataPattern <- action$getOption("depositDataPattern")
   depositMetadataPattern <- action$getOption("depositMetadataPattern")
+  
+  
+  #features if any
+  build_catalog_from_features = TRUE
+  if(fc){
+    #manage multiple sources (supposes a common data structure to expose as FC)
+    data_objects <- list()
+    if(is.null(entity$data$dir)){
+      data_objects <- list(entity$data)
+    }else{
+      data_objects <- entity$data$getData()
+    }
+    features = do.call("rbind", lapply(data_objects, function(data_object){data_object$features}))
+    if(is.null(features)){
+      if(!skipEnrichWithData){
+        warnMsg <- sprintf("No data features associated to entity '%s' and global option 'skipEnrichWithData' is false. Skip feature catalogue creation", entity$identifiers[["id"]])
+        config$logger.warn(warnMsg)
+        fc = FALSE
+      }else{
+        fto <- entity$data$featureTypeObj
+        if(!is.null(fto)){
+          infoMsg <- "Global option 'skipEnrichWithData' is true. Feature catalogue will be created based on the dictionary only"
+          config$logger.info(infoMsg)
+          build_catalog_from_features = FALSE
+        }else{
+          warnMsg <- "Global option 'skipEnrichWithData' is true, but no dictionary available. Skip feature catalogue creation"
+          config$logger.warn(warnMsg)
+          fc = FALSE
+        }
+      }
+    }
+  }
   
   #basic function to map a geoflow_contact to a metadata editor contact
   produce_md_contact = function(x){
@@ -313,8 +354,180 @@ function(action, entity, config){
 
   #description/contentInfo
   #description/feature_catalogue (common to all metadata standards?)
+  if(fc){
+    project$description$feature_catalogue = list()
+    project$description$feature_catalogue$name = paste0(entity$titles[["title"]], " - Feature Catalogue")
+    project$description$feature_catalogue$fieldOfApplication = list("FAIR") #to map
+    versionDate <- as.POSIXct(Sys.time())
+    project$description$feature_catalogue$versionNumber <- format(versionDate, "%Y%m%dT%H%M%S")
+    project$description$feature_catalogue$versionDate = list(
+      date = versionDate,
+      type = "publication"
+    )
+    project$description$feature_catalogue$producer = produce_md_contact(producers[[1]])
+    project$description$feature_catalogue$functionalLanguage = entity$language
+    #featuretype
+    ft = list(
+      typeName = entity$identifiers$id,
+      definition = entity$titles[["title"]],
+      code = entity$identifiers$id,
+      isAbstract = FALSE,
+      carrierOfCharacteristics = list()
+    )
+    
+    columns <- if(build_catalog_from_features){
+      #from data features
+      c(colnames(features), unlist(fc_extra_attributes))
+    }else{
+      #from dictionary
+      fto <- entity$data$featureTypeObj
+      sapply(fto$getMembers(), function(x){x$id})
+    }
+    for(featureAttrName in columns){
+      
+      if(featureAttrName %in% fc_exclude_attributes){
+        config$logger.warn(sprintf("Feature Attribute '%s' is listed in 'fc_exclude_attributes'. Discarding it...", featureAttrName)) 
+        next
+      }
+      
+      fat_attr_register <- NULL
+      
+      #create attribute
+      fat <- list()
+      #default name (from data)
+      memberName <- featureAttrName
+      
+      fat_attr <- NULL
+      fat_attr_desc <- NULL
+      fto <- entity$data$featureTypeObj
+      if(!is.null(fto)) fat_attr <- fto$getMemberById(featureAttrName)
+      if(!is.null(fat_attr)){
+        fat_attr_desc <- fat_attr$name
+        registerId <- fat_attr$registerId
+        if(!is.null(registerId)) if(!is.na(registerId)){
+          registers <- config$registers
+          if(length(registers)>0) registers <- registers[sapply(registers, function(x){x$id == registerId})]
+          if(length(registers)==0){
+            warnMsg <- sprintf("Unknown register '%s'. Ignored for creating feature catalogue", registerId)
+            config$logger.warn(warnMsg)
+          }else{
+            fat_attr_register <- registers[[1]]
+          }
+        }
+        if(!is.null(fat_attr_desc)) memberName <- fat_attr_desc
+      }else{
+        if(fc_exclude_attributes_not_in_dictionary){
+          config$logger.warn(sprintf("Feature Attribute '%s' not referenced in dictionary and 'fc_exclude_attributes_not_in_dictionary' option is enabled. Discarding it...", featureAttrName)) 
+          next
+        }
+      }
+      fat$memberName = memberName
+      fat$definition = fat_attr$def
+      #cardinality
+      minOccurs <- fc_default_min_occurs; if(!is.null(fat_attr)) minOccurs <- fat_attr$minOccurs
+      maxOccurs <- fc_default_max_occurs; if(!is.null(fat_attr)) maxOccurs <- fat_attr$maxOccurs
+      if(is.null(minOccurs)) minOccurs <- fc_default_min_occurs
+      if(is.null(maxOccurs)) maxOccurs <- fc_default_max_occurs
+      if(maxOccurs == "Inf") maxOccurs <- Inf
+      fat$cardinality = list(lower = minOccurs, upper = maxOccurs)
+      #code
+      fat$code = featureAttrName
+      #uom
+      fat$valueMeasurementUnit = fat_attr$uom
+      #add listed values
+      featureAttrValues <- fat_attr_register$data$code
+      if(build_catalog_from_features) if(featureAttrName %in% colnames(features)){
+        featureAttrValues <- switch(class(features)[1],
+                                    "sf" = features[,featureAttrName][[1]],
+                                    "data.frame" = features[,featureAttrName]
+        )
+      }
+      addValues <- TRUE
+      if(is(featureAttrValues, "sfc")){
+        addValues <- FALSE
+      }else if(featureAttrName %in% fc_exclude_values_for_attributes){
+        addValues <- FALSE
+      }else{
+        if(is.null(fat_attr)){
+          addValues <- FALSE
+        }else{
+          if(fat_attr$type == "variable") addValues <- FALSE
+        }
+      }
+      fat$listedValue = list()
+      if(!is.null(featureAttrValues) & addValues){
+        config$logger.info(sprintf("Listing values for feature Attribute '%s'...", featureAttrName)) 
+        featureAttrValues <- unique(featureAttrValues)
+        featureAttrValues <- featureAttrValues[order(featureAttrValues)]
+        for(featureAttrValue in featureAttrValues){
+          if(!is.na(featureAttrValue)){
+            val <- list(label = "", code = "", definition = "")
+            if(!is(featureAttrValue, "character")) featureAttrValue <- as(featureAttrValue, "character")
+            val$code = featureAttrValue
+            if(!is.null(fat_attr_register)){
+              reg_item <- fat_attr_register$data[fat_attr_register$data$code == featureAttrValue,]
+              if(nrow(reg_item)>0){
+                val$code = featureAttrValue
+                val$label = if(!is.na(reg_item[1L,"label"])) reg_item[1L,"label"] else ""
+                val$definition = if(!is.na(reg_item[1L, "definition"])) reg_item[1L, "definition"] else ""
+              }
+            }
+            fat$listedValue[[length(fat$listedValue)+1]] = val
+          }
+        }
+      }else{
+        config$logger.warn(sprintf("Skip listing values for feature Attribute '%s'...", featureAttrName))
+      }
+      
+      #add primitive type + data type (attribute or variable) as valueType
+      fat_type <- if(build_catalog_from_features & !is.null(featureAttrValues[1])){
+        switch(class(featureAttrValues[1])[1],
+               "integer" = "xsd:int",
+               "numeric" = "xsd:decimal",
+               "character" = "xsd:string",
+               "logical" = "xsd:boolean",
+               "Date" = "xsd:date",
+               "POSIXct" = "xsd:datetime",
+               "sfc_POINT" = "gml:PointPropertyType",
+               "sfc_MULTIPOINT" = "gml:MultiPointPropertyType",
+               "sfc_LINESTRING" = "gml:LineStringPropertyType",
+               "sfc_MULTILINESTRING" = "gml:MultiLineStringPropertyType",
+               "sfc_POLYGON" = "gml:PolygonPropertyType",
+               "sfc_MULTIPOLYGON" = "gml:MultiPolygonPropertyType"
+        )
+      }else{
+        type = if(!is.null(fto)) fto$getMemberById(featureAttrName)$type else "attribute"
+        switch(type,
+               "attribute" = "xsd:string",
+               "variable" = "xsd:decimal",
+               type
+        )
+      }
+      config$logger.info(sprintf("Set primitive type '%s' for feature Attribute '%s'...", fat_type, featureAttrName))
+      fat_generic_type <- if(build_catalog_from_features){
+        switch(class(featureAttrValues[1])[1],
+               "integer" = "variable",
+               "numeric" = "variable",
+               "attribute"
+        )
+      }else{
+        if(!is.null(fto)) fto$getMemberById(featureAttrName)$type else "attribute"
+      }
+      config$logger.info(sprintf("Feature member generic type for '%s': %s", featureAttrName, fat_generic_type))
+      if(!is.null(fat_attr)) fat_generic_type <- fat_attr$type
+      fat_type_anchor <- fat_type #ISOAnchor$new(name = fat_type, href = fat_generic_type)
+      fat$valueType = fat_type_anchor
+      
+      #add feature attribute as carrierOfCharacteristic
+      config$logger.info(sprintf("Add carrier of characteristics for feature Attribute '%s'...", featureAttrName))
+      ft$carrierOfCharacteristics[[length(ft$carrierOfCharacteristics)+1]] = fat
+    }
+    
+    project$description$feature_catalogue$featureType = list(ft)
+  }
   
   #creation
+  #-----------------------------------------------------------------------------
   output = metadataeditr::create_project(
     type = "geospatial",
     idno = entity$identifiers[["id"]],
@@ -329,6 +542,7 @@ function(action, entity, config){
   }
   
   #add resources
+  #-----------------------------------------------------------------------------
   #first remove existing resources
   reslist = metadataeditr::resources_list(entity$identifiers[["id"]])
   if(reslist$status_code==200){

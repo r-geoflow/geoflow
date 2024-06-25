@@ -10,13 +10,19 @@
     "entities": [
       {
         "handler": "gsheet",
-        "source": "https://docs.google.com/spreadsheets/d/1KSc_IrM86GrNpUASCIVfq6L9cmML77iwpcSbliynYZk/edit?gid=1962881097#gid=1962881097"
+        "source": "https://docs.google.com/spreadsheets/d/1sRB4CcVRmGMYlXXy-pibzYm4c1ldGeV1D9YxOGwIRVA/edit?gid=1962881097#gid=1962881097"
       }
     ],
     "contacts" : [
       {
         "handler": "gsheet",
-        "source": "https://docs.google.com/spreadsheets/d/1BqlXwA2fKiRuozNAQhBb_PbQVSPTCfl8_Q9rfM8E2ws/edit?usp=sharing"
+        "source": "https://docs.google.com/spreadsheets/d/1sRB4CcVRmGMYlXXy-pibzYm4c1ldGeV1D9YxOGwIRVA/edit?gid=1809507591#gid=1809507591"
+      }
+    ],
+    "dictionary" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1sRB4CcVRmGMYlXXy-pibzYm4c1ldGeV1D9YxOGwIRVA/edit?gid=227860508#gid=227860508"
       }
     ]
   },
@@ -38,6 +44,10 @@
   "actions": [
     {
       "id": "geometa-create-iso-19115",
+      "run": true
+    },
+    {
+      "id": "geometa-create-iso-19110",
       "run": true
     },
     {
