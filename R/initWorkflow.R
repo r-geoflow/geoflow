@@ -475,7 +475,6 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
             newcontact <- NULL
             if(is(contact,"geoflow_contact")){
               id <- contact$identifiers[["id"]]
-              config$logger.info(id)
               role <- contact$role
               if(!is.null(id)) if(!is.na(id)){
                 contact_from_directory <- directory_of_contacts[sapply(directory_of_contacts, function(x){id %in% x$identifiers})]
