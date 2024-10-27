@@ -435,6 +435,7 @@ geoflow_data <- R6Class("geoflow_data",
           self$dir <- data_dir
           ext_data_files <- list()
           ext_sld_files <- list()
+          all_data_files = list.files(data_dir, full.names = T)
           if(self$access == "default"){
             if(!is_absolute_path(data_dir) && !is.null(config)) data_dir <- file.path(config$session_wd, datasource_uri)
             if(!dir.exists(data_dir)){
@@ -451,7 +452,7 @@ geoflow_data <- R6Class("geoflow_data",
               )
               ext_data_files <- list.files(data_dir, pattern = paste0(".", ext), full.names = T)
             }else{
-              ext_data_files <- list.files(data_dir, full.names = T)
+              ext_data_files <- all_data_files
             }
             #exclude dirs
             ext_data_files = ext_data_files[!dir.exists(ext_data_files)]
@@ -485,14 +486,14 @@ geoflow_data <- R6Class("geoflow_data",
             }
           }
           
-          if(length(ext_data_files)>0){
-            ext_sld_files <- ext_data_files[endsWith(ext_data_files,".sld")]
+          if(length(all_data_files)>0){
+            ext_sld_files <- all_data_files[endsWith(all_data_files,".sld")]
             ext_data_files <-ext_data_files[!endsWith(ext_data_files,".sld")]
           }
  
           #detect presence of data files register
           data_files_register <- NULL
-          data_files_register_file = ext_data_files[basename(ext_data_files) == "register.csv"]
+          data_files_register_file = all_data_files[basename(all_data_files) == "register.csv"]
           if(length(data_files_register_file)>0){
             data_files_register_file = data_files_register_file[1]
             target_register_file = data_files_register_file
