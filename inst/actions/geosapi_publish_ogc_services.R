@@ -238,7 +238,7 @@ function(action, entity, config){
                              )
           )
         }else{
-          errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", filepath, datasource)
+          errMsg <- sprintf("Upload from local file(s): no file found for source '%s' (%s)", filepath, datasource)
           config$logger.error(errMsg)
           stop(errMsg)
         }
