@@ -72,6 +72,8 @@ Validates a source table using syntactic and content validation rules
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{raw}}{indicates whether to return a \code{list} of \code{geoflow_validator_cell} objects or a \code{data.frame}}
+
+\item{\code{debug}}{debug validation}
 }
 \if{html}{\out{</div>}}
 }

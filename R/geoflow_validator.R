@@ -893,6 +893,7 @@ geoflow_validator <- R6Class("geoflow_validator",
      
      #'@description Validates a source table using syntactic and content validation rules
      #'@param raw indicates whether to return a \code{list} of \code{geoflow_validator_cell} objects or a \code{data.frame}
+     #'@param debug debug validation
      #'@return a \code{list} of \code{geoflow_validator_cell} objects, or \code{data.frame} 
      validate_content = function(raw = FALSE){
        content_validation_report <- NULL
@@ -906,7 +907,12 @@ geoflow_validator <- R6Class("geoflow_validator",
            if(is.R6Class(col_validator_class)){
              out_col <- col_validator_class$new(i, which(colnames(src_obj)==colname), src_obj[,colname])
              if(!raw){
-               out_col <- out_col$validate()
+          
+               out_col <- try(out_col$validate(), silent = T)
+               if(is(out_col,"try-error")){
+                 stop(sprintf("Unexpected validation error for row %s column %s ('%s'), value '%s':\n%s", 
+                              i, which(colnames(src_obj)==colname), colname, src_obj[,colname], out_col[1]))
+               }
                out_col <- cbind(col = rep(colname,nrow(out_col)), out_col)
              }
            }
