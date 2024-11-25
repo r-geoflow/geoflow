@@ -112,7 +112,7 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
       #If cell is empty and can be empty it's okay, nothing to validate
       if(private$na_authorized){
         if(is.na(private$str)) return(report)
-        if(private$str == "") return(report)
+        if(as(private$str, "character") == "") return(report)
       }
       #If cell is empty and should't be empty return a error
       if(!private$na_authorized){
