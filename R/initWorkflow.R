@@ -221,7 +221,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         config$logger.info(sprintf("Configuring %s software '%s' (%s)", software$type, software$id, software$software_type))
         target_software$setId(software$id)
         target_software$setType(software$type)
-        if(!is.null(software$parameters)) target_software$setParameters(unlist(software$parameters))
+        if(!is.null(software$parameters)) target_software$setParameters(software$parameters)
         
         #check software dependencies
         target_software$checkPackages()

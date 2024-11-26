@@ -122,9 +122,8 @@ geoflow_software <- R6Class("geoflow_software",
     },
     
     #'@description Set properties. Function to call to pass argument values for a given \code{geoflow_software}
-    #'@param ... named list of properties
-    setProperties = function(...){
-      props <- list(...)[[1]]
+    #'@param props named list of properties
+    setProperties = function(props){
       propNames <- names(props)
       if(length(propNames)>0){
         for(propName in propNames){
@@ -144,9 +143,8 @@ geoflow_software <- R6Class("geoflow_software",
     },
     
     #'@description Set parameters. Function to call to pass argument values for a given \code{geoflow_software}
-    #'@param ... named list of parameters
-    setParameters = function(...){
-      params <- list(...)[[1]]
+    #'@param params named list of parameters
+    setParameters = function(params){
       paramNames <- names(params)
       if(length(paramNames)>0){
         for(paramName in paramNames){
