@@ -690,6 +690,23 @@ register_software <- function(){
         pwd = list(label = "Password", def = "Password for user authentication", class = "character"),
         logger = list(label = "Logger", def = "Level for 'geonode4R' logger messages (NULL,INFO or DEBUG)", class = "character", choices = c("INFO", "DEBUG"))
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #SMTP CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "smtp",
+      definition = "SMTP Mail client powered by 'blastula' package",
+      packages = list("blastula"),
+      handler = try(blastula::creds_envvar, silent = TRUE),
+      arguments = list(
+        user = list(label = "User", def = "User", class = "character"),
+        pass_envvar = list(label = "Password Env Variable", def = "Environment variable name giving the password", class = "character", default = "SMTP_PASSWORD"),
+        provider = list(label = "Provider", def = "Provider", class = "character"),
+        host = list(label = "Host", def = "Host", class = "character"),
+        port = list(label = "Port", def = "Port", class = "integer"),
+        use_ssl = list(label = "Use SSL", def = "Use SSL", class = "logical", default = TRUE)
+      )
     )
   )
   .geoflow$software <- software

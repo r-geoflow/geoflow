@@ -75,7 +75,8 @@ Suggests:
   atom4R,
   d4storagehub4R,
   rmarkdown,
-  dataverse
+  dataverse,
+  blastula
 License: MIT + file LICENSE
 URL: https://github.com/r-geoflow/geoflow
 BugReports: https://github.com/r-geoflow/geoflow
