@@ -655,8 +655,15 @@ get_config_resource_path <- function(config, path){
   is_url <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", path) > 0
   if(is_url) return(path)
   if(!is_absolute_path(path)){
+    path_root = config$root
+    mtch = gregexpr("\\.\\./", path)[[1]]
+    mtch = mtch[mtch != -1]
+    if(length(mtch)>0) for(i in 1:length(mtch)){
+      path_root = dirname(path_root)
+    }
+    path = gsub("\\.\\./", "", path)
     if(startsWith("./", path)) path = unlist(strsplit(path, "\\./"))[2]
-    path = file.path(config$root, path)
+    path = file.path(path_root, path)
   }
   return(path)
 }
