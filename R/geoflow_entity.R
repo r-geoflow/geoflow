@@ -2065,12 +2065,12 @@ geoflow_entity <- R6Class("geoflow_entity",
         }),collapse=line_separator),
         #Title
         Title = paste0(sapply(names(self$titles), function(name){
-          outtitle <- paste(name, self$titles[[name]],sep=":")
+          outtitle <- paste(name, paste0("\"",self$titles[[name]],"\""),sep=":")
           return(outtitle)
         }),collapse=line_separator),
         #Description
         Description = paste0(sapply(names(self$descriptions), function(name){
-          outdesc <- paste(name, self$descriptions[[name]],sep=":")
+          outdesc <- paste(name, paste0("\"",self$descriptions[[name]],"\""),sep=":")
           return(outdesc)
         }),collapse=line_separator),
         #Subject
@@ -2156,7 +2156,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         Provenance = {
           outprov <- NA
           if(!is.null(self$provenance)){
-            outprov <- paste0("statement:", self$provenance$statement, line_separator)
+            outprov <- paste0("statement:", paste0("\"",self$provenance$statement,"\""), line_separator)
             if(length(self$provenance$processes)>0){
               processes_str <- paste0(sapply(self$provenance$processes, function(process){
                 rationale <- paste0("\"", process$rationale, "\"")
