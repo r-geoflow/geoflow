@@ -58,7 +58,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     #type
     if(length(rec$hierarchyLevel)>0) entity$setType(key = "generic", type = rec$hierarchyLevel[[1]]$attrs$codeListValue)
     #language
-    entity$setLanguage(if(is.list(rec$language)) rec$language$attrs$codeListValue else rec$language)
+    entity$setLanguage(if(is(rec$language,"ISOLanguage")) rec$language$attrs$codeListValue else rec$language)
     #srid
     if(length(rec$referenceSystemInfo)>0){
       code = rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code
