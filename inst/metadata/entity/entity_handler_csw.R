@@ -44,7 +44,9 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     if(!is.null(rp$contactInfo$phone$voice)) if(!is.na(rp$contactInfo$phone$voice)) contact$setVoice(rp$contactInfo$phone$voice)
     if(!is.null(rp$contactInfo$phone$facsimile)) if(!is.na(rp$contactInfo$phone$facsimile)) contact$setFacsimile(rp$contactInfo$phone$facsimile)
     if(!is.null(rp$contactInfo$onlineResource$name)) if(!is.na(rp$contactInfo$onlineResource$name)) contact$setWebsiteName(rp$contactInfo$onlineResource$name)
-    if(!is.null(rp$contactInfo$onlineResource$linkage$value)) if(!is.na(rp$contactInfo$onlineResource$linkage$value)) contact$setWebsiteUrl(rp$contactInfo$onlineResource$linkage$value)
+    if(is(rp$contactInfo$onlineResource$linkage, "ISOURL")){
+      contact$setWebsiteUrl(rp$contactInfo$onlineResource$linkage$value)
+    }
     contact$setRole(rp$role$attrs$codeListValue)
     return(contact$clone(deep = TRUE))
   }
@@ -52,11 +54,11 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
   entities = lapply(recs, function(rec){
     entity = geoflow_entity$new()
     entity$setIdentifier("id", rec$fileIdentifier)
-    
+    print(sprintf("Processing metadata '%s' from CSW", rec$fileIdentifier))
     #type
     if(length(rec$hierarchyLevel)>0) entity$setType(key = "generic", type = rec$hierarchyLevel[[1]]$attrs$codeListValue)
     #language
-    entity$setLanguage(rec$language$attrs$codeListValue)
+    entity$setLanguage(if(is.list(rec$language)) rec$language$attrs$codeListValue else rec$language)
     #srid
     if(length(rec$referenceSystemInfo)>0){
       code = rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code
@@ -138,7 +140,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       
       #doi (in case available)
       hasDOI = sapply(rec$identificationInfo[[1]]$citation$identifier, function(identifier){
-        has = !is.character(identifier$code)
+        has = !is.character(identifier$code) & !is.na(identifier$code)
         if(has) has = regexpr(pattern = "dx.doi.org", identifier$code$attrs[["xlink:href"]]) > 0
         return(has)
       })
@@ -268,13 +270,15 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
         for(resource_format in resource_formats){
           format = geoflow_format$new()
           format$setKey("resource")
-          name = resource_format$name
-          if(is(name, "ISOAnchor")){
-            format$setUri(name$attrs[["xlink:href"]])
-            name = name$value
+          if(is(resource_format, "ISOFormat")){
+            name = resource_format$name
+            if(is(name, "ISOAnchor")){
+              format$setUri(name$attrs[["xlink:href"]])
+              name = name$value
+            }
+            format$setName(name)
+            entity$addFormat(format)
           }
-          format$setName(name)
-          entity$addFormat(format)
         }
       }
     }
@@ -284,7 +288,6 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       #distributors
       distributors = rec$distributionInfo$distributor
       for(distributor in distributors){
-        print(distributor$distributorContact)
         entity$addContact(createContactFromResponsibleParty(distributor$distributorContact))
       }
       #distribution formats
@@ -293,13 +296,15 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
         for(distrib_format in distrib_formats){
           format = geoflow_format$new()
           format$setKey("distribution")
-          name = distrib_format$name
-          if(is(name, "ISOAnchor")){
-            format$setUri(name$attrs[["xlink:href"]])
-            name = name$value
+          if(is(distrib_format, "ISOFormat")){
+            name = distrib_format$name
+            if(is(name, "ISOAnchor")){
+              format$setUri(name$attrs[["xlink:href"]])
+              name = name$value
+            }
+            format$setName(name)
+            entity$addFormat(format)
           }
-          format$setName(name)
-          entity$addFormat(format)
         }
       }
       
