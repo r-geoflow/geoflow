@@ -33,6 +33,7 @@ Imports:
   R6, 
   methods,
   dotenv,
+  benchmarkme,
   httr,
   jsonlite,
   XML,

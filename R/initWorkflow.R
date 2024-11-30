@@ -39,6 +39,8 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   cat("Session info\n")
   config$log_separator("=")
   print(sessionInfo())
+  print(paste("* RAM:", round(benchmarkme::get_ram()/1e9,1),"GB"))
+  print(paste("* CPU:", benchmarkme::get_cpu()$no_of_cores,"cores"))
   config$log_separator("=")
   cat("Workflow initialization\n")
   config$log_separator("=")
