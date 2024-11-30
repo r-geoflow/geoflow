@@ -451,7 +451,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                                        i, datasource, datasource_uri, getwd()))
             
             #basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
-            basefilename <- datasource_name
+            basefilename <- basename(datasource_name)
           
             #here either we only pickup zipped files and re-distribute them in job data directory
             #or we write it from data_object$features if the latter is not NULL and if writer available (for now only shp)
@@ -2156,8 +2156,9 @@ geoflow_entity <- R6Class("geoflow_entity",
         Provenance = {
           outprov <- NA
           if(!is.null(self$provenance)){
-            outprov <- paste0("statement:", paste0("\"",self$provenance$statement,"\""), line_separator)
+            outprov <- paste0("statement:", paste0("\"",self$provenance$statement,"\""))
             if(length(self$provenance$processes)>0){
+              outprov <- paste0(outprov, line_separator)
               processes_str <- paste0(sapply(self$provenance$processes, function(process){
                 rationale <- paste0("\"", process$rationale, "\"")
                 outproc <- paste0("process:", rationale)
