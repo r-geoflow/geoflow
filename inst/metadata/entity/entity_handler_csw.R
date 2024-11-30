@@ -155,11 +155,17 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       if(length(altitles)>0) for(altitle in altitles) entity$setTitle("alternative", altitle)
       #description
       entity$setDescription("abstract", rec$identificationInfo[[1]]$abstract)
-      entity$setDescription("purpose", rec$identificationInfo[[1]]$purpose)
+      if(!is.null(rec$identificationInfo[[1]]$purpose)) if(!is.na(rec$identificationInfo[[1]]$purpose)){
+        entity$setDescription("purpose", rec$identificationInfo[[1]]$purpose) 
+      }
       credits = rec$identificationInfo[[1]]$credit
       if(length(credits)>0) entity$setDescription("credit", credits[[1]])
-      entity$setDescription("info", rec$identificationInfo[[1]]$supplementalInformation)
-      entity$setDescription("edition", rec$identificationInfo[[1]]$citation$edition)
+      if(!is.null(rec$identificationInfo[[1]]$supplementalInformation)) if(!is.na(rec$identificationInfo[[1]]$supplementalInformation)){
+        entity$setDescription("info", rec$identificationInfo[[1]]$supplementalInformation)
+      }
+      if(!is.null(rec$identificationInfo[[1]]$citation$edition)) if(!is.na(rec$identificationInfo[[1]]$citation$edition)){
+        entity$setDescription("edition", rec$identificationInfo[[1]]$citation$edition)
+      }
       status = rec$identificationInfo[[1]]$status
       if(length(status)>0) entity$setDescription("status", status[[1]]$attrs$codeListValue)
       #subject
