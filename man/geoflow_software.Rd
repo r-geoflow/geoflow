@@ -249,13 +249,13 @@ Set attributes. Function to call when creating an instance of \code{geoflow_soft
 \subsection{Method \code{setProperties()}}{
 Set properties. Function to call to pass argument values for a given \code{geoflow_software}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setProperties(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setProperties(props)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{...}}{named list of properties}
+\item{\code{props}}{named list of properties}
 }
 \if{html}{\out{</div>}}
 }
@@ -283,13 +283,13 @@ Set software arguments. Function to call when creating an instance of \code{geof
 \subsection{Method \code{setParameters()}}{
 Set parameters. Function to call to pass argument values for a given \code{geoflow_software}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setParameters(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_software$setParameters(params)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{...}}{named list of parameters}
+\item{\code{params}}{named list of parameters}
 }
 \if{html}{\out{</div>}}
 }
