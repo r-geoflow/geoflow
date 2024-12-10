@@ -239,6 +239,10 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
           stop(errMsg)
         }
         client_params <- unlist(software[names(software)!="handler"])
+        if(software$id == "ocs"){
+          config$logger.info("OCS connection details")
+          print(client_params)
+        }
         client <- client_handler(client_params)
       }
       if(!is.null(config$software[[software$type]][[switch(software$type,"input"=software$id,"output"=software$software_type)]])){
