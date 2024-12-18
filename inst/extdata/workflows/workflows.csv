@@ -7,7 +7,7 @@ config_metadata_gsheets_iso19115_inspire.json,Load metadata entities/contacts fr
 config_metadata_gsheets_iso19115_inspire_geonetwork.json,Load metadata entities/contacts from Google Spreadsheet; generate ISO 19115/19139 metadata (with INSPIRE validation) and publish them in GeoNetwork (using the GeoNetwork API)
 config_metadata_gsheets_iso19115_inspire_geonetwork_with_uuid.json,Load metadata entities/contacts from Google Spreadsheet; generate ISO 19115/19139 metadata (with INSPIRE validation) and publish them in GeoNetwork (using the GeoNetwork API). Metadata identification with UUIDs.
 config_metadata_gsheets_zenodo.json,Load metadata entities/contacts from Google Spreadsheets and deposit records on Zenodo
-config_metadata_gsheets_zenodo_clean_options.json,Load metadata entities/contacts from Google Spreadsheets and deposit records on Zenodo, with deposit cleaning options
+config_metadata_gsheets_zenodo_clean_options.json,Load metadata entities/contacts from Google Spreadsheets and deposit records on Zenodo with deposit cleaning options
 config_metadata_gsheets_zenodo_full.json,Load metadata entities/contacts from Google Spreadsheets, deposit records on Zenodo and publish them
 config_metadata_gsheets_sdi_postgis_dbi.json,Load metadata entities/contacts from Google spreadsheets and upload a shapefile into a Postgis database
 config_metadata_gsheets_sdi_geoserver_shp.json,Load metadata entities/contacts from Google Spreadsheets and publish ESRI shapefile based layer on GeoServer
