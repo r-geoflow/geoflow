@@ -22,4 +22,7 @@
   #embedded actions
   register_actions()
   
+  #vocabularies
+  register_vocabularies()
+  
 } # nocov end

@@ -173,6 +173,9 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
           #enrich entities with metadata (other properties)
           entity$enrichWithMetadata(config)
           
+          #enrich entities with vocabularies
+          entity$enrichWithVocabularies(config)
+          
           #run sequence of entity data actions (if any)
           if(!is.null(entity$data)) {
             if(entity$data$run){

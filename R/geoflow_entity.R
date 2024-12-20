@@ -1864,6 +1864,42 @@ geoflow_entity <- R6Class("geoflow_entity",
       }
     },
     
+    
+    #'@description Enrichs the entity with vocabularies
+    #'@param config geoflow config object
+    enrichWithVocabularies = function(config){
+      
+      self$subjects = lapply(self$subjects, function(subject){
+        
+        if(is.null(subject$uri)) return(subject)
+        
+        #find vocabulary
+        vocabs = list_vocabularies(raw = T)
+        target_vocab = vocabs[sapply(vocabs, function(vocab){vocab$id == subject$uri})]
+        if(length(target_vocab)>0){
+          target_vocab = target_vocab[[1]]
+          subject$uri = target_vocab$uri
+          subject$keywords = lapply(subject$keywords, function(keyword){
+            if(!is.null(keyword$uri)){
+              #enrich from URI to add labels
+              rs = target_vocab$query_from_uri(uri = keyword$uri)
+              if(nrow(rs)>0){
+                keyword$name = rs[rs$lang == "en",]$prefLabel
+                for(lang in rs$lang){
+                  attr(keyword$name, paste0("locale#",toupper(lang))) = rs[rs$lang == lang,]$prefLabel
+                }
+              }
+            }else{
+              #enrich from an existing term to get URI + other labels
+            }
+            return(keyword)
+          })
+        }
+        
+        return(subject)
+      })
+    },
+    
     #'@description Enrichs the entity with formats
     #'@param config geoflow config object
     enrichWithFormats = function(config){

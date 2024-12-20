@@ -705,6 +705,18 @@ register_software <- function(){
         port = list(label = "Port", def = "Port", class = "integer"),
         use_ssl = list(label = "Use SSL", def = "Use SSL", class = "logical", default = TRUE)
       )
+    ),
+    #-------------------------------------------------------------------------------------------------------
+    #SPARQL CLIENT
+    #-------------------------------------------------------------------------------------------------------
+    geoflow_software$new(
+      software_type = "sparql",
+      definition = "A SPARQL endpoint client",
+      packages = list(),
+      handler = list,
+      arguments = list(
+        endpoint = list(label = "Endpoint", def = "SPARQL endpoint URL", class = "character")
+      )
     )
   )
   .geoflow$software <- software
