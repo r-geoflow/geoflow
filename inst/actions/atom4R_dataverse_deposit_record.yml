@@ -1,0 +1,45 @@
+id: atom4R-dataverse-deposit-record
+fun: atom4R_dataverse_deposit_record.R
+funders:
+  - name: Réseau Zone Ateliers
+    url: https://www.za-inee.org/
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  orphaned: true
+types:
+  - Data upload
+  - Data publication
+  - Metadata publication
+  - DOI management
+def: Deposits/Publish data and/or metetadata on a Dataverse using the Sword API
+target: job
+target_dir: dataverse
+pid_generator: dataverse
+pid_types:
+  doi: DOI_for_version
+generic_uploader: true
+packages:
+  - atom4R
+available_options:
+  depositWithFiles:
+    def: Indicates if the action is uploading files
+    class: logical
+    default: false
+  publish:
+    def: Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE
+    class: logical
+    default: false
+  deleteOldFiles:
+    def: Indicates if the action should delete old files prior upload new files
+    class: logical
+    default: true
+  update_metadata:
+    def: For an existing deposit, indicates if metadata elements should be updated
+    class: logical
+    default: true
+  update_files:
+    def: For an existing deposit, indicates if files should be updated
+    class: logical
+    default: true

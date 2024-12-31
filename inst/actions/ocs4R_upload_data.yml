@@ -1,0 +1,20 @@
+id: ocs4R-upload-data
+fun: ocs4R_upload_data.R
+funders:
+  - name: IRD
+    url: https:/www.ird.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Data upload
+def: Upload data to an OCS Cloud (NextCloud/Owncloud) Workspace
+target: NA
+target_dir: NA
+generic_uploader: false
+packages:
+  - ocs4R
+available_options: []

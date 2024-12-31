@@ -1,0 +1,47 @@
+id: sf-write-generic
+fun: sf_write_generic.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+  - name: Alexandre Bennici
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Data writing
+  - Data upload
+def: Import features data into several formats
+target: entity
+target_dir: data
+packages:
+  - sf
+  - DBI
+  - RSQLite
+  - RPostgres
+available_options:
+  type:
+    def: format to convert
+    class: character
+    choices:
+      - shp
+      - dbtable
+      - csv
+      - gpkg
+    default: NA
+  createIndexes:
+    def: create indexes for columns
+    class: logical
+    default: false
+  overwrite:
+    def: Overwrite policy
+    class: logical
+    default: true
+  append:
+    def: Append policy
+    class: logical
+    default: false
+  chunk.size:
+    def: Size of DB upload data chunk. Default is 0L, meaning no chunking is operated.
+    class: integer
+    default: 0

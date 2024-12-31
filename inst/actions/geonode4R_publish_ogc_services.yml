@@ -1,0 +1,21 @@
+id: geonode4R-publish-ogc-services
+fun: geonode4R_publish_ogc_services.R
+funders:
+  - name: IRD
+    url: https:/www.ird.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Data upload
+  - Data publication
+  - Metadata publication
+def: Publish data to GeoNode OGC web-services (WMS/WFS/WCS)
+target: NA
+target_dir: NA
+packages:
+  - geonode4R
+available_options: []

@@ -1,0 +1,71 @@
+id: geometa-create-iso-19115
+fun: geometa_create_iso_19115.R
+funders:
+  - name: R Consortium
+    url: https://r-consortium.org/
+  - name: UN-FAO 
+    url: https://www.fao.org
+  - name: IRD
+    url: https:/www.ird.fr
+  - name: INRAE
+    url: https://www.inrae.fr
+authors:
+  - 
+    name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Metadata production
+def: Produce an ISO/OGC 19115 metadata object and export it to XML
+target: entity
+target_dir: metadata
+packages:
+  - geometa
+  - ows4R
+available_options:
+  use_uuid:
+    def: Use UUID as metadata identifier, if not defined the UUID is pre-generated
+    class: logical
+    default: false
+  doi:
+    def: Add entity DOI - if defined - as metadata identifier and online resource
+    class: logical
+    default: false
+  doi_thumbnail:
+    def: if option 'doi' is true and this option enabled, a DOI thumbnail will be added
+    class: logical
+    default: false
+  inspire:
+    def: Validates ISO 19139 metadata with INSPIRE reference validator
+    class: logical
+    default: false
+  logo:
+    def: Add configure profile logo(s) - if defined - as metadata thumbnail(s)
+    class: logical
+    default: false
+  addfeatures:
+    def: Add entity data features - if defined - as metadata bounding polygon(s)
+    class: logical
+    default: false
+  featureid:
+    def: ID of entity data features used to identify bounding polygon(s) with option 'addfeatures'
+    class: character
+    default: NA
+  subject_geography:
+    def: Identifier of the subject handling a Geographic coverage.
+    class: character
+    default: geography
+  include_service_identification:
+    def: Include service identification info metadata block
+    class: logical
+    default: false
+  include_coverage_data_dimension_values:
+    def: Include data dimensions's range values to coverage description
+    class: logical
+    default: false
+  include_coverage_service_dimension_values:
+    def: Include ogc dimensions's range values to coverage description
+    class: logical
+    default: false

@@ -1,0 +1,77 @@
+id: zen4R-deposit-record
+fun: zen4R_deposit_record.R
+funders:
+  - name: IRD
+    url: https:/www.ird.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Data upload
+  - Data publication
+  - Metadata publication
+  - DOI management
+def: Deposits/Publish data and/or metadata in the Zenodo infrastructure
+target: job
+target_dir: zenodo
+pid_generator: zenodo
+pid_types:
+  doi: DOI_for_version
+  conceptdoi: DOI_for_allversions
+generic_uploader: true
+packages:
+  - zen4R
+available_options:
+  depositWithFiles:
+    def: Indicates if the action is uploading files
+    class: logical
+    default: false
+  depositDataPattern:
+    def: A regular expression to filter data files to upload in Zenodo
+    class: character
+    default: ""
+  depositMetadataPattern:
+    def: A regular expression to filter metadata files to upload in Zenodo
+    class: character
+    default: ""
+  zipEachDataFile:
+    def: Indicates if each data file should be zipped (to be used in case of large data files
+    class: logical
+    default: false
+  publish: 
+    def: Indicates if the action should publish the deposit. Requires 'depositWithFiles' set to TRUE
+    class: logical
+    default: false
+  review:
+    def: Indicates if the action should submit the record to a review/publication by a community. Requires 'publish' set to TRUE, and a community
+    class: logical
+    default: false
+  strategy:
+    def: Strategy to use when handling published records, either 'newversion' (default) or 'edition'
+    class: character
+    choices:
+      - newversion
+      - edition
+    default: newversion
+  deleteOldFiles:
+    def: Indicates if the action should delete old files prior upload new files
+    class: logical
+    default: true
+  update_metadata:
+    def: For an existing deposit, indicates if metadata elements should be updated
+    class: logical
+    default: true
+  update_files:
+    def: For an existing deposit, indicates if files should be updated
+    class: logical
+    default: true
+  communities:
+    def: One or more communities to which the deposit should be associated
+    class: character
+    choices: []
+    add_choices: true
+    multiple: true
+    default: NA

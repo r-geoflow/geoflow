@@ -1,0 +1,34 @@
+id: create-metadata-rmd
+fun: rmarkdown_create_metadata.R
+funders: []
+authors:
+  - name: Alexandre Bennici
+maintainer:
+  orphaned: true
+types:
+  - Metadata production
+  - Reporting
+def: Generate a Markdown out of a entity
+target: entity
+target_dir: markdown
+packages:
+  - rmarkdown
+available_options:
+  template:
+    def: Rmarkdown template
+    class: character
+    default: generic
+  output_format:
+    def: output format generate by Rmarkdown template (e.g. 'html','pdf')
+    class: character
+    choices:
+      - html
+      - pdf
+      - word
+      - odt
+      - rtf
+      - md
+      - github
+    add_choices: false
+    multiple: false
+    default: html

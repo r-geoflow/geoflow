@@ -1,0 +1,26 @@
+id: dataone-upload-datapackage
+fun: dataone_upload_datapackage.R
+funders:
+  - name: Réseau Zone Ateliers
+    url: https://www.za-inee.org/
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  orphaned: true
+types:
+  - Data upload
+  - Data publication
+  - Metadata publication
+  - DOI management
+def: Uploads a data package to a DataOne metacat node
+target: job
+target_dir: dataone
+pid_generator: dataone
+pid_types:
+  packageId: PackageId
+packages:
+  - mime
+  - datapack
+  - dataone
+available_options: []

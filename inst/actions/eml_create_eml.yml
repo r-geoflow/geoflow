@@ -1,0 +1,23 @@
+id: eml-create-eml
+fun: eml_create_eml.R
+funders:
+  - name: Réseau Zone Ateliers
+    url: https://www.za-inee.org/
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  orphaned: true
+types:
+  - Metadata production
+def: Produce an EML metadata object
+target: entity
+target_dir: metadata
+packages:
+  - EML
+  - emld
+available_options:
+  subject_taxonomy:
+    def: Identifier of the subject handling the Taxonomic coverage
+    class: character
+    default: taxonomy

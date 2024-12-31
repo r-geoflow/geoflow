@@ -1,0 +1,64 @@
+id: geonapi-publish-iso-19139
+fun: geonapi_publish_iso_19139.R
+funders:
+  - name: UN-FAO 
+    url: https://www.fao.org
+  - name: IRD
+    url: https:/www.ird.fr
+  - name: INRAE
+    url: https://www.inrae.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Metadata publication
+def: Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API
+target: entity
+target_dir: metadata
+packages:
+  - geometa
+  - geonapi
+available_options:
+  geometa_inspire:
+    def: Validates ISO 19139 metadata with INSPIRE reference validator before publication
+    class: logical
+    default: false
+  privileges:
+    def: Geonetwork privileges to set for the metadata to be published
+    class: character
+    choices: 
+      - view
+      - dynamic
+      - download
+      - editing
+      - notify
+      - featured
+    default:
+      - view
+      - dynamic
+      - download
+      - featured
+    multiple: true
+  group:
+    def: Geonetwork user group to which the metadata should be associated
+    class: character
+    default: 2
+  category:
+    def: Category of metadata resources to which the metadata record should be associated
+    class: character
+    default: datasets
+  add_metadata_link:
+    def: Adds a link (as online resource) that points to the published metadata (as OGC CSW GetRecordById URL)
+    class: logical
+    default: true
+  publish_thumbnails:
+    def: Uploads local thumbnails as attachments and publish them as thumbnails / graphic overviews
+    class: logical
+    default: false
+  create_doi_on_datacite:
+    def: Creates DOIs on DataCite. Requires a DataCite account to be registered in the GeoNetwork administration panel.
+    class: logical
+    default: false

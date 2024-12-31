@@ -1,0 +1,29 @@
+id: d4storagehub4R-upload-data
+fun: d4storagehub4R_upload_data.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Data upload
+def: Upload data/metadata to a D4Science Workspace
+target: NA
+target_dir: NA
+generic_uploader: true
+packages:
+  - d4storagehub4R
+available_options:
+  depositWithFiles:
+    def: Indicates if the action is uploading files
+    class: logical
+    default: false
+  otherUploadFolders:
+    def: List of Folders (other than 'data' and 'metadata') to upload and which may contain files which should enrich others actions
+    class: character
+    choices: []
+    add_choices: true
+    multiple: true
+    default: NULL

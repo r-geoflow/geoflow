@@ -1,0 +1,32 @@
+id: ows4R-publish-iso-19139
+fun: ows4R_publish_iso_19139.R
+funders:
+  - name: UN-FAO 
+    url: https://www.fao.org
+  - name: IRD
+    url: https:/www.ird.fr
+  - name: INRAE
+    url: https://www.inrae.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Metadata publication
+def: Publish/Update an ISO/OGC XML metadata object using OGC CSW Protocol
+target: entity
+target_dir: metadata
+packages:
+  - geometa
+  - ows4R
+available_options:
+  geometa_inspire: 
+    def: Validates ISO 19139 metadata with INSPIRE reference validator before publication
+    class: logical
+    default: false
+  add_metadata_link:
+    def: Adds a link (as online resource) that points to the published metadata (as OGC CSW GetRecordById URL)
+    class: logical
+    default: true

@@ -1,0 +1,63 @@
+id: geometa-create-iso-19110
+fun: geometa_create_iso_19110.R
+funders:
+  - name: R Consortium
+    url: https://r-consortium.org/
+  - name: UN-FAO 
+    url: https://www.fao.org
+  - name: IRD
+    url: https:/www.ird.fr
+  - name: INRAE
+    url: https://www.inrae.fr
+authors:
+  - 
+    name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Metadata production
+def: Produce an ISO 19110 metadata object and export it to XML
+target: entity
+target_dir: metadata
+packages:
+  - geometa
+available_options:
+  doi:
+    def: Add entity DOI - if defined - as metadata identifier and online resource
+    class: logical
+    default: false
+  exclude_attributes:
+    def: Attributes that should be excluded from the ISO 19110 production
+    class: character
+    choices: []
+    add_choices: true
+    multiple: true
+    default: NULL
+  exclude_attributes_not_in_dictionary:
+    def: Enable to exclude all attributes/variables not referenced as dictionary/featuretype
+    class: logical
+    default: false
+  exclude_values_for_attributes:
+    def: Attribute names for which listed values should not be produced
+    class: character
+    choices: []
+    add_choices: true
+    multiple: true
+    default: NULL
+  extra_attributes:
+    def: Extra attributes to add as feature catalog attributes although not in data
+    class: character
+    choices: []
+    add_choices: true
+    multiple: true
+    default: NULL
+  default_min_occurs:
+    def: The default min occurs value for feature attributes cardinality
+    class: integer
+    default: 0
+  default_max_occurs:
+    def: The default max occurs value for feature attribute cardinality
+    class: numeric
+    default: Inf

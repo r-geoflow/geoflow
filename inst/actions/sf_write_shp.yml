@@ -1,0 +1,18 @@
+id: sf-write-shp
+fun: sf_write_shp.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+  - name: Alexandre Bennici
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Data writing
+def: Import features data and zip files
+target: entity
+target_dir: data
+packages:
+  - sf
+available_options: []
