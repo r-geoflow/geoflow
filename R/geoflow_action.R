@@ -146,6 +146,7 @@ geoflow_action <- R6Class("geoflow_action",
       self$authors = yml$authors
       self$maintainer = yml$maintainer
       self$def = yml$def
+      self$types = yml$types
       self$target = if(yml$target=="NA") NA else yml$target
       self$target_dir = if(yml$target_dir=="NA") NA else yml$target_dir
       if(!is.na(self$target)) if(!self$target %in% c("entity","job")) stop("Action target should be either 'entity' or 'job'")
