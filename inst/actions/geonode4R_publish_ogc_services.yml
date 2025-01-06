@@ -14,6 +14,7 @@ types:
   - Data publication
   - Metadata publication
 def: Publish data to GeoNode OGC web-services (WMS/WFS/WCS)
+status: experimental
 target: NA
 target_dir: NA
 packages:

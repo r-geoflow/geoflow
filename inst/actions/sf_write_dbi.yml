@@ -12,6 +12,7 @@ types:
   - Data writing
   - Data upload
 def: Import features data into Postgres/Postgis
+status: stable
 target: entity
 target_dir: data
 packages:

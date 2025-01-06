@@ -10,6 +10,7 @@ maintainer:
 types:
   - Data upload
 def: Upload data/metadata to a D4Science Workspace
+status: stable
 target: NA
 target_dir: NA
 generic_uploader: true

@@ -9,6 +9,7 @@ types:
   - Metadata production
   - Reporting
 def: Generate a Markdown out of a entity
+status: experimental
 target: entity
 target_dir: markdown
 packages:

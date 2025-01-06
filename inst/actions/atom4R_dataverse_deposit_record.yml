@@ -14,6 +14,7 @@ types:
   - Metadata publication
   - DOI management
 def: Deposits/Publish data and/or metetadata on a Dataverse using the Sword API
+status: experimental
 target: job
 target_dir: dataverse
 pid_generator: dataverse

@@ -15,6 +15,7 @@ types:
   - Metadata publication
   - DOI management
 def: Deposits/Publish data and/or metadata in the Zenodo infrastructure
+status: stable
 target: job
 target_dir: zenodo
 pid_generator: zenodo

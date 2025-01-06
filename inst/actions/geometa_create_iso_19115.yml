@@ -19,6 +19,7 @@ maintainer:
 types:
   - Metadata production
 def: Produce an ISO/OGC 19115 metadata object and export it to XML
+status: stable
 target: entity
 target_dir: metadata
 packages:

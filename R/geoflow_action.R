@@ -70,6 +70,10 @@ geoflow_action <- R6Class("geoflow_action",
     options = list(),
     #'@field available_options a list of available options for the actions
     available_options= list(),
+    #'@field status status
+    status = "stable",
+    #'@field notes notes
+    notes = "",
     
     #'@description Initialize a \link{geoflow_action}
     #'@param yaml a yaml file
@@ -90,6 +94,8 @@ geoflow_action <- R6Class("geoflow_action",
     #'@param script action script
     #'@param options action options
     #'@param available_options available options for the action
+    #'@param status status of the action (experimental, stable, deprecated, superseded)
+    #'@param notes notes
     initialize = function(yaml = NULL,
                           id = NULL, 
                           funders = list(), authors = list(), maintainer = NULL,
@@ -99,7 +105,8 @@ geoflow_action <- R6Class("geoflow_action",
                           pid_generator = NULL, pid_types = list(),
                           generic_uploader = FALSE,
                           fun = NULL, script = NULL, options = list(),
-                          available_options = list()){
+                          available_options = list(),
+                          status = "stable", notes = ""){
       
       if(!is.null(yaml)){
         self$fromYAML(yaml) 
@@ -125,6 +132,8 @@ geoflow_action <- R6Class("geoflow_action",
         self$script <- script
         self$options <- options
         self$available_options  <- available_options
+        self$status = status
+        self$notes = notes
       }
     },
     
@@ -161,6 +170,8 @@ geoflow_action <- R6Class("geoflow_action",
         }
         return(opt)
       })
+      self$status = if(!is.null(yml$status)) yml$status else "<unknown>"
+      self$notes = if(!is.null(yml$notes)) yml$notes else ""
     },
     
     #'@description Check that all packages required for the action are available, if yes,
@@ -341,6 +352,9 @@ list_actions <- function(raw = FALSE){
         target_dir = action$target_dir,
         pid_generator = action$isPIDGenerator(),
         packages = paste(action$packages, collapse=","),
+        status = action$status,
+        notes = action$notes,
+        maintainer = if(!is.null(action$maintainer$name)){action$maintainer$name}else{ if(action$maintainer$orphaned) "<orphaned>" else "<unknown>" },
         stringsAsFactors = FALSE
       ))
     }))

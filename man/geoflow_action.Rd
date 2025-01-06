@@ -49,6 +49,12 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \describe{
 \item{\code{id}}{action ID}
 
+\item{\code{funders}}{funders}
+
+\item{\code{authors}}{authors}
+
+\item{\code{maintainer}}{maintainer}
+
 \item{\code{scope}}{action scope}
 
 \item{\code{types}}{types of action}
@@ -74,6 +80,10 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item{\code{options}}{action options}
 
 \item{\code{available_options}}{a list of available options for the actions}
+
+\item{\code{status}}{status}
+
+\item{\code{notes}}{notes}
 }
 \if{html}{\out{</div>}}
 }
@@ -81,6 +91,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-geoflow_action-new}{\code{geoflow_action$new()}}
+\item \href{#method-geoflow_action-fromYAML}{\code{geoflow_action$fromYAML()}}
 \item \href{#method-geoflow_action-checkPackages}{\code{geoflow_action$checkPackages()}}
 \item \href{#method-geoflow_action-run}{\code{geoflow_action$run()}}
 \item \href{#method-geoflow_action-getOption}{\code{geoflow_action$getOption()}}
@@ -106,7 +117,11 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 Initialize a \link{geoflow_action}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_action$new(
-  id,
+  yaml = NULL,
+  id = NULL,
+  funders = list(),
+  authors = list(),
+  maintainer = NULL,
   scope = "global",
   types = list(),
   def = "",
@@ -119,14 +134,24 @@ Initialize a \link{geoflow_action}
   fun = NULL,
   script = NULL,
   options = list(),
-  available_options = list()
+  available_options = list(),
+  status = "stable",
+  notes = ""
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{yaml}}{a yaml file}
+
 \item{\code{id}}{action id}
+
+\item{\code{funders}}{funders}
+
+\item{\code{authors}}{authors}
+
+\item{\code{maintainer}}{maintainer}
 
 \item{\code{scope}}{action scope "global" or "local"}
 
@@ -153,6 +178,27 @@ Initialize a \link{geoflow_action}
 \item{\code{options}}{action options}
 
 \item{\code{available_options}}{available options for the action}
+
+\item{\code{status}}{status of the action (experimental, stable, deprecated, superseded)}
+
+\item{\code{notes}}{notes}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_action-fromYAML"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_action-fromYAML}{}}}
+\subsection{Method \code{fromYAML()}}{
+Reads action properties from YAML file
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_action$fromYAML(file)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{file}}{file}
 }
 \if{html}{\out{</div>}}
 }

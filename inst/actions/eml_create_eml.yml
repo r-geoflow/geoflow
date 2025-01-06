@@ -11,6 +11,7 @@ maintainer:
 types:
   - Metadata production
 def: Produce an EML metadata object
+status: experimental
 target: entity
 target_dir: metadata
 packages:

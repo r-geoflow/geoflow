@@ -18,6 +18,7 @@ types:
   - Data publication
   - Metadata publication
 def: Publish data to GeoServer OGC web-services (WMS/WFS/WCS)
+status: stable
 target: NA
 target_dir: NA
 packages:

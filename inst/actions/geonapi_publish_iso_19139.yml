@@ -16,6 +16,7 @@ maintainer:
 types:
   - Metadata publication
 def: Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API
+status: stable
 target: entity
 target_dir: metadata
 packages:

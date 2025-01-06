@@ -12,6 +12,7 @@ maintainer:
 types:
   - Data upload
 def: Upload data to an OCS Cloud (NextCloud/Owncloud) Workspace
+status: experimental
 target: NA
 target_dir: NA
 generic_uploader: false
