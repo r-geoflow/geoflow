@@ -16,9 +16,17 @@ This class models a SKOS vocabulary
 \details{
 geoflow_skos_vocabulary
 }
-\keyword{action}
+\keyword{skos}
+\keyword{vocabulary}
 \section{Super class}{
-\code{geoflow::geoflow_vocabulary} -> \code{geoflow_skos_vocabulary}
+\code{\link[geoflow:geoflow_vocabulary]{geoflow::geoflow_vocabulary}} -> \code{geoflow_skos_vocabulary}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{endpoint}}{endpoint}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -45,6 +53,19 @@ geoflow_skos_vocabulary
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$new(id, def, uri, endpoint)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{id}
+
+\item{\code{def}}{def}
+
+\item{\code{uri}}{uri}
+
+\item{\code{endpoint}}{endpoint}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-query"></a>}}
@@ -54,11 +75,26 @@ geoflow_skos_vocabulary
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$query(str, graphUri = NULL, mimetype = "text/csv")}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{str}}{str}
+
+\item{\code{graphUri}}{graphUri}
+
+\item{\code{mimetype}}{mimetype}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the response of the SPARQL query
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-ping"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-ping}{}}}
 \subsection{Method \code{ping()}}{
+Ping query
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$ping()}\if{html}{\out{</div>}}
 }
@@ -76,6 +112,20 @@ geoflow_skos_vocabulary
 )}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{uri}}{uri}
+
+\item{\code{graphUri}}{graphUri}
+
+\item{\code{mimetype}}{mimetype}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the response of the SPARQL query
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-clone"></a>}}

@@ -5,10 +5,10 @@
 \alias{geoflow_vocabulary}
 \title{Geoflow vocabulary class}
 \format{
-\code{\link{R6Class}} object.
+\code{\link[R6]{R6Class}} object.
 }
 \value{
-Object of \code{\link{R6Class}} for modelling a vocabulary
+Object of \code{\link[R6]{R6Class}} for modelling a vocabulary
 }
 \description{
 This class models a vocabulary
@@ -16,7 +16,22 @@ This class models a vocabulary
 \details{
 geoflow_vocabulary
 }
-\keyword{action}
+\keyword{vocabulary}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{id}}{id}
+
+\item{\code{def}}{def}
+
+\item{\code{uri}}{uri}
+
+\item{\code{software_type}}{software_type}
+
+\item{\code{software}}{software}
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -33,15 +48,35 @@ geoflow_vocabulary
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_vocabulary$new(id, def, uri, software_type)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{id}
+
+\item{\code{def}}{def}
+
+\item{\code{uri}}{uri}
+
+\item{\code{software_type}}{software type}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_vocabulary-setSoftware"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_vocabulary-setSoftware}{}}}
 \subsection{Method \code{setSoftware()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_vocabulary$setSoftware(sofware)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_vocabulary$setSoftware(software)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{software}}{software}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_vocabulary-clone"></a>}}

@@ -106,6 +106,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_entity-enrichWithIdentifiers}{\code{geoflow_entity$enrichWithIdentifiers()}}
 \item \href{#method-geoflow_entity-enrichWithRelations}{\code{geoflow_entity$enrichWithRelations()}}
 \item \href{#method-geoflow_entity-enrichWithSubjects}{\code{geoflow_entity$enrichWithSubjects()}}
+\item \href{#method-geoflow_entity-enrichWithVocabularies}{\code{geoflow_entity$enrichWithVocabularies()}}
 \item \href{#method-geoflow_entity-enrichWithFormats}{\code{geoflow_entity$enrichWithFormats()}}
 \item \href{#method-geoflow_entity-enrichWithMetadata}{\code{geoflow_entity$enrichWithMetadata()}}
 \item \href{#method-geoflow_entity-getContacts}{\code{geoflow_entity$getContacts()}}
@@ -782,6 +783,23 @@ Enrichs the entity with subjects. If no subject specify in Subjects,
 automatically add keyword from dictionary to 'theme' category
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithSubjects(config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-enrichWithVocabularies"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-enrichWithVocabularies}{}}}
+\subsection{Method \code{enrichWithVocabularies()}}{
+Enrichs the entity with vocabularies
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithVocabularies(config)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

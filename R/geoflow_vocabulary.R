@@ -1,15 +1,15 @@
 #' geoflow_vocabulary
-#'
-#' @docType class
-#' @importFrom R6 R6Class
-#' @export
 #' 
 #' @name geoflow_vocabulary
 #' @title Geoflow vocabulary class
 #' @description This class models a vocabulary
-#' @keywords action
-#' @return Object of \code{\link{R6Class}} for modelling a vocabulary
-#' @format \code{\link{R6Class}} object.
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#'
+#' @keywords vocabulary
+#' @return Object of \code{\link[R6]{R6Class}} for modelling a vocabulary
+#' @format \code{\link[R6]{R6Class}} object.
 #'
 geoflow_vocabulary <- R6Class("geoflow_vocabulary",
   public = list(
@@ -37,14 +37,16 @@ geoflow_vocabulary <- R6Class("geoflow_vocabulary",
       self$software_type = software_type
     },
     
-    setSoftware = function(sofware){
-      
+    #'@name Set software
+    #'@param software software
+    setSoftware = function(software){
+      #TODO
     }
   )
 )
 
 #' geoflow_skos_vocabulary
-#'
+#' 
 #' @docType class
 #' @importFrom R6 R6Class
 #' @export
@@ -52,7 +54,7 @@ geoflow_vocabulary <- R6Class("geoflow_vocabulary",
 #' @name geoflow_skos_vocabulary
 #' @title Geoflow SKOS vocabulary class
 #' @description This class models a SKOS vocabulary
-#' @keywords action
+#' @keywords skos vocabulary
 #' @return Object of \code{\link{R6Class}} for modelling a SKOS vocabulary
 #' @format \code{\link{R6Class}} object.
 #'
@@ -93,7 +95,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       httr::content(req)
     },
     
-    #'@name ping
+    #'@description Ping query
     ping = function(){
       str = "SELECT ?s ?p ?o WHERE { 
                   	?s ?p ?o 
