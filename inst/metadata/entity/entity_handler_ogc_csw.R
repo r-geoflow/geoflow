@@ -140,8 +140,11 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       
       #doi (in case available)
       hasDOI = sapply(rec$identificationInfo[[1]]$citation$identifier, function(identifier){
-        has = !is.character(identifier$code) & !is.na(identifier$code)
-        if(has) has = regexpr(pattern = "dx.doi.org", identifier$code$attrs[["xlink:href"]]) > 0
+        has = FALSE
+        if(!is.null(identifier)){
+          has = !is.character(identifier$code) & !is.na(identifier$code)
+          if(has) has = regexpr(pattern = "dx.doi.org", identifier$code$attrs[["xlink:href"]]) > 0
+        }
         return(has)
       })
       if(any(hasDOI)){
