@@ -1,0 +1,15 @@
+id: gsheet
+type: contact
+fun: contact_handler_gsheet.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle metadata contacts from a Google spreadsheet
+status: stable
+packages:
+  - gsheet
+available_options: []

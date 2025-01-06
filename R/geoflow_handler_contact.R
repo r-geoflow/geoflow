@@ -11,37 +11,10 @@
 #' @export
 #'
 register_contact_handlers <- function(){
-  handlers <- list(
-    geoflow_handler$new(
-      id = "csv",
-      def = "Handle metadata contacts from a CSV file",
-      fun = source(system.file("metadata/contact", "contact_handler_csv.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "excel",
-      def = "Handle metadata contacts from a Microsoft Excel (xls,xlsx) file",
-      packages = list("readxl"),
-      fun = source(system.file("metadata/contact", "contact_handler_excel.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "gsheet",
-      def = "Handle metadata contacts from a Google spreadsheet",
-      packages = list("gsheet"),
-      fun = source(system.file("metadata/contact", "contact_handler_gsheet.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "dbi",
-      def = "Handle metadata contacts from a DB source",
-      packages = list("DBI", "RSQLite", "RPostgres"),
-      fun = source(system.file("metadata/contact", "contact_handler_dbi.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "ocs",
-      def = "Handle metadata contacts from a tabulat data source (csv or excel) hosted on an OCS cloud",
-      packages = list("ocs4R"),
-      fun = source(system.file("metadata/contact", "contact_handler_ocs.R", package = "geoflow"))$value
-    ) 
-  )
+  yml_files = list.files(system.file("metadata/contact", package = "geoflow"), pattern = "yml")
+  handlers <- lapply(yml_files, function(file){
+    geoflow_handler$new(yaml = system.file("metadata/contact", file, package = "geoflow"))
+  })
   .geoflow$contact_handlers <- handlers
 }
 
@@ -73,6 +46,7 @@ list_contact_handlers <- function(raw = FALSE){
         packages = paste(handler$packages, collapse=","),
         status = handler$status,
         notes = handler$notes,
+        maintainer = if(!is.null(handler$maintainer$name)){handler$maintainer$name}else{ if(handler$maintainer$orphaned) "<orphaned>" else "<unknown>" },
         stringsAsFactors = FALSE
       ))
     }))
