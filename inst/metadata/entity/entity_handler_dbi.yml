@@ -1,0 +1,26 @@
+id: dbi
+type: entity
+fun: entity_handler_dbi.R
+funders:
+  - name: IRD
+    url: https:/www.ird.fr
+  - name: INRAE
+    url: https://www.inrae.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle metadata entities from a DB source
+status: stable
+packages:
+  - DBI
+  - RSQLite
+  - RPostgres
+  - RPostgreSQL
+available_options:
+  enrich_from_dbi:
+    def: Enrich entity data from DBI software
+    class: logical
+    default: false

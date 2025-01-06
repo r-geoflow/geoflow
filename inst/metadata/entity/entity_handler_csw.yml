@@ -1,0 +1,21 @@
+id: csw
+type: entity
+fun: entity_handler_csw.R
+funders:
+  - name: IRD
+    url: https:/www.ird.fr
+  - name: INRAE
+    url: https://www.inrae.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle metadata entities from an OGC CSW endpoint
+status: experimental
+packages:
+  - ows4R
+  - sf
+  - geometa
+available_options: []

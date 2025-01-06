@@ -1,0 +1,23 @@
+id: ocs
+type: entity
+fun: entity_handler_ocs.R
+funders:
+  - name: INRAE
+    url: https://www.inrae.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle metadata entities from a tabulat data source (csv or excel) hosted on an OCS cloud
+status: stable
+packages:
+  - ocs4R
+  - rear
+  - readxl
+available_options:
+  enrich_from_dbi:
+    def: Enrich entity data from DBI software
+    class: logical
+    default: false

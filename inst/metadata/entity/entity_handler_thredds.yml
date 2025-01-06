@@ -1,0 +1,19 @@
+id: thredds
+type: entity
+fun: entity_handler_thredds.R
+funders: []
+authors:
+  - name: Alexandre Bennici
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  orphaned: true
+def: Handle metadata entities from a Thredds server source
+status: experimental
+packages:
+  - thredds
+  - ncdf4
+  - XML
+  - png
+  - curl
+available_options: []

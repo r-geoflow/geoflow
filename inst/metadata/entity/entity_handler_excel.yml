@@ -1,0 +1,19 @@
+id: excel
+type: entity
+fun: entity_handler_excel.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle metadata entities from a Microsoft Excel (xls,xlsx) file
+status: stable
+packages:
+  - readxl
+available_options:
+  enrich_from_dbi:
+    def: Enrich entity data from DBI software
+    class: logical
+    default: false

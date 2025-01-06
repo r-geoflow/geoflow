@@ -1,0 +1,18 @@
+id: thredds_excel
+type: entity
+fun: entity_handler_thredds_excel.R
+funders: []
+authors:
+  - name: Alexandre Bennici
+maintainer:
+  orphaned: true
+def: Handle metadata thredds entities from a Microsoft Excel (xls,xlsx) file
+status: experimental
+packages:
+  - readxl
+  - thredds
+  - ncdf4
+  - XML
+  - png
+  - curl
+available_options: []

@@ -46,6 +46,14 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \describe{
 \item{\code{id}}{handler id}
 
+\item{\code{type}}{handler type (entity,contact,dictionary)}
+
+\item{\code{funders}}{funders}
+
+\item{\code{authors}}{authors}
+
+\item{\code{maintainer}}{maintainer}
+
 \item{\code{def}}{handler definition}
 
 \item{\code{packages}}{handler packages}
@@ -68,6 +76,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-geoflow_handler-new}{\code{geoflow_handler$new()}}
+\item \href{#method-geoflow_handler-fromYAML}{\code{geoflow_handler$fromYAML()}}
 \item \href{#method-geoflow_handler-checkPackages}{\code{geoflow_handler$checkPackages()}}
 \item \href{#method-geoflow_handler-getOption}{\code{geoflow_handler$getOption()}}
 \item \href{#method-geoflow_handler-clone}{\code{geoflow_handler$clone()}}
@@ -80,14 +89,19 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 Initializes a \link{geoflow_handler}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$new(
-  id,
+  yaml = NULL,
+  id = NULL,
+  type = c("entity", "contact", "dictionary"),
+  funders = list(),
+  authors = list(),
+  maintainer = NULL,
   def = "",
   packages = list(),
   fun = NULL,
   script = NULL,
   options = list(),
   available_options = list(),
-  status = "active",
+  status = "stable",
   notes = ""
 )}\if{html}{\out{</div>}}
 }
@@ -95,7 +109,17 @@ Initializes a \link{geoflow_handler}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{yaml}}{a YAML file}
+
 \item{\code{id}}{id}
+
+\item{\code{type}}{type}
+
+\item{\code{funders}}{funders}
+
+\item{\code{authors}}{authors}
+
+\item{\code{maintainer}}{maintainer}
 
 \item{\code{def}}{def}
 
@@ -109,9 +133,26 @@ Initializes a \link{geoflow_handler}
 
 \item{\code{available_options}}{available options for the action}
 
-\item{\code{status}}{status (active/deprecated)}
+\item{\code{status}}{status (experimental/stable/deprecated/superseded)}
 
 \item{\code{notes}}{notes}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_handler-fromYAML"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_handler-fromYAML}{}}}
+\subsection{Method \code{fromYAML()}}{
+Reads handler properties from YAML file
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$fromYAML(file)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{file}}{file}
 }
 \if{html}{\out{</div>}}
 }

@@ -1,0 +1,23 @@
+id: csv
+type: entity
+fun: entity_handler_csv.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle metadata entities from a CSV file
+status: stable
+packages:
+  - readr
+available_options:
+  guess_max:
+    def: Guess max argument, see readr::read_csv
+    class: integer
+    default: 0
+  enrich_from_dbi:
+    def: Enrich entity data from DBI software
+    class: logical
+    default: false

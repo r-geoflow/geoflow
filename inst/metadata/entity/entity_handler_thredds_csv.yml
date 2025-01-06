@@ -1,0 +1,19 @@
+id: thredds_csv
+type: entity
+fun: entity_handler_thredds_csv.R
+funders: []
+authors:
+  - name: Alexandre Bennici
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  orphaned: true
+def: Handle metadata thredds entities from a CSV file
+status: experimental
+packages:
+  - thredds
+  - ncdf4
+  - XML
+  - png
+  - curl
+available_options: []

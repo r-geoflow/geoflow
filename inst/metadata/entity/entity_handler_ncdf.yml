@@ -1,0 +1,13 @@
+id: ncdf
+type: entity
+fun: entity_handler_ncdf.R
+funders: []
+authors:
+  - name: Alexandre Bennici
+maintainer:
+  orphaned: true
+def: Handle metadata entities from a Netcdf source
+status: experimental
+packages:
+  - ncdf4
+available_options: []

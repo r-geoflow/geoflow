@@ -36,6 +36,14 @@ geoflow_handler <- R6Class("geoflow_handler",
   public = list(
     #'@field id handler id
     id = NA,
+    #'@field type handler type (entity,contact,dictionary)
+    type = NULL,
+    #'@field funders funders
+    funders = list(),
+    #'@field authors authors
+    authors = list(),
+    #'@field maintainer maintainer
+    maintainer = NULL,
     #'@field def handler definition
     def = NA,
     #'@field packages handler packages
@@ -49,32 +57,82 @@ geoflow_handler <- R6Class("geoflow_handler",
     #'@field available_options available options
     available_options = list(),
     #'@field status status
-    status = "active",
+    status = "stable",
     #'@field notes notes
     notes = "",
     
     #'@description Initializes a \link{geoflow_handler}
+    #'@param yaml a YAML file
     #'@param id id
+    #'@param type type
+    #'@param funders funders
+    #'@param authors authors
+    #'@param maintainer maintainer
     #'@param def def
     #'@param packages list of packages required for the handler
     #'@param fun the handler \code{function} having 2 arguments \code{config} and \code{source}
     #'@param script a handler script
     #'@param options action options
     #'@param available_options available options for the action
-    #'@param status status (active/deprecated)
+    #'@param status status (experimental/stable/deprecated/superseded)
     #'@param notes notes
-    initialize = function(id, def = "", packages = list(), fun = NULL, script = NULL, 
+    initialize = function(yaml = NULL,
+                          id = NULL, type = c("entity", "contact", "dictionary"),
+                          funders = list(), authors = list(), maintainer = NULL,
+                          def = "",  
+                          packages = list(), fun = NULL, script = NULL, 
                           options = list(), available_options = list(),
-                          status = "active", notes = ""){
-      self$id <- id
-      self$def <- def
-      self$packages <- packages
-      self$fun <- fun
-      self$script <- script
-      self$options <- options
-      self$available_options <- available_options
-      self$status = status
-      self$notes = notes
+                          status = "stable", notes = ""){
+      if(!is.null(yaml)){
+        self$fromYAML(yaml)
+      }else{
+        self$id <- id
+        type = match.arg(type)
+        self$type = type
+        self$funders = funders
+        self$authors = authors
+        self$maintainer = maintainer
+        self$def <- def
+        self$packages <- packages
+        self$fun <- fun
+        self$script <- script
+        self$options <- options
+        self$available_options <- available_options
+        self$status = status
+        self$notes = notes
+      }
+    },
+    
+    #'@description Reads handler properties from YAML file
+    #'@param file file
+    fromYAML = function(file){
+      yml = yaml::read_yaml(file)
+      self$id = yml$id
+      self$type = yml$type
+      self$funders = yml$funders
+      self$authors = yml$authors
+      self$maintainer = yml$maintainer
+      self$def = yml$def
+      self$packages = yml$packages
+      self$fun = source(system.file(paste0("metadata/", self$type), yml$fun, package = "geoflow"))$value
+      self$status = if(!is.null(yml$status)) yml$status else "<unknown>"
+      self$notes = if(!is.null(yml$notes)) yml$notes else ""
+      self$available_options = lapply(yml$available_options, function(opt){
+        if(is.null(opt$default)){
+          opt$default = c()
+        }else{
+          if(length(opt$default)>1){
+            opt$default = unlist(opt$default)
+          }else{
+            opt$default = switch(opt$default,
+                                 "NA" = NA,
+                                 "Inf" = Inf,
+                                 as(opt$default, opt$class)                  
+            )
+          }
+        }
+        return(opt)
+      })
     },
     
     #'@description Check that all packages required for the handler are available, if yes,

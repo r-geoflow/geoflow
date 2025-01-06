@@ -1,0 +1,19 @@
+id: dbi_csv
+type: entity
+fun: entity_handler_dbi_csv.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle DBI metadata entities from a CSV file
+status: superseded
+notes: Use 'csv' handler enabling option 'enrich_from_dbi'
+packages:
+  - readr
+  - DBI
+  - RSQLite
+  - RPostgres
+  - RPostgreSQL

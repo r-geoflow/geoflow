@@ -1,0 +1,18 @@
+id: thredds_gsheet
+type: entity
+fun: entity_handler_thredds_gsheet.R
+funders: []
+authors:
+  - name: Alexandre Bennici
+maintainer:
+  orphaned: true
+def: Handle metadata thredds entities from a Google spreadsheet
+status: experimental
+packages:
+  - gsheet
+  - thredds
+  - ncdf4
+  - XML
+  - png
+  - curl
+available_options: []

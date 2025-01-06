@@ -1,0 +1,19 @@
+id: dbi_gsheet
+type: entity
+fun: entity_handler_dbi_gsheet.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle DBI metadata entities from a Google spreadsheet
+status: superseded
+notes: Use 'gsheet' handler enabling option 'enrich_from_dbi'
+packages:
+  - gsheet
+  - DBI
+  - RSQLite
+  - RPostgres
+  - RPostgreSQL

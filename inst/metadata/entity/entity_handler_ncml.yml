@@ -1,0 +1,13 @@
+id: ncdf
+type: entity
+fun: entity_handler_ncml.R
+funders: []
+authors:
+  - name: Alexandre Bennici
+maintainer:
+  orphaned: true
+def: Handle metadata entities from a NCML source
+status: experimental
+packages:
+  - XML
+available_options: []

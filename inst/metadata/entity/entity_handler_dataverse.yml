@@ -1,0 +1,15 @@
+id: dbi_dataverse
+type: entity
+fun: entity_handler_dataverse.R
+funders:
+  - name: INRAE
+    url: https://www.inrae.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  orphaned: true
+def: Handle metadata entities built from a Dataverse source
+status: experimental
+packages:
+  - dataverse

@@ -1,0 +1,25 @@
+id: zenodo
+type: entity
+fun: entity_handler_zenodo.R
+funders:
+  - name: IRD
+    url: https:/www.ird.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle metadata entities built from a Zenodo source
+status: experimental
+packages:
+  - zen4R
+available_options:
+  resource_type:
+    def: Type resource. By default 'deposit', use this if you are the owner of the records you fetch. Alternative option value is 'record' that can be used for third-party record handling (as anonymous user
+    class: character
+    default: deposit
+  source_type:
+    def: Type of source for handling Zenodo input deposits/records. Possible values are 'query' (an ElasticSearch query), doi' (one or more DOIs)
+    class: character
+    default: query

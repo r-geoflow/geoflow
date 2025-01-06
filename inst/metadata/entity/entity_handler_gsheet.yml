@@ -1,0 +1,19 @@
+id: gsheet
+type: entity
+fun: entity_handler_gsheet.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle metadata entities from a Google spreadsheet
+status: stable
+packages:
+  - gsheet
+available_options:
+  enrich_from_dbi:
+    def: Enrich entity data from DBI software
+    class: logical
+    default: false

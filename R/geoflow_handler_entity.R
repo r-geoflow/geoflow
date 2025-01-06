@@ -11,133 +11,10 @@
 #' @export
 #'
 register_entity_handlers <- function(){
-  handlers <- list(
-    geoflow_handler$new(
-      id = "csv",
-      def = "Handle metadata entities from a CSV file",
-      fun = source(system.file("metadata/entity", "entity_handler_csv.R", package = "geoflow"))$value,
-      available_options = list(
-        guess_max = list(def = "Guess max argument, see readr::read_csv", default = 0),
-        enrich_from_dbi = list(def = "Enrich entity data from DBI software", default = FALSE)
-      )
-    ),
-    geoflow_handler$new(
-      id = "excel",
-      def = "Handle metadata entities from a Microsoft Excel (xls,xlsx) file",
-      packages = list("readxl"),
-      fun = source(system.file("metadata/entity", "entity_handler_excel.R", package = "geoflow"))$value,
-      available_options = list(
-        enrich_from_dbi = list(def = "Enrich entity data from DBI software", default = FALSE)
-      )
-    ),
-    geoflow_handler$new(
-      id = "gsheet",
-      def = "Handle metadata entities from a Google spreadsheet",
-      packages = list("gsheet"),
-      fun = source(system.file("metadata/entity", "entity_handler_gsheet.R", package = "geoflow"))$value,
-      available_options = list(
-        enrich_from_dbi = list(def = "Enrich entity data from DBI software", default = FALSE)
-      )
-    ),
-    geoflow_handler$new(
-      id = "dbi",
-      def = "Handle metadata entities from a DB source",
-      packages = list("DBI", "RSQLite", "RPostgres"),
-      fun = source(system.file("metadata/entity", "entity_handler_dbi.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "dbi_csv",
-      def = "Handle DBI metadata entities from a CSV file",
-      packages = list("DBI", "RSQLite", "RPostgres"),
-      fun = source(system.file("metadata/entity", "entity_handler_dbi_csv.R", package = "geoflow"))$value,
-      status = "deprecated",
-      notes = "Use 'csv' handler enabling option 'enrich_from_dbi"
-    ),
-    geoflow_handler$new(
-      id = "dbi_excel",
-      def = "Handle DBI metadata entities from a Microsoft Excel (xls, xlsx) file",
-      packages = list("readxl"),
-      fun = source(system.file("metadata/entity", "entity_handler_dbi_excel.R", package = "geoflow"))$value,
-      status = "deprecated",
-      notes = "Use 'excel' handler enabling option 'enrich_from_dbi"
-    ),
-    geoflow_handler$new(
-      id = "dbi_gsheet",
-      def = "Handle DBI metadata entities from a Google spreadsheet",
-      packages = list("gsheet"),
-      fun = source(system.file("metadata/entity", "entity_handler_dbi_gsheet.R", package = "geoflow"))$value,
-      status = "deprecated",
-      notes = "Use 'gsheet' handler enabling option 'enrich_from_dbi"
-    ),
-    geoflow_handler$new(
-      id = "dataverse",
-      def = "Handle metadata entities built from a Dataverse source",
-      packages = list("dataverse"),
-      fun = source(system.file("metadata/entity", "entity_handler_dataverse.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "ocs",
-      def = "Handle metadata entities from a tabulat data source (csv or excel) hosted on an OCS cloud",
-      packages = list("ocs4R"),
-      fun = source(system.file("metadata/entity", "entity_handler_ocs.R", package = "geoflow"))$value,
-      available_options = list(
-        enrich_from_dbi = list(def = "Enrich entity data from DBI software", default = FALSE)
-      )
-    ),
-    geoflow_handler$new(
-      id = "ncdf",
-      def = "Handle metadata entities from a Netcdf source",
-      packages = list("ncdf4"),
-      fun = source(system.file("metadata/entity", "entity_handler_ncdf.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "ncml",
-      def = "Handle metadata entities from a NCML source",
-      packages = list("XML"),
-      fun = source(system.file("metadata/entity", "entity_handler_ncml.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "thredds",
-      def = "Handle metadata entities from a Thredds server source",
-      packages = list("ncdf4","thredds","XML","png","curl"),
-      fun = source(system.file("metadata/entity", "entity_handler_thredds.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "thredds_csv",
-      def = "Handle metadata thredds entities from a CSV file",
-      fun = source(system.file("metadata/entity", "entity_handler_thredds_csv.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "thredds_excel",
-      def = "Handle metadata thredds entities from a Microsoft Excel (xls,xlsx) file",
-      packages = list("readxl"),
-      fun = source(system.file("metadata/entity", "entity_handler_thredds_excel.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "thredds_gsheet",
-      def = "Handle metadata thredds entities from a Google spreadsheet",
-      packages = list("gsheet"),
-      fun = source(system.file("metadata/entity", "entity_handler_thredds_gsheet.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "ogc_csw",
-      def = "Handle metadata entities from an OGC CSW endpoint",
-      packages = list("ows4R", "sf", "geometa"),
-      fun = source(system.file("metadata/entity", "entity_handler_csw.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "zenodo",
-      def = "Handle metadata entities built from a Zenodo source",
-      packages = list("zen4R"),
-      fun = source(system.file("metadata/entity", "entity_handler_zenodo.R", package = "geoflow"))$value,
-      available_options = list(
-        resource_type = list(def = "Type resource. By default 'deposit', use this if you are the owner of the records you fetch.
-                             Alternative option value is 'record' that can be used for third-party record handling (as anonymous user", default = "deposit"),
-        source_type = list(def = "Type of source for handling Zenodo input deposits/records. Possible values are ['query': an ElasticSearch query, 
-                           'doi': one or more DOIs]", default = 'query')
-      )
-    )
-  )
+  yml_files = list.files(system.file("metadata/entity", package = "geoflow"), pattern = "yml")
+  handlers <- lapply(yml_files, function(file){
+    geoflow_handler$new(yaml = system.file("metadata/entity", file, package = "geoflow"))
+  })
   .geoflow$entity_handlers <- handlers
 }
 
@@ -169,6 +46,7 @@ list_entity_handlers <- function(raw = FALSE){
         packages = paste(handler$packages, collapse=","),
         status = handler$status,
         notes = handler$notes,
+        maintainer = if(!is.null(handler$maintainer$name)){handler$maintainer$name}else{ if(handler$maintainer$orphaned) "<orphaned>" else "<unknown>" },
         stringsAsFactors = FALSE
       ))
     }))

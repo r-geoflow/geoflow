@@ -1,0 +1,19 @@
+id: dbi_excel
+type: entity
+fun: entity_handler_dbi_excel.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle DBI metadata entities from a Microsoft Excel (xls, xlsx) file
+status: superseded
+notes: Use 'excel' handler enabling option 'enrich_from_dbi'
+packages:
+  - readxl
+  - DBI
+  - RSQLite
+  - RPostgres
+  - RPostgreSQL
