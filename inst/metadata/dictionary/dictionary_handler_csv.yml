@@ -1,0 +1,15 @@
+id: csv
+type: dictionary
+fun: dictionary_handler_csv.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle dictionary from a CSV file
+status: stable
+packages:
+  - readr
+available_options: []

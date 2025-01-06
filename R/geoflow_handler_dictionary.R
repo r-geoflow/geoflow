@@ -11,37 +11,10 @@
 #' @export
 #'
 register_dictionary_handlers <- function(){
-  handlers <- list(
-    geoflow_handler$new(
-      id = "csv",
-      def = "Handle dictionary from a CSV file",
-      fun = source(system.file("metadata/dictionary", "dictionary_handler_csv.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "excel",
-      def = "Handle dictionary from a Microsoft Excel (xls,xlsx) file",
-      packages = list("readxl"),
-      fun = source(system.file("metadata/dictionary", "dictionary_handler_excel.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "gsheet",
-      def = "Handle dictionary from a Google spreadsheet",
-      packages = list("gsheet"),
-      fun = source(system.file("metadata/dictionary", "dictionary_handler_gsheet.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "dbi",
-      def = "Handle dictionary from a DB source",
-      packages = list("DBI", "RSQLite", "RPostgres"),
-      fun = source(system.file("metadata/dictionary", "dictionary_handler_dbi.R", package = "geoflow"))$value
-    ),
-    geoflow_handler$new(
-      id = "ocs",
-      def = "Handle dictionary from a tabulat data source (csv or excel) hosted on an OCS cloud",
-      packages = list("ocs4R"),
-      fun = source(system.file("metadata/dictionary", "dictionary_handler_ocs.R", package = "geoflow"))$value
-    )
-  )
+  yml_files = list.files(system.file("metadata/dictionary", package = "geoflow"), pattern = "yml")
+  handlers <- lapply(yml_files, function(file){
+    geoflow_handler$new(yaml = system.file("metadata/dictionary", file, package = "geoflow"))
+  })
   .geoflow$dictionary_handlers <- handlers
 }
 

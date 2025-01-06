@@ -1,0 +1,19 @@
+id: ocs
+type: dictionary
+fun: dictionary_handler_ocs.R
+funders:
+  - name: INRAE
+    url: https://www.inrae.fr
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle dictionary from a tabulat data source (csv or excel) hosted on an OCS cloud
+status: stable
+packages:
+  - ocs4R
+  - rear
+  - readxl
+available_options: []

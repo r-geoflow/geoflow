@@ -1,0 +1,18 @@
+id: dbi
+type: dictionary
+fun: dictionary_handler_dbi.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle dictionary from a DB source
+status: stable
+packages:
+  - DBI
+  - RSQLite
+  - RPostgres
+  - RPostgreSQL
+available_options: []

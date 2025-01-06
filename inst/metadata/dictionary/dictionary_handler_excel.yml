@@ -1,0 +1,15 @@
+id: excel
+type: dictionary
+fun: dictionary_handler_excel.R
+funders: []
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+def: Handle dictionary from a Microsoft Excel (xls,xlsx) file
+status: stable
+packages:
+  - readxl
+available_options: []
