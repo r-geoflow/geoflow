@@ -12,8 +12,4 @@ def: Handle metadata contacts from a CSV file
 status: stable
 packages:
   - readr
-available_options:
-  guess_max:
-    def: Guess max argument, see readr::read_csv
-    class: integer
-    default: 0
+available_options: []
