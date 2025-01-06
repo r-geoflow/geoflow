@@ -1,4 +1,4 @@
-id: csw
+id: ogc_csw
 type: entity
 fun: entity_handler_csw.R
 funders:
