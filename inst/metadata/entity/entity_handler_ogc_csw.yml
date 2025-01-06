@@ -1,6 +1,6 @@
 id: ogc_csw
 type: entity
-fun: entity_handler_csw.R
+fun: entity_handler_ogc_csw.R
 funders:
   - name: IRD
     url: https:/www.ird.fr
