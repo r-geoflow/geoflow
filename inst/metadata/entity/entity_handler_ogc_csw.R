@@ -58,7 +58,8 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     #type
     if(length(rec$hierarchyLevel)>0) entity$setType(key = "generic", type = rec$hierarchyLevel[[1]]$attrs$codeListValue)
     #language
-    entity$setLanguage(if(is(rec$language,"ISOLanguage")) rec$language$attrs$codeListValue else rec$language)
+    lang = if(is(rec$language,"ISOLanguage")) rec$language$attrs$codeListValue else rec$language
+    entity$setLanguage(if(!is.na(lang)) lang else "eng")
     #srid
     if(length(rec$referenceSystemInfo)>0){
       code = rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code
@@ -170,7 +171,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
         entity$setDescription("edition", rec$identificationInfo[[1]]$citation$edition)
       }
       status = rec$identificationInfo[[1]]$status
-      if(length(status)>0) entity$setDescription("status", status[[1]]$attrs$codeListValue)
+      if(length(status)>0) if(nzchar(status[[1]]$attrs$codeListValue)) entity$setDescription("status", status[[1]]$attrs$codeListValue)
       #subject
       entity$subjects = lapply(rec$identificationInfo[[1]]$descriptiveKeywords, function(dk){
         subject = geoflow_subject$new()
@@ -234,6 +235,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
           if(is(constraint, "ISOLegalConstraints")){
             #use constraints
             use_values = lapply(constraint$useConstraints, function(x){x$attrs$codeListValue})
+            use_values = use_values[use_values != ""]
             if(length(use_values)>0){
               for(use_value in use_values){
                 use_right = geoflow_right$new()
@@ -244,6 +246,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
             }
             #access constraints
             access_values = lapply(constraint$accessConstraints, function(x){x$attrs$codeListValue})
+            access_values = access_values[access_values != ""]
             if(length(access_values)>0){
               for(access_value in access_values){
                 access_right = geoflow_right$new()
@@ -379,6 +382,31 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       }
     }
     
+    #data
+    if(!is.null(rec$distributionInfo))
+      tro = rec$distributionInfo$transferOptions
+      if(!is.null(tro)){
+        onLine = tro[[1]]$onLine
+        if(length(onLine)>0){
+          onLineToDownload = onLine[sapply(onLine, function(x){x$protocol == "WWW:DOWNLOAD-1.0-http--download"})]
+          if(length(onLineToDownload)>0){
+            g_data = geoflow_data$new()
+            onLineToDownload = onLineToDownload[[1]]
+            outres = onLineToDownload$name
+            attr(outres, "uri") = onLineToDownload$linkage$value
+            g_data$setSource(outres)
+            g_data$sourceType = switch(mime::guess_type(onLineToDownload$linkage$value),
+              "text/csv" = "csv",
+              "application/zip" = "zip",
+              "application/x-qgis" = "shp",
+              "application/geopackage+sqlite3" = "gpkg",
+              "application/x-netcdf" = "nc",
+              "image/tiff" = "geotiff"
+            )
+            entity$setData(g_data)
+          }
+        }
+      }
     return(entity)
   })
   
