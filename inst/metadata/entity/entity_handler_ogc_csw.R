@@ -403,6 +403,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
               "application/x-netcdf" = "nc",
               "image/tiff" = "geotiff"
             )
+            g_data$uploadType = "other"
             entity$setData(g_data)
           }
         }
