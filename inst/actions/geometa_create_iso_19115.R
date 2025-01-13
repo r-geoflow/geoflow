@@ -22,6 +22,7 @@ function(action, entity, config){
   include_service_identification <- action$getOption("include_service_identification")
   include_coverage_data_dimension_values <- action$getOption("include_coverage_data_dimension_values")
   include_coverage_service_dimension_values <- action$getOption("include_coverage_service_dimension_values")
+  include_online_resource_ids = action$getOption("include_online_resource_ids")
   
   #check inspire metadata validator configuration
   INSPIRE_VALIDATOR <- NULL
@@ -778,6 +779,7 @@ function(action, entity, config){
     doi_or$setName("DOI")
     doi_or$setDescription("Digital Object Identifier")
     doi_or$setProtocol("WWW:LINK-1.0-http--link")
+    if(include_online_resource_ids) doi_or$setAttr("id", the_doi)
     dto$addOnlineResource(doi_or)
   }
   
@@ -840,6 +842,12 @@ function(action, entity, config){
                          "WWW:LINK-1.0-http--link"
       )
       or$setProtocol(protocol)
+      
+      if(include_online_resource_ids) if(any(sapply(c("wms", "wfs", "wcs","download"), function(x){startsWith(http_relation$key, x)}))) {
+        resource_id = paste(tolower(entity$identifiers[["id"]]), http_relation$key, tolower(http_relation$name),sep="_")
+        or$setAttr("id", resource_id)
+      }
+      
       dto$onLine = c(dto$onLine,or)
     }
   }
