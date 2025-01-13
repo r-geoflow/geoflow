@@ -151,9 +151,9 @@ geoflow_action <- R6Class("geoflow_action",
       self$target_dir = if(yml$target_dir=="NA") NA else yml$target_dir
       if(!is.na(self$target)) if(!self$target %in% c("entity","job")) stop("Action target should be either 'entity' or 'job'")
       self$packages = yml$packages
-      self$pid_generator = yml$pid_generator
+      self$pid_generator = if(!is.null(yml$pid_generator)) yml$pid_generator else FALSE
       self$pid_types = yml$pid_types
-      self$generic_uploader = yml$generic_uploader
+      self$generic_uploader = if(!is.null(yml$generic_uploader)) yml$generic_uploader else FALSE
       self$fun = source(system.file("actions", yml$fun, package = "geoflow"))$value
       self$available_options = lapply(yml$available_options, function(opt){
         if(is.null(opt$default)){
