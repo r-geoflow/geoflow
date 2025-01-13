@@ -162,7 +162,7 @@ geoflow_action <- R6Class("geoflow_action",
           if(length(opt$default)>1){
             opt$default = unlist(opt$default)
           }else{
-            opt$default = switch(opt$default,
+            opt$default = switch(as.character(opt$default),
               "NA" = NA,
               "Inf" = Inf,
               as(opt$default, opt$class)                  
