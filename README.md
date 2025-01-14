@@ -1,7 +1,7 @@
 # geoflow
 
 [![Build Status](https://github.com/r-geoflow/geoflow/actions/workflows/r-cmd-check.yml/badge.svg?branch=master)](https://github.com/r-geoflow/geoflow/actions/workflows/r-cmd-check.yml)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/geoflow)](https://cran.r-project.org/package=geoflow)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/geoflow)](https://cran.r-project.org/package=geoflow)
 [![Github_Status_Badge](https://img.shields.io/badge/Github-1.0.0-blue.svg)](https://github.com/r-geoflow/geoflow)
 [![DOI](https://zenodo.org/badge/DOI//10.5281/zenodo.3138920.svg)](https://doi.org//10.5281/zenodo.3138920)
 
