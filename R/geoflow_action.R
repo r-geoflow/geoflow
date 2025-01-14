@@ -57,7 +57,7 @@ geoflow_action <- R6Class("geoflow_action",
     #'@field packages list of packages required to perform the action
     packages = list(),
     #'@field pid_generator a name referencing the PID generator (if existing)
-    pid_generator = NULL,
+    pid_generator = "",
     #'@field pid_types types of PIDs to generate
     pid_types = list(),
     #'@field generic_uploader whether the action is a generic uploader or not.
@@ -102,7 +102,7 @@ geoflow_action <- R6Class("geoflow_action",
                           scope = "global", types = list(), def = "", 
                           target = NA, target_dir = NA,
                           packages = list(), 
-                          pid_generator = NULL, pid_types = list(),
+                          pid_generator = "", pid_types = list(),
                           generic_uploader = FALSE,
                           fun = NULL, script = NULL, options = list(),
                           available_options = list(),
@@ -151,7 +151,7 @@ geoflow_action <- R6Class("geoflow_action",
       self$target_dir = if(yml$target_dir=="NA") NA else yml$target_dir
       if(!is.na(self$target)) if(!self$target %in% c("entity","job")) stop("Action target should be either 'entity' or 'job'")
       self$packages = yml$packages
-      self$pid_generator = if(!is.null(yml$pid_generator)) yml$pid_generator else FALSE
+      self$pid_generator = if(!is.null(yml$pid_generator)) yml$pid_generator else ""
       self$pid_types = yml$pid_types
       self$generic_uploader = if(!is.null(yml$generic_uploader)) yml$generic_uploader else FALSE
       self$fun = source(system.file("actions", yml$fun, package = "geoflow"))$value
