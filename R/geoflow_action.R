@@ -57,7 +57,7 @@ geoflow_action <- R6Class("geoflow_action",
     #'@field packages list of packages required to perform the action
     packages = list(),
     #'@field pid_generator a name referencing the PID generator (if existing)
-    pid_generator = "",
+    pid_generator = NULL,
     #'@field pid_types types of PIDs to generate
     pid_types = list(),
     #'@field generic_uploader whether the action is a generic uploader or not.
@@ -102,7 +102,7 @@ geoflow_action <- R6Class("geoflow_action",
                           scope = "global", types = list(), def = "", 
                           target = NA, target_dir = NA,
                           packages = list(), 
-                          pid_generator = "", pid_types = list(),
+                          pid_generator = NULL, pid_types = list(),
                           generic_uploader = FALSE,
                           fun = NULL, script = NULL, options = list(),
                           available_options = list(),
@@ -151,7 +151,7 @@ geoflow_action <- R6Class("geoflow_action",
       self$target_dir = if(yml$target_dir=="NA") NA else yml$target_dir
       if(!is.na(self$target)) if(!self$target %in% c("entity","job")) stop("Action target should be either 'entity' or 'job'")
       self$packages = yml$packages
-      self$pid_generator = if(!is.null(yml$pid_generator)) yml$pid_generator else ""
+      self$pid_generator = if(!is.null(yml$pid_generator)) yml$pid_generator else NULL
       self$pid_types = yml$pid_types
       self$generic_uploader = if(!is.null(yml$generic_uploader)) yml$generic_uploader else FALSE
       self$fun = source(system.file("actions", yml$fun, package = "geoflow"))$value
@@ -218,7 +218,7 @@ geoflow_action <- R6Class("geoflow_action",
     #'@description Indicates if the action is PID generator
     #'@return \code{TRUE} if the action is a PID generator, \code{FALSE} otherwise
     isPIDGenerator = function(){
-      return(!is.null(self$pid_generator))
+      return(!is.null(self$pid_generator) )
     },
     
     #'@description Exports PIDs for the action. This function will export the PIDs in several ways. First, a simple CSV file 
@@ -235,7 +235,7 @@ geoflow_action <- R6Class("geoflow_action",
       out_pids <- do.call("rbind", lapply(entities, function(entity){
         out_entity <- data.frame(
           Identifier = entity$identifiers[["id"]], 
-          Status = entity$status[[self$pid_generator]],
+          Status = if(!is.null(self$pid_generator)) entity$status[[self$pid_generator]] else NA,
           stringsAsFactors = FALSE
         )
         for(pid_type in names(self$pid_types)){
@@ -351,7 +351,7 @@ list_actions <- function(raw = FALSE){
         definition = action$def,
         target = action$target,
         target_dir = action$target_dir,
-        pid_generator = action$isPIDGenerator(),
+        pid_generator = if(action$isPIDGenerator()) action$pid_generator else "",
         packages = paste(action$packages, collapse=","),
         status = action$status,
         notes = action$notes,
