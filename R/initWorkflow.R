@@ -5,7 +5,7 @@
 #'
 #' @usage initWorkflow(file, dir, jobDirPath, handleMetadata, session)
 #'                 
-#' @param file a JSON configuration file
+#' @param file a JSON or YAML configuration file
 #' @param dir a directory where to execute the workflow
 #' @param jobDirPath a directory set-up for the job. Default is \code{NULL} means it will be created
 #'  during initialization of the workflow, otherwise the path provided will be used.
@@ -27,7 +27,20 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   
   #file/config
   file <- tools::file_path_as_absolute(file)
-  config <- jsonlite::read_json(file)
+  config = NULL
+  config_ext = NULL
+  switch(
+    mime::guess_type(file),
+    "application/json" = {
+      config = jsonlite::read_json(file)
+      config_ext = "json"
+    },
+    "text/yaml" = {
+      config = yaml::read_yaml(file)
+      config_ext = "yml"
+    },
+    stop("Configuration file should be a valid JSON or YAML file")
+  )
   
   #keep the source
   config$src <- file
@@ -59,7 +72,8 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   setwd(jobDirPath)
   file.copy(from = config_file, to = getwd())
   #rename copied file
-  file.rename(from = file.path(getwd(), basename(config_file)), to = "job.json")
+  job_config_file = paste0("job.", config_ext)
+  file.rename(from = file.path(getwd(), basename(config_file)), to = job_config_file)
   setwd(wd)
   
   #profile

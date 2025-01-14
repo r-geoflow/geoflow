@@ -22,7 +22,9 @@
 #' @import dotenv
 #' @import uuid
 #' @import httr
+#' @import mime
 #' @import jsonlite
+#' @import yaml
 #' @import XML
 #' @import xml2
 #' @import mime

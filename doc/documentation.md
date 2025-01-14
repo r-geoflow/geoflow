@@ -126,8 +126,8 @@ install_github("r-geoflow/geoflow", dependencies = c("Depends", "Imports"))
 
 In R, using `geoflow` consists essentially in running the function
 \`\`executeWorkflow”, which takes a main parameter: the name of a
-configuration file in JSON format. An optional *dir* parameter can be
-specified to instruct geoflow to store execution files in:
+configuration file in JSON or YAML format. An optional *dir* parameter
+can be specified to instruct geoflow to store execution files in:
 
 ``` r
 executeWorkflow("config.json", dir = NULL)
@@ -214,15 +214,15 @@ can/should be defined:
 The `options` are by definition optional. The table below defines the
 possible geoflow global options:
 
-| Name                 | Definition                                                                                                                                                                                      | Default value |
-|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| `line_separator`     | Defines the suite of characters used for splitting metadata components with a single tabular cell of an *entity* (eg. Description field)                                                        | \*\*\_\*      |
-| `skipDataDownload`   | Indicates whether data associated to an entity should be download                                                                                                                               | **false**     |
-| `skipFileDownload`   | Deprecated, use `skipDataDownload` instead.                                                                                                                                                     | **false**     |
-| `skipDynamicBbox`    | Indicates whether bbox inherited from data should be ignored.                                                                                                                                   | **false**     |
-| `skipEnrichWithData`   | Indicates whether the entity should be enriched with data                                                                                                                               | **false**     |
-| `skipEnrichWithDatatypes`   | Indicates whether the entity data should be enriched with datatypes (case where a zip archive needs to be scanneed to inherit source/upload types)                                                                                                                               | **false**     |
-| `enrichDataStrategy` | Strategy to use when inheriting spatial bbox from multiple data objects, either “first” (take the first data object for the bbox, or “union” (union of bboxes from the different data objects). | \*\*“first”\* |
+| Name                      | Definition                                                                                                                                                                                      | Default value |
+|---------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| `line_separator`          | Defines the suite of characters used for splitting metadata components with a single tabular cell of an *entity* (eg. Description field)                                                        | \*\*\_\*      |
+| `skipDataDownload`        | Indicates whether downloading data associated to an entity should be skipped                                                                                                                    | **false**     |
+| `skipFileDownload`        | Deprecated, use `skipDataDownload` instead.                                                                                                                                                     | **false**     |
+| `skipEnrichWithData`      | Indicates whether actual data objects (features/coverages) reading and association with entity data should be skipped or not                                                                    | **false**     |
+| `skipEnrichWithDatatypes` | Indicates whether entity data object should be enriched with data types. Applies to zip archives that are scanned to detect which file extension should be used as `sourceType` / `uploadType`  | **false**     |
+| `skipDynamicBbox`         | Indicates whether bbox inherited from data should be ignored.                                                                                                                                   | **false**     |
+| `enrichDataStrategy`      | Strategy to use when inheriting spatial bbox from multiple data objects, either “first” (take the first data object for the bbox, or “union” (union of bboxes from the different data objects). | \*\*“first”\* |
 
 Note on the **mode**:
 
@@ -262,6 +262,25 @@ JSON snippet of *profile*:
 }
 ```
 
+###### YAML
+
+YAML snippet of *profile*:
+
+``` yaml
+profile:
+  id: my-workflow-identifier
+  name: My workflow
+  project: Test geoflow project
+  organization: My organization
+  logos:
+    - https://via.placeholder.com/300x150.png/09f/fff?text=geometa
+    - https://via.placeholder.com/300x150.png/09f/fff?text=ows4R
+  mode: entity
+  options:
+    line_separator: "_\n"
+    skipFileDownload: false
+```
+
 <a name="geoflow_config_metadata"/>
 
 ##### 4.3.3 Configuration components – `metadata`
@@ -290,48 +309,49 @@ handlers.
 
 - List of `entity` handlers supported by geoflow:
 
-| id             | definition                                                                                | packages                   |
-|:---------------|:------------------------------------------------------------------------------------------|:---------------------------|
-| csv            | Handle metadata entities from a CSV file                                                  |                            |
-| excel          | Handle metadata entities from a Microsoft Excel (xls,xlsx) file                           | readxl                     |
-| gsheet         | Handle metadata entities from a Google spreadsheet                                        | gsheet                     |
-| dbi            | Handle metadata entities from a DB source                                                 | DBI,RSQLite,RPostgres      |
-| dbi_csv        | Handle DBI metadata entities from a CSV file                                              | DBI,RSQLite,RPostgres      |
-| dbi_excel      | Handle DBI metadata entities from a Microsoft Excel (xls, xlsx) file                      | readxl                     |
-| dbi_gsheet     | Handle DBI metadata entities from a Google spreadsheet                                    | gsheet                     |
-| dataverse      | Handle metadata entities built from a Dataverse source                                    | dataverse                  |
-| ocs            | Handle metadata entities from a tabulat data source (csv or excel) hosted on an OCS cloud | ocs4R                      |
-| ncdf           | Handle metadata entities from a Netcdf source                                             | ncdf4                      |
-| ncml           | Handle metadata entities from a NCML source                                               | XML                        |
-| thredds        | Handle metadata entities from a Thredds server source                                     | ncdf4,thredds,XML,png,curl |
-| thredds_csv    | Handle metadata thredds entities from a CSV file                                          |                            |
-| thredds_excel  | Handle metadata thredds entities from a Microsoft Excel (xls,xlsx) file                   | readxl                     |
-| thredds_gsheet | Handle metadata thredds entities from a Google spreadsheet                                | gsheet                     |
-| ogc_csw        | Handle metadata entities from an OGC CSW endpoint                                         | ows4R,sf,geometa           |
+| id             | definition                                                                                | packages                                 | status       | notes                                                  | maintainer       |
+|:---------------|:------------------------------------------------------------------------------------------|:-----------------------------------------|:-------------|:-------------------------------------------------------|:-----------------|
+| csv            | Handle metadata entities from a CSV file                                                  | readr                                    | stable       |                                                        | Emmanuel Blondel |
+| dbi_dataverse  | Handle metadata entities built from a Dataverse source                                    | dataverse                                | experimental |                                                        | <orphaned>       |
+| dbi            | Handle metadata entities from a DB source                                                 | DBI,RSQLite,RPostgres,RPostgreSQL        | stable       |                                                        | Emmanuel Blondel |
+| dbi_csv        | Handle DBI metadata entities from a CSV file                                              | readr,DBI,RSQLite,RPostgres,RPostgreSQL  | superseded   | Use ‘csv’ handler enabling option ‘enrich_from_dbi’    | Emmanuel Blondel |
+| dbi_excel      | Handle DBI metadata entities from a Microsoft Excel (xls, xlsx) file                      | readxl,DBI,RSQLite,RPostgres,RPostgreSQL | superseded   | Use ‘excel’ handler enabling option ‘enrich_from_dbi’  | Emmanuel Blondel |
+| dbi_gsheet     | Handle DBI metadata entities from a Google spreadsheet                                    | gsheet,DBI,RSQLite,RPostgres,RPostgreSQL | superseded   | Use ‘gsheet’ handler enabling option ‘enrich_from_dbi’ | Emmanuel Blondel |
+| excel          | Handle metadata entities from a Microsoft Excel (xls,xlsx) file                           | readxl                                   | stable       |                                                        | Emmanuel Blondel |
+| gsheet         | Handle metadata entities from a Google spreadsheet                                        | gsheet                                   | stable       |                                                        | Emmanuel Blondel |
+| ncdf           | Handle metadata entities from a Netcdf source                                             | ncdf4                                    | experimental |                                                        | <orphaned>       |
+| ncdf           | Handle metadata entities from a NCML source                                               | XML                                      | experimental |                                                        | <orphaned>       |
+| ocs            | Handle metadata entities from a tabulat data source (csv or excel) hosted on an OCS cloud | ocs4R,rear,readxl                        | stable       |                                                        | Emmanuel Blondel |
+| ogc_csw        | Handle metadata entities from an OGC CSW endpoint                                         | ows4R,sf,geometa                         | experimental |                                                        | Emmanuel Blondel |
+| thredds        | Handle metadata entities from a Thredds server source                                     | thredds,ncdf4,XML,png,curl               | experimental |                                                        | <orphaned>       |
+| thredds_csv    | Handle metadata thredds entities from a CSV file                                          | thredds,ncdf4,XML,png,curl               | experimental |                                                        | <orphaned>       |
+| thredds_excel  | Handle metadata thredds entities from a Microsoft Excel (xls,xlsx) file                   | readxl,thredds,ncdf4,XML,png,curl        | experimental |                                                        | <orphaned>       |
+| thredds_gsheet | Handle metadata thredds entities from a Google spreadsheet                                | gsheet,thredds,ncdf4,XML,png,curl        | experimental |                                                        | <orphaned>       |
+| zenodo         | Handle metadata entities built from a Zenodo source                                       | zen4R                                    | experimental |                                                        | Emmanuel Blondel |
 
 List of entity handlers supported by geoflow
 
 - List of `contact` handlers supported by geoflow:
 
-| id     | definition                                                                                | packages              |
-|:-------|:------------------------------------------------------------------------------------------|:----------------------|
-| csv    | Handle metadata contacts from a CSV file                                                  |                       |
-| excel  | Handle metadata contacts from a Microsoft Excel (xls,xlsx) file                           | readxl                |
-| gsheet | Handle metadata contacts from a Google spreadsheet                                        | gsheet                |
-| dbi    | Handle metadata contacts from a DB source                                                 | DBI,RSQLite,RPostgres |
-| ocs    | Handle metadata contacts from a tabulat data source (csv or excel) hosted on an OCS cloud | ocs4R                 |
+| id     | definition                                                                                | packages                          | status | notes | maintainer       |
+|:-------|:------------------------------------------------------------------------------------------|:----------------------------------|:-------|:------|:-----------------|
+| csv    | Handle metadata contacts from a CSV file                                                  | readr                             | stable |       | Emmanuel Blondel |
+| dbi    | Handle metadata contacts from a DB source                                                 | DBI,RSQLite,RPostgres,RPostgreSQL | stable |       | Emmanuel Blondel |
+| excel  | Handle metadata contacts from a Microsoft Excel (xls,xlsx) file                           | readxl                            | stable |       | Emmanuel Blondel |
+| gsheet | Handle metadata contacts from a Google spreadsheet                                        | gsheet                            | stable |       | Emmanuel Blondel |
+| ocs    | Handle metadata contacts from a tabulat data source (csv or excel) hosted on an OCS cloud | ocs4R,rear,readxl                 | stable |       | Emmanuel Blondel |
 
 List of contact handlers supported by geoflow
 
 - List of `dictionary` handlers supported by geoflow:
 
-| id     | definition                                                                         | packages              |
-|:-------|:-----------------------------------------------------------------------------------|:----------------------|
-| csv    | Handle dictionary from a CSV file                                                  |                       |
-| excel  | Handle dictionary from a Microsoft Excel (xls,xlsx) file                           | readxl                |
-| gsheet | Handle dictionary from a Google spreadsheet                                        | gsheet                |
-| dbi    | Handle dictionary from a DB source                                                 | DBI,RSQLite,RPostgres |
-| ocs    | Handle dictionary from a tabulat data source (csv or excel) hosted on an OCS cloud | ocs4R                 |
+| id     | definition                                                                         | packages                          | status | notes |
+|:-------|:-----------------------------------------------------------------------------------|:----------------------------------|:-------|:------|
+| csv    | Handle dictionary from a CSV file                                                  | readr                             | stable |       |
+| dbi    | Handle dictionary from a DB source                                                 | DBI,RSQLite,RPostgres,RPostgreSQL | stable |       |
+| excel  | Handle dictionary from a Microsoft Excel (xls,xlsx) file                           | readxl                            | stable |       |
+| gsheet | Handle dictionary from a Google spreadsheet                                        | gsheet                            | stable |       |
+| ocs    | Handle dictionary from a tabulat data source (csv or excel) hosted on an OCS cloud | ocs4R,rear,readxl                 | stable |       |
 
 List of dictionary handlers supported by geoflow
 
@@ -420,6 +440,57 @@ workflow configuration object loaded with `initWorkflow`)
   }
 ```
 
+###### YAML
+
+- YAML snippet for *entities* handled with a Google spreadsheet:
+
+``` yaml
+entities:
+  - handler: gsheet
+    source": https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing
+```
+
+- YAML snippet for *contacts* handled with a Google spreadsheet:
+
+``` yaml
+contacts:
+  - handler: gsheet
+    source: https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing
+```
+
+- YAML snippet for the metadata part (including *entities* and
+  *contacts*)
+
+``` yaml
+metadata:
+  entities:
+    - handler: gsheet
+      source: https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing
+  contacts:
+    - handler: gsheet
+      source: https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing
+```
+
+- YAML snippet for custom handlers
+
+It is possible to use a custom `handler` function provided by the user.
+For this, the `handler` should be the *name* of the R function to be
+provided by an R script. The R script must be defined in a extra
+property named `script`. In this configuration, the `source` property
+becomes optional (it could be hardcoded in the user’s
+```` handler``` function if this ````source\`\` is not expected to
+change from one configuration to another).
+
+The YAML configuration snippet for a custom contact LDAP `handler` would
+look like this:
+
+``` yaml
+contacts:
+  handler: my_ldap_function_to_load_contacts
+  source: my_ldap_endpoint
+  script: my_ldap_script.R
+```
+
 <a name="geoflow_config_software"/>
 
 ##### 4.3.4 Configuration components – `software`
@@ -457,6 +528,8 @@ list of \``software` managed by geoflow can be retrieved in R with
 | openapi             | OpenAPI client powered by ‘rapiclient’ package                            | rapiclient            |
 | ocs                 | Open Collaboration Services (OCS) client powered by ‘ocs4R’ package       | ocs4R                 |
 | geonode             | GeoNode client powered by ‘geonode4R’ package                             | geonode4R             |
+| smtp                | SMTP Mail client powered by ‘blastula’ package                            | blastula              |
+| sparql              | A SPARQL endpoint client                                                  |                       |
 
 List of software supported by geoflow
 
@@ -597,6 +670,80 @@ Since it is a list of software, the base JSON definition will be an
 ]
 ```
 
+###### YAML
+
+- YAML snippet for declaring a `database` (*input* software) for data
+  fetching:
+
+``` yaml
+id: my-database
+type: input
+software_type: dbi
+parameters:
+  drv: PostgreSQL
+  user: user
+  password: pwd
+  host: localhost
+  port: 5432
+  dbname: mydb
+```
+
+- YAML snippet for declaring a `geoserver` (*output* software) for data
+  publishing:
+
+``` yaml
+id: my-geoserver
+type: output
+software_type: geoserver
+parameters:
+  url: http://localhost:800/geoserver
+    user: admin
+    pwd: geoserver
+    logger: DEBUG
+properties:
+  workspace: my_geoserver_workspace
+    store: my_geoserver_store
+```
+
+- YAML snippet for the overall “software” component
+
+Since it is a list of software, the base JSON definition will be an
+*array* (using square brackets `[ ]`):
+
+``` yaml
+software: <software here>
+```
+
+- JSON snippet for the overall “software” component (including one
+  *input* - a database - and one *output* - a geoserver -)
+
+``` yaml
+software
+  - id: my-database
+    type: input
+        software_type: dbi
+        parameters:
+            drv: PostgreSQL
+            user: user
+            password: pwd
+            host: localhost
+            port: 5432
+            dbname: mydb
+  - id: my-geoserver
+        type: output
+        software_type: geoserver
+        parameters:
+            url: http://localhost:800/geoserver
+            user: admin
+            pwd: geoserver
+            logger: DEBUG
+        properties:
+            workspace: my_geoserver_workspace
+            store: my_geoserver_store
+  }
+]
+```
+
 - **How to use a user’s custom software**
 
 DOCUMENTATION IN PREPARATION
@@ -630,24 +777,24 @@ functions to interact with common tools (databases, web-applications,
 APIs). The list of `actions` managed by geoflow can be retrieved in R
 with `list_actions()`. The list of actions managed by `geoflow` are:
 
-| id                              | types                                                            | definition                                                                 | target | target_dir | pid_generator | packages                 |
-|:--------------------------------|:-----------------------------------------------------------------|:---------------------------------------------------------------------------|:-------|:-----------|:--------------|:-------------------------|
-| geometa-create-iso-19115        | Metadata production                                              | Produce an ISO/OGC 19115/19139 metadata object                             | entity | metadata   | FALSE         | geometa,ows4R            |
-| geometa-create-iso-19110        | Metadata production                                              | Produce an ISO 19110/19139 metadata object                                 | entity | metadata   | FALSE         | geometa                  |
-| ows4R-publish-iso-19139         | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object using OGC CSW Protocol     | NA     | NA         | FALSE         | ows4R                    |
-| geonapi-publish-iso-19139       | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API        | NA     | NA         | FALSE         | geonapi                  |
-| geosapi-publish-ogc-services    | Data upload,Data publication,Metadata publication                | Publish data to GeoServer OGC web-services (WMS/WFS/WCS)                   | NA     | NA         | FALSE         | geosapi                  |
-| geonode4R-publish-ogc-services  | Data upload,Data publication,Metadata publication                | Publish data to GeoNode OGC web-services (WMS/WFS/WCS)                     | NA     | NA         | FALSE         | geonode4R                |
-| zen4R-deposit-record            | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metadata in the Zenodo infrastructure         | job    | zenodo     | TRUE          | zen4R                    |
-| atom4R-dataverse-deposit-record | Data upload,Data publication,Metadata publication,DOI assignment | Deposits/Publish data and/or metetadata on a Dataverse using the Sword API | job    | dataverse  | TRUE          | atom4R                   |
-| dataone-upload-datapackage      | Data upload,Data publication,Metadata publication,DOI assignment | Uploads a data package to a DataOne metacat node                           | job    | dataone    | TRUE          | mime,datapack,dataone    |
-| sf-write-generic                | Data writing,Data upload                                         | Import features data into several formats                                  | entity | data       | FALSE         | sf,DBI,RSQLite,RPostgres |
-| sf-write-dbi                    | Data writing,Data upload                                         | Import features data into Postgres/Postgis                                 | NA     | NA         | FALSE         | sf,DBI,RSQLite,RPostgres |
-| sf-write-shp                    | Data writing                                                     | Import features data and zip files                                         | entity | data       | FALSE         | sf                       |
-| eml-create-eml                  | Metadata production                                              | Produce an EML metadata object                                             | entity | metadata   | FALSE         | EML,emld                 |
-| d4storagehub4R-upload-data      | Data upload                                                      | Upload data/metadata to a D4Science Workspace                              | NA     | NA         | FALSE         | d4storagehub4R           |
-| ocs4R-upload-data               | Data upload                                                      | Upload data to an OCS Cloud (NextCloud/Owncloud) Workspace                 | NA     | NA         | FALSE         | ocs4R                    |
-| create-metadata-rmd             | Metadata production                                              | Generate a Markdown out of a entity                                        | entity | markdown   | FALSE         | rmarkdown                |
+| id                              | types                                                            | definition                                                                 | target | target_dir | pid_generator | packages                 | status       | notes | maintainer       |
+|:--------------------------------|:-----------------------------------------------------------------|:---------------------------------------------------------------------------|:-------|:-----------|:--------------|:-------------------------|:-------------|:------|:-----------------|
+| atom4R-dataverse-deposit-record | Data upload,Data publication,Metadata publication,DOI management | Deposits/Publish data and/or metetadata on a Dataverse using the Sword API | job    | dataverse  | dataverse     | atom4R                   | experimental |       | <orphaned>       |
+| d4storagehub4R-upload-data      | Data upload                                                      | Upload data/metadata to a D4Science Workspace                              | NA     | NA         |               | d4storagehub4R           | stable       |       | Emmanuel Blondel |
+| dataone-upload-datapackage      | Data upload,Data publication,Metadata publication,DOI management | Uploads a data package to a DataOne metacat node                           | job    | dataone    | dataone       | mime,datapack,dataone    | experimental |       | <orphaned>       |
+| eml-create-eml                  | Metadata production                                              | Produce an EML metadata object                                             | entity | metadata   |               | EML,emld                 | experimental |       | <orphaned>       |
+| geometa-create-iso-19110        | Metadata production                                              | Produce an ISO 19110 metadata object and export it to XML                  | entity | metadata   |               | geometa                  | stable       |       | Emmanuel Blondel |
+| geometa-create-iso-19115        | Metadata production                                              | Produce an ISO/OGC 19115 metadata object and export it to XML              | entity | metadata   |               | geometa,ows4R            | stable       |       | Emmanuel Blondel |
+| geonapi-publish-iso-19139       | Metadata publication                                             | Publish/Update an ISO/OGC 19139 metadata object with GeoNetwork API        | entity | metadata   |               | geometa,geonapi          | stable       |       | Emmanuel Blondel |
+| geonode4R-publish-ogc-services  | Data upload,Data publication,Metadata publication                | Publish data to GeoNode OGC web-services (WMS/WFS/WCS)                     | NA     | NA         |               | geonode4R                | experimental |       | Emmanuel Blondel |
+| geosapi-publish-ogc-services    | Data upload,Data publication,Metadata publication                | Publish data to GeoServer OGC web-services (WMS/WFS/WCS)                   | NA     | NA         |               | geosapi                  | stable       |       | Emmanuel Blondel |
+| ocs4R-upload-data               | Data upload                                                      | Upload data to an OCS Cloud (NextCloud/Owncloud) Workspace                 | NA     | NA         |               | ocs4R                    | experimental |       | Emmanuel Blondel |
+| ows4R-publish-iso-19139         | Metadata publication                                             | Publish/Update an ISO/OGC XML metadata object using OGC CSW Protocol       | entity | metadata   |               | geometa,ows4R            | stable       |       | Emmanuel Blondel |
+| create-metadata-rmd             | Metadata production,Reporting                                    | Generate a Markdown out of a entity                                        | entity | markdown   |               | rmarkdown                | experimental |       | <orphaned>       |
+| sf-write-dbi                    | Data writing,Data upload                                         | Import features data into Postgres/Postgis                                 | entity | data       |               | sf,DBI,RSQLite,RPostgres | stable       |       | Emmanuel Blondel |
+| sf-write-generic                | Data writing,Data upload                                         | Import features data into several formats                                  | entity | data       |               | sf,DBI,RSQLite,RPostgres | stable       |       | Emmanuel Blondel |
+| sf-write-shp                    | Data writing                                                     | Import features data and zip files                                         | entity | data       |               | sf                       | stable       |       | Emmanuel Blondel |
+| zen4R-deposit-record            | Data upload,Data publication,Metadata publication,DOI management | Deposits/Publish data and/or metadata in the Zenodo infrastructure         | job    | zenodo     | zenodo        | zen4R                    | stable       |       | Emmanuel Blondel |
 
 List of actions supported by geoflow
 
@@ -680,6 +827,7 @@ geoflow::list_action_options("geometa-create-iso-19115")
     ## 9             include_service_identification
     ## 10    include_coverage_data_dimension_values
     ## 11 include_coverage_service_dimension_values
+    ## 12               include_online_resource_ids
     ##                                                                                   definition
     ## 1                  Use UUID as metadata identifier, if not defined the UUID is pre-generated
     ## 2                   Add entity DOI - if defined - as metadata identifier and online resource
@@ -692,6 +840,7 @@ geoflow::list_action_options("geometa-create-iso-19115")
     ## 9                                         Include service identification info metadata block
     ## 10                            Include data dimensions's range values to coverage description
     ## 11                             Include ogc dimensions's range values to coverage description
+    ## 12   Include online resource IDs (Applies only to DOIs, OGC services and download resources)
     ##      default
     ## 1      FALSE
     ## 2      FALSE
@@ -704,6 +853,7 @@ geoflow::list_action_options("geometa-create-iso-19115")
     ## 9      FALSE
     ## 10     FALSE
     ## 11     FALSE
+    ## 12     FALSE
 
 ###### JSON
 
@@ -729,6 +879,27 @@ Since it is a list of *actions*, the base JSON definition will be an
 "actions": [
      <here will be listed the actions to perform>
 ]
+```
+
+###### YAML
+
+- YAML snippet for an action (eg “geometa-create-iso-19115”) with an
+  option enabled:
+
+``` yaml
+id: geometa-create-iso-19115
+options:
+  logo: true
+run: true
+```
+
+- YAML snippet for the overall list of *actions*
+
+Since it is a list of *actions*, the base YAML definition will be an
+*array* (using square brackets `[ ]`):
+
+``` yaml
+actions: <here will be listed the actions to perform>
 ```
 
 <a name="geoflow_config_register"/>
@@ -771,6 +942,17 @@ Since it is a list of registers, the base JSON definition will be an
 "registers": [
      <here will be listed the registers>
 ]
+```
+
+###### YAML
+
+- YAML snippet for the overall “registers” component
+
+Since it is a list of registers, the base JSON definition will be an
+*array* (using square brackets `[ ]`):
+
+``` yaml
+registers: <here will be listed the registers>
 ```
 
 - **How to use a user’s custom register**

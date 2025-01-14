@@ -102,7 +102,7 @@ install_github("r-geoflow/geoflow", dependencies = c("Depends", "Imports"))
 
 #### 4.2 How to use geoflow in R
 
-In R, using ``geoflow`` consists essentially in running the function ``executeWorkflow", which takes a main parameter: the name of a configuration file in JSON format. An optional _dir_ parameter can be specified to instruct geoflow to store execution files in:
+In R, using ``geoflow`` consists essentially in running the function ``executeWorkflow", which takes a main parameter: the name of a configuration file in JSON or YAML format. An optional _dir_ parameter can be specified to instruct geoflow to store execution files in:
 
 ```{r, eval = FALSE}
 executeWorkflow("config.json", dir = NULL)
@@ -210,6 +210,25 @@ JSON snippet of _profile_:
     "skipFileDownload": false
   }
 }
+```
+
+###### YAML
+
+YAML snippet of _profile_:
+
+```{yaml}
+profile:
+  id: my-workflow-identifier
+  name: My workflow
+  project: Test geoflow project
+  organization: My organization
+  logos:
+    - https://via.placeholder.com/300x150.png/09f/fff?text=geometa
+    - https://via.placeholder.com/300x150.png/09f/fff?text=ows4R
+  mode: entity
+  options:
+    line_separator: "_\n"
+    skipFileDownload: false
 ```
 
 <a name="geoflow_config_metadata"/>
@@ -327,6 +346,49 @@ In R, the ``my_ldap_function_to_load_contacts`` function writen by user in ``my_
     return(contacts)
   }
 
+```
+
+###### YAML
+
+* YAML snippet for _entities_ handled with a Google spreadsheet:
+
+```{yaml}
+entities:
+  - handler: gsheet
+    source": https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing
+```
+
+* YAML snippet for _contacts_ handled with a Google spreadsheet:
+
+```{yaml}
+contacts:
+  - handler: gsheet
+    source: https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing
+```
+
+* YAML snippet for the metadata part (including _entities_ and _contacts_)
+
+```{yaml}
+metadata:
+  entities:
+    - handler: gsheet
+      source: https://docs.google.com/spreadsheets/d/1iG7i3CE0W9zVM3QxWfCjoYbqj1dQvKsMnER6kqwDiqM/edit?usp=sharing
+  contacts:
+    - handler: gsheet
+      source: https://docs.google.com/spreadsheets/d/144NmGsikdIRE578IN0McK9uZEUHZdBuZcGy1pJS6nAg/edit?usp=sharing
+```
+
+* YAML snippet for custom handlers
+
+It is possible to use a custom ``handler`` function provided by the user. For this,  the ``handler`` should be the _name_ of the R function to be provided by an R script. The R script must be defined in a extra property named ``script``. In this configuration, the ``source`` property becomes optional (it could be hardcoded in the user's ``handler``` function if this ``source`` is not expected to change from one configuration to another).
+
+The YAML configuration snippet for a custom contact LDAP ``handler`` would look like this:
+
+```{yaml}
+contacts:
+  handler: my_ldap_function_to_load_contacts
+  source: my_ldap_endpoint
+  script: my_ldap_script.R
 ```
 
 <a name="geoflow_config_software"/>
@@ -453,6 +515,76 @@ Since it is a list of software, the base JSON definition will be an _array_ (usi
 ]
 ```
 
+###### YAML
+
+* YAML snippet for declaring a ```database``` (_input_ software) for data fetching:
+
+```{yaml}
+id: my-database
+type: input
+software_type: dbi
+parameters:
+  drv: PostgreSQL
+  user: user
+  password: pwd
+  host: localhost
+  port: 5432
+  dbname: mydb
+```
+
+* YAML snippet for declaring a ```geoserver``` (_output_ software) for data publishing:
+
+```{yaml}
+id: my-geoserver
+type: output
+software_type: geoserver
+parameters:
+  url: http://localhost:800/geoserver
+	user: admin
+	pwd: geoserver
+	logger: DEBUG
+properties:
+  workspace: my_geoserver_workspace
+	store: my_geoserver_store
+```
+
+* YAML snippet for the overall "software" component
+
+Since it is a list of software, the base JSON definition will be an _array_ (using square brackets ```[ ]```):
+
+```{yaml}
+software: <software here>
+```
+
+* JSON snippet for the overall "software" component (including one _input_ - a database - and one _output_ - a geoserver -)
+
+```{yaml}
+software
+  - id: my-database
+    type: input
+		software_type: dbi
+		parameters:
+			drv: PostgreSQL
+			user: user
+			password: pwd
+			host: localhost
+			port: 5432
+			dbname: mydb
+  - id: my-geoserver
+		type: output
+		software_type: geoserver
+		parameters:
+			url: http://localhost:800/geoserver
+			user: admin
+			pwd: geoserver
+			logger: DEBUG
+		properties:
+			workspace: my_geoserver_workspace
+			store: my_geoserver_store
+  }
+]
+```
+
 
 * **How to use a user's custom software**
 
@@ -519,6 +651,25 @@ Since it is a list of _actions_, the base JSON definition will be an _array_ (us
 ]
 ```
 
+###### YAML
+
+* YAML snippet for an action (eg "geometa-create-iso-19115") with an option enabled:
+
+```{yaml}
+id: geometa-create-iso-19115
+options:
+  logo: true
+run: true
+```
+
+* YAML snippet for the overall list of _actions_
+
+Since it is a list of _actions_, the base YAML definition will be an _array_ (using square brackets ```[ ]```):
+
+```{yaml}
+actions: <here will be listed the actions to perform>
+```
+
 
 <a name="geoflow_config_register"/>
 
@@ -551,6 +702,16 @@ Since it is a list of registers, the base JSON definition will be an _array_ (us
 "registers": [
      <here will be listed the registers>
 ]
+```
+
+###### YAML
+
+* YAML snippet for the overall "registers" component
+
+Since it is a list of registers, the base JSON definition will be an _array_ (using square brackets ```[ ]```):
+
+```{yaml}
+registers: <here will be listed the registers>
 ```
 
 * **How to use a user's custom register**

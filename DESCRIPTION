@@ -35,7 +35,9 @@ Imports:
   dotenv,
   benchmarkme,
   httr,
+  mime,
   jsonlite,
+  yaml,
   XML,
   xml2,
   curl,
@@ -77,7 +79,8 @@ Suggests:
   d4storagehub4R,
   rmarkdown,
   dataverse,
-  blastula
+  blastula,
+  waldo
 License: MIT + file LICENSE
 URL: https://github.com/r-geoflow/geoflow
 BugReports: https://github.com/r-geoflow/geoflow

@@ -7,7 +7,7 @@
 initWorkflow(file, dir, jobDirPath, handleMetadata, session)
 }
 \arguments{
-\item{file}{a JSON configuration file}
+\item{file}{a JSON or YAML configuration file}
 
 \item{dir}{a directory where to execute the workflow}
 
