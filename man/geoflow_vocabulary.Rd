@@ -44,6 +44,7 @@ geoflow_vocabulary
 \if{html}{\out{<a id="method-geoflow_vocabulary-new"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_vocabulary-new}{}}}
 \subsection{Method \code{new()}}{
+Initializes a vocabulary
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_vocabulary$new(id, def, uri, software_type)}\if{html}{\out{</div>}}
 }
@@ -66,6 +67,7 @@ geoflow_vocabulary
 \if{html}{\out{<a id="method-geoflow_vocabulary-setSoftware"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_vocabulary-setSoftware}{}}}
 \subsection{Method \code{setSoftware()}}{
+Set software
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_vocabulary$setSoftware(software)}\if{html}{\out{</div>}}
 }

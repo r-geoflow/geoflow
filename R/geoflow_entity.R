@@ -1880,17 +1880,19 @@ geoflow_entity <- R6Class("geoflow_entity",
           target_vocab = target_vocab[[1]]
           subject$uri = target_vocab$uri
           subject$keywords = lapply(subject$keywords, function(keyword){
+            rs = NULL
             if(!is.null(keyword$uri)){
               #enrich from URI to add labels
               rs = target_vocab$query_from_uri(uri = keyword$uri)
-              if(nrow(rs)>0){
-                keyword$name = rs[rs$lang == "en",]$prefLabel
-                for(lang in rs$lang){
-                  attr(keyword$name, paste0("locale#",toupper(lang))) = rs[rs$lang == lang,]$prefLabel
-                }
-              }
             }else{
               #enrich from an existing term to get URI + other labels
+              rs = target_vocab$query_from_term(term = keyword$name)
+            }
+            if(!is.null(rs)) if(tibble::is_tibble(rs)) if(nrow(rs)>0){
+              keyword$name = rs[rs$lang == "en",]$prefLabel
+              for(lang in rs$lang){
+                attr(keyword$name, paste0("locale#",toupper(lang))) = rs[rs$lang == lang,]$prefLabel
+              }
             }
             return(keyword)
           })

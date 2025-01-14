@@ -25,7 +25,7 @@ geoflow_vocabulary <- R6Class("geoflow_vocabulary",
     #'@field software software
     software = NULL,
     
-    #'@name Initializes a vocabulary
+    #'@description Initializes a vocabulary
     #'@param id id
     #'@param def def
     #'@param uri uri
@@ -37,7 +37,7 @@ geoflow_vocabulary <- R6Class("geoflow_vocabulary",
       self$software_type = software_type
     },
     
-    #'@name Set software
+    #'@description Set software
     #'@param software software
     setSoftware = function(software){
       #TODO
@@ -64,7 +64,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     #'@field endpoint endpoint
     endpoint = NA,
     
-    #'@name Initializes a vocabulary
+    #'@description Initializes a vocabulary
     #'@param id id
     #'@param def def
     #'@param uri uri
@@ -74,7 +74,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       self$endpoint = endpoint
     },
     
-    #'@name query
+    #'@description query
     #'@param str str
     #'@param graphUri graphUri
     #'@param mimetype mimetype
@@ -103,7 +103,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       self$query(str)
     },
     
-    #'@name query_from_uri
+    #'@description query_from_uri
     #'@param uri uri
     #'@param graphUri graphUri
     #'@param mimetype mimetype
@@ -111,20 +111,39 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     query_from_uri = function(uri, graphUri = NULL, mimetype = "text/csv"){
       
       str = paste0(
-       "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
-        SELECT ?concept ?lang ?prefLabel (GROUP_CONCAT ( DISTINCT concat('\"',?altLabel,'\"@',lang(?altLabel)); separator=\"|_|\" ) as ?altLabels) 
+       "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        SELECT ?concept ?lang ?prefLabel
         WHERE { 
           BIND(<",uri,"> AS ?concept) 
           ?concept skos:prefLabel ?prefLabel . 
           BIND(lang(?prefLabel) AS ?lang) 
-          OPTIONAL{ 
-          	?concept skos:altLabel ?altLabel . 
-          	FILTER(lang(?altLabel) = ?lang) 
-          } 
         } 
         GROUP BY ?concept ?lang ?prefLabel 
         ORDER BY ?lang "
+      )
+      
+      self$query(str = str, graphUri = graphUri, mimetype = mimetype)
+    },
+    
+    #'@description query_from_term
+    #'@param term term
+    #'@param graphUri graphUri
+    #'@param mimetype mimetype
+    #'@return the response of the SPARQL query
+    query_from_term = function(term, graphUri = NULL, mimetype = "text/csv"){
+      
+      str = paste0(
+        "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+         SELECT ?concept ?lang ?prefLabel
+         WHERE {
+          ?concept skos:prefLabel ?searchLabel .
+          ?concept skos:prefLabel ?prefLabel .
+          FILTER (STR(?searchLabel) = \"", term, "\")
+          FILTER (LANG(?prefLabel) != \"\")
+          BIND (LANG(?prefLabel) AS ?lang)
+         }
+         GROUP BY ?concept ?lang ?prefLabel 
+         ORDER BY ?lang "
       )
       
       self$query(str = str, graphUri = graphUri, mimetype = mimetype)

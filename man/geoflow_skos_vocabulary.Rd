@@ -35,6 +35,7 @@ geoflow_skos_vocabulary
 \item \href{#method-geoflow_skos_vocabulary-query}{\code{geoflow_skos_vocabulary$query()}}
 \item \href{#method-geoflow_skos_vocabulary-ping}{\code{geoflow_skos_vocabulary$ping()}}
 \item \href{#method-geoflow_skos_vocabulary-query_from_uri}{\code{geoflow_skos_vocabulary$query_from_uri()}}
+\item \href{#method-geoflow_skos_vocabulary-query_from_term}{\code{geoflow_skos_vocabulary$query_from_term()}}
 \item \href{#method-geoflow_skos_vocabulary-clone}{\code{geoflow_skos_vocabulary$clone()}}
 }
 }
@@ -49,6 +50,7 @@ geoflow_skos_vocabulary
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-new"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-new}{}}}
 \subsection{Method \code{new()}}{
+Initializes a vocabulary
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$new(id, def, uri, endpoint)}\if{html}{\out{</div>}}
 }
@@ -71,6 +73,7 @@ geoflow_skos_vocabulary
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-query"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-query}{}}}
 \subsection{Method \code{query()}}{
+query
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$query(str, graphUri = NULL, mimetype = "text/csv")}\if{html}{\out{</div>}}
 }
@@ -104,6 +107,7 @@ Ping query
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-query_from_uri"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-query_from_uri}{}}}
 \subsection{Method \code{query_from_uri()}}{
+query_from_uri
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$query_from_uri(
   uri,
@@ -116,6 +120,34 @@ Ping query
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{uri}}{uri}
+
+\item{\code{graphUri}}{graphUri}
+
+\item{\code{mimetype}}{mimetype}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the response of the SPARQL query
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_skos_vocabulary-query_from_term"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-query_from_term}{}}}
+\subsection{Method \code{query_from_term()}}{
+query_from_term
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$query_from_term(
+  term,
+  graphUri = NULL,
+  mimetype = "text/csv"
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{term}}{term}
 
 \item{\code{graphUri}}{graphUri}
 
