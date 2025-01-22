@@ -223,7 +223,7 @@ function(action, entity, config){
       if(length(data_files)>0){
         if(entity$data$upload){
           config$logger.info("Dataverse: uploading data files...")
-          uploaded <- SWORD$addFilesToDataverseRecord(paste0("doi:", doi), files = data_files)
+          uploaded <- mapply(FUN = SWORD$addFilesToDataverseRecord,paste0("doi:", doi),data_files)
         }else{
           config$logger.warn("Dataverse: upload:false, skipping data files upload!")
         }
