@@ -142,8 +142,8 @@ function(action, entity, config){
   md$setDataSetURI(md$fileIdentifier)
   
   dctype <- entity$types[["generic"]]
-  dctype_idx = which(tolower(ISOHierarchyLevel$values()) == tolower(dctype))
-  dctype_iso = ISOHierarchyLevel$values()[dctype_idx]
+  dctype_idx = which(tolower(ISOScopeCode$values()) == tolower(dctype))
+  dctype_iso = ISOScopeCode$values()[dctype_idx]
   if(length(dctype_iso)==0) dctype_iso = "dataset"
   md$addHierarchyLevel(dctype_iso)
   
@@ -857,7 +857,7 @@ function(action, entity, config){
   #data quality - provenance / lineage
   if(!is.null(entity$provenance)){
     dq_lineage <- ISODataQuality$new()
-    dq_lineage_scope <- ISOScope$new()
+    dq_lineage_scope <- ISODataQualityScope$new()
     dq_lineage_scope$setLevel(dctype_iso)
     dq_lineage$setScope(dq_lineage_scope)
     lineage <- ISOLineage$new()
@@ -884,7 +884,7 @@ function(action, entity, config){
   #data quality other than lineage
   if(inspire){
     dq2 <- ISODataQuality$new()
-    scope2 <- ISOScope$new()
+    scope2 <- ISODataQualityScope$new()
     scope2$setLevel(dctype_iso)
     dq2$setScope(scope2)
     
