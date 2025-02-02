@@ -131,7 +131,7 @@ function(action, entity, config){
   ct <- ISOCitation$new()
   ct$setTitle(entity$titles[["title"]])
   if("alternative" %in% names(entity$titles)){
-    ct$setAlternateTitle(entity$titles[["alternative"]])
+    ct$addAlternateTitle(entity$titles[["alternative"]])
   }
   d <- ISODate$new()
   d$setDate(Sys.Date())
