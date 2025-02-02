@@ -70,7 +70,7 @@ available_options:
     def: Include ogc dimensions's range values to coverage description
     class: logical
     default: false
-  include_online_resource_ids:
-    def: Include online resource IDs (Applies only to DOIs, OGC services and download resources)
+  include_object_identification_ids:
+    def: Include object identification IDs (Applies only to graphic overviews, DOIs, OGC services and download resources)
     class: logical
     default: false

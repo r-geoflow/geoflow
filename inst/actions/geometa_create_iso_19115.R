@@ -22,7 +22,7 @@ function(action, entity, config){
   include_service_identification <- action$getOption("include_service_identification")
   include_coverage_data_dimension_values <- action$getOption("include_coverage_data_dimension_values")
   include_coverage_service_dimension_values <- action$getOption("include_coverage_service_dimension_values")
-  include_online_resource_ids = action$getOption("include_online_resource_ids")
+  include_object_identification_ids = action$getOption("include_object_identification_ids")
   
   #check inspire metadata validator configuration
   INSPIRE_VALIDATOR <- NULL
@@ -70,6 +70,10 @@ function(action, entity, config){
       rp$parentAttrs[["xlink:href"]] <- paste0("https://orcid.org/", orcid)
     }
     
+    if(include_object_identification_ids){
+      rp_id = paste(role, tolower(x$email), sep = "_")
+      rp$setAttr("id", create_object_identification_id("party", rp_id))
+    }
     return(rp)
   }
   
@@ -267,7 +271,7 @@ function(action, entity, config){
   ct <- ISOCitation$new()
   ct$setTitle(entity$titles[["title"]], locales = geoflow::get_locales_from(entity$titles[["title"]]))
   if("alternative" %in% names(entity$titles)){
-    ct$setAlternateTitle(entity$titles[["alternative"]])
+    ct$addAlternateTitle(entity$titles[["alternative"]])
   }
   for(date in entity$dates){
     if(date$key != "edition"){
@@ -328,6 +332,8 @@ function(action, entity, config){
         fileName = thumbnail$link,
         fileDescription = thumbnail$name
       )
+      thumbnail_id = paste(tolower(entity$identifiers[["id"]]), "thumbnail", tolower(thumbnail$link),sep="_")
+      if(include_object_identification_ids) go$setAttr("id", create_object_identification_id("browsegraphic", thumbnail_id))
       ident$addGraphicOverview(go)
     }
   }
@@ -779,7 +785,7 @@ function(action, entity, config){
     doi_or$setName("DOI")
     doi_or$setDescription("Digital Object Identifier")
     doi_or$setProtocol("WWW:LINK-1.0-http--link")
-    if(include_online_resource_ids) doi_or$setAttr("id", the_doi)
+    if(include_object_identification_ids) doi_or$setAttr("id", create_object_identification_id("onlineresource", the_doi))
     dto$addOnlineResource(doi_or)
   }
   
@@ -843,9 +849,9 @@ function(action, entity, config){
       )
       or$setProtocol(protocol)
       
-      if(include_online_resource_ids) if(any(sapply(c("wms", "wfs", "wcs","download"), function(x){startsWith(http_relation$key, x)}))) {
+      if(include_object_identification_ids) if(any(sapply(c("wms", "wfs", "wcs","download"), function(x){startsWith(http_relation$key, x)}))) {
         resource_id = paste(tolower(entity$identifiers[["id"]]), http_relation$key, tolower(http_relation$name),sep="_")
-        or$setAttr("id", resource_id)
+        or$setAttr("id", create_object_identification_id("onlineresource", resource_id))
       }
       
       dto$onLine = c(dto$onLine,or)

@@ -43,6 +43,7 @@ Imports:
   curl,
   whisker,
   mime,
+  digest,
   plyr,
   readr,
   zip,

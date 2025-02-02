@@ -801,3 +801,17 @@ describeOGCRelation <- function(entity, data_object, service, download = FALSE, 
   )
   return(out)
 }
+
+#'@name create_object_identification_id
+#'@aliases create_object_identification_id
+#'@title create_object_identification_id
+#'
+#'@usage create_object_identification_id(str)
+#'
+#'@param prefix a character string
+#'@param str a character string
+#'@return a digested character string
+#'@export
+create_object_identification_id = function(prefix, str){
+  paste(prefix, digest::digest(object = str, algo = "crc32", serialize = FALSE), sep = "_")
+}
