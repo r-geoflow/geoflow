@@ -267,7 +267,7 @@ function(action, entity, config){
   ct <- ISOCitation$new()
   ct$setTitle(entity$titles[["title"]], locales = geoflow::get_locales_from(entity$titles[["title"]]))
   if("alternative" %in% names(entity$titles)){
-    ct$setAlternateTitle(entity$titles[["alternative"]])
+    ct$addAlternateTitle(entity$titles[["alternative"]])
   }
   for(date in entity$dates){
     if(date$key != "edition"){
