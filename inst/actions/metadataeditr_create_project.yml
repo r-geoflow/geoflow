@@ -1,0 +1,71 @@
+id: metadataeditr-create-project
+fun: metadataeditr_create_project.R
+funders:
+  - name: World Bank
+    url: https://www.worldbank.org/ext/en/home
+authors:
+  - name: Emmanuel Blondel
+    email: emmanuel.blondel1@gmail.com
+maintainer:
+  name: Emmanuel Blondel
+  email: emmanuel.blondel1@gmail.com
+types:
+  - Data upload
+  - Data publication
+  - Metadata publication
+def: Create and publish a geospatial project in the World Bank metadata editor
+status: experimental
+target: entity
+target_dir: metadata
+packages:
+  - metadataeditr
+available_options:
+  fc:
+    def: Whether the feature catalog has to be produced
+    class: logical
+    default: true
+  fc_exclude_attributes:
+    def: Attributes that should be excluded from the ISO 19110 production
+    class: character
+    choices: []
+    add_choices: true
+    multiple: true
+    default: ""
+  fc_exclude_attributes_not_in_dictionary:
+    def: Feature catalog - Enable to exclude all attributes/variables not referenced as dictionary/featuretype
+    class: logical
+    default: false
+  fc_exclude_values_for_attributes:
+    def: Feature catalog - Attribute names for which listed values should not be produced
+    class: character
+    choices: []
+    add_choices: true
+    multiple: true
+    default: ""
+  fc_extra_attributes:
+    def: Feature catalog - Extra attributes to add as feature catalog attributes although not in data
+    class: character
+    choices: []
+    add_choices: true
+    multiple: true
+    default: ""
+  fc_default_min_occurs:
+    def: Feature catalog - The default min occurs value for feature attributes cardinality
+    class: integer
+    default: 0
+  fc_default_max_occurs:
+    def: Feature catalog - The default max occurs value for feature attribute cardinality
+    class: numeric
+    default: Inf
+  depositWithFiles:
+    def: Indicates if the action is uploading files
+    class: logical
+    default: true
+  depositDataPattern:
+    def: A regular expression to filter data files to upload in metadata editor
+    class: character
+    default: ""
+  depositMetadataPattern:
+    def: A regular expression to filter metadata files to upload in metadata editor
+    class: character
+    default: ""

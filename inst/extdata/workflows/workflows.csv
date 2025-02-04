@@ -20,3 +20,5 @@ config_metadata_zenodo.json,Load metadata entities/contacts from Zenodo deposits
 config_metadata_zenodo_with_options.json,Load metadata entities/contacts from Zenodo deposits/records (with options declared to fetch from public records and by DOI)
 config_metadata_ncml.json,Load a metadata entity/contacts from a NCML source
 config_metadata_thredds_noaa.json,Load metadata entities/contact from a Thredds data server (NOAA example)
+config_metadataeditr_from_csw,Load metadata entities from an OGC Catalogue Service for the Web (CSW) query and publish into the World Bank Metadata editor
+config_metadataeditr_from_gsheets,Load metadata entities/contacts from a Google spreadsheets and publish into the World Bank Metadata editor
