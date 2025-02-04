@@ -19,7 +19,7 @@
 #' @param append a boolean condition for appending to DB existing table. Default is \code{FALSE}
 #' @param chunk.size an object of class \code{integer} giving the size of chunks to apply for DB upload.
 #' Default is equal to \code{OL}, meaning DB upload will be done without chunking.
-#' @param type format to convert into list :"shp","dbtable" 
+#' @param type format to convert into. Formats supported: shp, csv, gpkg, parquet, dbtable 
 #' 
 #' @author Alexandre Bennici, \email{bennicialexandre@@gmail.com}
 #' @export
@@ -28,7 +28,7 @@
 writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                                          useFeatures=FALSE, resourcename=NULL, useUploadSource=FALSE,
                                          createIndexes=FALSE, overwrite=TRUE, append = FALSE, chunk.size = 0L, 
-                                         type){
+                                         type = c("shp", "csv", "gpkg", "parquet", "dbtable")){
   config$logger.info("------------------------------------------------------------------------------")
   config$logger.info("Write data resource start")
   if(is.null(obj) && !useFeatures){
@@ -90,6 +90,14 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
            
            config$logger.info(sprintf("Format type: %s", type))
            sf::st_write(obj = obj, dsn=paste0("./data/",resourcename,".gpkg"))
+           config$logger.info("write gpkg file to data job directory")
+         },
+         "parquet" = {
+           resourcename_parts <- unlist(strsplit(resourcename, "\\."))
+           if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
+           
+           config$logger.info(sprintf("Format type: %s", type))
+           sfarrow::st_write_parquet(obj = obj, dsn=paste0("./data/",resourcename,".parquet"))
            config$logger.info("write gpkg file to data job directory")
          },
          "dbtable" = {

@@ -17,6 +17,7 @@ target: entity
 target_dir: data
 packages:
   - sf
+  - sfarrow
   - DBI
   - RSQLite
   - RPostgres
@@ -29,6 +30,7 @@ available_options:
       - dbtable
       - csv
       - gpkg
+      - parquet
     default: NA
   createIndexes:
     def: create indexes for columns

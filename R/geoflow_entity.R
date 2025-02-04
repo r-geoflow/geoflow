@@ -651,6 +651,8 @@ geoflow_entity <- R6Class("geoflow_entity",
                     srcType = "csv"
                   }else if(any(endsWith(zip_files$filename, ".tif"))){
                     srcType = "geotiff"
+                  }else if(any(endsWith(zip_files$filename, ".parquet"))){
+                    srcType = "parquet"
                   }
                   config$logger.info(sprintf("Resolving sourceType from zip list: '%s'", srcType))
                 }
@@ -660,6 +662,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               "gpkg" = "gpkg",
               "csv" = "csv",
               "tif" = "geotiff",
+              "parquet" = "parquet",
               "other"
             )
             #additional rule for uploadType
@@ -892,6 +895,52 @@ geoflow_entity <- R6Class("geoflow_entity",
                    sf.data <- sf::st_read(trgGpkg, query = data_object$sourceSql)
                  }else{
                    sf.data <- sf::st_read(trgGpkg)
+                 }
+                 
+                 if(!is.null(sf.data)){
+                   
+                   #we try to apply the cql filter specified as data property
+                   #TODO cqlfilter to dismiss in favour of a sourceFilter property
+                   if(!is.null(data_object$cqlfilter)){
+                     sf.data <- filter_sf_by_cqlfilter(sf.data, data_object$cqlfilter)
+                   }
+                   data_object$setFeatures(sf.data)
+                   
+                   #dynamic srid
+                   if(is(sf.data, "sf")){
+                     epsgcode = get_epsg_code(sf.data)
+                     if(!is.na(epsgcode)){
+                       data_srids <<- c(data_srids, epsgcode)
+                     }
+                     sf.crs = sf::st_crs(sf.data)
+                     if(is.na(sf.crs)){
+                       #in case data features are not geo-referenced we check availability of self$srid and apply it to data features
+                       if(!is.null(self$srid)) sf::st_crs(data_object$features) <- self$srid 
+                     }
+                   }
+                   
+                 }else{
+                   warnMsg <- sprintf("Cannot read GeoPackage data source '%s'. Dynamic metadata computation aborted!", trgGpkg)
+                   config$logger.warn(warnMsg)
+                 }
+               }else{
+                 warnMsg <- sprintf("No readable GeoPackage source '%s'. Dynamic metadata computation aborted!", datasource_file)
+                 config$logger.warn(warnMsg)
+               }
+               
+             },
+             #parquet - Geoparquet file - operated through sfarrow package
+             #---------------------------------------------------------------------------------
+             "parquet" = {
+               trgParquet <- file.path(getwd(), paste0(basefilename,".parquet"))
+               if(file.exists(trgParquet)){
+                 #read GeoParquet
+                 config$logger.info("Read Parquet file from geoflow temporary data directory")
+                 if(!is.null(data_object$sourceSql)){
+                   warnings("'sourceSql' is ignored in reading Parquet file!")
+                   sf.data <- sfarrow::st_read_parquet(trgParquet)
+                 }else{
+                   sf.data <- sfarrow::st_read_parquet(trgParquet)
                  }
                  
                  if(!is.null(sf.data)){
@@ -1410,7 +1459,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'on files formats(eg. csv,shp,gpkg) and 2) process automatically to conversion from source to upload type.
     #'@param config geoflow config object
     prepareFeaturesToUpload = function(config) {
-      types_with_file<-c("csv","shp","gpkg")
+      types_with_file<-c("csv","shp","gpkg","parquet")
       
       data_objects <- list()
       if(is.null(self$data$dir)){
@@ -1439,6 +1488,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               uploadSourceExt<-switch(data_object$uploadType,
                                       "shp" = "zip",
                                       "gpkg" = "zip",
+                                      "parquet" = "parquet",
                                       NULL
                                       
               )

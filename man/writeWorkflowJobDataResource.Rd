@@ -31,7 +31,7 @@ writeWorkflowJobDataResource(entity, config, obj,
 \item{chunk.size}{an object of class \code{integer} giving the size of chunks to apply for DB upload.
 Default is equal to \code{OL}, meaning DB upload will be done without chunking.}
 
-\item{type}{format to convert into list :"shp","dbtable"}
+\item{type}{format to convert into. Formats supported: shp, csv, gpkg, parquet, dbtable}
 }
 \description{
 \code{writeWorkflowJobDataResource} allows to transform datasource into different formats

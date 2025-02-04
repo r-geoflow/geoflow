@@ -30,7 +30,9 @@
 #' @import mime
 #' @import plyr
 #' @import readr
+#' @import arrow
 #' @import sf
+#' @import sfarrow
 #' @importFrom terra rast
 #' @import geometa
 #' @import geosapi
