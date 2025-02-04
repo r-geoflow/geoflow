@@ -247,7 +247,8 @@ register_software <- function(){
         password = list(label = "Password", def = "Password", class = "character"),
         host = list(label = "Hostname", def = "Hostname", class = "character"),
         port = list(label = "Port number", def = "Port number", class = "integer"),
-        dbname = list(label = "Database name", def = "Database name", class = "character")
+        dbname = list(label = "Database name", def = "Database name", class = "character"),
+        options = list(label = "Options", def = "Connection options", class = "character")
       ),
       attributes = list(
         onstart_sql = list(label = "SQL 'on-start' script", def = "An SQL script to be run on workflow start", class = "character"),
