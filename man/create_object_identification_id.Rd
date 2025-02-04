@@ -7,6 +7,8 @@
 create_object_identification_id(str)
 }
 \arguments{
+\item{prefix}{a character string}
+
 \item{str}{a character string}
 }
 \value{
