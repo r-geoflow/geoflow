@@ -36,16 +36,25 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       contact$setFirstName(ind_parts[1])
       contact$setLastName(ind_parts[2])
     }
-    if(!is.null(rp$contactInfo$address$deliveryPoint)) if(!is.na(rp$contactInfo$address$deliveryPoint)) contact$setPostalAddress(rp$contactInfo$address$deliveryPoint)
-    if(!is.null(rp$contactInfo$address$postalCode)) if(!is.na(rp$contactInfo$address$postalCode)) contact$setPostalCode(rp$contactInfo$address$postalCode)
-    if(!is.null(rp$contactInfo$address$city)) if(!is.na(rp$contactInfo$address$city)) contact$setCity(rp$contactInfo$address$city)
-    if(!is.null(rp$contactInfo$address$country)) if(!is.na(rp$contactInfo$address$country)) contact$setCountry(rp$contactInfo$address$country)
-    if(!is.null(rp$contactInfo$address$electronicMailAddress)) if(!is.na(rp$contactInfo$address$electronicMailAddress)) contact$setEmail(rp$contactInfo$address$electronicMailAddress)
-    if(!is.null(rp$contactInfo$phone$voice)) if(!is.na(rp$contactInfo$phone$voice)) contact$setVoice(rp$contactInfo$phone$voice)
-    if(!is.null(rp$contactInfo$phone$facsimile)) if(!is.na(rp$contactInfo$phone$facsimile)) contact$setFacsimile(rp$contactInfo$phone$facsimile)
-    if(!is.null(rp$contactInfo$onlineResource$name)) if(!is.na(rp$contactInfo$onlineResource$name)) contact$setWebsiteName(rp$contactInfo$onlineResource$name)
-    if(is(rp$contactInfo$onlineResource$linkage, "ISOURL")){
-      contact$setWebsiteUrl(rp$contactInfo$onlineResource$linkage$value)
+    if(length(rp$contactInfo$address)>0){
+      address = rp$contactInfo$address[[1]]
+      if(!is.null(address$deliveryPoint)) if(!is.na(address$deliveryPoint)) contact$setPostalAddress(address$deliveryPoint)
+      if(!is.null(address$postalCode)) if(!is.na(address$postalCode)) contact$setPostalCode(address$postalCode)
+      if(!is.null(address$city)) if(!is.na(address$city)) contact$setCity(address$city)
+      if(!is.null(address$country)) if(!is.na(address$country)) contact$setCountry(address$country)
+      if(!is.null(address$electronicMailAddress)) if(!is.na(address$electronicMailAddress)) contact$setEmail(address$electronicMailAddress)
+    }
+    if(length(rp$contactInfo$phone)>0){
+      phone = rp$contactInfo$phone[[1]]
+      if(!is.null(phone$voice)) if(!is.na(phone$voice)) contact$setVoice(phone$voice)
+      if(!is.null(phone$facsimile)) if(!is.na(phone$facsimile)) contact$setFacsimile(phone$facsimile)
+    }
+    if(length(rp$contactInfo$onlineResource)>0){
+      or = rp$contactInfo$onlineResource[[1]]
+      if(!is.null(or$name)) if(!is.na(or$name)) contact$setWebsiteName(or$name)
+      if(is(or$linkage, "ISOURL")){
+        contact$setWebsiteUrl(or$linkage$value)
+      }
     }
     contact$setRole(rp$role$attrs$codeListValue)
     return(contact$clone(deep = TRUE))
@@ -58,11 +67,19 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     #type
     if(length(rec$hierarchyLevel)>0) entity$setType(key = "generic", type = rec$hierarchyLevel[[1]]$attrs$codeListValue)
     #language
-    lang = if(is(rec$language,"ISOLanguage")) rec$language$attrs$codeListValue else rec$language
+    lang = if(is(rec$language,"ISOLanguage")){
+      rec$language$attrs$codeListValue
+    }else if(is(rec$language, "ISOElementSequence")){
+      langXML = XML::xmlParse(rec$language$value)
+      XML::xmlGetAttr(XML::xmlChildren(langXML)[[1]], "codeListValue")
+    }else{
+      rec$language
+    }
     entity$setLanguage(if(!is.na(lang)) lang else "eng")
     #srid
     if(length(rec$referenceSystemInfo)>0){
       code = rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code
+      code = regmatches(code,regexpr("EPSG:[0-9]+",code))
       code_parts = unlist(strsplit(code, "/"))
       code = code_parts[length(code_parts)]
       code_parts = unlist(strsplit(code, ":"))
@@ -101,7 +118,9 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     #creator
     #metadata contacts
     for(poc in rec$contact) if(length(poc)>1){
-      entity$addContact(createContactFromResponsibleParty(poc))
+      contact_metadata = createContactFromResponsibleParty(poc)
+      contact_metadata$setRole("metadata")
+      entity$addContact(contact_metadata)
     }
     
     #metadata date
@@ -220,9 +239,11 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
             if(is(time_extent$extent, "GMLTimeInstant")){
               entity$temporal_extent = list(instant = time_extent$extent$timePosition$value)
             }else if(is(time_extent$extent, "GMLTimePeriod")){
+              start = time_extent$extent$beginPosition$value
+              end = time_extent$extent$endPosition$value
               entity$temporal_extent = list(
-                start = time_extent$extent$beginPosition$value,
-                end = time_extent$extent$endPosition$value
+                start = if(regexpr(" ", start)>0) as.POSIXct(start) else as.Date(start),
+                end = if(regexpr(" ", end)>0) as.POSIXct(end) else as.Date(end)
               )
             }
           }
