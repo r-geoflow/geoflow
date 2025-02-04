@@ -40,7 +40,16 @@ function(action, entity, config){
     rp <- ISOResponsibleParty$new()
     if(is.null(x$firstName)) x$firstName = NA
     if(is.null(x$lastName)) x$lastName = NA
-    if(!is.na(x$firstName) && !is.na(x$lastName)) rp$setIndividualName(paste(x$firstName, x$lastName))
+    indName = ""
+    if(!is.na(x$firstName)) indName = x$firstName
+    if(!is.na(x$lastName)){
+      if(nzchar(indName)){
+        indName = x$lastName
+      }else{
+        indName = paste(indName, x$lastName)
+      }
+    }
+    if(nzchar(indName)) rp$setIndividualName(indName)
     rp$setOrganisationName(x$organizationName)
     rp$setPositionName(x$positionName)
     rp$setRole(role)
@@ -116,7 +125,15 @@ function(action, entity, config){
   }
   md$setCharacterSet("utf8")
   md$setLanguage(entity$language)
-  md$setDateStamp(Sys.time())
+  
+  md_date = Sys.time()
+  if(length(entity$dates)>0){
+    md_dates = entity$dates[sapply(entity$dates, function(x){x$key == "metadata"})]
+    if(length(md_dates)>0){
+      md_date = md_dates[[1]]$value
+    }
+  }
+  md$setDateStamp(md_date)
   
   #locales (i18n/i10n support)
   if(length(entity$locales)>0){
