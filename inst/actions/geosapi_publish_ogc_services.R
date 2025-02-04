@@ -421,12 +421,18 @@ function(action, entity, config){
           style <- data_object$styles[i]
           #check if any style SLD file is available in source
           style_sldfile <- paste0(style,".sld")
-          if(!style %in% gs_styles){
-            config$logger.warn(sprintf("No style '%s' in Geoserver", style))
-            if(style_sldfile %in% data_object$source){
-              config$logger.info(sprintf("Creating GeoServer style '%s' from SLD style file '%s' available as source", style, style_sldfile))
-              created <- GS$createStyle(file = file.path(getwd(), "data", style_sldfile), name = style, ws = workspace)
+          style_sldfilepath = file.path(getwd(), "data", style_sldfile)
+          if(file.exists(style_sldfilepath)){
+            if(!style %in% gs_styles){
+              config$logger.warn(sprintf("No style '%s' in Geoserver", style))
+              config$logger.info(sprintf("Creating GeoServer style '%s' from SLD style file '%s' available as data", style, style_sldfile))
+              created <- GS$createStyle(file = style_sldfilepath, name = style, ws = workspace)
               if(created) reload_styles = TRUE
+            }else{
+              config$logger.warn(sprintf("Existing style '%s' in Geoserver", style))
+              config$logger.info(sprintf("Updating GeoServer style '%s' from SLD style file '%s' available as data", style, style_sldfile))
+              updated <- GS$updateStyle(file = style_sldfilepath, name = style, ws = workspace)
+              if(updated) reload_styles = TRUE
             }
           }
         }

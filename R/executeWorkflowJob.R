@@ -158,6 +158,9 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
               }
             }
             
+            #copyStylesToJobDir
+            entity$copyStylesToJobDir(config)
+            
             #extra identifiers to use in entity identification/actions
             entity$enrichWithIdentifiers(config)
             #data relations (eg. geosapi & OGC data protocol online resources)

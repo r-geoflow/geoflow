@@ -575,6 +575,23 @@ geoflow_entity <- R6Class("geoflow_entity",
       
     },
     
+    #'@description This function checks for the availability of layer styles (set as entity resource)
+    #'that would have been added with DBI handlers from a special DB 'layer_styles' table
+    #'@param config geoflow config object
+    copyStylesToJobDir = function(config){
+      setwd("./data")
+      if(!is.null(self$resources$layer_styles)){
+        styles = self$resources$layer_styles
+        for(i in 1:nrow(styles)){
+          style = styles[i,]
+          sld_filename = paste0(style$stylename, ".sld")
+          config$logger.info(sprintf("Write SLD style '%s'", sld_filename))
+          XML::saveXML(XML::xmlParse(style$stylesld), sld_filename)
+        }
+      }
+      setwd("..")
+    },
+    
     #'@description Function that will scan zip data files and resolve data objects sourceType and uploadType
     #'@param config geoflow config object
     #'@param jobdir relative path of the job directory

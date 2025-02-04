@@ -97,6 +97,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_entity-getEntityJobDirPath}{\code{geoflow_entity$getEntityJobDirPath()}}
 \item \href{#method-geoflow_entity-prepareEntityJobDir}{\code{geoflow_entity$prepareEntityJobDir()}}
 \item \href{#method-geoflow_entity-copyDataToJobDir}{\code{geoflow_entity$copyDataToJobDir()}}
+\item \href{#method-geoflow_entity-copyStylesToJobDir}{\code{geoflow_entity$copyStylesToJobDir()}}
 \item \href{#method-geoflow_entity-enrichWithDatatypes}{\code{geoflow_entity$enrichWithDatatypes()}}
 \item \href{#method-geoflow_entity-enrichWithData}{\code{geoflow_entity$enrichWithData()}}
 \item \href{#method-geoflow_entity-enrichSpatialCoverageFromDB}{\code{geoflow_entity$enrichSpatialCoverageFromDB()}}
@@ -607,6 +608,24 @@ geoflow job directory.
 \item{\code{config}}{geoflow config object}
 
 \item{\code{jobdir}}{relative path of the job directory}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-copyStylesToJobDir"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-copyStylesToJobDir}{}}}
+\subsection{Method \code{copyStylesToJobDir()}}{
+This function checks for the availability of layer styles (set as entity resource)
+that would have been added with DBI handlers from a special DB 'layer_styles' table
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$copyStylesToJobDir(config)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{config}}{geoflow config object}
 }
 \if{html}{\out{</div>}}
 }
