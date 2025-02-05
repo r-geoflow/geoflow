@@ -753,6 +753,40 @@ create_geoflow_data_from_dbi <- function(dbi, schema, table){
   return(entity_data)
 }
 
+#'@name fetch_layer_styles_from_dbi
+#'@aliases fetch_layer_styles_from_dbi
+#'@title fetch_layer_styles_from_dbi
+#'
+#'@usage fetch_layer_styles_from_dbi(entity, dbi, schema, table)
+#'
+#'@param entity a \link{geoflow_entity} to be used and enriched
+#'@param dbi a dbi connection
+#'@param schema schema
+#'@param table table
+#'@return the entity, enriched with layer styles
+#'
+#'@author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#'@export
+fetch_layer_styles_from_dbi <- function(entity, dbi, schema, table){
+  if(DBI::dbExistsTable(dbi, "layer_styles")){
+    #assume this is a special table
+    styles_sql = sprintf("select * from layer_styles where f_table_schema='%s' and f_table_name='%s'", 
+                         schema, table)
+    styles = DBI::dbGetQuery(dbi, statement = styles_sql)
+    if(nrow(styles)>0){
+      styles[order(styles$useasdefault,decreasing = T),] #make sure we list the default one first
+      #add style names in geoflow_data
+      for(i in 1:nrow(styles)){
+        style = styles[i,]
+        entity$data$addStyle(style$stylename)
+      }
+      #add style defs as entity resource to delegate copy after entity dir is created
+      entity$addResource("layer_styles", styles)
+    }
+  }
+  return(entity)
+}
+
 #'@name describeOGCRelation
 #'@aliases describeOGCRelation
 #'@title describeOGCRelation

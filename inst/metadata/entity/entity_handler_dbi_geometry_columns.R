@@ -54,23 +54,8 @@ handle_entities_dbi_geometry_columns <- function(handler, source, config, handle
     entity_data = create_geoflow_data_from_dbi(dbi, db_table$f_table_schema, db_table$f_table_name)
     entity$setData(entity_data)
     
-    #associated styles
-    if(DBI::dbExistsTable(dbi, "layer_styles")){
-      #assume this is a special table
-      styles_sql = sprintf("select * from layer_styles where f_table_schema='%s' and f_table_name='%s'", 
-                           db_table$f_table_schema, db_table$f_table_name)
-      styles = DBI::dbGetQuery(dbi, statement = styles_sql)
-      if(nrow(styles)>0){
-        styles[order(styles$useasdefault,decreasing = T),] #make sure we list the default one first
-        #add style names in geoflow_data
-        for(i in 1:nrow(styles)){
-          style = styles[i,]
-          entity$data$addStyle(style$stylename)
-        }
-        #add style defs as entity resource to delegate copy after entity dir is created
-        entity$addResource("layer_styles", styles)
-      }
-    }
+    #feth layer_styles (if any) from DBI
+    entity = fetch_layer_styles_from_dbi(entity, dbi, db_table$f_table_schema, db_table$f_table_name)
         
     return(entity)
   })
