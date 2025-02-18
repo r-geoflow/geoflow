@@ -35,8 +35,9 @@ function(action, entity, config){
     }
   }
   
-  createResponsibleParty = function(x, role = NULL){
+  createResponsibleParty = function(x, role = NULL, roleId = NULL){
     if(is.null(role)) role <- x$role 
+    if(is.null(roleId)) roleId = role
     rp <- ISOResponsibleParty$new()
     if(is.null(x$firstName)) x$firstName = NA
     if(is.null(x$lastName)) x$lastName = NA
@@ -80,7 +81,7 @@ function(action, entity, config){
     }
     
     if(include_object_identification_ids){
-      rp_id = paste(role, tolower(x$email), sep = "_")
+      rp_id = paste(roleId, tolower(x$email), sep = "_")
       rp$setAttr("id", create_object_identification_id("party", rp_id))
     }
     return(rp)
@@ -181,7 +182,7 @@ function(action, entity, config){
   
   if(length(entity$contacts)>0)for(entity_contact in entity$contacts){
     if(tolower(entity_contact$role) == "metadata"){
-      rp<-createResponsibleParty(entity_contact,"pointOfContact") 
+      rp<-createResponsibleParty(entity_contact,role = "pointOfContact", roleId = "metadata") 
       md$addContact(rp)
     } 
   }
@@ -278,7 +279,7 @@ function(action, entity, config){
   #adding contacts
   if(length(entity$contacts)>0)for(entity_contact in entity$contacts){
     if(tolower(entity_contact$role) != "metadata" && !startsWith(entity_contact$role, "processor")){
-      rp<-createResponsibleParty(entity_contact) 
+      rp<-createResponsibleParty(entity_contact, roleId = "pointOfContact") 
       ident$addPointOfContact(rp)
     }
   }
@@ -335,7 +336,7 @@ function(action, entity, config){
     owners <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
     if(length(owners)==0) owners <- list(entity$contacts[[1]])
     for(owner_entity in owners){
-      rp<-createResponsibleParty(owner_entity) 
+      rp<-createResponsibleParty(owner_entity, roleId = "owner") 
       ct$citedResponsibleParty <- c(ct$citedResponsibleParty, rp)
     }
   }
@@ -786,7 +787,7 @@ function(action, entity, config){
     if(length(distributors)==0) distributors <- list(entity$contacts[[1]])
     for(distributor_entity in distributors){
       dist_ent = ISODistributor$new()
-      dist_rp<-createResponsibleParty(distributor_entity) 
+      dist_rp<-createResponsibleParty(distributor_entity, roleId = "distributor") 
       dist_ent$setContact(dist_rp)
       distrib$addDistributor(dist_ent)
     }
@@ -894,7 +895,7 @@ function(action, entity, config){
         
         #processor as responsability party
         for(processor in process$processors){
-          rpp<-createResponsibleParty(processor) 
+          rpp<-createResponsibleParty(processor, roleId = "processor") 
           processStep$addProcessor(rpp)
         }
         lineage$addProcessStep(processStep)
