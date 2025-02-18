@@ -867,7 +867,7 @@ function(action, entity, config){
       or$setProtocol(protocol)
       
       if(include_object_identification_ids) if(any(sapply(c("wms", "wfs", "wcs","download"), function(x){startsWith(http_relation$key, x)}))) {
-        resource_id = paste(tolower(entity$identifiers[["id"]]), http_relation$key, tolower(http_relation$name),sep="_")
+        resource_id = paste(tolower(entity$identifiers[["id"]]), http_relation$key, if(!is.null(mimeType)) mimeType else "", tolower(http_relation$name),sep="_")
         or$setAttr("id", create_object_identification_id("onlineresource", resource_id))
       }
       
