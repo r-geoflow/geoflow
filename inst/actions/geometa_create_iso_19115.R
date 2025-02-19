@@ -336,7 +336,7 @@ function(action, entity, config){
     owners <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
     if(length(owners)==0) owners <- list(entity$contacts[[1]])
     for(owner_entity in owners){
-      rp<-createResponsibleParty(owner_entity, roleId = "owner") 
+      rp<-createResponsibleParty(owner_entity, roleId = "responsible_party") 
       ct$citedResponsibleParty <- c(ct$citedResponsibleParty, rp)
     }
   }
@@ -404,7 +404,13 @@ function(action, entity, config){
       legal_constraints$addUseConstraint("license")
       for(license in licenses){
         for(value in license$values){
-          legal_constraints$addUseLimitation(value, locales = geoflow::get_locales_from(value))
+          license_info = zen4R::ZenodoManager$new()$getLicenseById(value)
+          if(!is.null(license_info)){
+            value = ISOAnchor$new(name = license_info$title[[1]], href = license_info$props$url)
+            legal_constraints$useLimitation = c(legal_constraints$useLimitation, value)
+          }else{
+            legal_constraints$addUseLimitation(value, locales = geoflow::get_locales_from(value))
+          }
         }
       }
     }
