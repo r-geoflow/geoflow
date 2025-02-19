@@ -1956,9 +1956,10 @@ geoflow_entity <- R6Class("geoflow_entity",
               rs = target_vocab$query_from_term(term = keyword$name)
             }
             if(!is.null(rs)) if(tibble::is_tibble(rs)) if(nrow(rs)>0){
-              keyword$name = rs[rs$lang == "en",]$prefLabel
-              for(lang in rs$lang){
-                attr(keyword$name, paste0("locale#",toupper(lang))) = rs[rs$lang == lang,]$prefLabel
+              keyword$uri = rs[rs$lang == "en",]$concept[1]
+              keyword$name = rs[rs$lang == "en",]$prefLabel[1]
+              for(lang in unique(rs$lang)){
+                attr(keyword$name, paste0("locale#",toupper(lang))) = rs[rs$lang == lang,]$prefLabel[1]
               }
             }
             return(keyword)
