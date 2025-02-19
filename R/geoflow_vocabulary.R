@@ -89,6 +89,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
         body = req_body,
         httr::add_headers(
           "Content-Type" = "application/x-www-form-urlencoded",
+          "User-Agent" = paste("geoflow", packageVersion("geoflow"), sep = "_"),
           "Accept" = mimetype
         )
       ))
