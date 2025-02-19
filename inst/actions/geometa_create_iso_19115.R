@@ -279,7 +279,7 @@ function(action, entity, config){
   #adding contacts
   if(length(entity$contacts)>0)for(entity_contact in entity$contacts){
     if(tolower(entity_contact$role) != "metadata" && !startsWith(entity_contact$role, "processor")){
-      rp<-createResponsibleParty(entity_contact, roleId = "pointOfContact") 
+      rp<-createResponsibleParty(entity_contact, roleId = entity_contact$role) 
       ident$addPointOfContact(rp)
     }
   }
