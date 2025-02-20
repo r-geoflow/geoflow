@@ -348,7 +348,7 @@ function(action, entity, config){
     for(thumbnail in thumbnails){
       go <- ISOBrowseGraphic$new(
         fileName = thumbnail$link,
-        fileDescription = thumbnail$name
+        fileDescription = thumbnail$description
       )
       thumbnail_id = paste(tolower(entity$identifiers[["id"]]), "thumbnail", tolower(thumbnail$link),sep="_")
       if(include_object_identification_ids) go$setAttr("id", create_object_identification_id("browsegraphic", thumbnail_id))
@@ -807,7 +807,8 @@ function(action, entity, config){
     doi_or <- ISOOnlineResource$new()
     doi_or$setLinkage(paste0("http://dx.doi.org/", the_doi))
     doi_or$setName("DOI")
-    doi_or$setDescription("Digital Object Identifier")
+    doi_desc = set_i18n(term_key = "doi")
+    doi_or$setDescription(doi_desc, locales = geoflow::get_locales_from(doi_desc))
     doi_or$setProtocol("WWW:LINK-1.0-http--link")
     if(include_object_identification_ids) doi_or$setAttr("id", create_object_identification_id("onlineresource", the_doi))
     dto$addOnlineResource(doi_or)
@@ -850,7 +851,7 @@ function(action, entity, config){
         name$setName(http_relation$name)
       }
       or$setName(name)
-      or$setDescription(http_relation$description)
+      or$setDescription(http_relation$description, locales = geoflow::get_locales_from(http_relation$description))
       protocol <- switch(http_relation$key,
                          "http" = "WWW:LINK-1.0-http--link",
                          "download" = "WWW:DOWNLOAD-1.0-http--download",
@@ -922,8 +923,8 @@ function(action, entity, config){
     dc_inspire1 <- ISODomainConsistency$new()
     cr_inspire1 <- ISOConformanceResult$new()
     cr_inspire_spec1 <- ISOCitation$new()
-    cr_inspire_spec1$setTitle("Commission Regulation (EU) No 1089/2010 of 23 November 2010 implementing Directive 2007/2/EC of the European Parliament and of the Council as regards interoperability of spatial data sets and services")
-    cr_inspire1$setExplanation("See the referenced specification")
+    cr_inspire_spec1$setTitle(set_i18n("inspire_spatial_data_services"))
+    cr_inspire1$setExplanation(NA)
     cr_inspire_date1 <- ISODate$new()
     cr_inspire_date1$setDate(as.Date(ISOdate(2010,12,8)))
     cr_inspire_date1$setDateType("publication")
@@ -936,8 +937,8 @@ function(action, entity, config){
     dc_inspire2 <- ISODomainConsistency$new()
     cr_inspire2 <- ISOConformanceResult$new()
     cr_inspire_spec2 <- ISOCitation$new()
-    cr_inspire_spec2$setTitle("COMMISSION REGULATION (EC) No 1205/2008 of 3 December 2008 implementing Directive 2007/2/EC of the European Parliament and of the Council as regards metadata")
-    cr_inspire2$setExplanation("See the referenced specification")
+    cr_inspire_spec2$setTitle(set_i18n("inspire_metadata"))
+    cr_inspire2$setExplanation(NA)
     cr_inspire_date2 <- ISODate$new()
     cr_inspire_date2$setDate(as.Date(ISOdate(2008,12,4)))
     cr_inspire_date2$setDateType("publication")

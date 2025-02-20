@@ -1,0 +1,60 @@
+{
+  "doi": {
+    "EN": "Digital Object Identifier",
+    "FR": "Identifiant d'objet numérique",
+    "ES": "Identificador de objeto digital",
+    "AR": "معرف الكائن الرقمي",
+    "RU": "Цифровой идентификатор объекта",
+    "ZH": "数字对象标识符"
+  },
+  "graphic_overview": {
+    "EN": "Map overview",
+    "FR": "Aperçu de la carte",
+    "ES": "Vista general del mapa",
+    "AR": "نظرة عامة على الخريطة",
+    "RU": "Обзор карты",
+    "ZH": "地图概览"
+  },
+  "data_download": {
+    "EN": "Data download",
+    "FR": "Téléchargement de données",
+    "ES": "Descarga de datos",
+    "AR": "تنزيل البيانات",
+    "RU": "Загрузка данных",
+    "ZH": "数据下载"
+  },
+  "data_coverage_access": {
+    "EN": "Data (coverage) access",
+    "FR": "Accès aux données",
+    "ES": "Acceso a los datos",
+    "AR": "الوصول إلى البيانات",
+    "RU": "Доступ к данным",
+    "ZH": "数据访问"
+  },
+  "data_features_access": {
+    "EN": "Data (features) access",
+    "FR": "Accès aux données",
+    "ES": "Acceso a los datos",
+    "AR": "الوصول إلى البيانات",
+    "RU": "Доступ к данным",
+    "ZH": "数据访问"
+  },
+  "map_access": {
+    "EN": "Map access",
+    "FR": "Accès à la carte",
+    "ES": "Acceso al mapa",
+    "AR": "الوصول إلى الخريطة",
+    "RU": "Доступ к карте",
+    "ZH": "地图访问"
+  },
+  "inspire_metadata": {
+    "EN": "Commission Regulation (EC) No 1205/2008 of 3 December 2008 implementing Directive 2007/2/EC of the European Parliament and of the Council as regards metadata",
+    "FR": "Règlement (CE) n o 1205/2008 de la Commission du 3 décembre 2008 portant modalités d'application de la directive 2007/2/CE du Parlement européen et du Conseil en ce qui concerne les métadonnées (Texte présentant de l'intérêt pour l'EEE)",
+    "ES": "Reglamento (CE) n o 1205/2008 de la Comisión, de 3 de diciembre de 2008 , por el que se ejecuta la Directiva 2007/2/CE del Parlamento Europeo y del Consejo en lo que se refiere a los metadatos (Texto pertinente a efectos del EEE)"
+  },
+  "inspire_spatial_data_services": {
+    "EN": "Commission Regulation (EU) No 1089/2010 of 23 November 2010 implementing Directive 2007/2/EC of the European Parliament and of the Council as regards interoperability of spatial data sets and services",
+    "FR": "Règlement (UE) No 1089/2010 DE LA Commission du 23 novembre 2010 portant modalités d'application de la directive 2007/2/CE du Parlement européen et du Conseil en ce qui concerne l'interopérabilité des séries et des services de données géographiques",
+    "ES": "Reglamento (UE) No 1089/2010 DE LA Comisión de 23 de noviembre de 2010 por el que se aplica la Directiva 2007/2/CE del Parlamento Europeo y del Consejo en lo que se refiere a la interoperabilidad de los conjuntos y los servicios de datos espaciales"
+  }
+}

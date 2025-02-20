@@ -213,6 +213,52 @@ get_locales_from <- function(values){
   return(locales)
 }
 
+#'@name set_locales_to
+#'@aliases set_locales_to
+#'@title set_locales_to
+#'@description Set locales to a property values set
+#'
+#'@usage set_locales_to(values)
+#'
+#'@param values values
+#'
+#'@export
+set_locales_to <- function(values, locales = list()){
+  for(lang in names(locales)){
+    attr(values, paste0("locale#", lang)) <- locales[[lang]]
+  }
+  return(values)
+}
+
+#'@name set_i18n
+#'@aliases set_i18n
+#'@title set_i18n
+#'@description Set default locales to a property values set
+#'
+#'@usage set_i18n(term_key, default, expr, ...)
+#'
+#'@param term_key term key
+#'@param default default
+#'@param expr expr
+#'@param ... named values to be passed to expr
+#'
+#'@export
+set_i18n <- function(term_key, default = NULL, expr = "{{term}}", ...){
+  
+  i18n_terms = jsonlite::read_json(system.file("metadata/i18n.json", package = "geoflow"))
+  if(!term_key %in% names(i18n_terms)) stop(sprintf("Term '%s' not defined in i18n.json file!"))
+  locales = i18n_terms[[term_key]]
+  
+  if(regexpr("\\{\\{term\\}\\}", expr) == -1) stop(sprintf("Expression 'expr' should at least include the key '{{term}}'"))
+  
+  set_locales_to(
+    values = whisker::whisker.render(expr, c(term = if(!is.null(default)) default else locales[[1]], list(...))), 
+    locales = lapply(locales, function(x){
+      whisker::whisker.render(expr, c(term = x, list(...)))
+    })
+  )
+}
+
 #' @name str_to_posix
 #' @aliases str_to_posix
 #' @title str_to_posix
@@ -814,22 +860,43 @@ describeOGCRelation <- function(entity, data_object, service, download = FALSE, 
   out <- switch(tolower(service),
                 "wms" = {
                   out_wms_link = layertitle
-                  if(handle_category) out_wms_link = sprintf("%s - %s", out_wms_link, "Map access")
-                  if(handle_ogc_service_description) out_wms_link = sprintf("%s - %s", out_wms_link, "OGC Web Map Service (WMS)")
+                  if(handle_category) out_wms_link = set_i18n(
+                    term_key = "map_access", 
+                    expr = {
+                      the_expr = "{{out_wms_link}} - {{term}}"
+                      if(handle_ogc_service_description) the_expr = paste0(the_expr," - OGC Web Map Service (WMS)")
+                      the_expr
+                    },
+                    out_wms_link = out_wms_link
+                  )
                   out_wms_link
                 },
                 "wfs" = {
                   out_wfs_link = layertitle
-                  if(handle_category) out_wfs_link = sprintf("%s - %s", out_wfs_link, if(download) "Data download" else "Data (features) access")
-                  if(handle_ogc_service_description) out_wfs_link = sprintf("%s - %s", out_wfs_link, "OGC Web Feature Service (WFS)")
-                  if(handle_format && !is.null(format)) out_wfs_link = sprintf("%s - %s", out_wfs_link, format)
+                  if(handle_category) out_wfs_link = set_i18n(
+                    term_key = if(download) "data_download" else "data_features_access",
+                    expr = {
+                      the_expr = "{{out_wfs_link}} - {{term}}"
+                      if(handle_ogc_service_description) the_expr = paste0(the_expr, " - OGC Web Feature Service (WFS)")
+                      if(handle_format && !is.null(format)) the_expr = paste0(the_expr, " - ", format)
+                      the_expr
+                    },
+                    out_wfs_link = out_wfs_link
+                  )
                   out_wfs_link
                 },
                 "wcs" = {
                   out_wcs_link = layertitle
-                  if(handle_category) out_wcs_link = sprintf("%s - %s", out_wcs_link, if(download) "Data download" else "Data (coverage) access")
-                  if(handle_ogc_service_description) out_wcs_link = sprintf("%s - %s", out_wcs_link, "OGC Web Coverage Service (WCS)")
-                  if(handle_format && !is.null(format)) out_wcs_link = sprintf("%s - %s", out_wcs_link, format)
+                  if(handle_category) out_wcs_link = set_i18n(
+                    term_key = if(download) "data_download" else "data_coverage_access",
+                    expr = {
+                      the_expr = "{{out_wcs_link}} - {{term}}"
+                      if(handle_ogc_service_description) the_expr = paste0(the_expr, " - OGC Web Coverage Service (WCS)")
+                      if(handle_format && !is.null(format)) the_expr = paste0(the_expr, " - ", format)
+                      the_expr
+                    },
+                    out_wcs_link = out_wcs_link
+                  )
                   out_wcs_link
                 }
   )
