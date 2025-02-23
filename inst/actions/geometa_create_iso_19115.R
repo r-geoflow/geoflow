@@ -44,7 +44,7 @@ function(action, entity, config){
     indName = ""
     if(!is.na(x$firstName)) indName = x$firstName
     if(!is.na(x$lastName)){
-      if(nzchar(indName)){
+      if(!nzchar(indName)){
         indName = x$lastName
       }else{
         indName = paste(indName, x$lastName)
