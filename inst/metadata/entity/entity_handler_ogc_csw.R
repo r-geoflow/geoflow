@@ -38,11 +38,11 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     }
     if(length(rp$contactInfo$address)>0){
       address = rp$contactInfo$address[[1]]
-      if(!is.null(address$deliveryPoint)) if(!is.na(address$deliveryPoint)) contact$setPostalAddress(address$deliveryPoint)
+      if(length(address$deliveryPoint)>0) if(!is.na(address$deliveryPoint)) contact$setPostalAddress(address$deliveryPoint)
       if(!is.null(address$postalCode)) if(!is.na(address$postalCode)) contact$setPostalCode(address$postalCode)
       if(!is.null(address$city)) if(!is.na(address$city)) contact$setCity(address$city)
       if(!is.null(address$country)) if(!is.na(address$country)) contact$setCountry(address$country)
-      if(!is.null(address$electronicMailAddress)) if(!is.na(address$electronicMailAddress)) contact$setEmail(address$electronicMailAddress)
+      if(length(address$electronicMailAddress)>0) if(!is.na(address$electronicMailAddress)) contact$setEmail(address$electronicMailAddress)
     }
     if(length(rp$contactInfo$phone)>0){
       phone = rp$contactInfo$phone[[1]]
@@ -62,6 +62,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
   
   entities = lapply(recs, function(rec){
     entity = geoflow_entity$new()
+    g_data = geoflow_data$new()
     entity$setIdentifier("id", rec$fileIdentifier)
     print(sprintf("Processing metadata '%s' from CSW", rec$fileIdentifier))
     #type
@@ -79,12 +80,17 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     #srid
     if(length(rec$referenceSystemInfo)>0){
       code = rec$referenceSystemInfo[[1]]$referenceSystemIdentifier$code
-      code = regmatches(code,regexpr("EPSG:[0-9]+",code))
+      thecode = regmatches(code,regexpr("EPSG:[0-9]+",code))
+      if(length(thecode)>0){
+        code = thecode
+      }else{
+        if(!is.na(as.integer(code))) code = code
+      }
       code_parts = unlist(strsplit(code, "/"))
       code = code_parts[length(code_parts)]
       code_parts = unlist(strsplit(code, ":"))
       code = code_parts[length(code_parts)]
-      if(code == "WGS 84") code = 4326
+      if(code %in% c("WGS 84","WGS84")) code = 4326
       entity$setSrid(suppressWarnings(as.integer(code)))
     }
     
@@ -129,6 +135,13 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     #identificationInfo metadata fields
     if(length(rec$identificationInfo)>0){
       
+      #pocs
+      for (poc in rec$identificationInfo[[1]]$pointOfContact) if(length(poc)>1){
+        contact_metadata = createContactFromResponsibleParty(poc)
+        contact_metadata$setRole("pointOfContact")
+        entity$addContact(contact_metadata)
+      }
+      
       #graphic overviews
       gos = rec$identificationInfo[[1]]$graphicOverview
       for(go in gos){
@@ -142,7 +155,8 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       #cited responsible party
       rps = rec$identificationInfo[[1]]$citation$citedResponsibleParty
       for(rp in rps){
-        entity$addContact(createContactFromResponsibleParty(rp))
+        rp_contact = createContactFromResponsibleParty(rp)
+        entity$addContact(rp_contact)
       }
       
       #dates
@@ -187,7 +201,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
         entity$setDescription("info", rec$identificationInfo[[1]]$supplementalInformation)
       }
       if(!is.null(rec$identificationInfo[[1]]$citation$edition)) if(!is.na(rec$identificationInfo[[1]]$citation$edition)){
-        entity$setDescription("edition", rec$identificationInfo[[1]]$citation$edition)
+        entity$setDescription("edition", as(rec$identificationInfo[[1]]$citation$edition, "character"))
       }
       status = rec$identificationInfo[[1]]$status
       if(length(status)>0) if(nzchar(status[[1]]$attrs$codeListValue)) entity$setDescription("status", status[[1]]$attrs$codeListValue)
@@ -242,12 +256,29 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
               start = time_extent$extent$beginPosition$value
               end = time_extent$extent$endPosition$value
               entity$temporal_extent = list(
-                start = if(regexpr(" ", start)>0) as.POSIXct(start) else as.Date(start),
-                end = if(regexpr(" ", end)>0) as.POSIXct(end) else as.Date(end)
+                start = if(!is.null(start)){ if(regexpr(" ", start)>0) as.POSIXct(start) else as.Date(start)}else{
+                  emtpy_start = NA
+                  attributes(empty_start) = time_extent$extent$beginPosition$attrs
+                  empty_start
+                },
+                end = if(!is.null(end)) {if(regexpr(" ", end)>0) as.POSIXct(end) else as.Date(end)}else{
+                  empty_end = NA
+                  attributes(empty_end) = time_extent$extent$endPosition$attrs
+                  empty_end
+                }
               )
             }
           }
         }
+        
+        #spatial representation type
+        srt = rec$identificationInfo[[1]]$spatialRepresentationType
+        if(length(srt)>0){
+          g_data$setSpatialRepresentationType(srt[[1]]$value)
+        }
+        #spatial resolution
+        sr = rec$identificationInfo[[1]]$spatialResolution
+        if(length(sr))
       }
       #rights
       constraints = rec$identificationInfo[[1]]$resourceConstraints
@@ -404,14 +435,13 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     }
     
     #data
-    if(!is.null(rec$distributionInfo))
+    if(!is.null(rec$distributionInfo)){
       tro = rec$distributionInfo$transferOptions
       if(!is.null(tro)){
         onLine = tro[[1]]$onLine
         if(length(onLine)>0){
           onLineToDownload = onLine[sapply(onLine, function(x){x$protocol == "WWW:DOWNLOAD-1.0-http--download"})]
           if(length(onLineToDownload)>0){
-            g_data = geoflow_data$new()
             onLineToDownload = onLineToDownload[[1]]
             outres = onLineToDownload$name
             attr(outres, "uri") = onLineToDownload$linkage$value
@@ -425,10 +455,11 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
               "image/tiff" = "geotiff"
             )
             g_data$uploadType = "other"
-            entity$setData(g_data)
           }
         }
       }
+    }
+    entity$setData(g_data)
     return(entity)
   })
   
