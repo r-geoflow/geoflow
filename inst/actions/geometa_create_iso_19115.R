@@ -334,7 +334,11 @@ function(action, entity, config){
   #adding responsible party (search for owner, otherwise take first contact)
   if(length(entity$contacts)>0){
     owners <- entity$contacts[sapply(entity$contacts, function(x){x$role == "owner"})]
-    if(length(owners)==0) owners <- list(entity$contacts[[1]])
+    if(length(owners)==0){
+      owner = entity$contacts[[1]]$clone(deep = T)
+      owner$setRole("owner")
+      owners <- list(owner)
+    }
     for(owner_entity in owners){
       rp<-createResponsibleParty(owner_entity, roleId = "responsible_party") 
       ct$citedResponsibleParty <- c(ct$citedResponsibleParty, rp)
@@ -499,11 +503,25 @@ function(action, entity, config){
   if(!is.null(entity$temporal_extent)){
     time <- ISOTemporalExtent$new()
     if(!is.null(entity$temporal_extent$instant)){
-      gmltimeinstant <- GMLTimeInstant$new(timePosition = entity$temporal_extent$instant)
-      time$setTimeInstant(gmltimeinstant)
+      gmltimeinstant <- GMLTimeInstant$new()
+      instant = entity$temporal_extent$instant
+      gmltimeinstant$setTimeInstant(timeInstant = if(is.na(instant)) NULL else instant,
+                                    frame = attr(instant, "frame"),
+                                    calendarEraName = attr(instant, "calendarEraName"),
+                                    indeterminatePosition = attr(instant, "indeterminatePosition"))
     }
     if(!is.null(entity$temporal_extent$start) & !is.null(entity$temporal_extent$end)){
-      gmltimeperiod <- GMLTimePeriod$new(beginPosition = entity$temporal_extent$start, endPosition = entity$temporal_extent$end)
+      gmltimeperiod <- GMLTimePeriod$new()
+      start = entity$temporal_extent$start
+      gmltimeperiod$setBeginPosition(beginPosition = if(is.na(start)) NULL else start,
+                                     frame = attr(start, "frame"),
+                                     calendarEraName = attr(start, "calendarEraName"),
+                                     indeterminatePosition = attr(start, "indeterminatePosition"))
+      end = entity$temporal_extent$end
+      gmltimeperiod$setEndPosition(endPosition = if(is.na(end)) NULL else end,
+                                   frame = attr(start, "frame"),
+                                   calendarEraName = attr(start, "calendarEraName"),
+                                   indeterminatePosition = attr(start, "indeterminatePosition"))
       time$setTimePeriod(gmltimeperiod)
     }
     extent$addTemporalElement(time)
