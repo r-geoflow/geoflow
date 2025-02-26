@@ -1,4 +1,4 @@
-# geoflow
+# geoflow <a href="https://github.com/r-geoflow-/geoflow"><img src='https://github.com/r-geoflow/geoflow-logos/blob/main/geoflow_square.png?raw=true' align="right" height="139" /></a>
 
 [![Build Status](https://github.com/r-geoflow/geoflow/actions/workflows/r-cmd-check.yml/badge.svg?branch=master)](https://github.com/r-geoflow/geoflow/actions/workflows/r-cmd-check.yml)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/geoflow)](https://cran.r-project.org/package=geoflow)
