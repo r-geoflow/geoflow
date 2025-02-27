@@ -83,10 +83,7 @@ Suggests:
   rmarkdown,
   dataverse,
   blastula,
-  metadataeditr,
   waldo
-Remotes:
-  ihsn/metadataeditr
 License: MIT + file LICENSE
 URL: https://github.com/r-geoflow/geoflow
 BugReports: https://github.com/r-geoflow/geoflow
