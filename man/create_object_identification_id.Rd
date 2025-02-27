@@ -4,7 +4,7 @@
 \alias{create_object_identification_id}
 \title{create_object_identification_id}
 \usage{
-create_object_identification_id(str)
+create_object_identification_id(prefix, str)
 }
 \arguments{
 \item{prefix}{a character string}

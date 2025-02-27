@@ -218,9 +218,10 @@ get_locales_from <- function(values){
 #'@title set_locales_to
 #'@description Set locales to a property values set
 #'
-#'@usage set_locales_to(values)
+#'@usage set_locales_to(values,locales)
 #'
 #'@param values values
+#'@param locales locales
 #'
 #'@export
 set_locales_to <- function(values, locales = list()){
@@ -907,7 +908,7 @@ describeOGCRelation <- function(entity, data_object, service, download = FALSE, 
 #'@aliases create_object_identification_id
 #'@title create_object_identification_id
 #'
-#'@usage create_object_identification_id(str)
+#'@usage create_object_identification_id(prefix, str)
 #'
 #'@param prefix a character string
 #'@param str a character string

@@ -4,10 +4,12 @@
 \alias{set_locales_to}
 \title{set_locales_to}
 \usage{
-set_locales_to(values)
+set_locales_to(values,locales)
 }
 \arguments{
 \item{values}{values}
+
+\item{locales}{locales}
 }
 \description{
 Set locales to a property values set
