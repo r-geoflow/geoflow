@@ -278,7 +278,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
         }
         #spatial resolution
         sr = rec$identificationInfo[[1]]$spatialResolution
-        if(length(sr))
+        #TODO
       }
       #rights
       constraints = rec$identificationInfo[[1]]$resourceConstraints
