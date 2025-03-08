@@ -19,7 +19,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     allowedKeyValuesFor = list(
       identifiers = c("id", "id_version", "uuid", "doi", "packageId"),
       titles = c("title", "alternative"),
-      descriptions = c("abstract", "purpose", "credit", "info", "edition", "status"),
+      descriptions = c("abstract", "purpose", "credit", "info", "edition", "status", "maintenance"),
       spatialCoverage = c("ewkt", "wkt", "srid"),
       formats = c("resource","distribution")
     ) 
@@ -1930,6 +1930,26 @@ geoflow_entity <- R6Class("geoflow_entity",
           }
         }
       }
+      
+      #GEMET thesaurus (enrichment with proper publication dates)
+      if(any(sapply(self$subjects, function(subject){
+        v = FALSE
+        if(!is.null(subject$name)) v = startsWith(subject$name, "GEMET")
+        retun(v)
+      }))){
+        self$subjects = lapply(self$subjects, function(subject){
+          #GEMET dates enrichment
+          if(startsWith(subject$name, "GEMET - INSPIRE themes")){
+            subject$setDate("publication", as.Date("2008-06-01")) 
+          }
+          if(startsWith(subject$name, "GEMET - Concepts")){
+            subject$setDate("publication", as.Date("2010-01-13"))
+          }
+          return(subject)
+        })
+        
+      }
+      
     },
     
     

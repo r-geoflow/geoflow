@@ -395,8 +395,9 @@ function(action, entity, config){
   }
   
   #maintenance information
+  default_maintenance = "asNeeded"
   maint <- ISOMaintenanceInformation$new()
-  maint$setMaintenanceFrequency("asNeeded")
+  maint$setMaintenanceFrequency(if(!is.null(self$descriptions[["maintenance"]])) self$descriptions[["maintenance"]] else default_maintenance)
   ident$addResourceMaintenance(maint)
   
   #legal constraints
