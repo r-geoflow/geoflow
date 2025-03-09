@@ -373,7 +373,7 @@ geoflow_validator_entity_Description <- R6Class("geoflow_validator_entity_Descri
      #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
      #'@param str string to validate
      initialize = function(i, j, str){
-       valid_keys <- list("abstract", "purpose", "credit", "info", "edition", "status")
+       valid_keys <- list("abstract", "purpose", "credit", "info", "edition", "status", "maintenance")
        super$initialize(FALSE,TRUE, TRUE, valid_keys, "abstract",TRUE, TRUE, TRUE, i, j, str)
      }
    )
