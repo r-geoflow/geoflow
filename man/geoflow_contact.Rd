@@ -82,6 +82,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-geoflow_contact-new}{\code{geoflow_contact$new()}}
+\item \href{#method-geoflow_contact-getAllowedKeyValuesFor}{\code{geoflow_contact$getAllowedKeyValuesFor()}}
 \item \href{#method-geoflow_contact-setIdentifier}{\code{geoflow_contact$setIdentifier()}}
 \item \href{#method-geoflow_contact-setId}{\code{geoflow_contact$setId()}}
 \item \href{#method-geoflow_contact-setFirstName}{\code{geoflow_contact$setFirstName()}}
@@ -110,6 +111,26 @@ Initializes a \link{geoflow_contact} object
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$new()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_contact-getAllowedKeyValuesFor"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-getAllowedKeyValuesFor}{}}}
+\subsection{Method \code{getAllowedKeyValuesFor()}}{
+Retrieves keys allowed for a given tabular field name. eg. "Identifier"
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$getAllowedKeyValuesFor(field)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{field}}{field name}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the list of valid keys for the field considered
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_contact-setIdentifier"></a>}}

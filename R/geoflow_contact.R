@@ -34,6 +34,12 @@
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'
 geoflow_contact <- R6Class("geoflow_contact",
+  private = list(
+     #TODO manage these allowed key values in class definitions (eg. geoflow_format)
+     allowedKeyValuesFor = list(
+       identifiers = c("id", "orcid")
+     ) 
+  ),
   public = list(
     #' @field id contact identifier
     id = NULL,
@@ -70,6 +76,15 @@ geoflow_contact <- R6Class("geoflow_contact",
  
     #'@description Initializes a \link{geoflow_contact} object
     initialize = function(){},
+    
+    #'@description Retrieves keys allowed for a given tabular field name. eg. "Identifier"
+    #'@param field field name
+    #'@return the list of valid keys for the field considered
+    getAllowedKeyValuesFor = function(field){
+      clazz <- eval(parse(text = paste0("geoflow_validator_contact_",field)))
+      clazz_obj <- clazz$new(0,0,"")
+      return(clazz_obj$getValidKeys())
+    },
     
     #'@description Sets an identifier by means of key
     #'@param key an identifier key. Default is "id"
