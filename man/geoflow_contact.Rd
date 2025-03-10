@@ -99,6 +99,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_contact-setPostalCode}{\code{geoflow_contact$setPostalCode()}}
 \item \href{#method-geoflow_contact-setCity}{\code{geoflow_contact$setCity()}}
 \item \href{#method-geoflow_contact-setCountry}{\code{geoflow_contact$setCountry()}}
+\item \href{#method-geoflow_contact-asDataFrame}{\code{geoflow_contact$asDataFrame()}}
 \item \href{#method-geoflow_contact-clone}{\code{geoflow_contact$clone()}}
 }
 }
@@ -404,6 +405,26 @@ Sets the contact country
 \item{\code{country}}{contact country}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_contact-asDataFrame"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-asDataFrame}{}}}
+\subsection{Method \code{asDataFrame()}}{
+Methods to export the \link{geoflow_contact} as \code{data.frame} using key-based syntax.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$asDataFrame(line_separator = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{line_separator}}{a line separator. By default, the default line separator will be used.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+an object of class \code{data.frame} giving the entities using key-based syntax
 }
 }
 \if{html}{\out{<hr>}}

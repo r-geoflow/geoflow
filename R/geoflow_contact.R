@@ -181,6 +181,49 @@ geoflow_contact <- R6Class("geoflow_contact",
     #'@param country contact country
     setCountry = function(country){
       self$country <- country
+    },
+    
+    
+    #'@description Methods to export the \link{geoflow_contact} as \code{data.frame} using key-based syntax.
+    #'@param line_separator a line separator. By default, the default line separator will be used.
+    #'@return an object of class \code{data.frame} giving the entities using key-based syntax
+    asDataFrame = function(line_separator = NULL){
+      if(is.null(line_separator)) line_separator <- get_line_separator()
+      out <- data.frame(
+        #Identifier
+        Identifier = paste0(sapply(names(self$identifiers),function(name){
+          outid <- paste(name, self$identifiers[[name]],sep=":")
+          return(outid)
+        }),collapse=line_separator),
+        #Email
+        Email = if(!is.null(self$email)) self$email else "",
+        #OrganizationName
+        OrganizationName = if(!is.null(self$organizationName)) self$organizationName else "",
+        #PositionName
+        PositionName = if(!is.null(self$positionName)) self$positionName else "",
+        #LastName
+        LastName = if(!is.null(self$lastName)) self$lastName else "",
+        #FirstName
+        FirstName = if(!is.null(self$firstName)) self$firstName else "",
+        #PostalAddress
+        PostalAddress = if(!is.null(self$postalAddress)) self$postalAddress else "",
+        #PostalCode
+        PostalCode = if(!is.null(self$postalCode)) self$postalCode else "",
+        #City
+        City = if(!is.null(self$city)) self$city else "",
+        #Country
+        Country = if(!is.null(self$country)) self$country else "",
+        #Voice
+        Voice = if(!is.null(self$voice)) self$voice else "",
+        #Facsimile
+        Facsimile = if(!is.null(self$facsimile)) self$facsimile else "",
+        #WebsiteUrl
+        WebsiteUrl = if(!is.null(self$websiteUrl)) self$websiteUrl else "",
+        #WebsiteName
+        WebsiteName = if(!is.null(self$websiteName)) self$websiteName else "",
+        stringsAsFactors = FALSE 
+      )
+      return(out)
     }
    
   )                                  
