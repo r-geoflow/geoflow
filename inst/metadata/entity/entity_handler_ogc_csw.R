@@ -274,7 +274,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
         #spatial representation type
         srt = rec$identificationInfo[[1]]$spatialRepresentationType
         if(length(srt)>0){
-          g_data$setSpatialRepresentationType(srt[[1]]$value)
+          g_data$setSpatialRepresentationType(srt[[1]]$attrs$codeListValue)
         }
         #spatial resolution
         sr = rec$identificationInfo[[1]]$spatialResolution
