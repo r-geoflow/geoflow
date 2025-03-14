@@ -1935,7 +1935,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(any(sapply(self$subjects, function(subject){
         v = FALSE
         if(!is.null(subject$name)) v = startsWith(subject$name, "GEMET")
-        retun(v)
+        return(v)
       }))){
         self$subjects = lapply(self$subjects, function(subject){
           #GEMET dates enrichment

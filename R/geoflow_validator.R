@@ -692,7 +692,7 @@ geoflow_validator_entity_TemporalCoverage <- R6Class("geoflow_validator_entity_T
             }
             
           }else{
-            report <- rbind(report, data.frame(type = "ERROR", message = sprintf("spatial extent '%' is not a recognized format",tmp_cov)))
+            report <- rbind(report, data.frame(type = "ERROR", message = sprintf("spatial extent '%s' is not a recognized format",tmp_cov)))
           }
         }
        return(report)
