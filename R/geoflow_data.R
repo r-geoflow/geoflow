@@ -20,7 +20,7 @@ geoflow_data <- R6Class("geoflow_data",
     supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"),
     supportedXPossibleNames = c("x","lon","long","longitude","decimalLongitude"),
     supportedYPossibleNames = c("y","lat","lati","latitude","decimalLatitude"),
-    supportedSpatialRepresentationTypes = c("vector","grid"),
+    supportedSpatialRepresentationTypes = c("vector","grid","textTable"),
     supportedEnvelopeCompositionTypes = c("UNION", "INTERSECTION")
   ),
   public = list(
