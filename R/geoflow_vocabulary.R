@@ -106,6 +106,8 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     
     #'@description list_collections
     #'@param mimetype mimetype
+    #'@param count_sub_collections count_sub_collections. Default is TRUE
+    #'@param count_concepts count_concepts. Default is TRUE
     #'@return the response of the SPARQL query
     list_collections = function(mimetype = "text/csv", 
                                 count_sub_collections = TRUE,
@@ -134,6 +136,30 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       out = self$query(str = str, mimetype = mimetype)
       if(!count_sub_collections) out$count_sub_collections = NULL
       if(!count_concepts) out$count_concepts = NULL
+      return(out)
+    },
+    
+    #'@description list_concepts
+    #'@param lang lang
+    #'@return the response of the SPARQL query
+    list_concepts = function(lang = "en"){
+      str = paste0("
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+        SELECT ?collection ?collectionLabel ?concept ?prefLabel WHERE {
+          ?collection a skos:Collection .
+          OPTIONAL { ?collection skos:prefLabel ?collectionLabel }
+        
+          ?collection skos:member ?concept .
+          ?concept a skos:Concept .
+          ?concept skos:prefLabel ?prefLabel .
+          
+          FILTER (LANG(?prefLabel) = \"", lang, "\")
+        }
+        ORDER BY ?collection ?concept
+      ")
+      out = self$query(str = str, graphUri = graphUri, mimetype = mimetype)
+      out = out[with(out, order(collection, prefLabel)),]
       return(out)
     },
     

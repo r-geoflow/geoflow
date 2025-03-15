@@ -35,6 +35,7 @@ geoflow_skos_vocabulary
 \item \href{#method-geoflow_skos_vocabulary-query}{\code{geoflow_skos_vocabulary$query()}}
 \item \href{#method-geoflow_skos_vocabulary-ping}{\code{geoflow_skos_vocabulary$ping()}}
 \item \href{#method-geoflow_skos_vocabulary-list_collections}{\code{geoflow_skos_vocabulary$list_collections()}}
+\item \href{#method-geoflow_skos_vocabulary-list_concepts}{\code{geoflow_skos_vocabulary$list_concepts()}}
 \item \href{#method-geoflow_skos_vocabulary-query_from_uri}{\code{geoflow_skos_vocabulary$query_from_uri()}}
 \item \href{#method-geoflow_skos_vocabulary-query_from_term}{\code{geoflow_skos_vocabulary$query_from_term()}}
 \item \href{#method-geoflow_skos_vocabulary-clone}{\code{geoflow_skos_vocabulary$clone()}}
@@ -110,13 +111,41 @@ Ping query
 \subsection{Method \code{list_collections()}}{
 list_collections
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$list_collections(mimetype = "text/csv")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$list_collections(
+  mimetype = "text/csv",
+  count_sub_collections = TRUE,
+  count_concepts = TRUE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{mimetype}}{mimetype}
+
+\item{\code{count_sub_collections}}{count_sub_collections. Default is TRUE}
+
+\item{\code{count_concepts}}{count_concepts. Default is TRUE}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the response of the SPARQL query
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_skos_vocabulary-list_concepts"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-list_concepts}{}}}
+\subsection{Method \code{list_concepts()}}{
+list_concepts
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$list_concepts(lang = "en")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{lang}}{lang}
 }
 \if{html}{\out{</div>}}
 }
