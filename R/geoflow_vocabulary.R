@@ -107,15 +107,34 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     #'@description list_collections
     #'@param mimetype mimetype
     #'@return the response of the SPARQL query
-    list_collections = function(mimetype = "text/csv"){
+    list_collections = function(mimetype = "text/csv", 
+                                count_sub_collections = TRUE,
+                                count_concepts = TRUE){
       str = "
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-      SELECT ?collection ?label WHERE {
+      SELECT ?collection ?label (COUNT(DISTINCT ?subCollection) AS ?count_sub_collections) (COUNT(DISTINCT ?concept) AS ?count_concepts) WHERE {
         ?collection a skos:Collection .
         OPTIONAL { ?collection skos:prefLabel ?label }
-      }"
-      self$query(str = str, mimetype = mimetype)
+        
+        # Count sub-collections
+        OPTIONAL {
+          ?collection skos:member ?subCollection .
+          ?subCollection a skos:Collection .
+        }
+        
+        # Count concepts
+        OPTIONAL {
+          ?collection skos:member ?concept .
+          ?concept a skos:Concept .
+        }
+      }
+      GROUP BY ?collection ?label
+      "
+      out = self$query(str = str, mimetype = mimetype)
+      if(!count_sub_collections) out$count_sub_collections = NULL
+      if(!count_concepts) out$count_concepts = NULL
+      return(out)
     },
     
     #'@description query_from_uri
@@ -137,7 +156,21 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
         ORDER BY ?lang "
       )
       
-      self$query(str = str, graphUri = graphUri, mimetype = mimetype)
+      out = self$query(str = str, graphUri = graphUri, mimetype = mimetype)
+      if(nrow(out)>0){
+        out = do.call("rbind", lapply(unique(out$lang), function(lang){
+          rec= out[out$lang == lang,]
+          if(any(is.na(rec$collection))){
+            newrec = rec[!is.na(rec$collection),]
+            if(nrow(newrec)==0){
+              rec = rec[1,]
+            }else{
+              rec = newrec[1,]
+            }
+          }
+          rec
+        }))
+      }
     },
     
     #'@description query_from_term
@@ -149,19 +182,41 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       
       str = paste0(
         "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-         SELECT ?concept ?lang ?prefLabel
+         SELECT ?concept ?lang ?prefLabel ?collection ?collectionLabel
          WHERE {
           ?concept skos:prefLabel ?searchLabel .
           ?concept skos:prefLabel ?prefLabel .
           FILTER (STR(?searchLabel) = \"", term, "\")
           FILTER (LANG(?prefLabel) != \"\")
           BIND (LANG(?prefLabel) AS ?lang)
+          
+          # Optional block to get the collection and its label
+          OPTIONAL {
+            ?collection skos:member ?concept .
+            OPTIONAL { ?collection skos:prefLabel ?collectionLabel }
+          }
+          
          }
-         GROUP BY ?concept ?lang ?prefLabel 
+         GROUP BY ?concept ?lang ?prefLabel ?collection ?collectionLabel
          ORDER BY ?lang "
       )
       
-      self$query(str = str, graphUri = graphUri, mimetype = mimetype)
+      out = self$query(str = str, graphUri = graphUri, mimetype = mimetype)
+      if(nrow(out)>0){
+        out = do.call("rbind", lapply(unique(out$lang), function(lang){
+          rec= out[out$lang == lang,]
+          if(any(is.na(rec$collection))){
+            newrec = rec[!is.na(rec$collection),]
+            if(nrow(newrec)==0){
+              rec = rec[1,]
+            }else{
+              rec = newrec[1,]
+            }
+          }
+          rec
+        }))
+      }
+      return(out)
     }
   )
 )

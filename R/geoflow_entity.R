@@ -1966,7 +1966,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         target_vocab = vocabs[sapply(vocabs, function(vocab){vocab$id == subject$uri})]
         if(length(target_vocab)>0){
           target_vocab = target_vocab[[1]]
-          subject$uri = target_vocab$uri
+          subject$uri = target_vocab$uri #default uri
           subject$keywords = lapply(subject$keywords, function(keyword){
             rs = NULL
             if(!is.null(keyword$uri)){
@@ -1981,6 +1981,11 @@ geoflow_entity <- R6Class("geoflow_entity",
               keyword$name = rs[rs$lang == "en",]$prefLabel[1]
               for(lang in unique(rs$lang)){
                 attr(keyword$name, paste0("locale#",toupper(lang))) = rs[rs$lang == lang,]$prefLabel[1]
+              }
+              #overwrite subject uri/name if we find a collection (assuming keywords are from the same collection)
+              if(!is.na(rs[1L,]$collection)){
+                subject$uri <<- rs[1L,]$collection
+                subject$name <<- rs[1L,]$collectionLabel
               }
             }
             return(keyword)
