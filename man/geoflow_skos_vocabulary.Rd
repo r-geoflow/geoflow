@@ -139,13 +139,15 @@ the response of the SPARQL query
 \subsection{Method \code{list_concepts()}}{
 list_concepts
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$list_concepts(lang = "en")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$list_concepts(lang = "en", mimetype = "text/csv")}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{lang}}{lang}
+
+\item{\code{mimetype}}{mimetype}
 }
 \if{html}{\out{</div>}}
 }

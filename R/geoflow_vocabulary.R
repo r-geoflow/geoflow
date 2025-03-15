@@ -141,8 +141,9 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     
     #'@description list_concepts
     #'@param lang lang
+    #'@param mimetype mimetype
     #'@return the response of the SPARQL query
-    list_concepts = function(lang = "en"){
+    list_concepts = function(lang = "en", mimetype = "text/csv"){
       str = paste0("
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
@@ -158,7 +159,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
         }
         ORDER BY ?collection ?concept
       ")
-      out = self$query(str = str, graphUri = graphUri, mimetype = mimetype)
+      out = self$query(str = str, mimetype = mimetype)
       out = out[with(out, order(collection, prefLabel)),]
       return(out)
     },
