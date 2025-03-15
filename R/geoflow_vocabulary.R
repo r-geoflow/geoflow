@@ -104,6 +104,19 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       self$query(str)
     },
     
+    #'@description List SKOS collections
+    #'@return the response of the SPARQL query
+    list_collections = function(mimetype = "text/csv"){
+      str = "
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+      SELECT ?collection ?label WHERE {
+        ?collection a skos:Collection .
+        OPTIONAL { ?collection skos:prefLabel ?label }
+      }"
+      self$query(str = str, mimetype = mimetype)
+    },
+    
     #'@description query_from_uri
     #'@param uri uri
     #'@param graphUri graphUri
