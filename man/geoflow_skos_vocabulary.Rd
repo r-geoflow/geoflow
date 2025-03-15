@@ -34,6 +34,7 @@ geoflow_skos_vocabulary
 \item \href{#method-geoflow_skos_vocabulary-new}{\code{geoflow_skos_vocabulary$new()}}
 \item \href{#method-geoflow_skos_vocabulary-query}{\code{geoflow_skos_vocabulary$query()}}
 \item \href{#method-geoflow_skos_vocabulary-ping}{\code{geoflow_skos_vocabulary$ping()}}
+\item \href{#method-geoflow_skos_vocabulary-list_collections}{\code{geoflow_skos_vocabulary$list_collections()}}
 \item \href{#method-geoflow_skos_vocabulary-query_from_uri}{\code{geoflow_skos_vocabulary$query_from_uri()}}
 \item \href{#method-geoflow_skos_vocabulary-query_from_term}{\code{geoflow_skos_vocabulary$query_from_term()}}
 \item \href{#method-geoflow_skos_vocabulary-clone}{\code{geoflow_skos_vocabulary$clone()}}
@@ -102,6 +103,26 @@ Ping query
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$ping()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_skos_vocabulary-list_collections"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-list_collections}{}}}
+\subsection{Method \code{list_collections()}}{
+list_collections
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$list_collections(mimetype = "text/csv")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{mimetype}}{mimetype}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the response of the SPARQL query
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-query_from_uri"></a>}}

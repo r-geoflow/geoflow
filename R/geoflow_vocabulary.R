@@ -104,7 +104,8 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       self$query(str)
     },
     
-    #'@description List SKOS collections
+    #'@description list_collections
+    #'@param mimetype mimetype
     #'@return the response of the SPARQL query
     list_collections = function(mimetype = "text/csv"){
       str = "
