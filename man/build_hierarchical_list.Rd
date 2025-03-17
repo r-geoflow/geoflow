@@ -7,9 +7,9 @@
 build_hierarchical_list(data, parent)
 }
 \arguments{
-\item{data}{data}
-
 \item{parent}{parent}
+
+\item{relationships}{relationships}
 }
 \value{
 a hierarchical list

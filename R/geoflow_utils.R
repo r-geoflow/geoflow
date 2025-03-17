@@ -918,37 +918,42 @@ create_object_identification_id = function(prefix, str){
   paste(prefix, digest::digest(object = str, algo = "crc32", serialize = FALSE), sep = "_")
 }
 
+
+#'@description precompute_relationships
+#'@aliases precompute_relationships
+#'@title precompute_relationships
+#'
+#'@usage precompute_relationships(data, parent_key, child_key)
+#'
+#'@param data data
+#'@param parent_key parent_key
+#'@param child_key child_key
+#'@return a list of relationships
+#'@export
+precompute_relationships <- function(data, parent_key, child_key) {
+  ordered_data <- data[order(data[[parent_key]], data[[child_key]]), ]
+  relationships <- split(ordered_data[[child_key]], ordered_data[[parent_key]])
+  return(relationships)
+}
+
+
 #'@name build_hierarchical_list
 #'@aliases build_hierarchical_list
 #'@title build_hierarchical_list
 #'
 #'@usage build_hierarchical_list(data, parent)
 #'
-#'@param data data
 #'@param parent parent
-#'@param parent_key column that identifies the parent
-#'@param child_key column that identifies the child
-#'@param recursive if the function is called recursively. Default is \code{TRUE}
-#'to build the full hierarchy. Can be set to \code{FALSE} to allow lazy loading
-#'in a Shiny context.
+#'@param relationships relationships
 #'@return a hierarchical list
 #'@export
-build_hierarchical_list <- function(data, parent, parent_key, child_key, recursive = TRUE) {
-  children <- data[data[,parent_key] == parent, ]
-  children <- children[order(children[,child_key]),]
+build_hierarchical_list <- function(parent, relationships) {
+  children <- relationships[[parent]]
   out <- list(text = parent)
-  if (nrow(children) == 0) {
-    return(out)
+  if (is.null(children)) {
+    out$icon = "fa-regular fa-note-sticky"
   } else {
-    out$children <- lapply(1:nrow(children), function(i) {
-      if(recursive){
-        build_hierarchical_list(data, children[i, child_key], parent_key, child_key, recursive)
-      }else{
-        list(
-          text = children[i, child_key]
-        )
-      }
-    })
+    out$children <- lapply(children, build_hierarchical_list, relationships)
   }
   return(out)
 }
