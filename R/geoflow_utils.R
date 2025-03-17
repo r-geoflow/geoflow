@@ -917,3 +917,27 @@ describeOGCRelation <- function(entity, data_object, service, download = FALSE, 
 create_object_identification_id = function(prefix, str){
   paste(prefix, digest::digest(object = str, algo = "crc32", serialize = FALSE), sep = "_")
 }
+
+#'@name build_hierarchical_list
+#'@aliases build_hierarchical_list
+#'@title build_hierarchical_list
+#'
+#'@usage build_hierarchical_list(data, parent)
+#'
+#'@param data data
+#'@param parent parent
+#'@return a hierarchical list
+#'@export
+build_hierarchical_list <- function(data, parent, parent_key, child_key) {
+  children <- data[data[,parent_key] == parent, ]
+  children <- children[order(children[,child_key]),]
+  if (nrow(children) == 0) {
+    return(NULL)
+  } else {
+    nested_list <- lapply(1:nrow(children), function(i) {
+      build_vocabulary_hierarchical_list(data, children[i, child_key])
+    })
+    names(nested_list) <- children[,child_key]
+    return(nested_list)
+  }
+}

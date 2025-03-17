@@ -35,6 +35,7 @@ geoflow_skos_vocabulary
 \item \href{#method-geoflow_skos_vocabulary-query}{\code{geoflow_skos_vocabulary$query()}}
 \item \href{#method-geoflow_skos_vocabulary-ping}{\code{geoflow_skos_vocabulary$ping()}}
 \item \href{#method-geoflow_skos_vocabulary-list_collections}{\code{geoflow_skos_vocabulary$list_collections()}}
+\item \href{#method-geoflow_skos_vocabulary-get_concepts_hierarchy}{\code{geoflow_skos_vocabulary$get_concepts_hierarchy()}}
 \item \href{#method-geoflow_skos_vocabulary-list_concepts}{\code{geoflow_skos_vocabulary$list_concepts()}}
 \item \href{#method-geoflow_skos_vocabulary-query_from_uri}{\code{geoflow_skos_vocabulary$query_from_uri()}}
 \item \href{#method-geoflow_skos_vocabulary-query_from_term}{\code{geoflow_skos_vocabulary$query_from_term()}}
@@ -126,6 +127,34 @@ list_collections
 \item{\code{count_sub_collections}}{count_sub_collections. Default is TRUE}
 
 \item{\code{count_concepts}}{count_concepts. Default is TRUE}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+the response of the SPARQL query
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_skos_vocabulary-get_concepts_hierarchy"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-get_concepts_hierarchy}{}}}
+\subsection{Method \code{get_concepts_hierarchy()}}{
+list_concepts
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$get_concepts_hierarchy(
+  lang = "en",
+  mimetype = "text/csv",
+  out_format = c("data.frame", "list")
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{lang}}{lang}
+
+\item{\code{mimetype}}{mimetype}
+
+\item{\code{out_format}}{output format (data.frame or list). Default is "data.frame"}
 }
 \if{html}{\out{</div>}}
 }

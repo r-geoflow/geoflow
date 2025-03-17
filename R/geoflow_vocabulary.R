@@ -142,6 +142,40 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     #'@description list_concepts
     #'@param lang lang
     #'@param mimetype mimetype
+    #'@param out_format output format (data.frame or list). Default is "data.frame"
+    #'@return the response of the SPARQL query
+    get_concepts_hierarchy = function(lang = "en", mimetype = "text/csv",
+                                      out_format = c("data.frame","list")){
+      out_format = match.arg(out_format)
+      str = paste0("
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+        SELECT ?broaderConcept ?broaderPrefLabel ?concept ?prefLabel WHERE {
+            ?concept a skos:Concept .
+            OPTIONAL { 
+                ?concept skos:prefLabel ?prefLabel .
+                FILTER (LANG(?prefLabel) = \"",lang,"\")
+            }
+            OPTIONAL { 
+                ?concept skos:broader ?broaderConcept .
+                OPTIONAL { 
+                    ?broaderConcept skos:prefLabel ?broaderPrefLabel .
+                    FILTER (LANG(?broaderPrefLabel) = \"",lang,"\")
+                }
+            }
+        }
+        ORDER BY ?concept
+      ")
+      out = self$query(str = str, mimetype = mimetype)
+      if(out_format == "list"){
+        out = build_hierarchical_list(out, parent = "root", parent_key = "broaderPrefLabel", child_key = "prefLabel")
+      }
+      return(out)
+    },
+    
+    #'@description list_concepts
+    #'@param lang lang
+    #'@param mimetype mimetype
     #'@return the response of the SPARQL query
     list_concepts = function(lang = "en", mimetype = "text/csv"){
       str = paste0("
