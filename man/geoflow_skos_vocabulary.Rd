@@ -143,7 +143,7 @@ list_concepts
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$get_concepts_hierarchy(
   lang = "en",
   mimetype = "text/csv",
-  out_format = c("data.frame", "list")
+  out_format = c("tibble", "list")
 )}\if{html}{\out{</div>}}
 }
 
@@ -154,7 +154,7 @@ list_concepts
 
 \item{\code{mimetype}}{mimetype}
 
-\item{\code{out_format}}{output format (data.frame or list). Default is "data.frame"}
+\item{\code{out_format}}{output format (tibble or list). Default is "tibble"}
 }
 \if{html}{\out{</div>}}
 }

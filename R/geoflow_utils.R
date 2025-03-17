@@ -935,7 +935,7 @@ build_hierarchical_list <- function(data, parent, parent_key, child_key) {
     return(NULL)
   } else {
     nested_list <- lapply(1:nrow(children), function(i) {
-      build_vocabulary_hierarchical_list(data, children[i, child_key])
+      build_hierarchical_list(data, children[i, child_key], parent_key, child_key)
     })
     names(nested_list) <- children[,child_key]
     return(nested_list)

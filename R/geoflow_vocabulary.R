@@ -142,10 +142,10 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     #'@description list_concepts
     #'@param lang lang
     #'@param mimetype mimetype
-    #'@param out_format output format (data.frame or list). Default is "data.frame"
+    #'@param out_format output format (tibble or list). Default is "tibble"
     #'@return the response of the SPARQL query
     get_concepts_hierarchy = function(lang = "en", mimetype = "text/csv",
-                                      out_format = c("data.frame","list")){
+                                      out_format = c("tibble","list")){
       out_format = match.arg(out_format)
       str = paste0("
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -168,7 +168,12 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       ")
       out = self$query(str = str, mimetype = mimetype)
       if(out_format == "list"){
-        out = build_hierarchical_list(out, parent = "root", parent_key = "broaderPrefLabel", child_key = "prefLabel")
+        out = build_hierarchical_list(
+          as.data.frame(out), 
+          parent = "root", 
+          parent_key = "broaderPrefLabel", 
+          child_key = "prefLabel"
+        )
       }
       return(out)
     },
