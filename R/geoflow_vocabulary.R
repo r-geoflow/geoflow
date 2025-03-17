@@ -167,6 +167,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
         ORDER BY ?concept
       ")
       out = self$query(str = str, mimetype = mimetype)
+      out[is.na(out$broaderPrefLabel),]$broaderPrefLabel = "root"
       if(out_format == "list"){
         out = build_hierarchical_list(
           as.data.frame(out), 

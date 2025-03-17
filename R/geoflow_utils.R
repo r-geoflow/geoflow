@@ -926,18 +926,29 @@ create_object_identification_id = function(prefix, str){
 #'
 #'@param data data
 #'@param parent parent
+#'@param parent_key column that identifies the parent
+#'@param child_key column that identifies the child
+#'@param recursive if the function is called recursively. Default is \code{TRUE}
+#'to build the full hierarchy. Can be set to \code{FALSE} to allow lazy loading
+#'in a Shiny context.
 #'@return a hierarchical list
 #'@export
-build_hierarchical_list <- function(data, parent, parent_key, child_key) {
+build_hierarchical_list <- function(data, parent, parent_key, child_key, recursive = TRUE) {
   children <- data[data[,parent_key] == parent, ]
   children <- children[order(children[,child_key]),]
+  out <- list(text = parent)
   if (nrow(children) == 0) {
-    return(NULL)
+    return(out)
   } else {
-    nested_list <- lapply(1:nrow(children), function(i) {
-      build_hierarchical_list(data, children[i, child_key], parent_key, child_key)
+    out$children <- lapply(1:nrow(children), function(i) {
+      if(recursive){
+        build_hierarchical_list(data, children[i, child_key], parent_key, child_key, recursive)
+      }else{
+        list(
+          text = children[i, child_key]
+        )
+      }
     })
-    names(nested_list) <- children[,child_key]
-    return(nested_list)
   }
+  return(out)
 }
