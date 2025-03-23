@@ -208,7 +208,9 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       #subject
       entity$subjects = lapply(rec$identificationInfo[[1]]$descriptiveKeywords, function(dk){
         subject = geoflow_subject$new()
-        subject$setKey(dk$type$attrs$codeListValue)
+        subj_key = dk$type$attrs$codeListValue
+        if(subj_key == "") subj_key = "theme"        
+        subject$setKey(subj_key)
         title = dk$thesaurusName$title
         if(!is.null(title)){
           if(is(title, "ISOAnchor")){
