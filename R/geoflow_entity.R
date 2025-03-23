@@ -1938,6 +1938,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         return(v)
       }))){
         self$subjects = lapply(self$subjects, function(subject){
+          if(is.null(subject$name)) return(subject)
           #GEMET dates enrichment
           if(startsWith(subject$name, "GEMET - INSPIRE themes")){
             subject$setDate("publication", as.Date("2008-06-01")) 
