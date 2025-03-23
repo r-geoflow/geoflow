@@ -397,7 +397,7 @@ function(action, entity, config){
   #maintenance information
   default_maintenance = "asNeeded"
   maint <- ISOMaintenanceInformation$new()
-  maint$setMaintenanceFrequency(if(!is.null(self$descriptions[["maintenance"]])) self$descriptions[["maintenance"]] else default_maintenance)
+  maint$setMaintenanceFrequency(if(!is.null(entity$descriptions[["maintenance"]])) entity$descriptions[["maintenance"]] else default_maintenance)
   ident$addResourceMaintenance(maint)
   
   #legal constraints
@@ -521,8 +521,8 @@ function(action, entity, config){
       end = entity$temporal_extent$end
       gmltimeperiod$setEndPosition(endPosition = if(is.na(end)) NULL else end,
                                    frame = attr(start, "frame"),
-                                   calendarEraName = attr(start, "calendarEraName"),
-                                   indeterminatePosition = attr(start, "indeterminatePosition"))
+                                   calendarEraName = attr(end, "calendarEraName"),
+                                   indeterminatePosition = attr(end, "indeterminatePosition"))
       time$setTimePeriod(gmltimeperiod)
     }
     extent$addTemporalElement(time)
