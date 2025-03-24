@@ -431,12 +431,20 @@ function(action, entity, config){
     #use constraints
     useConstraints <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "useconstraint"})]
     if(length(useConstraints)>0){
-      for(useConstraint in useConstraints) legal_constraints$addUseConstraint(useConstraint$value)
+      for(useConstraint in useConstraints){
+        for(value in useConstraint$values){
+          legal_constraints$addUseConstraint(value) 
+        }
+      }
     }
     #access constraints
     accessConstraints <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "accessconstraint"})]
     if(length(accessConstraints)>0){
-      for(accessConstraint in accessConstraints) legal_constraints$addAccessConstraint(accessConstraint$value)
+      for(accessConstraint in accessConstraints){
+        for(value in accessConstraint$values){
+          legal_constraints$addAccessConstraint(value)
+        }
+      }
     }
     #other constraints
     otherConstraints <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "otherconstraint"})]
