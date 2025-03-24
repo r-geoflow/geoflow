@@ -1934,7 +1934,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       #GEMET thesaurus (enrichment with proper publication dates)
       if(any(sapply(self$subjects, function(subject){
         v = FALSE
-        if(!is.null(subject$name)) v = startsWith(subject$name, "GEMET")
+        if(!is.null(subject$name)) if(!is.na(subject$name)) v = startsWith(subject$name, "GEMET")
         return(v)
       }))){
         self$subjects = lapply(self$subjects, function(subject){
