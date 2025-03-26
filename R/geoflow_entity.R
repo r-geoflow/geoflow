@@ -2218,7 +2218,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             if(!is.null(kwd$uri)) outkwd <- paste(outkwd, kwd$uri, sep="@")
             return(outkwd)
           }),collapse=",")
-          outsubj <- paste(name,kwds,sep=":")
+          outsubj <- paste(key,kwds,sep=":")
           return(outsubj)
         }),collapse=line_separator),
         #Contact
