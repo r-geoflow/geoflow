@@ -138,10 +138,12 @@ function(action, entity, config){
   
   #locales (i18n/i10n support)
   if(length(entity$locales)>0){
+    ref_locales = utils::read.csv(system.file("extdata/codelists", "ISO-639-2_utf-8.txt", package = "geometa"),sep="|", stringsAsFactors = FALSE)
     for(locale in entity$locales){
       a_locale <- ISOLocale$new()
       a_locale$setId(locale)
-      a_locale$setLanguage(locale)
+      language = ref_locales[ref_locales$alpha2 == tolower(locale),]$alpha3[1]
+      a_locale$setLanguage(language)
       a_locale$setCharacterSet("utf8")
       md$addLocale(a_locale)
     }
