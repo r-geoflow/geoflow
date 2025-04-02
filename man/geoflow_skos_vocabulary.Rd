@@ -24,6 +24,8 @@ geoflow_skos_vocabulary
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
+\item{\code{rdf}}{rdf}
+
 \item{\code{endpoint}}{endpoint}
 }
 \if{html}{\out{</div>}}
@@ -55,7 +57,7 @@ geoflow_skos_vocabulary
 \subsection{Method \code{new()}}{
 Initializes a vocabulary
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$new(id, def, uri, endpoint)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$new(id, def, uri, endpoint = NULL, file = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -67,7 +69,9 @@ Initializes a vocabulary
 
 \item{\code{uri}}{uri}
 
-\item{\code{endpoint}}{endpoint}
+\item{\code{endpoint}}{A Sparql endpoint}
+
+\item{\code{file}}{a RDF file}
 }
 \if{html}{\out{</div>}}
 }
@@ -142,7 +146,7 @@ list_concepts
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$get_concepts_hierarchy(
   lang = "en",
-  mimetype = "text/csv",
+  method = c("SPARQL", "R"),
   out_format = c("tibble", "list")
 )}\if{html}{\out{</div>}}
 }
@@ -152,7 +156,7 @@ list_concepts
 \describe{
 \item{\code{lang}}{lang}
 
-\item{\code{mimetype}}{mimetype}
+\item{\code{method}}{method used to build the hierarchy, either "SPARQL" or "R"}
 
 \item{\code{out_format}}{output format (tibble or list). Default is "tibble"}
 }

@@ -61,17 +61,42 @@ geoflow_vocabulary <- R6Class("geoflow_vocabulary",
 geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
   inherit = geoflow_vocabulary,
   public = list(
+    #'@field rdf rdf
+    rdf = NULL,
     #'@field endpoint endpoint
-    endpoint = NA,
+    endpoint = NULL,
     
     #'@description Initializes a vocabulary
     #'@param id id
     #'@param def def
     #'@param uri uri
-    #'@param endpoint endpoint
-    initialize = function(id, def, uri, endpoint){
+    #'@param endpoint A Sparql endpoint
+    #'@param file a RDF file
+    initialize = function(id, def, uri, endpoint = NULL, file = NULL){
       super$initialize(id, def, uri, software_type = "sparql")
       self$endpoint = endpoint
+      
+      #case of RDF resource
+      if(!is.null(file)){
+        if(startsWith(file, "http")){
+          download.file(url = file, destfile = file.path(tempdir(), basename(file)), mode = "wb")
+          file = file.path(tempdir(), basename(file))
+        }
+        if(mime::guess_type(file) %in% c("application/gzip", "application/zip")){
+          switch(mime::guess_type(file),
+            "application/gzip" = {
+              trg_file = file.path(tempdir(), paste0(id, ".rdf"))
+              readr::write_lines(readLines(gzfile(file, "r"), warn = F), file = trg_file)
+              self$rdf = rdflib::rdf_parse(trg_file)
+            },
+            "application/zip" = {
+              trg_file = as.character(unzip(zipfile = file, list = T)[1])
+              unzip(zipfile = file, exdir = tempdir())
+              self$rdf = rdflib::rdf_parse(file.path(tempdir(), trg_file))
+            }
+          )
+        }
+      }
     },
     
     #'@description query
@@ -80,20 +105,24 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     #'@param mimetype mimetype
     #'@return the response of the SPARQL query
     query = function(str, graphUri = NULL, mimetype = "text/csv"){
-      req_body = list(query = str)
-      if(!is.null(graphUri)) req_body$graphUri = graphUri 
-      
-      req = httr::with_verbose(httr::POST(
-        url = self$endpoint,
-        encode = "form",
-        body = req_body,
-        httr::add_headers(
-          "Content-Type" = "application/x-www-form-urlencoded",
-          "User-Agent" = paste("geoflow", packageVersion("geoflow"), sep = "_"),
-          "Accept" = mimetype
-        )
-      ))
-      httr::content(req)
+      if(!is.null(self$endpoint)){
+        req_body = list(query = str)
+        if(!is.null(graphUri)) req_body$graphUri = graphUri 
+        
+        req = httr::with_verbose(httr::POST(
+          url = self$endpoint,
+          encode = "form",
+          body = req_body,
+          httr::add_headers(
+            "Content-Type" = "application/x-www-form-urlencoded",
+            "User-Agent" = paste("geoflow", packageVersion("geoflow"), sep = "_"),
+            "Accept" = mimetype
+          )
+        ))
+        httr::content(req)
+      }else if(!is.null(self$rdf)){
+        rdflib::rdf_query(rdf = self$rdf, query = str, data.frame = T)
+      }
     },
     
     #'@description Ping query
@@ -141,32 +170,71 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     
     #'@description list_concepts
     #'@param lang lang
-    #'@param mimetype mimetype
+    #'@param method method used to build the hierarchy, either "SPARQL" or "R"
     #'@param out_format output format (tibble or list). Default is "tibble"
     #'@return the response of the SPARQL query
-    get_concepts_hierarchy = function(lang = "en", mimetype = "text/csv",
+    get_concepts_hierarchy = function(lang = "en",
+                                      method = c("SPARQL","R"),
                                       out_format = c("tibble","list")){
+      
+      method = match.arg(method)
       out_format = match.arg(out_format)
-      str = paste0("
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-
-        SELECT ?broaderConcept ?broaderPrefLabel ?concept ?prefLabel WHERE {
-            ?concept a skos:Concept .
-            OPTIONAL { 
-                ?concept skos:prefLabel ?prefLabel .
-                FILTER (LANG(?prefLabel) = \"",lang,"\")
-            }
-            OPTIONAL { 
-                ?concept skos:broader ?broaderConcept .
+      
+      out <-switch(method,
+        "SPARQL" = {             
+          str = paste0("
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    
+            SELECT ?broaderConcept ?broaderPrefLabel ?concept ?prefLabel WHERE {
+                ?concept a skos:Concept .
                 OPTIONAL { 
-                    ?broaderConcept skos:prefLabel ?broaderPrefLabel .
-                    FILTER (LANG(?broaderPrefLabel) = \"",lang,"\")
+                    ?concept skos:prefLabel ?prefLabel .
+                    FILTER (LANG(?prefLabel) = \"",lang,"\")
+                }
+                OPTIONAL { 
+                    ?concept skos:broader ?broaderConcept .
+                    OPTIONAL { 
+                        ?broaderConcept skos:prefLabel ?broaderPrefLabel .
+                        FILTER (LANG(?broaderPrefLabel) = \"",lang,"\")
+                    }
                 }
             }
+            ORDER BY ?concept
+          ")
+          self$query(str = str, mimetype = mimetype)
+        },
+        "R" = {
+          filter_by_language <- function(df, language) {
+            df[!is.na(df$lang),] %>%
+              dplyr::filter(lang == language)
+          }
+          #perform base sparql result
+          sparql_result = self$query(
+            str = "SELECT ?s ?p ?o ?lang WHERE { 
+                      ?s ?p ?o .
+                      OPTIONAL {
+                          BIND(LANG(?o) AS ?lang)
+                      }
+                  }",
+            mimetype = "text/csv"
+          )
+          # Create a hierarchy data.frame
+          sparql_result %>%
+            dplyr::filter(p == "http://www.w3.org/2004/02/skos/core#broader") %>%
+            dplyr::rename(concept = s, broaderConcept = o) %>%
+            dplyr::select(concept, broaderConcept) %>%
+            dplyr::left_join(
+              filter_by_language(sparql_result %>% filter(p == "http://www.w3.org/2004/02/skos/core#prefLabel"), lang) %>% rename(concept = s, prefLabel = o),
+              by = "concept"
+            ) %>%
+            dplyr::left_join(
+              filter_by_language(sparql_result %>% filter(p == "http://www.w3.org/2004/02/skos/core#prefLabel"), lang) %>% rename(broaderConcept = s, broaderPrefLabel = o),
+              by = "broaderConcept"
+            ) %>%
+            dplyr::select(broaderConcept, broaderPrefLabel, concept, prefLabel)
         }
-        ORDER BY ?concept
-      ")
-      out = self$query(str = str, mimetype = mimetype)
+      )
+      
       out[is.na(out$broaderPrefLabel),]$broaderPrefLabel = "root"
       if(out_format == "list"){
         relationships <- precompute_relationships(as.data.frame(out), "broaderPrefLabel", "prefLabel");
@@ -296,6 +364,12 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
 #'
 register_vocabularies = function(){
   vocabularies <- list(
+    geoflow_skos_vocabulary$new(
+      id = "gemet",
+      def = "GEMET Thesaurus",
+      uri = "https://www.eionet.europa.eu/gemet",
+      file = "https://www.eionet.europa.eu/gemet/latest/gemet.rdf.gz"
+    ),
     geoflow_skos_vocabulary$new(
       id = "agrovoc",
       def = "AGROVOC Thesaurus",

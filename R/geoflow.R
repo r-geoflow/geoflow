@@ -24,6 +24,7 @@
 #' @import httr
 #' @import mime
 #' @import jsonlite
+#' @import dplyr
 #' @import yaml
 #' @import XML
 #' @import xml2
