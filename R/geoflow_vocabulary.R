@@ -201,7 +201,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
             }
             ORDER BY ?concept
           ")
-          self$query(str = str, mimetype = mimetype)
+          self$query(str = str, mimetype = "text/csv")
         },
         "R" = {
           filter_by_language <- function(df, language) {
@@ -219,7 +219,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
             mimetype = "text/csv"
           )
           # Create a hierarchy data.frame
-          sparql_result %>%
+          out1 = sparql_result %>%
             dplyr::filter(p == "http://www.w3.org/2004/02/skos/core#broader") %>%
             dplyr::rename(concept = s, broaderConcept = o) %>%
             dplyr::select(concept, broaderConcept) %>%
@@ -232,6 +232,19 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
               by = "broaderConcept"
             ) %>%
             dplyr::select(broaderConcept, broaderPrefLabel, concept, prefLabel)
+          #add broader concepts as concepts for root
+          out2 = do.call("rbind", lapply(unique(out1$broaderConcept), function(broaderConcept){
+            res = NULL
+            if(nrow(out1[out1$concept == broaderConcept,])==0){
+              res = out1[out1$broaderConcept == broaderConcept,][1,]
+              res$concept = res$broaderConcept
+              res$prefLabel = res$broaderPrefLabel
+              res$broaderConcept = NA
+              res$broaderPrefLabel = NA
+            }
+            res
+          }))
+          rbind(out1,out2)
         }
       )
       

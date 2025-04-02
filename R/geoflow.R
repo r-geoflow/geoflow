@@ -24,12 +24,11 @@
 #' @import httr
 #' @import mime
 #' @import jsonlite
-#' @import dplyr
 #' @import yaml
 #' @import XML
 #' @import xml2
 #' @import mime
-#' @import plyr
+#' @import dplyr
 #' @import readr
 #' @import arrow
 #' @import sf

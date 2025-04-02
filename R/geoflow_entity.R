@@ -2059,7 +2059,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@return a list of \code{geoflow_contact} or a \code{data.frame}
     getContacts = function(pretty = FALSE){
       if(pretty){
-        out <- do.call("rbind.fill", lapply(self$contacts, function(contact){
+        out <- do.call(dplyr::bind_rows, lapply(self$contacts, function(contact){
           contact.df <- data.frame(
             id = contact$id,
             stringsAsFactors = FALSE
@@ -2095,7 +2095,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@return a list of \code{geoflow_subject} or a \code{data.frame}
     getSubjects = function(pretty = FALSE, keywords = FALSE){
       if(pretty){
-        out <- do.call("rbind.fill", lapply(self$subjects, function(subject){
+        out <- do.call(dplyr::bind_rows, lapply(self$subjects, function(subject){
           subject.df <- data.frame(
             subject_name = subject$name,
             subject_uri = ifelse(is.null(subject$uri),NA,subject$uri),
@@ -2124,7 +2124,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@return a list of \code{geoflow_relation} or a \code{data.frame}
     getRelations = function(pretty = FALSE){
       if(pretty){
-        out <- do.call("rbind.fill", lapply(self$relations, function(relation){
+        out <- do.call(dplyr::bind_rows, lapply(self$relations, function(relation){
           relation.df <- data.frame(
             key = relation$key,
             stringsAsFactors = FALSE

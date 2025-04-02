@@ -45,7 +45,6 @@ Imports:
   mime,
   digest,
   dplyr,
-  plyr,
   readr,
   arrow,
   zip,
