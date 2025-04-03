@@ -201,7 +201,10 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
             }
             ORDER BY ?concept
           ")
-          self$query(str = str, mimetype = "text/csv")
+          out = self$query(str = str, mimetype = "text/csv")
+          out[is.na(out$broaderConcept),]$broaderConcept = "<root>"
+          out[is.na(out$broaderPrefLabel),]$broaderPrefLabel = "<root>"
+          out
         },
         "R" = {
           filter_by_language <- function(df, language) {
@@ -244,14 +247,36 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
             }
             res
           }))
-          rbind(out1,out2)
+          out = rbind(out1,out2)
+          
+          out[is.na(out$broaderConcept),]$broaderConcept = "<root>"
+          out[is.na(out$broaderPrefLabel),]$broaderPrefLabel = "<root>"
+          
+          #manage exclusion of reciprocal parent-child relationships
+          out = do.call("rbind",lapply(unique(out$concept), function(concept){
+            ref_children = out[out$concept == concept,]
+            ref_parent = out[out$broaderConcept == concept & out$concept %in% ref_children$broaderConcept,]
+            if(nrow(ref_parent)>0){
+              print(ref_parent)
+              pairs = out[(out$concept == concept & out$broaderConcept == ref_parent$concept) | 
+                             (out$concept == ref_parent$concept & out$broaderConcept == concept),]
+              new_out = rbind(
+                pairs[1,],
+                ref_children[!ref_children$broaderConcept %in% ref_parent$concept,]
+              )
+            }else{
+              new_out = ref_children
+            }
+            return(new_out)
+          }))
+          out
         }
       )
       
-      out[is.na(out$broaderPrefLabel),]$broaderPrefLabel = "root"
+      
       if(out_format == "list"){
-        relationships <- precompute_relationships(as.data.frame(out), "broaderPrefLabel", "prefLabel");
-        out <- build_hierarchical_list("root", relationships)
+        relationships <- precompute_relationships(as.data.frame(out), "broaderConcept", "concept", "prefLabel")
+        out <- build_hierarchical_list("<root>", relationships)
       }
       return(out)
     },

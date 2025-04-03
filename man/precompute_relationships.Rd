@@ -12,6 +12,8 @@ precompute_relationships(data, parent_key, child_key)
 \item{parent_key}{parent_key}
 
 \item{child_key}{child_key}
+
+\item{child_label}{child_label}
 }
 \value{
 a list of relationships

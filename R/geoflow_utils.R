@@ -928,11 +928,17 @@ create_object_identification_id = function(prefix, str){
 #'@param data data
 #'@param parent_key parent_key
 #'@param child_key child_key
+#'@param child_label child_label
 #'@return a list of relationships
 #'@export
-precompute_relationships <- function(data, parent_key, child_key) {
+precompute_relationships <- function(data, parent_key, child_key, child_label) {
   ordered_data <- data[order(data[[parent_key]], data[[child_key]]), ]
   relationships <- split(ordered_data[[child_key]], ordered_data[[parent_key]])
+  rel_names = names(relationships)
+  relationships <- lapply(relationships, function(x){ 
+      lapply(x, function(x_el){ attr(x_el, "label") = data[data[,child_key] == x_el, child_label][1]; return(x_el) })
+    })
+  names(relationships) = rel_names
   return(relationships)
 }
 
@@ -949,10 +955,12 @@ precompute_relationships <- function(data, parent_key, child_key) {
 #'@export
 build_hierarchical_list <- function(parent, relationships) {
   children <- relationships[[parent]]
-  out <- list(text = parent)
-  if (is.null(children)) {
+  children_names <- sapply(children, function(x){attr(x, "label")})
+  children = children[order(children_names)]
+  out <- list(text = if(parent == "<root>") parent else attr(parent, "label") )
+  if(is.null(children)){
     out$icon = "fa-regular fa-note-sticky"
-  } else {
+  }else{
     out$children <- lapply(children, build_hierarchical_list, relationships)
   }
   return(out)
