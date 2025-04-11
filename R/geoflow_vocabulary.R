@@ -373,6 +373,9 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
                               self$rdf_data$p == "http://www.w3.org/2004/02/skos/core#prefLabel",]
         rec = rec[,c("s", "lang", "o")]
         colnames(rec) = c("concept", "lang", "prefLabel")
+        if(nrow(rec)>0){
+          rec = self$query_from_uri(uri = rec[1,]$concept)
+        }
         return(rec)
       }
       
