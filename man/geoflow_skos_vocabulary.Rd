@@ -26,6 +26,8 @@ geoflow_skos_vocabulary
 \describe{
 \item{\code{rdf}}{rdf}
 
+\item{\code{rdf_data}}{rdf_data}
+
 \item{\code{endpoint}}{endpoint}
 }
 \if{html}{\out{</div>}}
@@ -35,6 +37,7 @@ geoflow_skos_vocabulary
 \itemize{
 \item \href{#method-geoflow_skos_vocabulary-new}{\code{geoflow_skos_vocabulary$new()}}
 \item \href{#method-geoflow_skos_vocabulary-query}{\code{geoflow_skos_vocabulary$query()}}
+\item \href{#method-geoflow_skos_vocabulary-query_full_dataset}{\code{geoflow_skos_vocabulary$query_full_dataset()}}
 \item \href{#method-geoflow_skos_vocabulary-ping}{\code{geoflow_skos_vocabulary$ping()}}
 \item \href{#method-geoflow_skos_vocabulary-list_collections}{\code{geoflow_skos_vocabulary$list_collections()}}
 \item \href{#method-geoflow_skos_vocabulary-get_concepts_hierarchy}{\code{geoflow_skos_vocabulary$get_concepts_hierarchy()}}
@@ -98,6 +101,19 @@ query
 }
 \subsection{Returns}{
 the response of the SPARQL query
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_skos_vocabulary-query_full_dataset"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-query_full_dataset}{}}}
+\subsection{Method \code{query_full_dataset()}}{
+Queries full dataset
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$query_full_dataset()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+an object of class \link[tibble]{tibble}
 }
 }
 \if{html}{\out{<hr>}}
@@ -213,7 +229,7 @@ query_from_uri
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-the response of the SPARQL query
+an object of class \link[tibble]{tibble}
 }
 }
 \if{html}{\out{<hr>}}
@@ -241,7 +257,7 @@ query_from_term
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-the response of the SPARQL query
+an object of class \link[tibble]{tibble}
 }
 }
 \if{html}{\out{<hr>}}

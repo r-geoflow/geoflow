@@ -63,6 +63,8 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
   public = list(
     #'@field rdf rdf
     rdf = NULL,
+    #'@field rdf_data rdf_data
+    rdf_data = NULL,
     #'@field endpoint endpoint
     endpoint = NULL,
     
@@ -123,6 +125,23 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       }else if(!is.null(self$rdf)){
         rdflib::rdf_query(rdf = self$rdf, query = str, data.frame = T)
       }
+    },
+    
+    #'@description Queries full dataset
+    #'@return an object of class \link[tibble]{tibble}
+    query_full_dataset = function(){
+      if(is.null(self$rdf_data)){
+        self$rdf_data = self$query(
+          str = "SELECT ?s ?p ?o ?lang WHERE { 
+                      ?s ?p ?o .
+                      OPTIONAL {
+                          BIND(LANG(?o) AS ?lang)
+                      }
+                  }",
+          mimetype = "text/csv"
+        )
+      }
+      return(self$rdf_data)
     },
     
     #'@description Ping query
@@ -212,15 +231,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
               dplyr::filter(lang == language)
           }
           #perform base sparql result
-          sparql_result = self$query(
-            str = "SELECT ?s ?p ?o ?lang WHERE { 
-                      ?s ?p ?o .
-                      OPTIONAL {
-                          BIND(LANG(?o) AS ?lang)
-                      }
-                  }",
-            mimetype = "text/csv"
-          )
+          sparql_result = self$query_full_dataset()
           # Create a hierarchy data.frame
           out1 = sparql_result %>%
             dplyr::filter(p == "http://www.w3.org/2004/02/skos/core#broader") %>%
@@ -310,8 +321,16 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     #'@param uri uri
     #'@param graphUri graphUri
     #'@param mimetype mimetype
-    #'@return the response of the SPARQL query
+    #'@return an object of class \link[tibble]{tibble}
     query_from_uri = function(uri, graphUri = NULL, mimetype = "text/csv"){
+      
+      if(!is.null(self$rdf_data)){
+        rec = self$rdf_data[self$rdf_data$s == uri & 
+                              self$rdf_data$p == "http://www.w3.org/2004/02/skos/core#prefLabel",]
+        rec = rec[,c("s", "lang", "o")]
+        colnames(rec) = c("concept", "lang", "prefLabel")
+        return(rec)
+      }
       
       str = paste0(
        "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -346,8 +365,16 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     #'@param term term
     #'@param graphUri graphUri
     #'@param mimetype mimetype
-    #'@return the response of the SPARQL query
+    #'@return an object of class \link[tibble]{tibble}
     query_from_term = function(term, graphUri = NULL, mimetype = "text/csv"){
+      
+      if(!is.null(self$rdf_data)){
+        rec = self$rdf_data[self$rdf_data$o == term & !is.na(self$rdf_data$o) &
+                              self$rdf_data$p == "http://www.w3.org/2004/02/skos/core#prefLabel",]
+        rec = rec[,c("s", "lang", "o")]
+        colnames(rec) = c("concept", "lang", "prefLabel")
+        return(rec)
+      }
       
       str = paste0(
         "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
