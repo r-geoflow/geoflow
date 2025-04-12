@@ -456,7 +456,7 @@ geoflow_validator_entity_Date <- R6Class("geoflow_validator_entity_Date",
      #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
      #'@param str string to validate
      initialize = function(i, j, str){
-       valid_keys <- list("creation","publication","edition","embargo")
+       valid_keys <- list(geometa::ISODateType$values(),"edition","embargo")
        super$initialize(TRUE,TRUE, TRUE, valid_keys, "creation",FALSE, TRUE, TRUE, i, j, as(str,"character"))
      },
      
@@ -512,7 +512,7 @@ geoflow_validator_entity_Type <- R6Class("geoflow_validator_entity_Type",
     #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
     #'@param str string to validate
     initialize = function(i, j, str){
-      valid_keys <- list()
+      valid_keys <- list("generic", "zenodoResourceType")
       super$initialize(FALSE,T, TRUE, valid_keys, "generic",T, TRUE, TRUE, i, j, str)
     }
   )
@@ -532,7 +532,7 @@ geoflow_validator_entity_Language <- R6Class("geoflow_validator_entity_Language"
     #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
     #'@param str string to validate
     initialize = function(i, j, str){
-      valid_keys <- list()
+      valid_keys <- geometa::ISOLanguage$values()
       super$initialize(TRUE,FALSE, FALSE, valid_keys, "eng",TRUE, TRUE, TRUE, i, j, str)
     },
     
