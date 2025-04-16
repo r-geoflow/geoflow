@@ -97,6 +97,8 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
               self$rdf = rdflib::rdf_parse(file.path(tempdir(), trg_file))
             }
           )
+        }else if(mime::guess_type(file) == "application/rdf+xml"){
+          self$rdf = rdflib::rdf_parse(file)
         }
       }
     },
@@ -437,6 +439,12 @@ register_vocabularies = function(){
       def = "GEMET Thesaurus",
       uri = "https://www.eionet.europa.eu/gemet",
       file = "https://www.eionet.europa.eu/gemet/latest/gemet.rdf.gz"
+    ),
+    geoflow_skos_vocabulary$new(
+      id = "inrae",
+      def = "INRAE Thesaurus",
+      uri = "http://opendata.inrae.fr/thesaurusINRAE/thesaurusINRAE",
+      file = "https://forgemia.inra.fr/dipso/thesaurus-inrae/-/raw/main/thesaurusINRAE_skos_2025_04_02_V2.3.rdf"
     ),
     geoflow_skos_vocabulary$new(
       id = "agrovoc",
