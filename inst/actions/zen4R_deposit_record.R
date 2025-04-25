@@ -400,7 +400,7 @@ function(action, entity, config){
       grants = entity$relations[sapply(entity$relations, function(x){tolower(x$key) == "grant"})]
       if(length(grants)>0){
         for(grant in grants){
-          zenodo_metadata$addGrant(grant, sandbox = ZENODO$sandbox)
+          zenodo_metadata$addGrant(grant$name, sandbox = ZENODO$sandbox)
         }
       }
     }
