@@ -52,8 +52,8 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
     resourcename<-entity$data$uploadSource[[1]]
   }
   
-  if(!type %in% c("shp","dbtable","csv","gpkg")){
-    errMsg<-"Error: unrecognized type, specify a type at this list : 'csv','shp','dbtable','gpkg'"
+  if(!type %in% c("shp","dbtable","csv","gpkg", "parquet")){
+    errMsg<-"Error: unrecognized type, specify a type at this list : 'csv','shp','dbtable','gpkg', 'parquet'"
     config$logger.error(errMsg)
     stop(errMsg)
   } 
