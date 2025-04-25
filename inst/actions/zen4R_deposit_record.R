@@ -217,7 +217,13 @@ function(action, entity, config){
     
     #date
     pubDates <- entity$dates[sapply(entity$dates, function(date){date$key == "publication"})]
-    date <- if(length(pubDates)>0) pubDates[[1]]$value else entity$dates[[1]]$value
+    edDates <- entity$dates[sapply(entity$dates, function(date){date$key == "edition"})]
+    date <- entity$dates[[1]]$value
+    if(length(pubDates)>0){
+      date = pubDates[[1]]$value
+    }else{
+      date = edDates[[1]]$value
+    }
     zenodo_metadata$setPublicationDate(date)
     #version (mapped to geoflow descriptions edition)
     edition = entity$descriptions[["edition"]]
