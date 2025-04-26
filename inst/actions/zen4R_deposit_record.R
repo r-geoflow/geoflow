@@ -437,11 +437,15 @@ function(action, entity, config){
           config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
           data_files <- lapply(data_files, function(data_file){
             config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
-            fileparts <- unlist(strsplit(data_file, "\\."))
-            if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
+            fileparts <- unlist(strsplit(basename(data_file), "\\."))
+            fileext <- NULL
+            if(length(fileparts)>1){
+              fileext <- fileparts[length(fileparts)]
+              fileparts <- fileparts[1:(length(fileparts)-1)]
+            } 
             filename <- paste0(fileparts, collapse = ".")
             outfilename <- NULL
-            if(fileparts[length(fileparts)] != "parquet"){
+            if(fileext != "parquet"){
               outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
               zip::zipr(zipfile = outfilename, files = data_file)
             }else{
@@ -525,13 +529,16 @@ function(action, entity, config){
                      if(zipEachDataFile){
                        config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
                        data_files <- lapply(data_files, function(data_file){
-                         data_file = basename(data_file)
                          config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
-                         fileparts <- unlist(strsplit(data_file, "\\."))
-                         if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
+                         fileparts <- unlist(strsplit(basename(data_file), "\\."))
+                         fileext <- NULL
+                         if(length(fileparts)>1){
+                           fileext <- fileparts[length(fileparts)]
+                           fileparts <- fileparts[1:(length(fileparts)-1)]
+                         } 
                          filename <- paste0(fileparts, collapse = ".")
                          outfilename <- NULL
-                         if(fileparts[length(fileparts)] != "parquet"){
+                         if(fileext != "parquet"){
                            outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
                            zip::zipr(zipfile = outfilename, files = data_file)
                          }else{
@@ -563,13 +570,16 @@ function(action, entity, config){
                      if(zipEachDataFile){
                        config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
                        data_files <- lapply(data_files, function(data_file){
-                         data_file = basename(data_file)
                          config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
-                         fileparts <- unlist(strsplit(data_file, "\\."))
-                         if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
+                         fileparts <- unlist(strsplit(basename(data_file), "\\."))
+                         fileext <- NULL
+                         if(length(fileparts)>1){
+                           fileext <- fileparts[length(fileparts)]
+                           fileparts <- fileparts[1:(length(fileparts)-1)]
+                         } 
                          filename <- paste0(fileparts, collapse = ".")
                          outfilename <- NULL
-                         if(fileparts[length(fileparts)] != "parquet"){
+                         if(fileext != "parquet"){
                            outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
                            zip::zipr(zipfile = outfilename, files = data_file)
                          }else{
