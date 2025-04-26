@@ -39,7 +39,7 @@ available_options:
     class: character
     default: ""
   zipEachDataFile:
-    def: Indicates if each data file should be zipped (to be used in case of large data files
+    def: Indicates if each data file should be zipped (to be used in case of large data file). Parquet files are ignored.
     class: logical
     default: false
   publish: 

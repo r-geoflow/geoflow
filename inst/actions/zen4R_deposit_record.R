@@ -440,8 +440,13 @@ function(action, entity, config){
             fileparts <- unlist(strsplit(data_file, "\\."))
             if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
             filename <- paste0(fileparts, collapse = ".")
-            outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
-            zip::zipr(zipfile = outfilename, files = data_file)
+            outfilename <- NULL
+            if(fileparts[length(fileparts)] != "parquet"){
+              outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
+              zip::zipr(zipfile = outfilename, files = data_file)
+            }else{
+              outfilename <- file.path(getwd(), "data", paste0(filename, ".parquet"))
+            }
             return(outfilename)
           })
         }
@@ -525,8 +530,13 @@ function(action, entity, config){
                          fileparts <- unlist(strsplit(data_file, "\\."))
                          if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
                          filename <- paste0(fileparts, collapse = ".")
-                         outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
-                         zip::zipr(zipfile = outfilename, files = data_file)
+                         outfilename <- NULL
+                         if(fileparts[length(fileparts)] != "parquet"){
+                           outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
+                           zip::zipr(zipfile = outfilename, files = data_file)
+                         }else{
+                           outfilename <- file.path(getwd(), "data", paste0(filename, ".parquet"))
+                         }
                          return(outfilename)
                        })
                      }
@@ -558,8 +568,13 @@ function(action, entity, config){
                          fileparts <- unlist(strsplit(data_file, "\\."))
                          if(length(fileparts)>1) fileparts <- fileparts[1:(length(fileparts)-1)]
                          filename <- paste0(fileparts, collapse = ".")
-                         outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
-                         zip::zipr(zipfile = outfilename, files = data_file)
+                         outfilename <- NULL
+                         if(fileparts[length(fileparts)] != "parquet"){
+                           outfilename <- file.path(getwd(), "data", paste0(filename, ".zip"))
+                           zip::zipr(zipfile = outfilename, files = data_file)
+                         }else{
+                           outfilename <- file.path(getwd(), "data", paste0(filename, ".parquet"))
+                         }
                          return(outfilename)
                        })
                      }
