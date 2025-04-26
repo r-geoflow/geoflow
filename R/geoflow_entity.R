@@ -1954,15 +1954,20 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@param config geoflow config object
     enrichWithVocabularies = function(config){
       
+      vocabs = list_vocabularies(raw = T)
+      
       self$subjects = lapply(self$subjects, function(subject){
         
         if(is.null(subject$uri)) return(subject)
         
         #find vocabulary
-        vocabs = list_vocabularies(raw = T)
         target_vocab = vocabs[sapply(vocabs, function(vocab){vocab$id == subject$uri})]
         if(length(target_vocab)>0){
           target_vocab = target_vocab[[1]]
+          if(!is.null(target_vocab$rdf)){
+            #in case of rdf file-based vocabs, we 1st query the full dataset
+            target_vocab$query_full_dataset()
+          }
           subject$uri = target_vocab$uri #default uri
           subject$keywords = lapply(subject$keywords, function(keyword){
             rs = NULL
@@ -1980,10 +1985,10 @@ geoflow_entity <- R6Class("geoflow_entity",
                 attr(keyword$name, paste0("locale#",toupper(lang))) = rs[rs$lang == lang,]$prefLabel[1]
               }
               #overwrite subject uri/name if we find a collection (assuming keywords are from the same collection)
-              if(!is.na(rs[1L,]$collection)){
-                subject$uri <<- rs[1L,]$collection
-                subject$name <<- rs[1L,]$collectionLabel
-              }
+              # if(!is.na(rs[1L,]$collection)){
+              #   subject$uri <<- rs[1L,]$collection
+              #   subject$name <<- rs[1L,]$collectionLabel
+              # }
             }
             return(keyword)
           })
