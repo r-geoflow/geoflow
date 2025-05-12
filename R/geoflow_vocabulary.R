@@ -81,24 +81,32 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       #case of RDF resource
       if(!is.null(file)){
         if(startsWith(file, "http")){
-          download.file(url = file, destfile = file.path(tempdir(), basename(file)), mode = "wb")
-          file = file.path(tempdir(), basename(file))
+          req = httr::GET(file)
+          if(httr::status_code(req) == 200){
+            destfile = file.path(tempdir(), basename(file))
+            writeBin(httr::content(req, "raw"), destfile)
+            file = file.path(tempdir(), basename(file))
+          }else{
+            file = NULL
+          }
         }
-        if(mime::guess_type(file) %in% c("application/gzip", "application/zip")){
-          switch(mime::guess_type(file),
-            "application/gzip" = {
-              trg_file = file.path(tempdir(), paste0(id, ".rdf"))
-              readr::write_lines(readLines(gzfile(file, "r"), warn = F), file = trg_file)
-              self$rdf = rdflib::rdf_parse(trg_file)
-            },
-            "application/zip" = {
-              trg_file = as.character(unzip(zipfile = file, list = T)[1])
-              unzip(zipfile = file, exdir = tempdir())
-              self$rdf = rdflib::rdf_parse(file.path(tempdir(), trg_file))
-            }
-          )
-        }else if(mime::guess_type(file) == "application/rdf+xml"){
-          self$rdf = rdflib::rdf_parse(file)
+        if(!is.null(file)){
+          if(mime::guess_type(file) %in% c("application/gzip", "application/zip")){
+            switch(mime::guess_type(file),
+              "application/gzip" = {
+                trg_file = file.path(tempdir(), paste0(id, ".rdf"))
+                readr::write_lines(readLines(gzfile(file, "r"), warn = F), file = trg_file)
+                self$rdf = rdflib::rdf_parse(trg_file)
+              },
+              "application/zip" = {
+                trg_file = as.character(unzip(zipfile = file, list = T)[1])
+                unzip(zipfile = file, exdir = tempdir())
+                self$rdf = rdflib::rdf_parse(file.path(tempdir(), trg_file))
+              }
+            )
+          }else if(mime::guess_type(file) == "application/rdf+xml"){
+            self$rdf = rdflib::rdf_parse(file)
+          }
         }
       }
     },
