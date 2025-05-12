@@ -68,7 +68,7 @@ Examples cover both:
 | **Definition**               | Dataset summary description.                                 |
 | **Need**                     | Mandatory                                                    |
 | **Default key (if omitted)** | ``abstract`` (basic abstract of the dataset)                 |
-| **other keys available**     | ``purpose`` <br />``credit`` <br />``info`` <br />``edition``  <br />``statut``  |
+| **other keys available**     | ``purpose`` <br />``credit`` <br />``info`` <br />``edition``  <br />``status`` <br />``maintenance``  |
 | **Examples**                 |                                                              |
 | Simple usage                 | *This is my abstract* , equivalent to ``abstract:This is my abstract.`` |
 | Advanced usages              | Abstract extended with supplemental information and statut:  <br />`abstract:This is my abstract_` <br />`info:some more information about this dataset_`<br/>`statut:completed` |
