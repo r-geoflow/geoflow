@@ -1868,7 +1868,8 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@description Enrichs the entity with subjects. If no subject specify in Subjects, 
     #'automatically add keyword from dictionary to 'theme' category
     #'@param config geoflow config object
-    enrichWithSubjects = function(config){
+    #'@param exclusions exclusions
+    enrichWithSubjects = function(config, exclusions = c()){
         
 		data_objects <- self$data
 		if(is(data_objects, "geoflow_data")) data_objects <- list(self$data)
@@ -1880,51 +1881,54 @@ geoflow_entity <- R6Class("geoflow_entity",
 		  #List all columns of data features
 		  columns <- colnames(data_object$features)
 		  for(featureAttrName in columns){
-			#Check if correspond column exist in dictionary
-			fat_attr <- NULL
-			fto <- data_object$featureTypeObj
-			if(!is.null(fto)) fat_attr <- fto$getMemberById(featureAttrName)
-			if(!is.null(fat_attr)){
-			  #Check if register is link
-			  registerId <- fat_attr$registerId
-			  
-			  if(!is.null(registerId)) if(!is.na(registerId)){
-				registers <- config$registers
-				if(length(registers)>0) {
-				  registers <- registers[sapply(registers, function(x){x$id == registerId})]
-				  fat_attr_register <- registers[[1]]
-				  
-				  #Check if values of column are in register
-				  dataAttrValues <- unique(data_object$features[featureAttrName])
-				  featureAttrValues <- switch(class(data_object$features)[1],
-											  "sf" = data_object$features[,featureAttrName][[1]],
-											  "data.frame" = data_object$features[,featureAttrName]
-				  )
-				  featureAttrValues <- unique(featureAttrValues)
-				  matchAttrValues <- subset(fat_attr_register$data, code %in% featureAttrValues)
-				  
-				  if (nrow(matchAttrValues)>0){
-					defSource <- fat_attr$defSource
-					if(is.na(defSource)){desc_name<-paste0("[",fat_attr$name,"]")}else{
-					  desc_name<-paste0("[",defSource[1],"]")
-					  if(!is.null(attr(defSource,"description"))) desc_name<-paste0("[",attr(defSource,"description"),"]")
-					  if(!is.null(attr(defSource,"uri"))) desc_name<-paste0(desc_name,"@",attr(defSource,"uri"))
-					}
-					subject_obj <- geoflow_subject$new()
-					subject_obj$setKey("theme")
-					subject_obj$setName(desc_name)
-					for(i in 1:nrow(matchAttrValues)){
-					  subject_obj$addKeyword(
-						keyword = paste0(matchAttrValues$label[i]," [",matchAttrValues$code[i],"]"),
-						uri = if(!is.na(matchAttrValues$uri[i])) matchAttrValues$uri[i] else NULL
-					  )
-					}
-					self$addSubject(subject_obj)  
-					
-				  }
-				}
-			  }
-			}
+  		  
+		    if(featureAttrName %in% exclusions) next  
+		    
+  			#Check if correspond column exist in dictionary
+  			fat_attr <- NULL
+  			fto <- data_object$featureTypeObj
+  			if(!is.null(fto)) fat_attr <- fto$getMemberById(featureAttrName)
+  			if(!is.null(fat_attr)){
+  			  #Check if register is link
+  			  registerId <- fat_attr$registerId
+  			  
+  			  if(!is.null(registerId)) if(!is.na(registerId)){
+  				registers <- config$registers
+  				if(length(registers)>0) {
+  				  registers <- registers[sapply(registers, function(x){x$id == registerId})]
+  				  fat_attr_register <- registers[[1]]
+  				  
+  				  #Check if values of column are in register
+  				  dataAttrValues <- unique(data_object$features[featureAttrName])
+  				  featureAttrValues <- switch(class(data_object$features)[1],
+  											  "sf" = data_object$features[,featureAttrName][[1]],
+  											  "data.frame" = data_object$features[,featureAttrName]
+  				  )
+  				  featureAttrValues <- unique(featureAttrValues)
+  				  matchAttrValues <- subset(fat_attr_register$data, code %in% featureAttrValues)
+  				  
+  				  if (nrow(matchAttrValues)>0){
+  					defSource <- fat_attr$defSource
+  					if(is.na(defSource)){desc_name<-paste0("[",fat_attr$name,"]")}else{
+  					  desc_name<-paste0("[",defSource[1],"]")
+  					  if(!is.null(attr(defSource,"description"))) desc_name<-paste0("[",attr(defSource,"description"),"]")
+  					  if(!is.null(attr(defSource,"uri"))) desc_name<-paste0(desc_name,"@",attr(defSource,"uri"))
+  					}
+  					subject_obj <- geoflow_subject$new()
+  					subject_obj$setKey("theme")
+  					subject_obj$setName(desc_name)
+  					for(i in 1:nrow(matchAttrValues)){
+  					  subject_obj$addKeyword(
+  						keyword = paste0(matchAttrValues$label[i]," [",matchAttrValues$code[i],"]"),
+  						uri = if(!is.na(matchAttrValues$uri[i])) matchAttrValues$uri[i] else NULL
+  					  )
+  					}
+  					self$addSubject(subject_obj)  
+  					
+  				  }
+  				}
+  			  }
+  			}
 		  }
 		}
       

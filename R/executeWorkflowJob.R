@@ -24,13 +24,15 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
     
     #options
     skipDataDownload = FALSE
-    if(!is.null(config$profile$options$skipFileDownload)){
+    if(!is.null(config$profile$options[["skipFileDownload"]])){
       config$logger.warn("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
-      skipDataDownload = config$profile$options$skipFileDownload
+      skipDataDownload = config$profile$options[["skipDataDownload"]]
     }
-    skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
-    skipEnrichWithDatatypes <- if(!is.null(config$profile$options$skipEnrichWithDatatypes)) config$profile$options$skipEnrichWithDatatypes else FALSE
-    skipEnrichWithData = if(!is.null(config$profile$options$skipEnrichWithData)) config$profile$options$skipEnrichWithData else FALSE
+    skipDataDownload <- if(!is.null(config$profile$options[["skipDataDownload"]])) config$profile$options[["skipDataDownload"]] else FALSE
+    skipEnrichWithDatatypes <- if(!is.null(config$profile$options[["skipEnrichWithDatatypes"]])) config$profile$options[["skipEnrichWithDatatypes"]] else FALSE
+    skipEnrichWithData = if(!is.null(config$profile$options[["skipEnrichWithData"]])) config$profile$options[["skipEnrichWithData"]] else FALSE
+    skipEnrichWithDataSubjects = if(!is.null(config$profile$options[["skipEnrichWithDataSubjects"]])) config$profile$options[["skipEnrichWithDataSubjects"]] else FALSE
+    dataSubjectsToExclude = if(!is.null(config$profile$options[["dataSubjectsToExclude"]])) config$profile$options[["dataSubjectsToExclude"]] else c()
     
     #Actions onstart
     config$log_separator("-")
@@ -170,7 +172,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
             entity$enrichWithFormats(config)
             
             #data subjects
-            entity$enrichWithSubjects(config)
+            if(!skipEnrichWithDataSubjects) entity$enrichWithSubjects(config, exclusions = dataSubjectsToExclude)
           }
           
           #enrich entities with metadata (other properties)

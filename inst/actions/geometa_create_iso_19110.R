@@ -6,7 +6,7 @@ function(action, entity, config){
   
   ISOMetadataNamespace$GML$uri <- "http://www.opengis.net/gml/3.2"
   
-  skipEnrichWithData = if(!is.null(config$profile$options$skipEnrichWithData)) config$profile$options$skipEnrichWithData else FALSE
+  skipEnrichWithData = if(!is.null(config$profile$options[["skipEnrichWithData"]])) config$profile$options[["skipEnrichWithData"]] else FALSE
   
   #manage multiple sources (supposes a common data structure to expose as ISO 19110)
   data_objects <- list()
