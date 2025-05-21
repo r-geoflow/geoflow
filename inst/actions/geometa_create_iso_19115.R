@@ -516,10 +516,11 @@ function(action, entity, config){
     if(!is.null(entity$temporal_extent$instant)){
       gmltimeinstant <- GMLTimeInstant$new()
       instant = entity$temporal_extent$instant
-      gmltimeinstant$setTimeInstant(timeInstant = if(is.na(instant)) NULL else instant,
+      gmltimeinstant$setTimePosition(timePosition = if(is.na(instant)) NULL else instant,
                                     frame = attr(instant, "frame"),
                                     calendarEraName = attr(instant, "calendarEraName"),
                                     indeterminatePosition = attr(instant, "indeterminatePosition"))
+      time$setTimeInstant(gmltimeinstant)
     }
     if(!is.null(entity$temporal_extent$start) & !is.null(entity$temporal_extent$end)){
       gmltimeperiod <- GMLTimePeriod$new()
