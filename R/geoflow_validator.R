@@ -160,7 +160,7 @@ geoflow_validator_cell <- R6Class("geoflow_validator_cell",
                 if(private$key_required) report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Key is omitted, with no default key, please check the documentation")))
               }
             }else{
-              if(!kvp$key %in% private$valid_keys){
+              if(!tolower(kvp$key) %in% tolower(private$valid_keys)){
                 #warning --> indicate key will be ignored
                 if(private$error_if_invalid_key){
                   report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Key '%s' is invalid, allowed key values are [%s]", kvp$key, paste0(private$valid_keys, collapse = ","))))
