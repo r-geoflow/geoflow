@@ -20,6 +20,7 @@ packages:
   - DBI
   - RSQLite
   - RPostgres
+  - RPostgreSQL
 available_options:
   createIndexes:
     def: create indexes for columns

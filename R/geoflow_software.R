@@ -239,7 +239,7 @@ register_software <- function(){
     geoflow_software$new(
       software_type = "dbi",
       definition = "Data Base Interface powered by 'DBI' package",
-      packages = list("DBI", "RSQLite", "RPostgres"),
+      packages = list("DBI", "RSQLite", "RPostgres", "RPostgreSQL"),
       handler = try(DBI::dbConnect, silent = TRUE),
       arguments = list(
         drv = list(label = "DBI driver", def = "DBI driver name", class = "character", handler = try(DBI::dbDriver, silent = TRUE)),

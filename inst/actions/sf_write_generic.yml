@@ -21,6 +21,7 @@ packages:
   - DBI
   - RSQLite
   - RPostgres
+  - RPostgreSQL
 available_options:
   type:
     def: format to convert
