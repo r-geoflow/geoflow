@@ -422,7 +422,7 @@ function(action, entity, config){
       }
     }
     #use limitation
-    uses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) %in% c("use","uselimitation")})]
+    uses <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) %in% c("use","uselimitation","termsofuse", "disclaimer", "citation")})]
     if(length(uses)>0){
       for(use in uses){
         for(value in use$values){

@@ -178,7 +178,7 @@ Examples cover both:
 | **Definition**               | Description of the access and/or use constraints. Restriction code are map ISO 19115, the 2 constraints are related to code list . Control to term , use limitation can be use for any term of use (license, prefered citation, disclaimer). other constraint free text can be used |
 | **Need**                     |Optional               |
 | **Default key (if omitted)** |*Not applicable*|
-| **other keys available**     |``license``  <br /> ``use``  <br /> ``useLimitation``  <br /> ``useConstraint`` <br /> ``accessConstraint`` <br />  ``otherConstraint``|
+| **other keys available**     |``license``  <br /> ``use``  <br /> ``useLimitation``  <br /> ``termsOfuSe`` <br /> ``disclaimer`` <br /> ``citation`` <br />  ``useConstraint`` <br /> ``accessConstraint`` <br />  ``otherConstraint``|
 | **Examples**                 |               |
 | Simple usage                 |key:rule       |
 | Advanced usage               |`useLimitation:Free usage_` <br/> `accessConstraint:otherRestrictions_` <br/> `useConstraint:intellectualPropertyRights_` <br/> `otherConstraint:The supplier is unable to guarantee the accuracy, updating, integrity, completeness of the data`               |
