@@ -22,7 +22,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       descriptions = c("abstract", "purpose", "credit", "info", "edition", "status", "maintenance"),
       spatialCoverage = c("ewkt", "wkt", "srid"),
       formats = c("resource","distribution")
-    ) 
+    ),
+    shinyEditorMode = "creation"
   ),
   public = list(
     #'@field identifiers entity identifiers
@@ -70,6 +71,19 @@ geoflow_entity <- R6Class("geoflow_entity",
     
     #'@description Initializes an object of class \link{geoflow_entity}
     initialize = function(){
+    },
+    
+    #'@description Set mode for geoflow-shiny
+    #'@param mode mode
+    setShinyEditorMode = function(mode = c("creation", "edition")){
+      mode = match.arg(mode)
+      private$shinyEditorMode = mode
+    },
+    
+    #'@description Get mode for geoflow-shiny
+    #'@return the shiny editor mode
+    getShinyEditorMode = function(){
+      return(private$shinyEditorMode)
     },
     
     #'@description Retrieves keys allowed for a given tabular field name. eg. "Identifier"

@@ -38,7 +38,8 @@ geoflow_contact <- R6Class("geoflow_contact",
      #TODO manage these allowed key values in class definitions (eg. geoflow_format)
      allowedKeyValuesFor = list(
        identifiers = c("id", "orcid")
-     ) 
+     ),
+     shinyEditorMode = "creation"
   ),
   public = list(
     #' @field id contact identifier
@@ -76,6 +77,19 @@ geoflow_contact <- R6Class("geoflow_contact",
  
     #'@description Initializes a \link{geoflow_contact} object
     initialize = function(){},
+    
+    #'@description Set mode for geoflow-shiny
+    #'@param mode mode
+    setShinyEditorMode = function(mode = c("creation", "edition")){
+      mode = match.arg(mode)
+      private$shinyEditorMode = mode
+    },
+    
+    #'@description Get mode for geoflow-shiny
+    #'@return the shiny editor mode
+    getShinyEditorMode = function(){
+      return(private$shinyEditorMode)
+    },
     
     #'@description Retrieves keys allowed for a given tabular field name. eg. "Identifier"
     #'@param field field name

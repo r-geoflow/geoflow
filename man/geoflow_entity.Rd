@@ -71,6 +71,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-geoflow_entity-new}{\code{geoflow_entity$new()}}
+\item \href{#method-geoflow_entity-setShinyEditorMode}{\code{geoflow_entity$setShinyEditorMode()}}
+\item \href{#method-geoflow_entity-getShinyEditorMode}{\code{geoflow_entity$getShinyEditorMode()}}
 \item \href{#method-geoflow_entity-getAllowedKeyValuesFor}{\code{geoflow_entity$getAllowedKeyValuesFor()}}
 \item \href{#method-geoflow_entity-addLocalesFromValues}{\code{geoflow_entity$addLocalesFromValues()}}
 \item \href{#method-geoflow_entity-setIdentifier}{\code{geoflow_entity$setIdentifier()}}
@@ -131,6 +133,36 @@ Initializes an object of class \link{geoflow_entity}
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$new()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-setShinyEditorMode"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-setShinyEditorMode}{}}}
+\subsection{Method \code{setShinyEditorMode()}}{
+Set mode for geoflow-shiny
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$setShinyEditorMode(mode = c("creation", "edition"))}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{mode}}{mode}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_entity-getShinyEditorMode"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_entity-getShinyEditorMode}{}}}
+\subsection{Method \code{getShinyEditorMode()}}{
+Get mode for geoflow-shiny
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$getShinyEditorMode()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+the shiny editor mode
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_entity-getAllowedKeyValuesFor"></a>}}
@@ -801,13 +833,15 @@ This function that will enrich the entity with relations. At now this is essenti
 Enrichs the entity with subjects. If no subject specify in Subjects, 
 automatically add keyword from dictionary to 'theme' category
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithSubjects(config)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_entity$enrichWithSubjects(config, exclusions = c())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{config}}{geoflow config object}
+
+\item{\code{exclusions}}{exclusions}
 }
 \if{html}{\out{</div>}}
 }

@@ -82,6 +82,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-geoflow_contact-new}{\code{geoflow_contact$new()}}
+\item \href{#method-geoflow_contact-setShinyEditorMode}{\code{geoflow_contact$setShinyEditorMode()}}
+\item \href{#method-geoflow_contact-getShinyEditorMode}{\code{geoflow_contact$getShinyEditorMode()}}
 \item \href{#method-geoflow_contact-getAllowedKeyValuesFor}{\code{geoflow_contact$getAllowedKeyValuesFor()}}
 \item \href{#method-geoflow_contact-setIdentifier}{\code{geoflow_contact$setIdentifier()}}
 \item \href{#method-geoflow_contact-setId}{\code{geoflow_contact$setId()}}
@@ -112,6 +114,36 @@ Initializes a \link{geoflow_contact} object
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$new()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_contact-setShinyEditorMode"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-setShinyEditorMode}{}}}
+\subsection{Method \code{setShinyEditorMode()}}{
+Set mode for geoflow-shiny
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$setShinyEditorMode(mode = c("creation", "edition"))}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{mode}}{mode}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_contact-getShinyEditorMode"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_contact-getShinyEditorMode}{}}}
+\subsection{Method \code{getShinyEditorMode()}}{
+Get mode for geoflow-shiny
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_contact$getShinyEditorMode()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+the shiny editor mode
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_contact-getAllowedKeyValuesFor"></a>}}
