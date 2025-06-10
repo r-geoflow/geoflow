@@ -452,7 +452,7 @@ register_vocabularies = function(){
       id = "inrae",
       def = "INRAE Thesaurus",
       uri = "http://opendata.inrae.fr/thesaurusINRAE/thesaurusINRAE",
-      file = "https://forgemia.inra.fr/dipso/thesaurus-inrae/-/raw/main/thesaurusINRAE_skos_2025_04_02_V2.3.rdf"
+      file = "https://forge.inrae.fr/dipso/thesaurus-inrae/-/raw/main/thesaurusINRAE_skos_2025_04_02_V2.3.rdf"
     ),
     geoflow_skos_vocabulary$new(
       id = "agrovoc",
