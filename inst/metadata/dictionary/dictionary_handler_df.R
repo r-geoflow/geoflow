@@ -62,7 +62,8 @@ handle_dictionary_df <- function(handler, source, config){
         name = memberName, #i18n support
         def = memberDef, #i18n support
         defSource = defSource,
-        registerId = ftm$RegisterId
+        registerId = ftm$RegisterId,
+        registerScript = ftm$RegisterScript
       )
       if(!is.null(ftm$MinOccurs)) member$minOccurs <- ftm$MinOccurs
       if(!is.null(ftm$MaxOccurs)) member$maxOccurs <- ftm$MaxOccurs

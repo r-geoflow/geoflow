@@ -53,6 +53,34 @@ geoflow_featuretype <- R6Class("geoflow_featuretype",
         if(length(members)>0) out <- members[[1]]
       }
       return(out)
+    },
+    
+    #'@description Converts to data frame
+    #'@return an object of class \link{data.frame}
+    asDataFrame = function(){
+      if(length(self$members)==0){
+        return(data.frame(
+          FeatureType = if(!is.null(self$id)) self$id else "",
+          MemberCode = "",
+          MemberName = "",
+          MemberType = "",
+          MinOccurs = "",
+          MaxOccurs = "",
+          Definition = "",
+          DefinitionSource = "",
+          MeasurementUnit = "",
+          Register = "",
+          RegisterScript = "",
+          stringsAsFactors = F
+        ))
+      }else{
+        return(cbind(
+          FeatureType = if(!is.null(self$id)) self$id else "",
+          do.call("rbind", lapply(self$members, function(x){
+            x$asDataFrame()
+          }))
+        ))
+      }
     }
   )                                  
 )
