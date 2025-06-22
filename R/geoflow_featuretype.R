@@ -22,7 +22,7 @@ geoflow_featuretype <- R6Class("geoflow_featuretype",
     
     #'@description Initializes a \link{geoflow_featuretype}
     #'@param id id
-    initialize = function(id){
+    initialize = function(id = NULL){
       self$id = id
     },
 
