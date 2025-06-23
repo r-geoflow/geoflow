@@ -80,8 +80,8 @@ geoflow_featuremember <- R6Class("geoflow_featuremember",
          Definition = if(!is.null(self$def)) self$def else "",
          DefinitionSource = if(!is.null(self$defSource)) self$defSource else "",
          MeasurementUnit = if(!is.null(self$uom)) self$uom else "",
-         registerId = if(!is.null(self$registerId)) self$registerId else "",
-         registerScript = if(!is.null(self$registerScript)) self$registerScript else "",
+         RegisterId = if(!is.null(self$registerId)) self$registerId else "",
+         RegisterScript = if(!is.null(self$registerScript)) self$registerScript else "",
          stringsAsFactors = F
        ))
      }

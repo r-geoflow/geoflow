@@ -69,7 +69,7 @@ geoflow_featuretype <- R6Class("geoflow_featuretype",
           Definition = "",
           DefinitionSource = "",
           MeasurementUnit = "",
-          Register = "",
+          RegisterId = "",
           RegisterScript = "",
           stringsAsFactors = F
         ))
