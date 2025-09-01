@@ -40,6 +40,7 @@ Imports:
   yaml,
   XML,
   xml2,
+  rdflib,
   curl,
   whisker,
   mime,

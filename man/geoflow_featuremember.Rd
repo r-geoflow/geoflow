@@ -42,6 +42,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item{\code{uom}}{feature member unit of measure (uom)}
 
 \item{\code{registerId}}{feature member register ID}
+
+\item{\code{registerScript}}{feature member register script}
 }
 \if{html}{\out{</div>}}
 }
@@ -49,6 +51,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-geoflow_featuremember-new}{\code{geoflow_featuremember$new()}}
+\item \href{#method-geoflow_featuremember-asDataFrame}{\code{geoflow_featuremember$asDataFrame()}}
 \item \href{#method-geoflow_featuremember-clone}{\code{geoflow_featuremember$clone()}}
 }
 }
@@ -59,15 +62,16 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 Initializes a \link{geoflow_featuremember}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_featuremember$new(
-  type,
-  code,
-  name,
-  def,
+  type = "attribute",
+  code = NULL,
+  name = NULL,
+  def = NULL,
   defSource = NULL,
   minOccurs = NULL,
   maxOccurs = NULL,
   uom = NULL,
-  registerId = NULL
+  registerId = NULL,
+  registerScript = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -91,8 +95,23 @@ Initializes a \link{geoflow_featuremember}
 \item{\code{uom}}{unit of measure. Default is \code{NULL}}
 
 \item{\code{registerId}}{ID of the register associated to the feature type. Default is \code{NULL}}
+
+\item{\code{registerScript}}{source script providing the register functions. Default is \code{NULL}}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_featuremember-asDataFrame"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_featuremember-asDataFrame}{}}}
+\subsection{Method \code{asDataFrame()}}{
+Converts as data.frame
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuremember$asDataFrame()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+an object of class \link{data.frame}
 }
 }
 \if{html}{\out{<hr>}}

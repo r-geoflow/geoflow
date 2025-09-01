@@ -36,6 +36,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \item \href{#method-geoflow_featuretype-addMember}{\code{geoflow_featuretype$addMember()}}
 \item \href{#method-geoflow_featuretype-getMembers}{\code{geoflow_featuretype$getMembers()}}
 \item \href{#method-geoflow_featuretype-getMemberById}{\code{geoflow_featuretype$getMemberById()}}
+\item \href{#method-geoflow_featuretype-asDataFrame}{\code{geoflow_featuretype$asDataFrame()}}
 \item \href{#method-geoflow_featuretype-clone}{\code{geoflow_featuretype$clone()}}
 }
 }
@@ -45,7 +46,7 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \subsection{Method \code{new()}}{
 Initializes a \link{geoflow_featuretype}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuretype$new(id)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuretype$new(id = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -104,6 +105,19 @@ Get member by ID
 }
 \subsection{Returns}{
 an object of class \link{geoflow_featuremember}, \code{NULL} otherwise
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_featuretype-asDataFrame"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_featuretype-asDataFrame}{}}}
+\subsection{Method \code{asDataFrame()}}{
+Converts to data frame
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuretype$asDataFrame()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+an object of class \link{data.frame}
 }
 }
 \if{html}{\out{<hr>}}

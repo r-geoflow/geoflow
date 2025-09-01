@@ -28,6 +28,7 @@
 #' @import XML
 #' @import xml2
 #' @import mime
+#' @import rdflib
 #' @import dplyr
 #' @import readr
 #' @import arrow
