@@ -33,7 +33,7 @@ Many thanks to the following organizations that have provided fundings for stren
 <div style="float:left;">
   <a href="https://www.fao.org/home/en/"><img height=100 width=100 src="http://www.fao.org/fileadmin/templates/family-farming-decade/images/FAO-IFAD-Logos/FAO-Logo-EN.svg">
 <a href="https://en.ird.fr/"><img src="https://en.ird.fr/sites/ird_fr/files/2019-08/logo_IRD_2016_BLOC_UK_COUL.png" height=100 width=100/></a>
-  <a href="https://www.inrae.fr"><img height=100 width=100 src="https://www.inrae.fr/themes/custom/inrae_socle/logo.svg"></a>
+  <a href="https://www.inrae.fr"><img height=50 width=100 src="https://www.wikimer.org/wp-content/uploads/2020/03/logo_inrae.png"></a>
 </div>
 <br>
 <div style="float:left;">
