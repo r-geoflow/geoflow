@@ -257,12 +257,17 @@ function(action, entity, config){
     }
     if(length(contacts)>0) for(contact in contacts){
       
-      #manage orcid?
+      #manage orcid? ror?
       orcid <- NULL
+      ror <- NULL
       contact_ids <- contact$identifiers
       if(any(names(contact_ids)=="orcid")){
         contact_ids <- contact_ids[names(contact_ids)=="orcid"]
         if(length(contact_ids)>0) orcid <- contact_ids[[1]]
+      }
+      if(any(names(contact_ids)=="ror")){
+        contact_ids <- contact_ids[names(contact_ids)=="ror"]
+        if(length(contact_ids)>0) ror <- contact_ids[[1]]
       }
       #add/update creators
       if(!(contact$identifiers[["id"]] %in% contact_added)){
@@ -270,14 +275,14 @@ function(action, entity, config){
           zenodo_metadata$addCreator(
             name = contact$organizationName,
             affiliations = contact$organizationName, 
-            orcid = orcid
+            orcid = orcid, ror = ror
           )
         }else{
           zenodo_metadata$addCreator(
             firstname = contact$firstName, 
             lastname = contact$lastName, 
             affiliations = contact$organizationName,
-            orcid = orcid
+            orcid = orcid, ror = ror
           )
         }
         contact_added <- c(contact_added, contact$identifiers[["id"]])
@@ -300,12 +305,17 @@ function(action, entity, config){
           config$logger.info(sprintf("Adding contributors with role '%s'", zenodo_role_type))
           for(contact in contacts){
           
-            #manage orcid?
+            #manage orcid? ror?
             orcid <- NULL
+            ror <- NULL
             contrib_ids <- contact$identifiers
             if(any(names(contrib_ids)=="orcid")){
               contrib_ids <- contrib_ids[names(contrib_ids)=="orcid"]
               if(length(contrib_ids)>0) orcid <- contrib_ids[[1]]
+            }
+            if(any(names(contrib_ids)=="ror")){
+              contrib_ids <- contrib_ids[names(contrib_ids)=="ror"]
+              if(length(contrib_ids)>0) ror <- contrib_ids[[1]]
             }
             #add/update creators
             if(!(contact$identifiers[["id"]] %in% contrib_added)){
@@ -314,7 +324,7 @@ function(action, entity, config){
                   name = contact$organizationName,
                   affiliations = contact$organizationName,
                   role = zenodo_role_type,
-                  orcid = orcid
+                  orcid = orcid, ror = ror
                 )
               }else{
                 zenodo_metadata$addContributor(
@@ -322,7 +332,7 @@ function(action, entity, config){
                   lastname = contact$lastName, 
                   affiliations = contact$organizationName,
                   role = zenodo_role_type,
-                  orcid = orcid
+                  orcid = orcid, ror = ror
                 )
               }
               contrib_added <- c(contrib_added, contact$identifiers[["id"]])

@@ -258,7 +258,7 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
      #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
      #'@param str string to validate
      initialize = function(i, j, str){
-       valid_keys <- list("id", "orcid")
+       valid_keys <- list("id", "orcid", "ror")
        super$initialize(FALSE, TRUE, TRUE, valid_keys, "id", TRUE, TRUE, TRUE, i, j, str)
      },
      

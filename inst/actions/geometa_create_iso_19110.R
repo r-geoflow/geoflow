@@ -125,6 +125,10 @@ function(action, entity, config){
   if(!is.null(orcid)){
     producer$parentAttrs[["xlink:href"]] <- paste0("https://orcid.org/", orcid)
   }
+  ror = main_entity$identifiers[["ror"]]
+  if(!is.null(ror)){
+    producer$parentAttrs[["xlink:href"]] <- paste0("https://ror.org/", ror)
+  }
   
   fc$setProducer(producer)
   

@@ -21,7 +21,7 @@ function(action, entity, config){
   #identifiers
   dataset$id <- entity$identifiers[["id"]]
   if(!is.null(the_doi)){
-    dataset$alternateIdentifier <- list(directory = "https://orcid.org", userId = the_doi)
+    dataset$alternateIdentifier <- list(directory = "https://doi.org", userId = the_doi)
   }
   
   #titles
@@ -58,7 +58,11 @@ function(action, entity, config){
                "orcid" = {
                  person$id <- sprintf("https://orcid.org/%s", contact$identifiers[[idkey]])
                  person$userId <- list(directory = "https://orcid.org", userId = person$id)
-               }       
+               },
+               "ror" = {
+                 person$id <- sprintf("https://ror.org/%s", contact$identifiers[[idkey]])
+                 person$userId <- list(directory = "https://ror.org", userId = person$id)
+               }
         )
       }
     }

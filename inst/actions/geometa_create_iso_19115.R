@@ -79,6 +79,11 @@ function(action, entity, config){
     if(!is.null(orcid)){
       rp$parentAttrs[["xlink:href"]] <- paste0("https://orcid.org/", orcid)
     }
+    #check existence of ROR
+    ror = x$identifiers[["ror"]]
+    if(!is.null(ror)){
+      rp$parentAttrs[["xlink:href"]] <- paste0("https://ror.org/", ror)
+    }
     
     if(include_object_identification_ids){
       rp_id = paste(roleId, tolower(x$email), sep = "_")

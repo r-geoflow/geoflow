@@ -13,7 +13,7 @@
 | **Definition**               |identifiers to link contact informations to creator list in entity sheet   						 |
 | **Need**                     |Mandatory at least one identifier |
 | **Type of content** 		   |text or numeric  		 |
-| **Example**                 |`id:john.doe@geoflow.com_`<br/>`orcid`   
+| **Example**                 |`id:john.doe@geoflow.com_`<br/>`orcid`<br/>`ror`  
 
 ##### Email
 

@@ -118,6 +118,7 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
       if(!is.null(ids)){
         names(ids) = sapply(ids, function(x){x$scheme})
         if(!is.null(ids$orcid)) creator_c$setIdentifier("orcid", ids$orcid$identifier)
+        if(!is.null(ids$ror)) creator_c$setIdentifier("ror", ids$ror$identifier)
         if(!is.null(ids$gnd)) creator_c$setIdentifier("gnd", ids$gnd$identifier)
       }
       creator_c$setRole("creator")
@@ -136,6 +137,7 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
       if(!is.null(ids)){
         names(ids) = sapply(ids, function(x){x$scheme})
         if(!is.null(ids$orcid)) contrib_c$setIdentifier("orcid", ids$orcid$identifier)
+        if(!is.null(ids$ror)) contrib_c$setIdentifier("ror", ids$ror$identifier)
         if(!is.null(ids$gnd)) contrib_c$setIdentifier("gnd", ids$gnd$identifier)
       }
       contrib_c$setRole("contributor")

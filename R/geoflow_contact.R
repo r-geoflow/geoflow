@@ -37,7 +37,7 @@ geoflow_contact <- R6Class("geoflow_contact",
   private = list(
      #TODO manage these allowed key values in class definitions (eg. geoflow_format)
      allowedKeyValuesFor = list(
-       identifiers = c("id", "orcid")
+       identifiers = c("id", "orcid", "ror")
      ),
      shinyEditorMode = "creation"
   ),

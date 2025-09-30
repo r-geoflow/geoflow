@@ -1,6 +1,6 @@
 Package: geoflow
-Version: 0.9999.20250701
-Date: 2025-07-01
+Version: 0.9999.20250930
+Date: 2025-09-30
 Title: Orchestrate Geospatial (Meta)Data Management Workflows and Manage FAIR Services
 Description: An engine to facilitate the orchestration and execution of metadata-driven data management workflows, in compliance with FAIR 
   (Findable, Accessible, Interoperable and Reusable) data management principles. By means of a pivot metadata model, relying on the DublinCore standard (<https://dublincore.org/>), 
