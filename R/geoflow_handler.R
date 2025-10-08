@@ -141,7 +141,7 @@ geoflow_handler <- R6Class("geoflow_handler",
     #'    an error is thrown and user informed of the missing packages.
     checkPackages = function(){
       #check package dependencies
-      self$INFO(sprintf("Check package dependencies for handler '%s'", self$id))
+      self$INFO("Check package dependencies for handler '%s'", self$id)
       out_pkgs <- try(check_packages(self$packages))
       if(is(out_pkgs,"try-error")){
         errMsg <- sprintf("One or more packages are not imported although required for handler '%s'", self$id)
@@ -149,9 +149,9 @@ geoflow_handler <- R6Class("geoflow_handler",
         stop(errMsg)
       }else{
         if(is.null(out_pkgs)){
-          self$INFO(sprintf("No additional package required for handler '%s':", self$id))
+          self$INFO("No additional package required for handler '%s':", self$id)
         }else{
-          self$INFO(sprintf("The following packages have been imported for handler '%s':", self$id))
+          self$INFO("The following packages have been imported for handler '%s':", self$id)
           print(out_pkgs)
         }
       }

@@ -19,14 +19,14 @@ loadMetadataHandler <- function(config, element, type){
   h <- element$handler
   if(is.null(h)){
     errMsg <- "Missing 'handler' (default handler id, or function name from custom script)"
-    if(!is.null(config)) config$logger.error(errMsg)
+    if(!is.null(config)) config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
   #type of handler
   isHandlerId <- is.null(element$script)
   if(isHandlerId){
-    if(!is.null(config)) config$logger.info(sprintf("Try to use embedded %s handler", type))
+    if(!is.null(config)) config$logger$INFO("Try to use embedded %s handler", type)
     #in case handler id is specified
     md_default_handlers <- switch(type,
                                   "contacts" = list_contact_handlers(raw=TRUE),
@@ -49,18 +49,18 @@ loadMetadataHandler <- function(config, element, type){
   }else{
     #in case handler is a script
     h_script <- element$script
-    if(!is.null(config)) config$logger.info(sprintf("Try to use custom handler '%s' from script '%s'", h, h_script))
+    if(!is.null(config)) config$logger$INFO("Try to use custom handler '%s' from script '%s'", h, h_script)
     isScriptUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", h_script) > 0
     if(!isScriptUrl) if(!file.exists(h_script)){
       errMsg <- sprintf("File '%s' does not exist in current directory!", h_script)
-      if(!is.null(config)) config$logger.error(errMsg)
+      if(!is.null(config)) config$logger$ERROR(errMsg)
       stop(errMsg)
     }
     source(h_script) #load script
     md_handler_fun <- try(eval(parse(text = h)))
     if(is(md_handler_fun,"try-error")){
       errMsg <- sprintf("Failed loading function '%s. Please check the script '%s'", h, h_script)
-      if(!is.null(config)) config$logger.error(errMsg)
+      if(!is.null(config)) config$logger$ERROR(errMsg)
       stop(errMsg)
     }
     
@@ -68,7 +68,7 @@ loadMetadataHandler <- function(config, element, type){
     args <- names(formals(md_handler_fun))
     if(!all(c("handler", "source", "config") %in% args)){
       errMsg <- "The handler function should at least include the parameters (arguments) 'handler', 'source' and 'config'"
-      if(!is.null(config)) config$logger.error(errMsg)
+      if(!is.null(config)) config$logger$ERROR(errMsg)
       stop(errMsg)
     }
     md_handler = geoflow_handler$new(id = h, fun = md_handler_fun, options = element$options)

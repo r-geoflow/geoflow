@@ -30,7 +30,7 @@ function(action, entity, config){
     INSPIRE_VALIDATOR <- config$software$output$inspire
     if(is.null(INSPIRE_VALIDATOR)){
       errMsg <- "This action requires a INSPIRE metadata validator software to be declared in the configuration"
-      config$logger.error(errMsg)
+      config$logger$ERROR(errMsg)
       stop(errMsg)
     }
   }
@@ -627,7 +627,7 @@ function(action, entity, config){
                             "wms110" = "1.1.0",
                             "wms111" = "1.1.1",
                             "wms130" = "1.3.0")
-      config$logger.info(sprintf("Configuring WMS client on '%s' (version = '%s')", wms_link, wms_version))
+      config$logger$INFO("Configuring WMS client on '%s' (version = '%s')", wms_link, wms_version)
       
       if(!requireNamespace("ows4R", quietly = TRUE)){
         stop("The 'geometa-create-iso-19115' action requires the 'ows4R' package")
@@ -993,7 +993,7 @@ function(action, entity, config){
   if(length(actions)>0) fc_action <- actions[[1]]
   if(!is.null(fc_action)){
     fcIdentifier <- paste0(entity$identifiers[["id"]],"_dsd")
-    config$logger.info("Adding content information (feature catalogue description) to ISO 19115")
+    config$logger$INFO("Adding content information (feature catalogue description) to ISO 19115")
     fcd <- ISOFeatureCatalogueDescription$new()
     fcd$setComplianceCode(TRUE)
     fcd$addLanguage(entity$language)

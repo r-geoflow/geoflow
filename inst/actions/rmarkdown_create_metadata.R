@@ -4,13 +4,13 @@ function(action, entity, config){
     stop("The action 'create-metadata-rmd' requires the 'rmarkdown' package")
   }
   
-  config$logger.info('Generate Rmd')
+  config$logger$INFO('Generate Rmd')
   #options
   template <- action$getOption("template")
   output_format <- action$getOption("html")
   
   infoMsg <- sprintf("Rmd template use :'%s'", template)
-  config$logger.info(infoMsg)
+  config$logger$INFO(infoMsg)
   
   file_ext <- unlist(strsplit(template, "\\.(?=[^\\.]+$)", perl=TRUE))[2]
   if(!is.na(file_ext) && file_ext=='Rmd'){

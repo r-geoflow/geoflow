@@ -12,7 +12,7 @@
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'   
-initWorkflowJob <- function(dir = "."){
+initWorkflowJob <- function(dir){
   mainDir <- tools::file_path_as_absolute(dir)
   subDir <- "jobs"
   if (!dir.exists(file.path(mainDir, subDir))){

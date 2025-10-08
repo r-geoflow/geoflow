@@ -29,52 +29,52 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                                          useFeatures=FALSE, resourcename=NULL, useUploadSource=FALSE,
                                          createIndexes=FALSE, overwrite=TRUE, append = FALSE, chunk.size = 0L, 
                                          type = c("shp", "csv", "gpkg", "parquet", "dbtable")){
-  config$logger.info("------------------------------------------------------------------------------")
-  config$logger.info("Write data resource start")
+  config$logger$INFO("------------------------------------------------------------------------------")
+  config$logger$INFO("Write data resource start")
   if(is.null(obj) && !useFeatures){
     errMsg<-"Error: specify at least an object or useFeatures = TRUE"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   if(useFeatures){
-    config$logger.info("No object specified, use entity$data$features by default")
+    config$logger$INFO("No object specified, use entity$data$features by default")
     obj<-entity$data$features
   }
   
   if(is.null(resourcename) && !useUploadSource){
     errMsg<-"Error: specify a resourcename or useUploadSource = TRUE"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)  
   }
   
   if(useUploadSource){
-    config$logger.info("No resourcename specified, use entity$data$uploadSource by default")
+    config$logger$INFO("No resourcename specified, use entity$data$uploadSource by default")
     resourcename<-entity$data$uploadSource[[1]]
   }
   
   if(!type %in% c("shp","dbtable","csv","gpkg", "parquet")){
     errMsg<-"Error: unrecognized type, specify a type at this list : 'csv','shp','dbtable','gpkg', 'parquet'"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   } 
   
   switch(type,
          "csv" = {
-          config$logger.info(sprintf("Format type: %s", type))
+          config$logger$INFO("Format type: %s", type)
           sf::st_write(obj = obj, paste0("./data/",resourcename,".csv"))
-          config$logger.info("write csv file to data job directory")
+          config$logger$INFO("write csv file to data job directory")
          },
          "shp" = {
            resourcename_parts <- unlist(strsplit(resourcename, "\\."))
            if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
            
-           config$logger.info(sprintf("Format type: %s", type))
+           config$logger$INFO("Format type: %s", type)
            sf::st_write(obj = obj, paste0("./data/",resourcename,".shp"), delete_layer = TRUE)
-           config$logger.info("write shp file to data job directory")
+           config$logger$INFO("write shp file to data job directory")
            zip::zipr(zipfile = paste0("./data/",resourcename, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = resourcename)))
-           config$logger.info("zip datafiles for server export")
+           config$logger$INFO("zip datafiles for server export")
            if(useFeatures){
-             config$logger.info("object use to data features") 
+             config$logger$INFO("object use to data features") 
              df<-st_read(paste0("./data/",resourcename,".shp"), quiet=TRUE) 
              if(attr(df, "sf_column")== "geometry"){
                df$the_geom <- st_geometry(df)
@@ -88,27 +88,27 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
            resourcename_parts <- unlist(strsplit(resourcename, "\\."))
            if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
            
-           config$logger.info(sprintf("Format type: %s", type))
+           config$logger$INFO("Format type: %s", type)
            sf::st_write(obj = obj, dsn=paste0("./data/",resourcename,".gpkg"))
-           config$logger.info("write gpkg file to data job directory")
+           config$logger$INFO("write gpkg file to data job directory")
          },
          "parquet" = {
            resourcename_parts <- unlist(strsplit(resourcename, "\\."))
            if(length(resourcename_parts)>1) resourcename <- resourcename_parts[1]
            
-           config$logger.info(sprintf("Format type: %s", type))
+           config$logger$INFO("Format type: %s", type)
            sfarrow::st_write_parquet(obj = obj, dsn=paste0("./data/",resourcename,".parquet"))
-           config$logger.info("write gpkg file to data job directory")
+           config$logger$INFO("write gpkg file to data job directory")
          },
          "dbtable" = {
            if(is.null(config$software$output$dbi)){
              errMsg<-"Error: no dbi output detected, branch one in the config"
-             config$logger.error(errMsg)
+             config$logger$ERROR(errMsg)
              stop(errMsg)   
            }  
-           config$logger.info(sprintf("Format type: %s", type))
+           config$logger$INFO("Format type: %s", type)
            if(overwrite){
-             config$logger.info(sprintf("Overwrite is 'true', try to drop table %s", resourcename))
+             config$logger$INFO("Overwrite is 'true', try to drop table %s", resourcename)
              drop_sql <- sprintf("DROP TABLE IF EXISTS %s", resourcename)
              try(DBI::dbExecute(config$software$output$dbi, drop_sql), silent = TRUE)
            }
@@ -124,10 +124,10 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
              #sf upload
              if(chunk.size>0){
                chunks <- split(obj, ceiling(seq_along(1:nrow(obj))/chunk.size))
-               config$logger.info(sprintf("Upload DB data by chunks [nb of chunks: %s]", length(chunks)))
+               config$logger$INFO("Upload DB data by chunks [nb of chunks: %s]", length(chunks))
                
                #1st chunk with overwrite param applied
-               config$logger.info(sprintf("Upload data to DB: chunk 1 of %s", length(chunks)))
+               config$logger$INFO("Upload data to DB: chunk 1 of %s", length(chunks))
                sf::st_write(obj = chunks[[1]], dsn = config$software$output$dbi, layer =resourcename , 
                         layer_options = paste0('OVERWRITE=',ifelse(overwrite,'YES','NO')),
                         append = append)
@@ -136,7 +136,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                if(length(chunks)>1){
                  chunk_idx = 2
                  outchunk = lapply(chunks[2:length(chunks)], function(chunk){
-                   config$logger.info(sprintf("Upload data to DB: chunk %s of %s", chunk_idx, length(chunks)))
+                   config$logger$INFO("Upload data to DB: chunk %s of %s", chunk_idx, length(chunks))
                    sf::st_write(obj = chunk, dsn = config$software$output$dbi, layer = resourcename, 
                             append = TRUE)
                    chunk_idx <<- chunk_idx+1
@@ -144,7 +144,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                }
              }else{
                #no chunking
-               config$logger.info("Upload data to DB as single chunk")
+               config$logger$INFO("Upload data to DB as single chunk")
                sf::st_write(obj = obj, dsn = config$software$output$dbi, layer =resourcename , 
                         layer_options = paste0('OVERWRITE=',ifelse(overwrite,'YES','NO')),
                         append = append)
@@ -171,12 +171,12 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
              #create index for each colunm except geometry
              if(createIndexes){
                for (column_name in setdiff(names(obj),geometryName)){
-                 config$logger.info(sprintf("Drop index for column : %s",column_name))
+                 config$logger$INFO("Drop index for column : %s",column_name)
                  drop_index_sql <- sprintf("DROP INDEX %s_%s_idx;", resourcename, column_name)
                  try(DBI::dbExecute(config$software$output$dbi, drop_index_sql), silent = TRUE)
                }
                for (column_name in setdiff(names(obj),geometryName)){
-                 config$logger.info(sprintf("Indexes created for column : %s",column_name))
+                 config$logger$INFO("Indexes created for column : %s",column_name)
                  create_index_sql <- sprintf("CREATE INDEX %s_%s_idx  ON %s  (%s);", resourcename, column_name, resourcename, column_name)
                  DBI::dbExecute(config$software$output$dbi, create_index_sql)
                }
@@ -184,10 +184,10 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
            }else{
              if(chunk.size>0){
                chunks <- split(obj, ceiling(seq_along(1:nrow(obj))/chunk.size))
-               config$logger.info(sprintf("Upload DB data by chunks [nb of chunks: %s]", length(chunks)))
+               config$logger$INFO("Upload DB data by chunks [nb of chunks: %s]", length(chunks))
                
                #1st chunk with overwrite param applied
-               config$logger.info(sprintf("Upload data to DB: chunk 1 of %s", length(chunks)))
+               config$logger$INFO("Upload data to DB: chunk 1 of %s", length(chunks))
                dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=chunks[[1]],
                             overwrite = overwrite, append = append)
                
@@ -195,16 +195,16 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                if(length(chunks)>1){
                  chunk_idx = 2
                  outchunk = lapply(chunks[2:length(chunks)], function(chunk){
-                   config$logger.info(sprintf("Upload data to DB: chunk %s of %s", chunk_idx, length(chunks)))
+                   config$logger$INFO("Upload data to DB: chunk %s of %s", chunk_idx, length(chunks))
                    dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=chunk, append = TRUE)
                    chunk_idx <<- chunk_idx+1
                  })
                }
              }else{
                #no chunking
-               config$logger.info("Upload data to DB as single chunk")
+               config$logger$INFO("Upload data to DB as single chunk")
                if(config$software$output$dbi_config$parameters$drv == "PostgreSQL"){
-                 config$logger.info("-> Using RPostgreSQL enhanced methods")
+                 config$logger$INFO("-> Using RPostgreSQL enhanced methods")
                  #simple hack to create the table with proper data types
                  DBI::dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj[1,],
                               overwrite = overwrite, append = append)
@@ -222,7 +222,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
                    DBI::dbSendQuery(conn=config$software$output$dbi, sprintf("ALTER TABLE %s DROP COLUMN \"row.names\"", resourcename))
                  }
                }else{
-                 config$logger.info("-> Using standard DBI")
+                 config$logger$INFO("-> Using standard DBI")
                  DBI::dbWriteTable(conn=config$software$output$dbi, name =resourcename, value=obj,
                               overwrite = overwrite, append = append)
                }
@@ -231,12 +231,12 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
              #create index for each column
              if(createIndexes){
                for (column_name in names(obj)){
-                 config$logger.info(sprintf("Drop index for column : %s",column_name))
+                 config$logger$INFO("Drop index for column : %s",column_name)
                  drop_index_sql <- sprintf("DROP INDEX %s_%s_idx;", resourcename, column_name)
                  try(DBI::dbExecute(config$software$output$dbi, drop_index_sql), silent = TRUE)
                }
                for (column_name in names(obj)){
-                 config$logger.info(sprintf("Create index for column : %s",column_name))
+                 config$logger$INFO("Create index for column : %s",column_name)
                  create_index_sql <- sprintf("CREATE INDEX %s_%s_idx  ON %s  (%s);", resourcename, column_name, resourcename, column_name)
                  DBI::dbExecute(config$software$output$dbi, create_index_sql)
                }
@@ -244,7 +244,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
            }
          }
   )
-  config$logger.info("Write data resource end")
-  config$logger.info("------------------------------------------------------------------------------")
+  config$logger$INFO("Write data resource end")
+  config$logger$INFO("------------------------------------------------------------------------------")
 }
 

@@ -15,18 +15,20 @@
 #' @param runLocalActions whether entity data local actions (if any) should be run.
 #' Default is \code{TRUE}
 #' 
-#' @return a named list including the workflow \code{config}, the selected \code{entity} and
-#' the eventual \code{options} associated to the entity.
+#' @return a named list including the workflow \code{config}, the selected \code{entity}, 
+#' the eventual \code{options} associated to the entity, and the output entity \code{dir} path 
+#' of the selected entity.
 #' 
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
-debugWorkflow <- function(file, dir = ".", entityIndex = 1, 
+debugWorkflow <- function(file, dir = NULL, entityIndex = 1, 
                           copyData = TRUE, 
                           runSoftwareActions = TRUE,  
                           runLocalActions = TRUE){
   
   wd <- getwd()
+  on.exit(wd)
   if(!is.null(dir)) setwd(dir)
   
   #options
@@ -55,7 +57,7 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
           software_cfg <- software_list[[paste0(software_name, "_config")]]
           if(length(software_cfg$actions)>0){
             if(actionType %in% names(software_cfg$actions)){
-              config$logger.info(sprintf("Executing input software action '%s'",actionType))
+              config$logger$INFO("Executing input software action '%s'",actionType)
               software_cfg$actions[[actionType]](config, software, software_cfg)
             }
           }
@@ -73,7 +75,7 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
   #skipDataDownload
   skipDataDownload = FALSE
   if(!is.null(config$profile$options$skipFileDownload)){
-    config$logger.warn("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
+    config$logger$WARN("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
     skipDataDownload = config$profile$options$skipFileDownload
   }
   skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
@@ -91,13 +93,14 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
   entity$prepareEntityJobDir(config, jobdir)
   #let's work in entity jobdir
   setwd(entity$getEntityJobDirPath(config, jobdir))
-  config$logger.info(sprintf("Entity working directory: %s", getwd()))
+  .geoflow$debug$dir = entity$getEntityJobDirPath(config, jobdir)
+  config$logger$INFO("Entity working directory: %s", getwd())
 
   #enrich metadata with dynamic properties
   if(!is.null(entity$data)){
     #data features/coverages
     if(!skipDataDownload){
-      config$logger.info("SkipDataDownload is false: copying and fetching data...")
+      config$logger$INFO("SkipDataDownload is false: copying and fetching data...")
       #we copy data to job data dir (for data files)
       entity$copyDataToJobDir(config, jobdir)
       #vector data: we enrich entity with features
@@ -111,13 +114,13 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
       #we check if the source and upload are both different file format (csv,shp,gpkg) and process automatically to conversion from source to upload type
       entity$prepareFeaturesToUpload(config)
     }else{
-      config$logger.info("SkipDataDownload is true:")
+      config$logger$INFO("SkipDataDownload is true:")
       if(!skipEnrichWithData){
-        config$logger.info("SkipEnrichWithData is false: Fetching spatial coverage from data (for DB sources only)...")
+        config$logger$INFO("SkipEnrichWithData is false: Fetching spatial coverage from data (for DB sources only)...")
         #alternative behaviors in case we don't download data, applies to DB only
         entity$enrichSpatialCoverageFromDB(config)
       }else{
-        config$logger.info("SkipEnrichWithData is true")
+        config$logger$INFO("SkipEnrichWithData is true")
       }
     }
     #extra identifiers to use in entity identification/actions
@@ -142,7 +145,7 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
         if(length(entity$data$actions)>0){
           for(i in 1:length(entity$data$actions)){
             entity_action <- entity$data$actions[[i]]
-            config$logger.info(sprintf("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script))
+            config$logger$INFO("Executing entity data action %s: '%s' ('%s')", i, entity_action$id, entity_action$script)
             entity_action$run(entity, config)
             .geoflow$debug$options <- entity_action$options
           }
@@ -150,7 +153,7 @@ debugWorkflow <- function(file, dir = ".", entityIndex = 1,
           entity$enrichWithMetadata(config)
         }
       }else{
-        config$logger.info("Execution of entity data actions is disabled")
+        config$logger$INFO("Execution of entity data actions is disabled")
       }
     }
   }

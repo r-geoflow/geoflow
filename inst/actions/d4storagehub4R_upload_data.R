@@ -13,7 +13,7 @@ function(action, entity, config){
   D4STORAGE_HUB <- config$software$output$d4storagehub
   if(is.null(D4STORAGE_HUB)){
     errMsg <- "This action requires a d4storagehub software to be declared in the configuration"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   D4STORAGE_HUB_CONFIG <- config$software$output$d4storagehub_config
@@ -21,7 +21,7 @@ function(action, entity, config){
   if(is.null(workspace)) if(!is.null(entity$data$workspaces$d4storagehub)) workspace <- entity$data$workspaces$d4storagehub
   if(is.null(workspace)){
     errMsg <- "The d4storagehub configuration requires a workspace for publishing action"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }    
   
@@ -30,24 +30,24 @@ function(action, entity, config){
   workspace<- file.path(workspace,entity$getEntityJobDirname())
   folderID <- D4STORAGE_HUB$searchWSItemID(itemPath = file.path(workspace,"data"))
   if (is.null(folderID)) {
-    config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", workspace))
+    config$logger$INFO("Creating folder [%s] in d4cience workspace", workspace)
     D4STORAGE_HUB$createFolder(folderPath = workspace, name="data", description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
   }
   
   #upload
   #-------------------------------------------------------------------------------------------------
   if(entity$data$upload){
-    config$logger.info("Upload mode is set to true")
+    config$logger$INFO("Upload mode is set to true")
     fileName = entity$data$uploadSource[[1]]
     filePath = file.path(getwd(),"data",fileName)
     if(startsWith(entity$data$uploadType,"db")){
       errMsg <- "Skipping upload: Upload mode is no valid for 'database' type"
-      config$logger.error(errMsg)
+      config$logger$ERROR(errMsg)
       stop(errMsg)
     }else{
-      config$logger.info(sprintf("Trying to upload %s to d4science workspace folder %s", fileName, file.path(workspace, "data")))
+      config$logger$INFO("Trying to upload %s to d4science workspace folder %s", fileName, file.path(workspace, "data"))
       D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, "data"), file=filePath, description = "", archive = FALSE)
-      config$logger.info(sprintf("File %s successfully uploaded to the d4science folder %s", fileName, file.path(workspace, "data")))
+      config$logger$INFO("File %s successfully uploaded to the d4science folder %s", fileName, file.path(workspace, "data"))
     }
   }  
   
@@ -66,13 +66,13 @@ function(action, entity, config){
       other_folderID <- D4STORAGE_HUB$searchWSItemID(itemPath = file.path(workspace,folder))
       #check if folder exists
       if (is.null(other_folderID)) {
-        config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", file.path(workspace,folder)))
+        config$logger$INFO("Creating folder [%s] in d4cience workspace", file.path(workspace,folder))
         D4STORAGE_HUB$createFolder(folderPath = workspace, name=folder, description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
       }
       #upload files
       files <- list.files(file.path(getwd(),folder))
       for(file in files){
-        config$logger.info(sprintf("D4storagehub: uploading %s file '%s'", folder, file))
+        config$logger$INFO("D4storagehub: uploading %s file '%s'", folder, file)
         D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, folder), file=file.path(getwd(),folder,file), description = "", archive = FALSE)
         
         #specific case to html documents in markdown folder
@@ -98,11 +98,11 @@ function(action, entity, config){
     if(length(data_files)>0){
       #upload other data files
       for(data_file in data_files){
-        config$logger.info(sprintf("D4storagehub: uploading data file '%s'", data_file))
+        config$logger$INFO("D4storagehub: uploading data file '%s'", data_file)
         D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, "data"), file=file.path(getwd(),"data",data_file), description = "", archive = FALSE)
       }
     }else{
-      config$logger.warn("D4storagehub: no other data files to upload")
+      config$logger$WARN("D4storagehub: no other data files to upload")
     }
     
     #check if metadata files exists
@@ -111,16 +111,16 @@ function(action, entity, config){
       metadata_folderID <- D4STORAGE_HUB$searchWSItemID(itemPath = file.path(workspace,"metadata"))
       #check if metadata folder exists
       if (is.null(metadata_folderID)) {
-        config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", file.path(workspace,"metadata")))
+        config$logger$INFO("Creating folder [%s] in d4cience workspace", file.path(workspace,"metadata"))
         D4STORAGE_HUB$createFolder(folderPath = workspace, name="metadata", description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
       }
       #upload metadata files
       for(metadata_file in metadata_files){
-        config$logger.info(sprintf("D4storagehub: uploading metadata file '%s'", metadata_file))
+        config$logger$INFO("D4storagehub: uploading metadata file '%s'", metadata_file)
         D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, "metadata"), file=file.path(getwd(),"metadata",metadata_file), description = "", archive = FALSE)
       }
     }else{
-      config$logger.warn("D4storagehub: no metadata files to upload")
+      config$logger$WARN("D4storagehub: no metadata files to upload")
     }
     
     other_folders <- setdiff(list.dirs(getwd(),full.names =F),c("","data","metadata",otherUploadFolders)) 
@@ -130,20 +130,20 @@ function(action, entity, config){
         other_folderID <- D4STORAGE_HUB$searchWSItemID(itemPath = file.path(workspace,folder))
         #check if folder exists
         if (is.null(other_folderID)) {
-          config$logger.info(sprintf("Creating folder [%s] in d4cience workspace", file.path(workspace,folder)))
+          config$logger$INFO("Creating folder [%s] in d4cience workspace", file.path(workspace,folder))
           D4STORAGE_HUB$createFolder(folderPath = workspace, name=folder, description = entity$titles[['title']], hidden = FALSE, recursive = TRUE)
         }
         #upload files
         files <- list.files(file.path(getwd(),folder))
         for(file in files){
-          config$logger.info(sprintf("D4storagehub: uploading %s file '%s'", folder, file))
+          config$logger$INFO("D4storagehub: uploading %s file '%s'", folder, file)
           D4STORAGE_HUB$uploadFile (folderPath = file.path(workspace, folder), file=file.path(getwd(),folder,file), description = "", archive = FALSE)
         }
       }
     }else{
-      config$logger.warn("D4storagehub: no other files to upload")
+      config$logger$WARN("D4storagehub: no other files to upload")
     }
   }else{
-    config$logger.info("Skipping upload of no uploadSource files (option 'depositWithFiles' FALSE)")    
+    config$logger$INFO("Skipping upload of no uploadSource files (option 'depositWithFiles' FALSE)")    
   }
 }

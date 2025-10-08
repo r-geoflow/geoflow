@@ -247,7 +247,7 @@ function(action, entity, config){
     attributeList = list()
     columns <- colnames(features)
     for(featureAttrName in columns){
-      config$logger.info(sprintf("EML: adding '%s' to attributeList", featureAttrName))
+      config$logger$INFO("EML: adding '%s' to attributeList", featureAttrName)
       fat_attr_register <- NULL
       
       #create attribute
@@ -267,7 +267,7 @@ function(action, entity, config){
           if(length(registers)>0) registers <- registers[sapply(registers, function(x){x$id == registerId})]
           if(length(registers)==0){
             warnMsg <- sprintf("Unknown register '%s'. Ignored for creating EML attributeList", registerId)
-            config$logger.warn(warnMsg)
+            config$logger$WARN(warnMsg)
           }else{
             fat_attr_register <- registers[[1]]
           }
@@ -302,13 +302,13 @@ function(action, entity, config){
       uom <- fat_attr$uom
       if(!is.null(uom)){
         if(!uom %in% EML::get_unitList()$units$id){
-          config$logger.warn(sprintf("Unit '%s' not referenced in EML::get_unitList()$units IDs", uom))
+          config$logger$WARN(sprintf("Unit '%s' not referenced in EML::get_unitList()$units IDs", uom))
           if(!uom %in% EML::get_unitList()$units$abbreviation){
-            config$logger.warn(sprintf("Unit '%s' not referenced in EML::get_unitList()$units Abbreviations", uom))
+            config$logger$WARN(sprintf("Unit '%s' not referenced in EML::get_unitList()$units Abbreviations", uom))
           }else{
-            config$logger.warn(sprintf("Unit '%s' found in EML::get_unitList()$units Abbreviations", uom))
+            config$logger$WARN(sprintf("Unit '%s' found in EML::get_unitList()$units Abbreviations", uom))
             eml_unit = EML::get_unitList()$units[EML::get_unitList()$units$abbreviation == uom,]
-            config$logger.warn(sprintf("Unit for '%s' attribute, set unit ID '%s' instead of abbreviation", featureAttrName, eml_unit[1L, "id"]))
+            config$logger$WARN(sprintf("Unit for '%s' attribute, set unit ID '%s' instead of abbreviation", featureAttrName, eml_unit[1L, "id"]))
             uom <- eml_unit
           }
         }
@@ -416,7 +416,7 @@ function(action, entity, config){
     
     if(is(entity$data$features, "sf")){
       #use spatialVector
-      config$logger.info("EML: spatial dataset - filling attributeList as 'spatialVector'")
+      config$logger$INFO("EML: spatial dataset - filling attributeList as 'spatialVector'")
       dataset$spatialVector = EML::eml$spatialVector(
         alternateIdentifier = basename(entity$getJobDataResource(config, entity$data$source[[1]])),
         entityName = entity$title,
@@ -445,7 +445,7 @@ function(action, entity, config){
       )
     }else{
       #use dataTable
-      config$logger.info("EML: non-spatial dataset - filling attributeList as 'dataTable'")
+      config$logger$INFO("EML: non-spatial dataset - filling attributeList as 'dataTable'")
       dataset$dataTable = EML::eml$dataTable(
         alternateIdentifier = basename(entity$getJobDataResource(config, entity$data$source[[1]])),
         entityName = entity$title,
@@ -468,12 +468,12 @@ function(action, entity, config){
   #eml validation
   eml_valid <- EML::eml_validate(eml_md)
   if(eml_valid){
-    config$logger.info("EML metadata produced is valid!")
+    config$logger$INFO("EML metadata produced is valid!")
   }else{
     eml_errors <- attr(eml_valid, "errors")
-    config$logger.warn(sprintf("EML metadata has %s validation issues:", length(eml_errors)))
+    config$logger$WARN(sprintf("EML metadata has %s validation issues:", length(eml_errors)))
     for(eml_error in eml_errors){
-      config$logger.warn(eml_error)
+      config$logger$WARN(eml_error)
     }
   }
   

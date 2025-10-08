@@ -14,7 +14,7 @@ handle_entities_dbi_geometry_columns <- function(handler, source, config, handle
   check_priv_geometry_columns = try(DBI::dbGetQuery(dbi, check_priv_geometry_columns_query))
   if(nrow(check_priv_geometry_columns)==0){
     warnMsg = sprintf("The 'geometry_columns' table is not granted for SELECT for public or user '%s'. An empty list of entities is returned!", dbi_user)
-    config$logger.warn(warnMsg)
+    config$logger$WARN(warnMsg)
     return(list())
   }
   
@@ -25,12 +25,12 @@ handle_entities_dbi_geometry_columns <- function(handler, source, config, handle
   db_tables <- try(DBI::dbGetQuery(dbi, db_tables_query))
   if(is(db_tables,"try-error")){
     errMsg <- sprintf("Error while trying to execute DB query '%s'.", db_tables_query)
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   if(nrow(db_tables)==0){
     warnMsg = sprintf("No table granted for SELECT for public or user '%s'. An empty list of entities is returned!", dbi_user)
-    config$logger.warn(warnMsg)
+    config$logger$WARN(warnMsg)
     return(list())
   }
   

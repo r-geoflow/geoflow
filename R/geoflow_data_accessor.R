@@ -100,7 +100,7 @@ geoflow_data_accessor <- R6Class("geoflow_data_accessor",
     #'    packages names and version. If one or more packages are unavailable,
     #'    an error is thrown and user informed of the missing packages.
     checkPackages = function(){
-      self$INFO(sprintf("Check package dependencies for data accessor '%s'", self$id))
+      self$INFO("Check package dependencies for data accessor '%s'", self$id)
       out_pkgs <- try(check_packages(self$packages))
       if(is(out_pkgs,"try-error")){
         errMsg <- sprintf("One or more packages are not imported although required for data accessor '%s'", self$id)
@@ -108,9 +108,9 @@ geoflow_data_accessor <- R6Class("geoflow_data_accessor",
         stop(errMsg)
       }else{
         if(is.null(out_pkgs)){
-          self$INFO(sprintf("No additional package required for data accessor '%s':", self$id))
+          self$INFO("No additional package required for data accessor '%s':", self$id)
         }else{
-          self$INFO(sprintf("The following packages have been imported for data accessor '%s':", self$id))
+          self$INFO("The following packages have been imported for data accessor '%s':", self$id)
           print(out_pkgs)
         }
       }

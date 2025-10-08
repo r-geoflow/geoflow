@@ -485,27 +485,23 @@ check_packages <- function(pkgs){
   return(pkgs_df)
 }
 
-#'@name add_config_utils
-#'@aliases add_config_utils
-#'@title add_config_utils
-#'@description \code{add_config_utils} adds util functions needed (logger, log_separator) to the configuratino object
+#'@name add_config_logger
+#'@aliases add_config_logger
+#'@title add_config_logger
+#'@description \code{add_config_logger} enables a logger (managed with the internal 
+#'class \link{geoflowLogger}).
 #'
-#'@usage add_config_utils(config)
+#'@usage add_config_logger(config)
 #'
 #'@param config object of class \link{list}
 #'
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
-add_config_utils <- function(config){
+add_config_logger <- function(config){
   id <- if(!is.null(config$profile$id)) config$profile$id else config$id
-  config$logger <- function(type, text){
-    txt <- text #use this to make sure sprintf calls don't conflict with next sprintf call
-    cat(sprintf("[geoflow][%s][%s] %s \n", id, type, txt))
-  }
-  config$logger.info <- function(text){config$logger("INFO", text)}
-  config$logger.warn <- function(text){config$logger("WARN", text)}
-  config$logger.error <- function(text){config$logger("ERROR", text)}
-  config$log_separator <- function(char){cat(paste0(paste0(rep(char,100),collapse=""),"\n"))}
+  if(is.null(config$verbose)) config$verbose = TRUE
+  if(is.null(config$debug)) config$debug = FALSE
+  config$logger <- geoflowLogger$new(verbose = config$verbose, debug = config$debug)
   return(config)
 }
 
@@ -540,7 +536,7 @@ load_workflow_environment <- function(config, session = NULL){
   config_str <- whisker::whisker.render(config_str, c(as.list(Sys.getenv()), userdata))
 
   config <- jsonlite::parse_json(config_str)
-  config <- add_config_utils(config)
+  config <- add_config_logger(config)
   return(config)
 }
 

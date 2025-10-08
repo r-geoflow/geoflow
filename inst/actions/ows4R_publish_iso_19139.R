@@ -11,10 +11,10 @@ function(action, entity, config){
     INSPIRE_VALIDATOR <- config$software$output$inspire
     if(is.null(INSPIRE_VALIDATOR)){
       errMsg <- "This action requires a INSPIRE metadata validator software to be declared in the configuration"
-      config$logger.error(errMsg)
+      config$logger$ERROR(errMsg)
       stop(errMsg)
     }
-    config$logger.info("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its CSW-T publication")
+    config$logger$INFO("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its CSW-T publication")
   }
   
   #shortcut for csw config
@@ -22,7 +22,7 @@ function(action, entity, config){
   
   if(is.null(CSW)){
     errMsg <- "This action requires a CSW software to be declared in the configuration"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
@@ -33,10 +33,10 @@ function(action, entity, config){
     if(is(md, "ISOFeatureCatalogue")) meta_id <- md$attrs[["uuid"]]
     meta_dc <- CSW$getRecordById(meta_id)
     if(is.null(meta_dc)){
-      config$logger.info(sprintf("Inserting new record with id '%s'", meta_id))
+      config$logger$INFO("Inserting new record with id '%s'", meta_id)
       CSW$insertRecord(record = md, geometa_inspire = inspire, geometa_inspireValidator = inspireValidator)
     }else{
-      config$logger.info(sprintf("Updating existing record with id '%s'", meta_id))
+      config$logger$INFO("Updating existing record with id '%s'", meta_id)
       CSW$updateRecord(record = md, geometa_inspire = inspire, geometa_inspireValidator = inspireValidator)
     }
   }
@@ -52,7 +52,7 @@ function(action, entity, config){
       doPublish(md, geometa_inspire, INSPIRE_VALIDATOR)
       rm(md)
     }else{
-      config$logger.warn(sprintf("No ISO 19115 XML metadata file to publish for entity '%s, skipping action!", entity$identifiers[["id"]]))
+      config$logger$WARN(sprintf("No ISO 19115 XML metadata file to publish for entity '%s, skipping action!", entity$identifiers[["id"]]))
     }
   }
   #geometa ISO 19110
@@ -67,7 +67,7 @@ function(action, entity, config){
       doPublish(md, geometa_inspire, INSPIRE_VALIDATOR)
       rm(md)
     }else{
-      config$logger.warn(sprintf("No ISO 19110 XML metadata file to publish for entity '%s, skipping action!", entity$identifiers[["id"]]))
+      config$logger$WARN(sprintf("No ISO 19110 XML metadata file to publish for entity '%s, skipping action!", entity$identifiers[["id"]]))
     }
   }
   

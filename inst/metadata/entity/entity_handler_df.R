@@ -3,35 +3,35 @@ handle_entities_df <- function(handler, source, config){
   
   if(!is(source, "data.frame")){
     errMsg <- "Error in 'handle_entities_df': source parameter should be an object of class 'data.frame'"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
   #validation
-  config$logger.info("Validating entities")
+  config$logger$INFO("Validating entities")
   validation_report <- geoflow::geoflow_validator_entities$new(source = source)$validate_content()
   if(is.null(validation_report)){
     errMsg <- "Error of metadata structure for entities"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   if(nrow(validation_report)==0){
-    config$logger.info("No validation issue detected!")
+    config$logger$INFO("No validation issue detected!")
   }else{
-    config$logger.info("Validation issues -->")
+    config$logger$INFO("Validation issues -->")
     print(validation_report)
     if(any(validation_report$type == "ERROR")){
       errMsg <- "At least one error of metadata syntax has been detected, aborting..."
-      config$logger.error(errMsg)
+      config$logger$ERROR(errMsg)
       stop(errMsg)
     }
   }
   
   entities <- list()
   rowNum <- nrow(source)
-  config$logger.info(sprintf("Parsing %s entities from tabular source", rowNum))
+  config$logger$INFO("Parsing %s entities from tabular source", rowNum)
   for(i in 1:rowNum){
-    config$logger.info(sprintf("Parsing entity %s", i))
+    config$logger$INFO("Parsing entity %s", i)
     source_entity <- source[i,]
     entity <- geoflow::geoflow_entity$new()
     
@@ -160,9 +160,9 @@ handle_entities_df <- function(handler, source, config){
         contact_ids <- unlist(strsplit(contact_splits[2],","))
         for(contact_id in contact_ids){
           if(is.na(contact_id)){
-            config$logger.warn(sprintf("Warning: In entity %s, empty contact id will be ignored!", i))
+            config$logger$WARN(sprintf("Warning: In entity %s, empty contact id will be ignored!", i))
           }else if(contact_id==""){
-            config$logger.warn(sprintf("Warning: In entity %s, empty contact id will be ignored!", i))
+            config$logger$WARN(sprintf("Warning: In entity %s, empty contact id will be ignored!", i))
           }else{
             contact_obj <- geoflow::geoflow_contact$new()
             contact_obj$setIdentifier(key = "id", contact_id)
@@ -272,12 +272,12 @@ handle_entities_df <- function(handler, source, config){
         if(!is.null(dict)){
           ft <- entity$data$featureType
           if(is.null(entity$data$featureType)){
-            config$logger.warn("No data featureType declared. Set feature type to dataset identifier")
+            config$logger$WARN("No data featureType declared. Set feature type to dataset identifier")
             ft <- entity$identifiers[["id"]]
           }
           featureTypeObj <- dict$getFeatureTypeById(id = ft)
           if(is.null(featureTypeObj)){
-            config$logger.warn(sprintf("No featuretype '%s' declared in dictionary!", ft))
+            config$logger$WARN(sprintf("No featuretype '%s' declared in dictionary!", ft))
           }else{
             entity$data$setFeatureTypeObj(featureTypeObj)
           }

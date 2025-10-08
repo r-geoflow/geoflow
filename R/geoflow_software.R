@@ -174,7 +174,7 @@ geoflow_software <- R6Class("geoflow_software",
     #'    packages names and version. If one or more packages are unavailable,
     #'    an error is thrown and user informed of the missing packages.
     checkPackages = function(){
-      self$INFO(sprintf("Check package dependencies for software '%s' (%s)", self$id, self$software_type))
+      self$INFO("Check package dependencies for software '%s' (%s)", self$id, self$software_type)
       out_pkgs <- try(check_packages(self$packages))
       if(is(out_pkgs,"try-error")){
         errMsg <- sprintf("One or more packages are not imported although required for software '%s' (%s)", 
@@ -183,11 +183,11 @@ geoflow_software <- R6Class("geoflow_software",
         stop(errMsg)
       }else{
         if(is.null(out_pkgs)){
-          self$INFO(sprintf("No additional package required for software '%s' (%s):", 
-                            self$id, self$software_type))
+          self$INFO("No additional package required for software '%s' (%s):", 
+                            self$id, self$software_type)
         }else{
-          self$INFO(sprintf("The following packages have been imported for software '%s' (%s):", 
-                            self$id, self$software_type))
+          self$INFO("The following packages have been imported for software '%s' (%s):", 
+                            self$id, self$software_type)
           print(out_pkgs)
         }
       }
@@ -265,29 +265,29 @@ register_software <- function(){
       actions = list(
         onstart = function(config, software, software_config){
           if(!is.null(software_config$properties$onstart_sql) || !is.null(software_config$properties$onstart_r)){
-            config$logger.info(sprintf("DBI [id='%s'] Execute 'onstart' action",software_config$id))
+            config$logger$INFO("DBI [id='%s'] Execute 'onstart' action",software_config$id)
             
             sql <- NULL
             if(!is.null(software_config$properties$onstart_sql)){
-              config$logger.info(sprintf("SQL script = %s", software_config$properties$onstart_sql))
+              config$logger$INFO("SQL script = %s", software_config$properties$onstart_sql)
               sql <- paste0(readLines(get_config_resource_path(config, software_config$properties$onstart_sql)),collapse="\n")
               
             }else if(!is.null(software_config$properties$onstart_r)){
               if(is.null(software_config$properties$onstart_r$script)){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Missing 'script'",software_config$id)
-                config$logger.error(errMsg)
+                config$logger$ERROR(errMsg)
                 stop(errMsg)
               }
               if(is.null(software_config$properties$onstart_r$fun)){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Missing 'fun'",software_config$id)
-                config$logger.error(errMsg)
+                config$logger$ERROR(errMsg)
                 stop(errMsg)
               }
               src <- try(source(get_config_resource_path(config, software_config$properties$onstart_r$script)))
               if(is(src,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Error while sourcing script '%s'",
                                   software_config$id, software_config$properties$onstart_r$script)
-                config$logger.error(errMsg)
+                config$logger$ERROR(errMsg)
                 stop(errMsg)
               }
               onstart_r_fun <- eval(parse(text=software_config$properties$onstart_r$fun))
@@ -295,59 +295,59 @@ register_software <- function(){
               if(is(sql,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onstart' from R - Error while executing function '%s'",
                                   software_config$id, software_config$properties$onstart_r$fun)
-                config$logger.error(errMsg)
+                config$logger$ERROR(errMsg)
                 stop(errMsg)
               }
             }
-            config$logger.info(sprintf("DBI [id='%s'] Executing SQL",software_config$id))
-            config$logger.info(paste0("\n", sql))
+            config$logger$INFO("DBI [id='%s'] Executing SQL",software_config$id)
+            config$logger$INFO(paste0("\n", sql))
             
             #write sql to file
             if (!dir.exists("sql")){
-              config$logger.info(sprintf("Creating 'sql' directory: %s", file.path(getwd(), "sql")))
-              dir.create(file.path(getwd(), "sql"))
+              config$logger$INFO("Creating 'sql' directory: %s", file.path(config$wd, "sql"))
+              dir.create(file.path(config$wd, "sql"))
             }
             sqlfilename <- paste0(software_config$id, "_onstart.sql")
-            config$logger.info(sprintf("DBI [id='%s'] Writing SQL file '%s' to job directory",software_config$id, sqlfilename))
-            writeChar(sql, file.path(getwd(), "sql", sqlfilename), eos = NULL)
+            config$logger$INFO("DBI [id='%s'] Writing SQL file '%s' to job directory",software_config$id, sqlfilename)
+            writeChar(sql, file.path(config$wd, "sql", sqlfilename), eos = NULL)
             
             #send sql to dB
             out <- try(DBI::dbSendQuery(software, sql))
             if(is(out,"try-error")){
               errMsg <- sprintf("DBI [id='%s'] Error while executing SQL",software_config$id)
-              config$logger.error(errMsg)
+              config$logger$ERROR(errMsg)
               stop(errMsg)
             }
-            config$logger.info(sprintf("DBI [id='%s'] Successful SQL execution!",software_config$id))
+            config$logger$INFO("DBI [id='%s'] Successful SQL execution!",software_config$id)
           }else{
-            config$logger.info(sprintf("DBI [id='%s'] No 'sqlonstart' property. Skipping 'onstart' action",software_config$id))
+            config$logger$INFO("DBI [id='%s'] No 'sqlonstart' property. Skipping 'onstart' action",software_config$id)
           }
         },
         onend = function(config, software, software_config){
           if(!is.null(software_config$properties$onend_sql) || !is.null(software_config$properties$onend_r)){
-            config$logger.info(sprintf("DBI [id='%s'] Execute 'onend' action",software_config$id))
+            config$logger$INFO("DBI [id='%s'] Execute 'onend' action",software_config$id)
             
             sql <- NULL
             if(!is.null(software_config$properties$onend_sql)){
-              config$logger.info(sprintf("SQL script = %s", software_config$properties$onend_sql))
+              config$logger$INFO("SQL script = %s", software_config$properties$onend_sql)
               sql <- paste0(readLines(get_config_resource_path(config, software_config$properties$onend_sql)),collapse="\n")
               
             }else if(!is.null(software_config$properties$onend_r)){
               if(is.null(software_config$properties$onend_r$script)){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Missing 'script'",software_config$id)
-                config$logger.error(errMsg)
+                config$logger$ERROR(errMsg)
                 stop(errMsg)
               }
               if(is.null(software_config$properties$onend_r$fun)){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Missing 'fun'",software_config$id)
-                config$logger.error(errMsg)
+                config$logger$ERROR(errMsg)
                 stop(errMsg)
               }
               src <- try(source(get_config_resource_path(config, software_config$properties$onend_r$script)))
               if(is(src,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Error while sourcing script '%s'",
                                   software_config$id, software_config$properties$onend_r$script)
-                config$logger.error(errMsg)
+                config$logger$ERROR(errMsg)
                 stop(errMsg)
               }
               onend_r_fun <- eval(parse(text=software_config$properties$onend_r$fun))
@@ -356,32 +356,32 @@ register_software <- function(){
               if(is(sql,"try-error")){
                 errMsg <- sprintf("DBI [id='%s'] Error to init 'onend' from R - Error while executing function '%s'",
                                   software_config$id, software_config$properties$onend_r$fun)
-                config$logger.error(errMsg)
+                config$logger$ERROR(errMsg)
                 stop(errMsg)
               }
             }
-            config$logger.info(sprintf("DBI [id='%s'] Executing SQL",software_config$id))
-            config$logger.info(paste0("\n", sql))
+            config$logger$INFO("DBI [id='%s'] Executing SQL",software_config$id)
+            config$logger$INFO(paste0("\n", sql))
             
             #write sql to file
             if (!dir.exists("sql")){
-              config$logger.info(sprintf("Creating 'sql' directory: %s", file.path(getwd(), "sql")))
-              dir.create(file.path(getwd(), "sql"))
+              config$logger$INFO("Creating 'sql' directory: %s", file.path(config$wd, "sql"))
+              dir.create(file.path(config$wd, "sql"))
             }
             sqlfilename <- paste0(software_config$id, "_onend.sql")
-            config$logger.info(sprintf("DBI [id='%s'] Writing SQL file '%s' to job directory",software_config$id, sqlfilename))
-            writeChar(sql, file.path(getwd(), "sql", sqlfilename), eos = NULL)
+            config$logger$INFO("DBI [id='%s'] Writing SQL file '%s' to job directory",software_config$id, sqlfilename)
+            writeChar(sql, file.path(config$wd, "sql", sqlfilename), eos = NULL)
             
             #send sql to dB
             out <- try(DBI::dbSendQuery(software, sql))
             if(is(out,"try-error")){
               errMsg <- sprintf("DBI [id='%s'] Error while executing SQL",software_config$id)
-              config$logger.error(errMsg)
+              config$logger$ERROR(errMsg)
               stop(errMsg)
             }
-            config$logger.info(sprintf("DBI [id='%s'] Successful SQL execution!",software_config$id))
+            config$logger$INFO("DBI [id='%s'] Successful SQL execution!",software_config$id)
           }else{
-            config$logger.info(sprintf("DBI [id='%s'] No 'onend_sql' property. Skipping 'onend' action",software_config$id))
+            config$logger$INFO("DBI [id='%s'] No 'onend_sql' property. Skipping 'onend' action",software_config$id)
           }
         }
       )
@@ -498,7 +498,7 @@ register_software <- function(){
       ),
       actions = list(
         onstart = function(config, software, software_config){
-          config$logger.info("Executing GeoServer 'onstart' action")
+          config$logger$INFO("Executing GeoServer 'onstart' action")
           if(!is.null(config$properties$workspace)){
             ws <- software$getWorkspace(config$properties$workspace)
             if(is.null(ws)){
@@ -508,7 +508,7 @@ register_software <- function(){
           #TODO to be completed with store creation cases
         },
         onend = function(config, software, software_config){
-          config$logger.info("Executing GeoServer 'onend' action")
+          config$logger$INFO("Executing GeoServer 'onend' action")
           software$reload()
         }
       )
@@ -580,12 +580,12 @@ register_software <- function(){
       attributes = list(),
       actions = list(
         onstart = function(config, software, software_config){
-          config$logger.info("Executing DataOne 'onstart' action")
+          config$logger$INFO("Executing DataOne 'onstart' action")
           options(dataone_test_token = software_config$parameters$token)
           options(dataone_token = software_config$parameters$token)
         },
         onend = function(config, software, software_config){
-          config$logger.info("Executing DataOne 'onend' action")
+          config$logger$INFO("Executing DataOne 'onend' action")
           options(dataone_test_token = NULL)
           options(dataone_token = NULL)
         }

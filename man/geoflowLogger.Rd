@@ -19,14 +19,42 @@ geoflowLogger
 Logger class used internally by geoflow
 }
 \keyword{logger}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{verbose}}{verbose}
+
+\item{\code{debug}}{debug}
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
+\item \href{#method-geoflowLogger-separator}{\code{geoflowLogger$separator()}}
 \item \href{#method-geoflowLogger-INFO}{\code{geoflowLogger$INFO()}}
 \item \href{#method-geoflowLogger-WARN}{\code{geoflowLogger$WARN()}}
 \item \href{#method-geoflowLogger-ERROR}{\code{geoflowLogger$ERROR()}}
+\item \href{#method-geoflowLogger-DEBUG}{\code{geoflowLogger$DEBUG()}}
 \item \href{#method-geoflowLogger-new}{\code{geoflowLogger$new()}}
 \item \href{#method-geoflowLogger-clone}{\code{geoflowLogger$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflowLogger-separator"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflowLogger-separator}{}}}
+\subsection{Method \code{separator()}}{
+Util to separate chunks of logs of different natures
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$separator(char)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{char}}{A character to be used, eg '='}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -35,13 +63,15 @@ Logger class used internally by geoflow
 \subsection{Method \code{INFO()}}{
 Prints an INFO logger message
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$INFO(text)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$INFO(txt, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{text}}{logger message}
+\item{\code{txt}}{logger message}
+
+\item{\code{...}}{values to be passed into txt. See \link{sprintf}}
 }
 \if{html}{\out{</div>}}
 }
@@ -52,13 +82,15 @@ Prints an INFO logger message
 \subsection{Method \code{WARN()}}{
 Prints an WARN logger message
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$WARN(text)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$WARN(txt, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{text}}{logger message}
+\item{\code{txt}}{logger message}
+
+\item{\code{...}}{values to be passed into txt. See \link{sprintf}}
 }
 \if{html}{\out{</div>}}
 }
@@ -69,13 +101,34 @@ Prints an WARN logger message
 \subsection{Method \code{ERROR()}}{
 Prints an ERROR logger message
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$ERROR(text)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$ERROR(txt, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{text}}{logger message}
+\item{\code{txt}}{logger message}
+
+\item{\code{...}}{values to be passed into txt. See \link{sprintf}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflowLogger-DEBUG"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflowLogger-DEBUG}{}}}
+\subsection{Method \code{DEBUG()}}{
+Prints an DEBUG logger message
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$DEBUG(txt, ...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{txt}}{logger message}
+
+\item{\code{...}}{values to be passed into txt. See \link{sprintf}}
 }
 \if{html}{\out{</div>}}
 }
@@ -86,9 +139,18 @@ Prints an ERROR logger message
 \subsection{Method \code{new()}}{
 Initializes an object of class \link{geoflowLogger}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$new()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflowLogger$new(verbose = TRUE, debug = FALSE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{verbose}}{\code{TRUE} if the logger is enabled, \code{FALSE} otherwise. Default is \code{TRUE}}
+
+\item{\code{debug}}{\code{TRUE} if the debugger is enabled, \code{FALSE} otherwise. Default is \code{FALSE}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflowLogger-clone"></a>}}

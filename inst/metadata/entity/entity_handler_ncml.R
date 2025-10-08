@@ -1,7 +1,7 @@
 #handle_entities_ncml
 handle_entities_ncml <- function(handler, source, config, handle = TRUE){
   
-  config$logger.info("NCML Handle")
+  config$logger$INFO("NCML Handle")
   
   if(!requireNamespace("XML", quietly = TRUE)){
     stop("The NCML handler requires the 'XML' package")

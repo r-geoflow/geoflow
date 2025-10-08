@@ -11,14 +11,14 @@ handle_contacts_dbi <- function(handler, source, config, handle = TRUE){
     source <- try(DBI::dbGetQuery(dbi, source))
     if(is(source,"try-error")){
       errMsg <- sprintf("Error while trying to execute DB query '%s'.", source)
-      config$logger.error(errMsg)
+      config$logger$ERROR(errMsg)
       stop(errMsg)
     }
   }else{
     source <- try(DBI::dbReadTable(dbi, source))
     if(is(source,"try-error")){
       errMsg <- sprintf("Error while trying to read DB table/view '%s'. Check if it exists in DB.", source)
-      config$logger.error(errMsg)
+      config$logger$ERROR(errMsg)
       stop(errMsg)
     }
   }

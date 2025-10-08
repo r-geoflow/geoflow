@@ -9,7 +9,7 @@ function(action, entity, config){
   GEONODE <- config$software$output$geonode
   if(is.null(GEONODE)){
     errMsg <- "This action requires a GeoNode software to be declared in the configuration"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
@@ -45,26 +45,26 @@ function(action, entity, config){
     #-------------------------------------------------------------------------------------------------
     resource = GEONODE$getResourceByUUID(uuid = entity$identifiers[["uuid"]])
     if(!is.null(resource)){
-      config$logger.warn(sprintf("Resource '%s' (id = %s) already exists! Deleting it...", resource$uuid, resource$pk))
+      config$logger$WARN(sprintf("Resource '%s' (id = %s) already exists! Deleting it...", resource$uuid, resource$pk))
       deleted = GEONODE$deleteResource(id = resource$pk)
-      if(deleted) config$logger.warn(sprintf("Resource '%s' (id = %s) deleted!", resource$uuid, resource$pk))
+      if(deleted) config$logger$WARN(sprintf("Resource '%s' (id = %s) deleted!", resource$uuid, resource$pk))
     }
     
     #upload
     #-------------------------------------------------------------------------------------------------
     if(data_object$upload){
       
-      config$logger.info("Upload mode is set to true")
+      config$logger$INFO("Upload mode is set to true")
       if(startsWith(data_object$uploadType,"db") || data_object$uploadType == "other"){
         warnMsg <- "Skipping upload: Upload mode is only valid for types 'shp', 'spatialite' or 'h2'"
-        config$logger.warn(warnMsg)
+        config$logger$WARN(warnMsg)
       }else{
         uploaded <- FALSE
-        config$logger.info("Upload from local file(s)")
+        config$logger$INFO("Upload from local file(s)")
         filepath <- file.path(getwd(), "data", datasource)
-        config$logger.info(sprintf("File to upload to GeoNode: %s", filepath))
+        config$logger$INFO("File to upload to GeoNode: %s", filepath)
         if(file.exists(filepath)){
-          config$logger.info(sprintf("Upload file '%s' [%s] to GeoNode...", filepath, data_object$uploadType))
+          config$logger$INFO("Upload file '%s' [%s] to GeoNode...", filepath, data_object$uploadType)
           files = list.files(path = "data", pattern = datasource_name, full.names = TRUE)
           files = files[!endsWith(files, ".zip")]
           dir.create("data/temp")
@@ -84,16 +84,16 @@ function(action, entity, config){
           unlink("data/temp",recursive = TRUE, force = TRUE)
         }else{
           errMsg <- sprintf("Upload from local file(s): no zipped file found for source '%s' (%s)", filepath, datasource)
-          config$logger.error(errMsg)
+          config$logger$ERROR(errMsg)
           stop(errMsg)
         }
         
         if(uploaded){
           infoMsg <- sprintf("Successful GeoNode upload for file '%s' (%s)", datasource_file, data_object$uploadType)
-          config$logger.info(infoMsg)
+          config$logger$INFO(infoMsg)
         }else{
           errMsg <- "Error during GeoNode file upload. Aborting 'geonode4R' action!"
-          config$logger.error(errMsg)
+          config$logger$ERROR(errMsg)
           stop(errMsg)
         }
       }

@@ -21,7 +21,7 @@ function(action, entity, config){
   DATAONE <- config$software$output$dataone
   if(is.null(DATAONE)){
     errMsg <- "This action requires a DataOne software to be declared in the configuration"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
@@ -106,9 +106,9 @@ function(action, entity, config){
   
   if(is(out, "try-error")){
     errMsg <- sprintf("Error during uploading data package to DataOne:\n%s", as(out, "character"))
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
   }else{
-    config$logger.info(sprintf("Successfully uploaded data package '%s'", out))
+    config$logger$INFO("Successfully uploaded data package '%s'", out)
   }
   
   #output table of DOIs
@@ -119,11 +119,11 @@ function(action, entity, config){
                       "UPDATE" = sprintf("Successfully updated Dataverse dataset with id '%s' (packageId: %s)", 
                                          entity$identifiers[["id"]], packageId)
     )
-    config$logger.info(infoMsg)
+    config$logger$INFO(infoMsg)
     
     #get the packageId assigned by DataOne
     packageId_to_save <- out
-    config$logger.info(sprintf("Setting packageId '%s' (inherited from DataOne) to save and export for record", packageId_to_save))
+    config$logger$INFO("Setting packageId '%s' (inherited from DataOne) to save and export for record", packageId_to_save)
     for(i in 1:length(config$metadata$content$entities)){
       ent <- config$metadata$content$entities[[i]]
       if(ent$identifiers[["id"]]==entity$identifiers[["id"]]){

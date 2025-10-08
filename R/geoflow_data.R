@@ -439,7 +439,7 @@ geoflow_data <- R6Class("geoflow_data",
           if(self$access == "default"){
             if(!is_absolute_path(data_dir) && !is.null(config)) data_dir <- file.path(config$session_wd, datasource_uri)
             if(!dir.exists(data_dir)){
-              config$logger.error("Data dir doesn't exist!")
+              config$logger$ERROR("Data dir doesn't exist!")
             }
             #local access
             #TODO remote access
@@ -462,13 +462,13 @@ geoflow_data <- R6Class("geoflow_data",
               accessors <- list_data_accessors(raw = TRUE)
               accessor <- accessors[sapply(accessors, function(x){x$id == self$access})][[1]]
               
-              config$logger.info(sprintf("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id))
+              config$logger$INFO("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id)
               access_software <- NULL
               if(!is.na(accessor$software_type)){
-                config$logger.info(sprintf("Accessor '%s' seems to require a software. Try to locate 'input' software", accessor$id))
+                config$logger$INFO("Accessor '%s' seems to require a software. Try to locate 'input' software", accessor$id)
                 accessor_software <- config$software$input[[accessor$software_type]]
                 if(is.null(accessor_software)){
-                  config$logger.info(sprintf("Accessor '%s' doesn't seem to have the required 'input' software. Try to locate 'output' software", accessor$id))
+                  config$logger$INFO("Accessor '%s' doesn't seem to have the required 'input' software. Try to locate 'output' software", accessor$id)
                   accessor_software <- config$software$output[[accessor$software_type]]
                 }
               }
@@ -476,12 +476,12 @@ geoflow_data <- R6Class("geoflow_data",
                 ext_data_files <- accessor$list(resource = data_dir, software = accessor_software)
               }else{
                 errMsg <- sprintf("No data access 'list' method for accessor '%s'", )
-                if(!is.null(config)) config$logger.error(errMsg)
+                if(!is.null(config)) config$logger$ERROR(errMsg)
                 stop(errMsg)
               }
             }else{
               errMsg <- sprintf("No config available to invoke data accessor '%s'", )
-              if(!is.null(config)) config$logger.error(errMsg)
+              if(!is.null(config)) config$logger$ERROR(errMsg)
               stop(errMsg)
             }
           }
@@ -969,11 +969,11 @@ geoflow_data <- R6Class("geoflow_data",
       software_types <- names(self$workspaces)
       for(software_type in software_types){
         workspace <- self$workspaces[[software_type]]
-        config$logger.info(sprintf("Check '%s' software availability for workspace '%s'", software_type, workspace))
+        config$logger$INFO("Check '%s' software availability for workspace '%s'", software_type, workspace)
         if(!software_type %in% names(config$software$input) &&
            !software_type %in% names(config$software$output)){
           errMsg <- sprintf("No software '%s' declared as input/output for workspace '%s'.", software_type, workspace)
-          config$logger.error(errMsg)
+          config$logger$ERROR(errMsg)
           stop(errMsg)
         }
       }

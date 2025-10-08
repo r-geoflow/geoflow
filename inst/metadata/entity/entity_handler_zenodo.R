@@ -15,8 +15,8 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
   source_type <- handler$getOption("source_type") #for this handler default is "query"
   
   #fetch results depending on resource and source types
-  config$logger.info(sprintf("Zenodo entity handler: resource type '%s'", resource_type))
-  config$logger.info(sprintf("Zenodo entity handler: source type '%s'", source_type))
+  config$logger$INFO("Zenodo entity handler: resource type '%s'", resource_type)
+  config$logger$INFO("Zenodo entity handler: source type '%s'", source_type)
   results <- switch(resource_type,
     "deposit" = {
       switch(source_type,
@@ -32,7 +32,7 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
           recs = recs[!sapply(recs, is.null)]
           recs
         },{
-          config$logger.warn(sprintf("Unknown source type '%s' in Zenodo entity handler", source_type))
+          config$logger$WARN(sprintf("Unknown source type '%s' in Zenodo entity handler", source_type))
           list()
         }
       )
@@ -51,12 +51,12 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
          recs = recs[!sapply(recs, is.null)]
          recs
        },{
-         config$logger.warn(sprintf("Unknown source type '%s' in Zenodo entity handler", source_type))
+         config$logger$WARN(sprintf("Unknown source type '%s' in Zenodo entity handler", source_type))
          list()
        }
      )  
     },{
-      config$logger.warn(sprintf("Unknown resource type '%s' in Zenodo entity handler. Valid values ['deposit','record']", resource_type))
+      config$logger$WARN(sprintf("Unknown resource type '%s' in Zenodo entity handler. Valid values ['deposit','record']", resource_type))
       list()
     }
   )
@@ -67,7 +67,7 @@ handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
     result <- results[[i]]
     print(result)
     result_doi = result$getDOI()
-    config$logger.info(sprintf("Creating entity (%s out of %s) from Zenodo deposit/record with DOI '%s'", i, length(results), result_doi))
+    config$logger$INFO("Creating entity (%s out of %s) from Zenodo deposit/record with DOI '%s'", i, length(results), result_doi)
     
     #create entity
     entity <- geoflow::geoflow_entity$new()

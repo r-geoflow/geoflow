@@ -18,7 +18,7 @@ handle_entities_thredds <- function(handler, source, config){
   
   if(length(thredds$get_dataset_names())==0) if(length(thredds$get_dataset_names(xpath=".//d1:dataset"))==0) {
     errMsg <- sprintf("No datasets for the thredds")
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
@@ -32,13 +32,13 @@ handle_entities_thredds <- function(handler, source, config){
   
   uri<-XML::parseURI(thredds$url)
   base_uri<-paste0(uri$scheme,"://",uri$server)
-  config$logger.info(sprintf("Thredds Base URL: %s", base_uri))
+  config$logger$INFO("Thredds Base URL: %s", base_uri)
   
   entities<-list()
   entities<- lapply(datasets, function(dataset){
     data<-thredds$get_datasets(dataset)[[dataset]]
     if(is.null(data)) data<-thredds$get_datasets(dataset,xpath=".//d1:dataset")[[dataset]]
-    config$logger.info(sprintf("Build entity for '%s'", data$url))
+    config$logger$INFO("Build entity for '%s'", data$url)
     
     #entity
     
@@ -49,14 +49,14 @@ handle_entities_thredds <- function(handler, source, config){
     if(!is.null(ncml)) ncml_uri<-paste0(base_uri,ncml,data$url) else ncml_uri<-NULL
     
     if(!is.null(ncml_uri)){
-      config$logger.info(sprintf("NCML URL for '%s': %s", data$url, ncml_uri))
+      config$logger$INFO("NCML URL for '%s': %s", data$url, ncml_uri)
       entity <- handle_entities_ncml(handler,ncml_uri,config)[[1]]
     } else if (!is.null(odap_uri)){
-      config$logger.info(sprintf("OpenDAP URL for '%s': %s", data$url, odap_uri))
+      config$logger$INFO("OpenDAP URL for '%s': %s", data$url, odap_uri)
       entity <- handle_entities_ncdf(handler,odap_uri,config)[[1]]
     }else{
       errMsg <- sprintf("No OpenDAP or NCML service for Thredds '%s'", thredds$url)
-      config$logger.error(errMsg)
+      config$logger$ERROR(errMsg)
       stop(errMsg)
     }
     #relations

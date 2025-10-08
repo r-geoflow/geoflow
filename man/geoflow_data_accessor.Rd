@@ -72,9 +72,11 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \if{html}{\out{
 <details open><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="DEBUG"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-DEBUG'><code>geoflow::geoflowLogger$DEBUG()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="ERROR"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-ERROR'><code>geoflow::geoflowLogger$ERROR()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="INFO"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-INFO'><code>geoflow::geoflowLogger$INFO()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="WARN"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-WARN'><code>geoflow::geoflowLogger$WARN()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflowLogger" data-id="separator"><a href='../../geoflow/html/geoflowLogger.html#method-geoflowLogger-separator'><code>geoflow::geoflowLogger$separator()</code></a></span></li>
 </ul>
 </details>
 }}

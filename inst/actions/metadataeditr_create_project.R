@@ -46,17 +46,17 @@ function(action, entity, config){
     if(is.null(features)){
       if(!skipEnrichWithData){
         warnMsg <- sprintf("No data features associated to entity '%s' and global option 'skipEnrichWithData' is false. Skip feature catalogue creation", entity$identifiers[["id"]])
-        config$logger.warn(warnMsg)
+        config$logger$WARN(warnMsg)
         fc = FALSE
       }else{
         fto <- entity$data$featureTypeObj
         if(!is.null(fto)){
           infoMsg <- "Global option 'skipEnrichWithData' is true. Feature catalogue will be created based on the dictionary only"
-          config$logger.info(infoMsg)
+          config$logger$INFO(infoMsg)
           build_catalog_from_features = FALSE
         }else{
           warnMsg <- "Global option 'skipEnrichWithData' is true, but no dictionary available. Skip feature catalogue creation"
-          config$logger.warn(warnMsg)
+          config$logger$WARN(warnMsg)
           fc = FALSE
         }
       }
@@ -408,7 +408,7 @@ function(action, entity, config){
     for(featureAttrName in columns){
       
       if(featureAttrName %in% fc_exclude_attributes){
-        config$logger.warn(sprintf("Feature Attribute '%s' is listed in 'fc_exclude_attributes'. Discarding it...", featureAttrName)) 
+        config$logger$WARN(sprintf("Feature Attribute '%s' is listed in 'fc_exclude_attributes'. Discarding it...", featureAttrName)) 
         next
       }
       
@@ -431,7 +431,7 @@ function(action, entity, config){
           if(length(registers)>0) registers <- registers[sapply(registers, function(x){x$id == registerId})]
           if(length(registers)==0){
             warnMsg <- sprintf("Unknown register '%s'. Ignored for creating feature catalogue", registerId)
-            config$logger.warn(warnMsg)
+            config$logger$WARN(warnMsg)
           }else{
             fat_attr_register <- registers[[1]]
           }
@@ -439,7 +439,7 @@ function(action, entity, config){
         if(!is.null(fat_attr_desc)) memberName <- fat_attr_desc
       }else{
         if(fc_exclude_attributes_not_in_dictionary){
-          config$logger.warn(sprintf("Feature Attribute '%s' not referenced in dictionary and 'fc_exclude_attributes_not_in_dictionary' option is enabled. Discarding it...", featureAttrName)) 
+          config$logger$WARN(sprintf("Feature Attribute '%s' not referenced in dictionary and 'fc_exclude_attributes_not_in_dictionary' option is enabled. Discarding it...", featureAttrName)) 
           next
         }
       }
@@ -478,7 +478,7 @@ function(action, entity, config){
       }
       fat$listedValue = list()
       if(!is.null(featureAttrValues) & addValues){
-        config$logger.info(sprintf("Listing values for feature Attribute '%s'...", featureAttrName)) 
+        config$logger$INFO("Listing values for feature Attribute '%s'...", featureAttrName)
         featureAttrValues <- unique(featureAttrValues)
         featureAttrValues <- featureAttrValues[order(featureAttrValues)]
         for(featureAttrValue in featureAttrValues){
@@ -498,7 +498,7 @@ function(action, entity, config){
           }
         }
       }else{
-        config$logger.warn(sprintf("Skip listing values for feature Attribute '%s'...", featureAttrName))
+        config$logger$WARN(sprintf("Skip listing values for feature Attribute '%s'...", featureAttrName))
       }
       
       #add primitive type + data type (attribute or variable) as valueType
@@ -525,7 +525,7 @@ function(action, entity, config){
                type
         )
       }
-      config$logger.info(sprintf("Set primitive type '%s' for feature Attribute '%s'...", fat_type, featureAttrName))
+      config$logger$INFO("Set primitive type '%s' for feature Attribute '%s'...", fat_type, featureAttrName)
       fat_generic_type <- if(build_catalog_from_features){
         switch(class(featureAttrValues[1])[1],
                "integer" = "variable",
@@ -535,13 +535,13 @@ function(action, entity, config){
       }else{
         if(!is.null(fto)) fto$getMemberById(featureAttrName)$type else "attribute"
       }
-      config$logger.info(sprintf("Feature member generic type for '%s': %s", featureAttrName, fat_generic_type))
+      config$logger$INFO("Feature member generic type for '%s': %s", featureAttrName, fat_generic_type)
       if(!is.null(fat_attr)) fat_generic_type <- fat_attr$type
       fat_type_anchor <- fat_type #ISOAnchor$new(name = fat_type, href = fat_generic_type)
       fat$valueType = fat_type_anchor
       
       #add feature attribute as carrierOfCharacteristic
-      config$logger.info(sprintf("Add carrier of characteristics for feature Attribute '%s'...", featureAttrName))
+      config$logger$INFO("Add carrier of characteristics for feature Attribute '%s'...", featureAttrName)
       ft$carrierOfCharacteristics[[length(ft$carrierOfCharacteristics)+1]] = fat
     }
     
@@ -560,7 +560,7 @@ function(action, entity, config){
   )
   
   if(output$response$status == "success"){
-    config$logger.info(sprintf("Project '%s' successfully submitted to metadata editor", entity$identifiers$id))
+    config$logger$INFO("Project '%s' successfully submitted to metadata editor", entity$identifiers$id)
   }
   
   #add resources
@@ -618,7 +618,7 @@ function(action, entity, config){
     #data
     data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern)
     for(data_file in data_files){
-      config$logger.info(sprintf("Upload data file '%s'", data_file))
+      config$logger$INFO("Upload data file '%s'", data_file)
       metadataeditr::resources_add(
         idno = entity$identifiers[["id"]],
         dctype = "dat",
@@ -629,7 +629,7 @@ function(action, entity, config){
     #metadata
     # metadata_files <- list.files(file.path(getwd(),"metadata"), pattern = depositMetadataPattern)
     # for(metadata_file in metadata_files){
-    #   config$logger.info(sprintf("Upload metadata file '%s'", metadata_file))
+    #   config$logger$INFO("Upload metadata file '%s'", metadata_file)
     #   metadataeditr::resources_add(
     #     idno = entity$identifiers[["id"]],
     #     dctype = "dat",

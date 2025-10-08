@@ -8,7 +8,7 @@ function(action, entity, config){
   #skipDataDownload
   skipDataDownload = FALSE
   if(!is.null(config$profile$options$skipFileDownload)){
-    config$logger.warn("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
+    config$logger$WARN("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
     skipDataDownload = config$profile$options$skipFileDownload
   }
   skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
@@ -25,19 +25,19 @@ function(action, entity, config){
   SWORD_CONFIG <- config$software$output$sword_for_dataverse_config
   if(is.null(SWORD)){
     errMsg <- "This action requires a Dataverse SWORD software to be declared in the configuration"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
   target_dataverse_id <- NULL
   if(is.null(SWORD_CONFIG$properties$dataverse)){
     errMsg <- "Missing target 'dataverse' in config. Search for entity-based 'dataverse'..."
-    config$logger.warn(errMsg)
+    config$logger$WARN(errMsg)
     if(is.null(entity$data$dataverse)){
       errMsg <- "No entity-based 'dataverse' defined"
-      config$logger.warn(errMsg)
+      config$logger$WARN(errMsg)
       errMsg <- "A 'dataverse' id is required to trigger the Dataverse SWORD deposit action"
-      config$logger.error(errMsg)
+      config$logger$ERROR(errMsg)
       stop(errMsg)
     }else{
       target_dataverse_id <- entity$data$dataverse
@@ -49,10 +49,10 @@ function(action, entity, config){
   #grab dataverse
   dataverse_exists <- any(sapply(SWORD$listCollections(), function(x){endsWith(x$href, target_dataverse_id)}))
   if(dataverse_exists){
-    config$logger.info(sprintf("Successfully fetched dataverse for id '%s':", target_dataverse_id))
+    config$logger$INFO("Successfully fetched dataverse for id '%s':", target_dataverse_id)
   }else{
     errMsg <- sprintf("Error while fetching dataverse for id '%s'. Unknown dataverse", target_dataverse_id)
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
@@ -167,7 +167,7 @@ function(action, entity, config){
   #save Dublin Core XML to metadata folder
   xml_file <- file.path(getwd(), "metadata", paste0(entity$getEntityJobDirname(), "_DC.xml"))
   dcentry$save(xml_file)
-  config$logger.info(sprintf("Dublin Core XML metadata file saved at '%s'", xml_file))
+  config$logger$INFO("Dublin Core XML metadata file saved at '%s'", xml_file)
   
   #action (create/update) on dataverse
   doi <- entity$identifiers[["doi"]]
@@ -175,32 +175,32 @@ function(action, entity, config){
   update <- action == "UPDATE"
   out <- switch(action,
                 "CREATE" = {
-                  config$logger.info(sprintf("Creating dataverse record in dataverse '%s'", target_dataverse_id))
+                  config$logger$INFO("Creating dataverse record in dataverse '%s'", target_dataverse_id)
                   rec <- try(SWORD$createDataverseRecord(target_dataverse_id, dcentry))
                   if(!is(rec, "try-error")){
-                    config$logger.info("Dataverse record successfuly created!")
+                    config$logger$INFO("Dataverse record successfuly created!")
                     doi <- unlist(strsplit(rec$id, "doi:"))[2] #we need the reserved doi to add files
                     rec
                   }else{
                     errMsg <- "Error while creating new dataverse record"
-                    config$logger.error(errMsg)
+                    config$logger$ERROR(errMsg)
                     stop(errMsg)
                   }
                 },
                 "UPDATE" = {
                   if(update_metadata){
-                    config$logger.info(sprintf("Updating dataverse record for doi '%s'", doi))
+                    config$logger$INFO("Updating dataverse record for doi '%s'", doi)
                     rec <- try(SWORD$updateDataverseRecord(target_dataverse_id, dcentry, paste0("doi:", doi)))
                     if(!is(rec, "try-error")){
-                      config$logger.info("Dataverse record successfuly updated!")
+                      config$logger$INFO("Dataverse record successfuly updated!")
                       rec
                     }else{
                       errMsg <- "Error while updating dataverse record"
-                      config$logger.error(errMsg)
+                      config$logger$ERROR(errMsg)
                       stop(errMsg)
                     }
                   }else{
-                    config$logger.info(sprintf("Skip updating dataverse record for doi '%s' (option 'update_metadata' is FALSE)", doi))
+                    config$logger$INFO("Skip updating dataverse record for doi '%s' (option 'update_metadata' is FALSE)", doi)
                     SWORD$getDataverseRecord(paste0("doi:", doi))
                   }
                 }
@@ -209,12 +209,12 @@ function(action, entity, config){
   #delete/add files
   if(depositWithFiles & (!update | (update & update_files))){
     if(deleteOldFiles & !skipDataDownload){
-      config$logger.info("Dataverse: deleting old files...")
+      config$logger$INFO("Dataverse: deleting old files...")
       deleted <- SWORD$deleteFilesFromDataverseRecord(paste0("doi:", doi))
-      config$logger.info("Dataverse: files deletion status:")
-      config$logger.info(deleted)
+      config$logger$INFO("Dataverse: files deletion status:")
+      config$logger$INFO(deleted)
     }
-    config$logger.info("Dataverse: adding files...")
+    config$logger$INFO("Dataverse: adding files...")
     #upload data files, if any
     data_files <- list.files(file.path(getwd(),"data"), full.names = T)
     if(length(data_files)>0){
@@ -222,10 +222,10 @@ function(action, entity, config){
       if(length(data_files)>0) data_files <- data_files[!endsWith(data_files, ".rds")]
       if(length(data_files)>0){
         if(entity$data$upload){
-          config$logger.info("Dataverse: uploading data files...")
+          config$logger$INFO("Dataverse: uploading data files...")
           uploaded <- mapply(FUN = SWORD$addFilesToDataverseRecord,paste0("doi:", doi),data_files)
         }else{
-          config$logger.warn("Dataverse: upload:false, skipping data files upload!")
+          config$logger$WARN("Dataverse: upload:false, skipping data files upload!")
         }
       }
     }
@@ -235,25 +235,25 @@ function(action, entity, config){
       metadata_files <- metadata_files[regexpr(entity$identifiers[["id"]],metadata_files)>0]
       if(length(metadata_files)>0) metadata_files <- metadata_files[!endsWith(metadata_files, ".rds")]
       if(length(metadata_files)>0){
-        config$logger.info("Dataverse: uploading metadata files...")
+        config$logger$INFO("Dataverse: uploading metadata files...")
         uploaded <- SWORD$addFilesToDataverseRecord(paste0("doi:", doi), files = metadata_files)
       }
     }
   }else{
-    config$logger.info("Skipping update of Dataverse record files (option 'update_files' and/or 'depositWithFiles FALSE)")
+    config$logger$INFO("Skipping update of Dataverse record files (option 'update_files' and/or 'depositWithFiles FALSE)")
   }
   
   #publish record?
   if(publish){
     #2d verification for publish action, need to have the DOI specified in the entity table
     if(is.null(entity$identifiers[["doi"]])){
-      config$logger.warn("No DOI specified in entity. Dataverse 'publish' action ignored!")
+      config$logger$WARN("No DOI specified in entity. Dataverse 'publish' action ignored!")
       publish <- FALSE
     }
     #3rd verification for publish action, need to check that DOI match the one prereserved
     if(!is.null(entity$identifiers[["doi"]])){
       if(doi != entity$identifiers[["doi"]]){ 
-        config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Dataverse record Concept DOI (%s). Zenodo 'publish' action ignored!", 
+        config$logger$WARN(sprintf("DOI specified (%s) in entity doesn't match Dataverse record Concept DOI (%s). Zenodo 'publish' action ignored!", 
                                    entity$identifiers[["doi"]], doi))
         publish <- FALSE
       }
@@ -261,13 +261,13 @@ function(action, entity, config){
     
     #publish
     if(publish){
-      config$logger.warn(sprintf("Dataverse: publishing record for DOI '%s'", doi))
+      config$logger$WARN(sprintf("Dataverse: publishing record for DOI '%s'", doi))
       rec <- try(SWORD$publishDataverseRecord(paste0("doi:", doi)))
       if(!is(rec,"try-error")){
-        config$logger.info("Dataverse record successfully published!")
+        config$logger$INFO("Dataverse record successfully published!")
       }else{
         errMsg <- "Error while publishing dataverse record"
-        config$logger.error(errMsg)
+        config$logger$ERROR(errMsg)
         stop(errMsg)
       }
     }
@@ -281,11 +281,11 @@ function(action, entity, config){
                       "UPDATE" = sprintf("Successfully updated Dataverse dataset with id '%s' (doi: %s)", 
                                          entity$identifiers[["id"]], doi)
     )
-    config$logger.info(infoMsg)
+    config$logger$INFO(infoMsg)
     
     #get the DOI assigned by Dataverse
     doi_to_save <- unlist(strsplit(out$id, "doi:"))[2]
-    config$logger.info(sprintf("Setting DOI '%s' (inherited from Dataverse) to save and export for record", doi_to_save))
+    config$logger$INFO("Setting DOI '%s' (inherited from Dataverse) to save and export for record", doi_to_save)
     for(i in 1:length(config$metadata$content$entities)){
       ent <- config$metadata$content$entities[[i]]
       if(ent$identifiers[["id"]]==entity$identifiers[["id"]]){

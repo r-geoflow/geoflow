@@ -8,7 +8,7 @@ function(action, entity, config){
   
   if(is.null(ZENODO)){
     errMsg <- "This action requires the Zenodo API to be declared in the configuration"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
@@ -16,7 +16,7 @@ function(action, entity, config){
   #skipDataDownload
   skipDataDownload = FALSE
   if(!is.null(config$profile$options$skipFileDownload)){
-    config$logger.warn("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
+    config$logger$WARN("Global option 'skipFileDownload' is deprecated, use 'skipDataDownload instead!")
     skipDataDownload = config$profile$options$skipFileDownload
   }
   skipDataDownload <- if(!is.null(config$profile$options$skipDataDownload)) config$profile$options$skipDataDownload else FALSE
@@ -96,8 +96,8 @@ function(action, entity, config){
   update <- FALSE
   record_status <- NULL
   if(is.null(zenodo_metadata)){
-    config$logger.info(sprintf("Zenodo: No existing Zenodo record with related identifier '%s'", entity$identifiers[["id"]]))
-    config$logger.info("Zenodo: creating a new deposit empty record")
+    config$logger$INFO("Zenodo: No existing Zenodo record with related identifier '%s'", entity$identifiers[["id"]])
+    config$logger$INFO("Zenodo: creating a new deposit empty record")
     reserveDOI = TRUE
     if(!is.null(entity$identifiers[["doi"]])) if(regexpr("zenodo", entity$identifiers[["doi"]])<0){
       reserveDOI = FALSE
@@ -113,7 +113,7 @@ function(action, entity, config){
     )
     record_status <- zenodo_metadata$status
   }else{
-    config$logger.info(sprintf("Zenodo: Existing record with related identifier '%s' ('other' scheme)", entity$identifiers[["id"]]))
+    config$logger$INFO("Zenodo: Existing record with related identifier '%s' ('other' scheme)", entity$identifiers[["id"]])
     update <- TRUE
     record_status <- zenodo_metadata$status
     
@@ -123,7 +123,7 @@ function(action, entity, config){
       if(!depositWithFiles){
         #the first run of the action will be skipped and we will wait for the final generic_uploader run
         #with depositWithFiles=TRUE to run the version to avoid two versions to be created
-        config$logger.info(sprintf("Zenodo: record '%s' already published. Skip 1st run to create version with generic uploader at the end of the workflow", zenodo_metadata$id))
+        config$logger$INFO("Zenodo: record '%s' already published. Skip 1st run to create version with generic uploader at the end of the workflow", zenodo_metadata$id)
         return(TRUE)
       }
     }
@@ -133,7 +133,7 @@ function(action, entity, config){
        zenodo_metadata$is_published &&
        !zenodo_metadata$is_draft &&
        strategy == "edition"){
-      config$logger.info(sprintf("Zenodo: record '%s' already published. Need to unlock it for edition", zenodo_metadata$id))
+      config$logger$INFO("Zenodo: record '%s' already published. Need to unlock it for edition", zenodo_metadata$id)
       unlocked_rec <- ZENODO$editRecord(zenodo_metadata$id)
       if(is(unlocked_rec, "ZenodoRecord")){
         zenodo_metadata <- unlocked_rec
@@ -141,7 +141,7 @@ function(action, entity, config){
     }
     
     if(record_status == "new_version_draft"){
-      config$logger.info("Draft version already set. Discard initial changes before publishing new version...")
+      config$logger$INFO("Draft version already set. Discard initial changes before publishing new version...")
       ZENODO$discardChanges(zenodo_metadata$id)
       zenodo_metadata = get_zenodo_metadata()
       record_status = zenodo_metadata$status
@@ -163,15 +163,15 @@ function(action, entity, config){
   #if entity comes with a foreign DOI (not assigned by Zenodo)
   #we set the DOI (which set prereserve_doi to FALSE)
   if(!is.null(doi)) if(regexpr("zenodo", doi)<0){
-    config$logger.info("Zenodo: Existing foreign DOI (not assigned by Zenodo). Setting foreign DOI and prereserve_doi to 'FALSE'")
+    config$logger$INFO("Zenodo: Existing foreign DOI (not assigned by Zenodo). Setting foreign DOI and prereserve_doi to 'FALSE'")
     zenodo_metadata$setDOI(doi)
   }
   
   if(!update | (update & update_metadata)){
     if(update){
-      config$logger.info("Updating Zenodo record metadata properties")
+      config$logger$INFO("Updating Zenodo record metadata properties")
     }else{
-      config$logger.info("Setting Zenodo record metadata properties")
+      config$logger$INFO("Setting Zenodo record metadata properties")
     }
     #language
     zenodo_metadata$metadata$languages = list()
@@ -302,7 +302,7 @@ function(action, entity, config){
       if(length(entity$contacts)>0){
         contacts <- entity$contacts[sapply(entity$contacts, function(x){x$role == zenodo_role_type})]
         if(length(contacts)>0){
-          config$logger.info(sprintf("Adding contributors with role '%s'", zenodo_role_type))
+          config$logger$INFO("Adding contributors with role '%s'", zenodo_role_type)
           for(contact in contacts){
           
             #manage orcid? ror?
@@ -352,8 +352,8 @@ function(action, entity, config){
         if(!is.null(the_license)){
           zenodo_metadata$setLicense(license, sandbox = ZENODO$sandbox)
         }else{
-          config$logger.warn(sprintf("Zenodo :license specified (%s) in entity doesn't match Zenodo accepted list of licenses. license %s ignored!", 
-                                     license,license))
+          config$logger$WARN("Zenodo :license specified (%s) in entity doesn't match Zenodo accepted list of licenses. license %s ignored!", 
+                                     license,license)
         }  
       }
     }
@@ -363,22 +363,22 @@ function(action, entity, config){
     # Access right with the following values: 'public','restricted'
     if(length(entity$rights)>0){
         accessRights <- entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "accessright"})]
-        config$logger.info(sprintf("accessRight: '%s'", accessRights))
+        config$logger$INFO("accessRight: '%s'", accessRights)
         if(length(accessRights)>0){
         accessRight <- accessRights[[1]]$values[[1]]
-        config$logger.info(sprintf("accessRight Value: '%s'", accessRight))
+        config$logger$INFO("accessRight Value: '%s'", accessRight)
         zenodo_metadata$setAccessPolicyFiles(accessRight)
         if(accessRight == "restricted"){
           #manage embargo
           embargoDates <- entity$dates[sapply(entity$dates, function(date){date$key == "embargo"})]
           if(length(embargoDates)>0){
             embargoDate = embargoDates[[1]]$value
-            config$logger.info(sprintf("Setting embargo date '%s'", embargoDate))
+            config$logger$INFO("Setting embargo date '%s'", embargoDate)
             embargoReason = ""
             embargoReasons = entity$rights[sapply(entity$rights, function(x){tolower(x$key) == "embargoreason"})]
             if(length(embargoReasons)>0){
               embargoReason = embargoReasons[[1]]$values[[1]]
-              config$logger.info(sprintf("Setting embargo reason: %s", embargoReason))
+              config$logger$INFO("Setting embargo reason: %s", embargoReason)
             }
             zenodo_metadata$setAccessPolicyEmbargo(active = TRUE, until = as.Date(embargoDate), reason = embargoReason)
           }
@@ -390,11 +390,11 @@ function(action, entity, config){
           # }
         }
       }else{
-        config$logger.info(sprintf("Zenodo: accessRight specified in entity not available. accessRight will be set to public!"))
+        config$logger$INFO("Zenodo: accessRight specified in entity not available. accessRight will be set to public!")
         zenodo_metadata$setAccessPolicyFiles("public")
       }
     }else{
-        config$logger.info(sprintf("Zenodo: Rights is empty. accessRight will be set to public!"))
+        config$logger$INFO("Zenodo: Rights is empty. accessRight will be set to public!")
       zenodo_metadata$setAccessPolicyFiles("public")
     }
     
@@ -422,14 +422,14 @@ function(action, entity, config){
     }
     
   }else{
-    config$logger.info("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")
+    config$logger$INFO("Skipping update of Zenodo record metadata (option 'update_metadata' FALSE)")
   }
   
   #file uploads (for new or edited records)
   #note: for new versions this is managed directly with ZENODO$depositRecordVersion
   if(depositWithFiles & (!update | (update & update_files)) & record_status == "draft" & zenodo_metadata$is_draft){
     if(deleteOldFiles & !skipDataDownload){
-      config$logger.info("Zenodo: deleting old files...")
+      config$logger$INFO("Zenodo: deleting old files...")
       zen_files <- ZENODO$getFiles(zenodo_metadata$id)
       if(length(zen_files)>0){
         for(zen_file in zen_files){
@@ -437,16 +437,16 @@ function(action, entity, config){
         }
       }
     }
-    config$logger.info("Zenodo: uploading files...")
+    config$logger$INFO("Zenodo: uploading files...")
     #upload data files, if any
     data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern)
     if(length(data_files)>0){
       if(entity$data$upload){
         
         if(zipEachDataFile){
-          config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
+          config$logger$INFO("Zenodo: 'zipEachDaTafile' is true - zipping data files")
           data_files <- lapply(data_files, function(data_file){
-            config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
+            config$logger$INFO("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file)
             fileparts <- unlist(strsplit(basename(data_file), "\\."))
             fileext <- NULL
             if(length(fileparts)>1){
@@ -465,13 +465,13 @@ function(action, entity, config){
           })
         }
         
-        config$logger.info("Zenodo: uploading data files...")
+        config$logger$INFO("Zenodo: uploading data files...")
         for(data_file in data_files){
-          config$logger.info(sprintf("Zenodo: uploading data file '%s'", data_file))
+          config$logger$INFO("Zenodo: uploading data file '%s'", data_file)
           ZENODO$uploadFile(file.path(getwd(), "data", data_file), record = zenodo_metadata)
         }
       }else{
-        config$logger.warn("Zenodo: entity data 'upload' is false, skip data files upload...")
+        config$logger$WARN("Zenodo: entity data 'upload' is false, skip data files upload...")
       }
     }
     #upload metadata files, if any
@@ -480,47 +480,47 @@ function(action, entity, config){
       if(length(metadata_files)>0) metadata_files <- metadata_files[!endsWith(metadata_files, ".rds")]
       if(length(metadata_files)>0){
         if(entity$data$upload){
-          config$logger.info("Zenodo: uploading metadata files...")
+          config$logger$INFO("Zenodo: uploading metadata files...")
           for(metadata_file in metadata_files){
-            config$logger.info(sprintf("Zenodo: uploading metadata file '%s'", metadata_file))
+            config$logger$INFO("Zenodo: uploading metadata file '%s'", metadata_file)
             ZENODO$uploadFile(file.path(getwd(), "metadata",metadata_file), record = zenodo_metadata)
           }
         }else{
-          config$logger.warn("Zenodo: entity data 'upload' is false, skip metadata files upload...")
+          config$logger$WARN("Zenodo: entity data 'upload' is false, skip metadata files upload...")
         }
       }
     }
   }else{
-    config$logger.info("Skipping update of Zenodo record files (option 'update_files' and/or 'depositWithFiles FALSE)")
+    config$logger$INFO("Skipping update of Zenodo record files (option 'update_files' and/or 'depositWithFiles FALSE)")
   }
   
   #deposit (and publish, if specified in options)
   if(publish){
     #2d verification for publish action, need to have the DOI specified in the entity table
     if(is.null(entity$identifiers[["doi"]])){
-      config$logger.warn("No DOI specified in entity. Zenodo 'publish' action ignored!")
+      config$logger$WARN("No DOI specified in entity. Zenodo 'publish' action ignored!")
       publish <- FALSE
     }
     #3rd verification for publish action, need to check that DOI match the one prereserved
     if(!is.null(entity$identifiers[["doi"]])){
       if(regexpr("zenodo", doi)>0) if(doi != entity$identifiers[["doi"]]){ 
-        config$logger.warn(sprintf("DOI specified (%s) in entity doesn't match Zenodo record Concept DOI (%s). Zenodo 'publish' action ignored!", 
-                                   entity$identifiers[["doi"]], doi))
+        config$logger$WARN("DOI specified (%s) in entity doesn't match Zenodo record Concept DOI (%s). Zenodo 'publish' action ignored!", 
+                                   entity$identifiers[["doi"]], doi)
         publish <- FALSE
       }
     }
   }
-  config$logger.info(sprintf("Current record status: %s", record_status))
+  config$logger$INFO("Current record status: %s", record_status)
   out <- switch(record_status,
                 "draft" = {
-                  config$logger.info(sprintf("Deposit draft record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+                  config$logger$INFO("Deposit draft record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish)))
                   ZENODO$depositRecord(
                     zenodo_metadata,
                     publish = FALSE #management of publication later
                   )
                 },
                 "draft_with_review" = {
-                  config$logger.info(sprintf("Deposit draft record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+                  config$logger$INFO("Deposit draft record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish)))
                   ZENODO$depositRecord(
                     zenodo_metadata,
                     publish = FALSE #management of publication later
@@ -529,17 +529,17 @@ function(action, entity, config){
                 "published" = {
                   switch(strategy,
                    "edition" = {
-                     config$logger.info(sprintf("Edit published record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+                     config$logger$INFO("Edit published record with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish)))
                      ZENODO$depositRecord(zenodo_metadata, publish = FALSE) #management of publication later
                     },
                    "newversion" = {
-                     config$logger.info(sprintf("Deposit record version with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+                     config$logger$INFO("Deposit record version with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish)))
                      data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern, full.names = T)
                      
                      if(zipEachDataFile){
-                       config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
+                       config$logger$INFO("Zenodo: 'zipEachDaTafile' is true - zipping data files")
                        data_files <- lapply(data_files, function(data_file){
-                         config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
+                         config$logger$INFO("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file)
                          fileparts <- unlist(strsplit(basename(data_file), "\\."))
                          fileext <- NULL
                          if(length(fileparts)>1){
@@ -561,7 +561,7 @@ function(action, entity, config){
                      metadata_files <- list.files(file.path(getwd(),"metadata"), full.names = TRUE)
                      files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
                      
-                     config$logger.info("Deposit record version...")
+                     config$logger$INFO("Deposit record version...")
                      ZENODO$depositRecordVersion(
                        record = zenodo_metadata, 
                        delete_latest_files = deleteOldFiles,
@@ -574,13 +574,13 @@ function(action, entity, config){
                 "new_version_draft" = {
                   switch(strategy,
                     "newversion" = {
-                     config$logger.info(sprintf("Deposit record version with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish))))
+                     config$logger$INFO("Deposit record version with id '%s' - publish = %s", zenodo_metadata$id, tolower(as.character(publish)))
                      data_files <- list.files(file.path(getwd(),"data"), pattern = depositDataPattern, full.names = T)
                      
                      if(zipEachDataFile){
-                       config$logger.info("Zenodo: 'zipEachDaTafile' is true - zipping data files")
+                       config$logger$INFO("Zenodo: 'zipEachDaTafile' is true - zipping data files")
                        data_files <- lapply(data_files, function(data_file){
-                         config$logger.info(sprintf("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file))
+                         config$logger$INFO("Zenodo: 'zipEachDaTafile' is true - zipping each data file '%s'", data_file)
                          fileparts <- unlist(strsplit(basename(data_file), "\\."))
                          fileext <- NULL
                          if(length(fileparts)>1){
@@ -602,7 +602,7 @@ function(action, entity, config){
                      metadata_files <- list.files(file.path(getwd(),"metadata"), full.names = TRUE)
                      files_to_upload <- if(depositWithFiles & (!update | (update & update_files))) c(data_files, metadata_files) else NULL
                      
-                     config$logger.info("Deposit record version...")
+                     config$logger$INFO("Deposit record version...")
                      ZENODO$depositRecordVersion(
                        record = zenodo_metadata, 
                        delete_latest_files = deleteOldFiles,
@@ -615,37 +615,37 @@ function(action, entity, config){
   )
   if(!is(out,"ZenodoRecord")){
     errMsg <- sprintf("Zenodo: %s", out$errors[[1]]$message)
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }else{
     
     if(publish){
       if(review){
         #publication is delegated to a review procedure by a community
-        config$logger.info("Delegated record publication (through community review)")
+        config$logger$INFO("Delegated record publication (through community review)")
         goReview = FALSE
         if(length(communities)>0){
           zen_com = ZENODO$getCommunityById(communities[1])
           if(!is.null(zen_com)){
             goReview = TRUE
           }else{
-            config$logger.warn(sprintf("Community '%s' doesn't exist, aborting submission of record for review", communities[1]))
+            config$logger$WARN(sprintf("Community '%s' doesn't exist, aborting submission of record for review", communities[1]))
           }
         }else{
-          config$logger.warn(sprintf("No community defined, aborting submission of record for review"))
+          config$logger$WARN(sprintf("No community defined, aborting submission of record for review"))
         }
         
         if(goReview){
           ZENODO$createReviewRequest(out, community = communities[1])
           submitted_for_review = ZENODO$submitRecordForReview(out$id)
           if(!submitted_for_review){
-            config$logger.warn(sprintf("Record submission for review to community '%s' didn't work as expected, aborting...", communities[1]))
+            config$logger$WARN(sprintf("Record submission for review to community '%s' didn't work as expected, aborting...", communities[1]))
             ZENDO$deleteReviewRequest(out)
           }
         }
       }else{
         #direct publication without review by a community
-        config$logger.info("Direct record publication (without review)")
+        config$logger$INFO("Direct record publication (without review)")
         out = ZENODO$publishRecord(out$id)
       }
     }
@@ -658,9 +658,9 @@ function(action, entity, config){
     #If the geoflow user is maintainer of this community, make possible to accept immediatly the record
     if(length(communities)>0){
       if(out$status == "published"){
-        config$logger.info("Adding published record to communities")
+        config$logger$INFO("Adding published record to communities")
         for(community in communities){
-          config$logger.info(sprintf("-> Processing community %s", community))
+          config$logger$INFO("-> Processing community %s", community)
           zen_com = ZENODO$getCommunityById(community)
           #we check the comunity exists
           if(!is.null(zen_com)){
@@ -681,7 +681,7 @@ function(action, entity, config){
           }
         }
       }else{
-        config$logger.info("Record is not published, abort addition to communities!")
+        config$logger$INFO("Record is not published, abort addition to communities!")
       }
     }
   }
@@ -689,7 +689,7 @@ function(action, entity, config){
   #we set the (prereserved) doi to the entity in question
   doi_to_save <- out$pids$doi$identifier
   if(!is.null(entity$identifiers[["doi"]])) doi_to_save <- entity$identifiers[["doi"]]
-  config$logger.info(sprintf("Setting DOI '%s' to save and export for record",doi_to_save))
+  config$logger$INFO("Setting DOI '%s' to save and export for record",doi_to_save)
   for(i in 1:length(config$metadata$content$entities)){
     ent <- config$metadata$content$entities[[i]]
     if(ent$identifiers[["id"]]==entity$identifiers[["id"]]){
@@ -707,7 +707,7 @@ function(action, entity, config){
   
   #if publish, we save all
   if(publish){
-    config$logger.info(sprintf("Export record '%s' to Zenodo metadata formats", out$getConceptDOI()))
+    config$logger$INFO("Export record '%s' to Zenodo metadata formats", out$getConceptDOI())
     out$exportAsAllFormats(file.path(getwd(),"metadata",entity$identifiers[["id"]]))
   }
   

@@ -6,7 +6,7 @@
 #' @usage initWorkflow(file, dir, jobDirPath, handleMetadata, session)
 #'                 
 #' @param file a JSON or YAML configuration file
-#' @param dir a directory where to execute the workflow
+#' @param dir a directory where to execute the workflow.
 #' @param jobDirPath a directory set-up for the job. Default is \code{NULL} means it will be created
 #'  during initialization of the workflow, otherwise the path provided will be used.
 #' @param handleMetadata Default is \code{TRUE}. Metadata contacts/entities/dictionary will be handled.
@@ -18,8 +18,11 @@
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'
-initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TRUE, session = NULL){
+initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, session = NULL){
 
+  wd <- getwd()
+  on.exit(setwd(wd))
+  
   #optional shiny session object
   if(!is.null(session)) if(!is(session, "ShinySession")){
     stop("The 'session' argument should specify an object of class 'ShinySession'")
@@ -47,17 +50,19 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   config$src_config <- config
   
   #worfklow config$loggers
-  config <- add_config_utils(config)
-  
-  cat("Session info\n")
-  config$log_separator("=")
-  print(sessionInfo())
-  print(paste("* RAM:", round(benchmarkme::get_ram()/1e9,1),"GB"))
-  print(paste("* CPU:", benchmarkme::get_cpu()$no_of_cores,"cores"))
-  config$log_separator("=")
-  cat("Workflow initialization\n")
-  config$log_separator("=")
-  config$logger.info("Init Workflow configuration")
+  config <- add_config_logger(config)
+
+  if(config$verbose){
+    cat("Session info\n")
+    config$logger$separator("=")
+    print(sessionInfo())
+    print(paste("* RAM:", round(benchmarkme::get_ram()/1e9,1),"GB"))
+    print(paste("* CPU:", benchmarkme::get_cpu()$no_of_cores,"cores"))
+    config$logger$separator("=")
+    cat("Workflow initialization\n")
+    config$logger$separator("=")
+    config$logger$INFO("Init Workflow configuration")
+  }
   
   config_file <- config$src
   #working dir (where jobs will be created)
@@ -65,10 +70,9 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   if(is.null(config$wd)) config$wd <- tools::file_path_as_absolute(dir)
   if(is.null(jobDirPath)) jobDirPath <- initWorkflowJob(dir = dir)
   config$job <- jobDirPath
-  config$logger.info(sprintf("Workflow job directory: %s", jobDirPath))
+  config$logger$INFO("Workflow job directory: %s", jobDirPath)
   
   #copy configuration file
-  wd <- getwd()
   setwd(jobDirPath)
   file.copy(from = config_file, to = getwd())
   #rename copied file
@@ -79,28 +83,28 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   #profile
   profile <- NULL
   if(!is.null(config$profile)){
-    config$logger.info("Creating workflow profile...")
+    config$logger$INFO("Creating workflow profile...")
     profile <- geoflow_profile$new()
     #identifier
     if(!is.null(config$profile$id)){
       profile$setId(config$profile$id)
     }else{
-      config$logger.warn("Configuration file TO UPDATE: 'id' should be defined in profile!")
+      config$logger$WARN("Configuration file TO UPDATE: 'id' should be defined in profile!")
       profile$setId(config$id)
     }
-    config$logger.info(sprintf("Workflow ID: %s", profile$id))
+    config$logger$INFO("Workflow ID: %s", profile$id)
     #other workflow metadata
     if(!is.null(config$profile$name)){
       profile$setName(config$profile$name)
-      config$logger.info(sprintf("Workflow name: %s", profile$name))
+      config$logger$INFO("Workflow name: %s", profile$name)
     }
     if(!is.null(config$profile$project)){
       profile$setProject(config$profile$project)
-      config$logger.info(sprintf("Workflow project: %s", profile$project))
+      config$logger$INFO("Workflow project: %s", profile$project)
     }
     if(!is.null(config$profile$organization)){
       profile$setOrganization(config$profile$organization)
-      config$logger.info(sprintf("Workflow organization: %s", profile$organization))
+      config$logger$INFO("Workflow organization: %s", profile$organization)
     }
     if(!is.null(config$profile$logos)){
       for(logo in config$profile$logos) profile$addLogo(logo)
@@ -110,7 +114,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
     if(!is.null(config$profile$mode)){
       cfg_mode <- config$profile$mode
     }else{
-      config$logger.warn("Configuration file TO UPDATE: 'mode' should be defined in profile!")
+      config$logger$WARN("Configuration file TO UPDATE: 'mode' should be defined in profile!")
       cfg_mode <- config$mode
     }
     if(!is.null(cfg_mode)){
@@ -118,35 +122,35 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
       if(!(cfg_mode %in% allowedModes)) {
         errMsg <- sprintf("The workflow '%s' mode is incorrect. Allowed values are [%s]",
                           cfg_mode, paste(allowedModes, collapse=","))
-        config$logger.error(errMsg)
+        config$logger$ERROR(errMsg)
         stop(errMsg)
       }
       profile$mode <- cfg_mode
     }else{
       warnMes <- "No workflow mode specified, 'raw' mode specified by default!"
-      config$logger.warn(warnMes)
+      config$logger$WARN(warnMes)
       profile$mode <- "raw"
     }
     #environment
     if(!is.null(config$profile$environment)) if(!is.null(config$profile$environment$file)){
-      config$logger.info(sprintf("Loading environment from env file '%s'", basename(config$profile$environment$file)))
+      config$logger$INFO("Loading environment from env file '%s'", basename(config$profile$environment$file))
       env_vars_before <- as.list(Sys.getenv())
       config$session_env <- env_vars_before
       loaded <- try(dotenv::load_dot_env(file = config$profile$environment$file))
       if(is(loaded,"try-error")){
         errMsg <- sprintf("Error while trying to load environment from env file '%s'", basename(config$profile$environment$file))
-        config$logger.error(errMsg)
+        config$logger$ERROR(errMsg)
         stop(errMsg)
       }else{
         env_vars_after <- as.list(Sys.getenv())
         env_vars <- setdiff(env_vars_after, env_vars_before)
-        config$logger.info("Workflow environment:")
+        config$logger$INFO("Workflow environment:")
         hide_env_vars <- c("PASSWORD", "PWD", "TOKEN")
         if(!is.null(config$profile$environment$hide_env_vars)) hide_env_vars <- unlist(config$profile$environment$hide_env_vars)
         for(env_var_name in names(env_vars)){
           env_var_value <- env_vars[[env_var_name]]
           if(any(sapply(hide_env_vars, regexpr, env_var_name)>0)) env_var_value <- "**********"
-          config$logger.info(sprintf("* %s = %s", env_var_name, env_var_value))
+          config$logger$INFO("* %s = %s", env_var_name, env_var_value)
         }
       }
     }
@@ -155,13 +159,13 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
     if(!is.null(config$profile$options)){
       cfg_options <- config$profile$options
     }else{
-      config$logger.warn("Configuration file TO UPDATE: 'options' should be defined in profile!")
+      config$logger$WARN("Configuration file TO UPDATE: 'options' should be defined in profile!")
       cfg_options <- config$options
     }
-    config$logger.info("Setting geoflow global options...")
+    config$logger$INFO("Setting geoflow global options...")
     config$profile$options <- cfg_options
     if(!is.null(config$profile$options$line_separator)){
-      config$logger.info(sprintf("Setting option 'line_separator' to '%s'", config$profile$options$line_separator))
+      config$logger$INFO("Setting option 'line_separator' to '%s'", config$profile$options$line_separator)
       set_line_separator(config$profile$options$line_separator)
     }
     for(option_name in names(config$profile$options)){
@@ -176,9 +180,9 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   #--------------------
   source_scripts <- config$dependencies$scripts
   if(length(source_scripts)>0){
-    config$logger.info("Loading R scripts...")
+    config$logger$INFO("Loading R scripts...")
     invisible(sapply(source_scripts,function(script){
-      config$logger.info(sprintf("Loading R script '%s'...", script))
+      config$logger$INFO("Loading R script '%s'...", script)
       source(script)
     }))
   }
@@ -204,12 +208,12 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
     for(software in software_configs){
       if(is.null(software$id)){
         errMsg <- "Sofware 'id' is missing. Please make sure to give an id to all declared software"
-        config$logger.info(errMsg)
+        config$logger$INFO(errMsg)
         stop(errMsg)
       }
       if(is.null(software$type)){
         errMsg <- "Sofware 'type' is missing. Please make sure to specify a type ('input' or 'output') to all declared software"
-        config$logger.info(errMsg)
+        config$logger$INFO(errMsg)
         stop(errMsg)
       }
       if(!(software$type %in% c("input","output"))){
@@ -221,20 +225,20 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
       if(embeddedSoftware){
         if(is.null(software$software_type)){
           errMsg <- sprintf("The 'software_type' is missing for software '%s'", software$id)
-          config$logger.info(errMsg)
+          config$logger$INFO(errMsg)
           stop(errMsg)
         }
       }
       
       if(!(software$software_type %in% sapply(supportedSoftware, function(x){x$software_type})) & embeddedSoftware){
         errMsg <- sprintf("Embedded Software type '%s' not supported by geoflow. Check the list of embedded software with R code: list_software()", software$software_type)
-        config$logger.error(errMsg)
+        config$logger$ERROR(errMsg)
         stop(errMsg)
       }
       client <- NULL
       if(embeddedSoftware){
         target_software <- supportedSoftware[sapply(supportedSoftware, function(x){x$software_type == software$software_type})][[1]]
-        config$logger.info(sprintf("Configuring %s software '%s' (%s)", software$type, software$id, software$software_type))
+        config$logger$INFO("Configuring %s software '%s' (%s)", software$type, software$id, software$software_type)
         target_software$setId(software$id)
         target_software$setType(software$type)
         if(!is.null(software$parameters)) target_software$setParameters(software$parameters)
@@ -249,12 +253,12 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         client_handler <- eval(parse(text=software$handler))
         if(is(client_handler,"try-error")){
           errMsg <- sprintf("Error while evaluating software handler '%s'", software$handler)
-          config$logger.error(errMsg)
+          config$logger$ERROR(errMsg)
           stop(errMsg)
         }
         client_params <- unlist(software[names(software)!="handler"])
         if(software$id == "ocs"){
-          config$logger.info("OCS connection details")
+          config$logger$INFO("OCS connection details")
           print(client_params)
         }
         client <- client_handler(client_params)
@@ -262,7 +266,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
       if(!is.null(config$software[[software$type]][[switch(software$type,"input"=software$id,"output"=software$software_type)]])){
         if(software$type=="input") errMsg <- sprintf("An input software with id '%s' has been already declared!", software$id)
         if(software$type=="output") errMsg <- sprintf("An output software with software type '%s' has been already declared!", software$software_type)
-        config$logger.error(errMsg)
+        config$logger$ERROR(errMsg)
         stop(errMsg)
       }
       config$software[[software$type]][[software$software_type]] <- if(!is.null(client)) client else software #return config in case software handler has no return
@@ -289,18 +293,18 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
       }
       
       #collating data structures (feature types) from handlers
-      config$logger.info("Loading dictionary data structures...")
+      config$logger$INFO("Loading dictionary data structures...")
       config$src_dictionary <- list()
       dicts <- lapply(cfg_md_dictionary, function(x){
-        config$logger.info(sprintf("Loading data structure definitions from '%s' [with '%s' handler]...", 
-                                   x$source, x$handler))
+        config$logger$INFO("Loading data structure definitions from '%s' [with '%s' handler]...", 
+                                   x$source, x$handler)
         
         md_dict_handler <- loadMetadataHandler(config, x, type = "dictionary")
         if(md_dict_handler$status == "deprecated"){
-          config$logger.warn(sprintf("Dictionary handler '%s' is deprecated. Notes: %s", 
+          config$logger$WARN(sprintf("Dictionary handler '%s' is deprecated. Notes: %s", 
                                      md_dict_handler$id, ifelse(nzchar(md_dict_handler$notes), md_dict_handler$notes, "-")))
         }
-        config$logger.info("Execute handler to load dictionary data structures...")
+        config$logger$INFO("Execute handler to load dictionary data structures...")
         dict <- md_dict_handler$fun(
           handler = md_dict_handler,
           source = x$source,
@@ -309,7 +313,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         
         if(!is(dict, "geoflow_dictionary")){
           errMsg <- "The output of the dictionary handler should return an object of class 'geoflow_dictionary'"
-          config$logger.error(errMsg)
+          config$logger$ERROR(errMsg)
           stop(errMsg)
         }
         
@@ -329,11 +333,11 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
       }
       if(!is(dictionary, "geoflow_dictionary")){
         errMsg <- "The output of the dictionary handler should return an object of class 'geoflow_dictionary'"
-        config$logger.error(errMsg)
+        config$logger$ERROR(errMsg)
         stop(errMsg)
       }
       
-      config$logger.info("Successfuly fetched dictionary !")
+      config$logger$INFO("Successfuly fetched dictionary !")
       config$metadata$content$dictionary <- dictionary
       config$registers <- dictionary$getRegisters()
       if(length(config$registers)==0) config$registers <- list()
@@ -355,7 +359,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         if(!isCustom){
           if(is.null(reg$id)){
             errMsg <- "An 'register' should have an id. Please check your configuration file. In case of a custom register, the id should be the function name."
-            config$logger.error(errMsg)
+            config$logger$ERROR(errMsg)
             stop(errMsg)
           }
           available_registers <- list_registers(raw=TRUE)
@@ -369,12 +373,12 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
           customfun <- eval(parse(text = reg$id))
           if(is(customfun,"try-error")){
             errMsg <- sprintf("Error while trying to evaluate custom function '%s", reg$id)
-            config$logger.error(errMsg)
+            config$logger$ERROR(errMsg)
             stop(errMsg)
           }
           if(!is(customfun,"function")){
             errMsg <- sprintf("'%s' is not a function!", reg$id)
-            config$logger.error(errMsg)
+            config$logger$ERROR(errMsg)
             stop(errMsg)
           }
           register_to_fetch <- geoflow_register$new(
@@ -400,7 +404,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   
   #metadata elements
   if(handleMetadata) if(!is.null(config$metadata)){
-    config$logger.info("Loading metadata elements...")
+    config$logger$INFO("Loading metadata elements...")
     if(is.null(config$metadata$content)) config$metadata$content <- list()
     
     #metadata contacts
@@ -413,17 +417,17 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         cfg_md_contacts <- config$metadata$contacts
       }
       #collating contacts from contact handlers
-      config$logger.info("Loading metadata contacts...")
+      config$logger$INFO("Loading metadata contacts...")
       config$src_contacts <- list()
       contacts <- do.call("c", lapply(cfg_md_contacts, function(x){
-        config$logger.info(sprintf("Loading metadata contacts from '%s' [with '%s' handler]...", 
-                                   x$source, x$handler))
+        config$logger$INFO("Loading metadata contacts from '%s' [with '%s' handler]...", 
+                                   x$source, x$handler)
         md_contact_handler <- loadMetadataHandler(config, x, type = "contacts")
         if(md_contact_handler$status == "deprecated"){
-          config$logger.warn(sprintf("Contact handler '%s' is deprecated. Notes: %s", 
+          config$logger$WARN(sprintf("Contact handler '%s' is deprecated. Notes: %s", 
                                      md_contact_handler$id, ifelse(nzchar(md_contact_handler$notes), md_contact_handler$notes, "-")))
         }
-        config$logger.info("Execute contact handler to load contacts...")
+        config$logger$INFO("Execute contact handler to load contacts...")
         contacts <- md_contact_handler$fun(
           handler = md_contact_handler, 
           source = x$source,
@@ -432,7 +436,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         
         if(!is(contacts, "list") | !all(sapply(contacts, is, "geoflow_contact"))){
           errMsg <- "The output of the contacts handler should return a list of objects of class 'geoflow_entity_contact'"
-          config$logger.error(errMsg)
+          config$logger$ERROR(errMsg)
           stop(errMsg)
         }
         
@@ -441,9 +445,9 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         return(contacts)
       }))
       
-      config$logger.info(sprintf("Successfuly fetched %s contacts!",length(contacts)))
+      config$logger$INFO("Successfuly fetched %s contacts!",length(contacts))
       config$metadata$content$contacts <- contacts
-      config$logger.info(sprintf("Successfuly loaded %s contacts!",length(contacts)))
+      config$logger$INFO("Successfuly loaded %s contacts!",length(contacts))
     }
     
     #metadata entities
@@ -456,17 +460,17 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         cfg_md_entities <- config$metadata$entities
       }
       #collating entities from entity handlers
-      config$logger.info("Loading metadata entities...")
+      config$logger$INFO("Loading metadata entities...")
       config$src_entities <- list()
       entities <- do.call("c", lapply(cfg_md_entities, function(x){
-        config$logger.info(sprintf("Loading metadata entities from '%s' [with '%s' handler]...", 
-                                   x$source, x$handler))
+        config$logger$INFO("Loading metadata entities from '%s' [with '%s' handler]...", 
+                                   x$source, x$handler)
         md_entity_handler <- loadMetadataHandler(config, x, type = "entities")
         if(md_entity_handler$status == "deprecated"){
-          config$logger.warn(sprintf("Entity handler '%s' is deprecated. Notes: %s", 
-                                     md_entity_handler$id, ifelse(nzchar(md_entity_handler$notes), md_entity_handler$notes, "-")))
+          config$logger$WARN("Entity handler '%s' is deprecated. Notes: %s", 
+                                     md_entity_handler$id, ifelse(nzchar(md_entity_handler$notes), md_entity_handler$notes, "-"))
         }
-        config$logger.info("Execute handler to load entities...")
+        config$logger$INFO("Execute handler to load entities...")
         entities <- md_entity_handler$fun(
           handler = md_entity_handler,
           source = x$source,
@@ -475,7 +479,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         
         if(!is(entities, "list") | !all(sapply(entities, is, "geoflow_entity"))){
           errMsg <- "The output of the entities handler should return a list of objects of class 'geoflow_entity'"
-          config$logger.error(errMsg)
+          config$logger$ERROR(errMsg)
           stop(errMsg)
         }
       
@@ -484,9 +488,9 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         return(entities)
       }))
         
-      config$logger.info(sprintf("Successfuly fetched %s entities!",length(entities)))
+      config$logger$INFO("Successfuly fetched %s entities!",length(entities))
       if(!is.null(config$metadata$content$contacts)){
-        config$logger.info("Enrich metadata entities from directory of contacts")
+        config$logger$INFO("Enrich metadata entities from directory of contacts")
         directory_of_contacts <- config$metadata$content$contacts
         #enrich entity contacts from contacts directory
         entities <- lapply(entities, function(entity){
@@ -501,7 +505,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
                 if(!all(is.null(contact_from_directory))){
                   if(length(contact_from_directory)>0){
                     if(length(contact_from_directory)>1 & length(unique(sapply(contact_from_directory, function(x){x$role})))>1){
-                      config$logger.warn("Warning: 2 contacts identified with same id/role! Check your contacts")
+                      config$logger$WARN("Warning: 2 contacts identified with same id/role! Check your contacts")
                     }
                     contact_from_directory <- contact_from_directory[[1]]
                     newcontact <- contact_from_directory$clone(deep=TRUE)
@@ -509,7 +513,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
                     newcontact$setRole(role)
                   }
                 }else{
-                  config$logger.warn(sprintf("Warning: contact %s is not registered in directory! Contact will be ignored!", id))
+                  config$logger$WARN(sprintf("Warning: contact %s is not registered in directory! Contact will be ignored!", id))
                 }
               }
             }
@@ -550,7 +554,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         })
       }
       config$metadata$content$entities <- entities
-      config$logger.info(sprintf("Successfuly loaded %s entities!",length(entities)))
+      config$logger$INFO("Successfuly loaded %s entities!",length(entities))
     }
     
   }
@@ -580,7 +584,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
       if(!isCustom){
         if(is.null(action$id)){
           errMsg <- "An 'action' should have an id. Please check your configuration file. In case of a custom action, the id should be the function name."
-          config$logger.error(errMsg)
+          config$logger$ERROR(errMsg)
           stop(errMsg)
         }
         #we try to find it among embedded actions
@@ -597,7 +601,7 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
         #options
         if(length(action$options)>0) if(!all(names(action$options) %in% names(action_to_trigger$available_options))){
           errMsg <- sprintf("Option(s) [%s] invalid for action '%s'", paste0(setdiff(names(action$options), names(action_to_trigger$available_options)), collapse=","), action$id)
-          config$logger.error(errMsg)
+          config$logger$ERROR(errMsg)
           stop(errMsg)
         }
         action_to_trigger$options <- action$options
@@ -606,31 +610,31 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
           customfun <- source(get_config_resource_path(config, action$script))$value
           if(is(customfun,"try-error")){
             errMsg <- sprintf("Error while trying to evaluate custom function'%s", action$id)
-            config$logger.error(errMsg)
+            config$logger$ERROR(errMsg)
             stop(errMsg)
           }
           if(!is(customfun,"function")){
             errMsg <- sprintf("'%s' is not a function!", action$id)
-            config$logger.error(errMsg)
+            config$logger$ERROR(errMsg)
             stop(errMsg)
           }
           funparams <- unlist(names(formals(customfun)))
           if(!("action" %in% funparams)){
-            config$logger.warn(sprintf("Action '%s' - Custom action arguments: [%s]", action$id, paste(funparams, collapse=",")))
+            config$logger$WARN(sprintf("Action '%s' - Custom action arguments: [%s]", action$id, paste(funparams, collapse=",")))
             errMsg <- sprintf("Missing parameter 'action' in function '%s'", action$id)
-            config$logger.error(errMsg)
+            config$logger$ERROR(errMsg)
             stop(errMsg)
           }
           if(!("entity" %in% funparams)){
-            config$logger.warn(sprintf("Custom action arguments: [%s]", paste(funparams, collapse=",")))
+            config$logger$WARN(sprintf("Custom action arguments: [%s]", paste(funparams, collapse=",")))
             errMsg <- sprintf("Missing parameter 'entity' in function '%s'", action$id)
-            config$logger.error(errMsg)
+            config$logger$ERROR(errMsg)
             stop(errMsg)
           }
           if(!("config" %in% funparams)){
-            config$logger.warn(sprintf("Custom action arguments: [%s]", paste(funparams, collapse=",")))
+            config$logger$WARN(sprintf("Custom action arguments: [%s]", paste(funparams, collapse=",")))
             errMsg <- sprintf("Missing parameter 'config' in function '%s'", action$id)
-            config$logger.error(errMsg)
+            config$logger$ERROR(errMsg)
             stop(errMsg)
           }
           action_to_trigger <- geoflow_action$new(
@@ -664,16 +668,16 @@ initWorkflow <- function(file, dir = ".", jobDirPath = NULL, handleMetadata = TR
   for(directory in directories){
     if (!file.exists(directory)){
       dir_name <- file.path(config$job, directory)
-      config$logger.info(sprintf("Creating '%s' job directory: %s",directory, dir_name))
+      config$logger$INFO("Creating '%s' job directory: %s",directory, dir_name)
       dir.create(dir_name)
     }
   }
   
   if(config$profile$mode == "raw"){
-    config$logger.info("Copying raw action scripts to job directory")
+    config$logger$INFO("Copying raw action scripts to job directory")
     if(length(config$actions)>0) for(i in 1:length(config$actions)){
       action = config$actions[[i]]
-      config$logger.info(sprintf("Copying %s ...", action$script))
+      config$logger$INFO("Copying %s ...", action$script)
       file.copy(from = file.path(config$wd, action$script), to = jobDirPath)
       config$actions[[i]]$script = basename(action$script)
     }

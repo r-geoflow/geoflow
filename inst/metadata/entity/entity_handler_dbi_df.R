@@ -24,7 +24,7 @@ handle_entities_dbi_df = function(handler, source, config){
       entity = fetch_layer_styles_from_dbi(entity, dbi, schema, expected_table_id)
     }else{
       warnMsg = sprintf("No DB table named '%s' available, skipping data enrichment from DB!", expected_table_id)
-      config$logger.warn(warnMsg)
+      config$logger$WARN(warnMsg)
     }
     return(entity)
   })

@@ -396,7 +396,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     prepareEntityJobDir = function(config, jobdir = NULL){
       if(is.null(jobdir)) jobdir <- config$job
       #create entity jobdir
-      config$logger.info(sprintf("Create entity job dir at '%s'", self$getEntityJobDirPath(config, jobdir)))
+      config$logger$INFO("Create entity job dir at '%s'", self$getEntityJobDirPath(config, jobdir))
       dir.create(self$getEntityJobDirPath(config, jobdir), recursive = TRUE)
       
       #create sub directories as listed in the configuration file
@@ -407,7 +407,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       for(directory in directories){
         if (!file.exists(directory)){
           dir_name <- file.path(self$getEntityJobDirPath(config, jobdir), directory)
-          config$logger.info(sprintf("Creating '%s' directory: %s",directory, dir_name))
+          config$logger$INFO("Creating '%s' directory: %s",directory, dir_name)
           dir.create(dir_name)
         }
       }
@@ -420,8 +420,10 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@param jobdir relative path of the job directory
     copyDataToJobDir = function(config, jobdir = NULL){
       
-      if(is.null(jobdir)) jobdir <- config$job
       wd <- getwd()
+      on.exit(setwd(wd))
+      
+      if(is.null(jobdir)) jobdir <- config$job
       setwd("./data")
       
       #get accessors
@@ -439,7 +441,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       
         accessor <- accessors[sapply(accessors, function(x){x$id == data_object$access})][[1]]
       
-        config$logger.info(sprintf("Copying data to entity job data directory '%s'", getwd()))
+        config$logger$INFO("Copying data to entity job data directory '%s'", getwd())
         
         if(!data_object$sourceType %in% c("dbtable", "dbquery", "dbview")) for(i in 1:length(data_object$source)){
         
@@ -459,10 +461,10 @@ geoflow_entity <- R6Class("geoflow_entity",
           datasource_file_needed <- !(data_object$sourceType %in% types_without_file)
           if(datasource_file_needed && is.null(datasource_uri)){
             warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
-            config$logger.warn(warnMsg)
+            config$logger$WARN(warnMsg)
           }else{
-            config$logger.info(sprintf("Copying data source %s '%s' (%s) to entity job data directory '%s'",
-                                       i, datasource, datasource_uri, getwd()))
+            config$logger$INFO("Copying data source %s '%s' (%s) to entity job data directory '%s'",
+                                       i, datasource, datasource_uri, getwd())
             
             #basefilename <- paste0(self$identifiers$id, "_", self$data$sourceType,"_",datasource_name)
             basefilename <- basename(datasource_name)
@@ -476,13 +478,13 @@ geoflow_entity <- R6Class("geoflow_entity",
             isSourceUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", datasource_uri) > 0
             if(isSourceUrl || accessor$id != "default"){
               #case where data is remote and there was no data enrichment in initWorkflow
-              config$logger.info(sprintf("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id))
+              config$logger$INFO("Copying data to job data directory from remote file(s) using accessor '%s'", accessor$id)
               access_software <- NULL
               if(!is.na(accessor$software_type)){
-                config$logger.info(sprintf("Accessor '%s' seems to require a software. Try to locate 'input' software", accessor$id))
+                config$logger$INFO("Accessor '%s' seems to require a software. Try to locate 'input' software", accessor$id)
                 accessor_software <- config$software$input[[accessor$software_type]]
                 if(is.null(accessor_software)){
-                  config$logger.info(sprintf("Accessor '%s' doesn't seem to have the required 'input' software. Try to locate 'output' software", accessor$id))
+                  config$logger$INFO("Accessor '%s' doesn't seem to have the required 'input' software. Try to locate 'output' software", accessor$id)
                   accessor_software <- config$software$output[[accessor$software_type]]
                 }
               }
@@ -497,29 +499,29 @@ geoflow_entity <- R6Class("geoflow_entity",
               if(!is.null(datasource_uri)){
                 if(!is_absolute_path(datasource_uri)) datasource_uri <- file.path(config$session_wd,datasource_uri)
               }
-              config$logger.info("Copying data to Job data directory from local file(s)")
+              config$logger$INFO("Copying data to Job data directory from local file(s)")
               data.files <- list.files(path = dirname(datasource_uri), pattern = basename(datasource_uri))
               if(length(data.files)>0){
                 isZipped <- any(sapply(data.files, endsWith, ".zip"))
                 if(!isZipped){
-                  config$logger.info("Copying data local file(s): copying also unzipped files to job data directory")
+                  config$logger$INFO("Copying data local file(s): copying also unzipped files to job data directory")
                   for(data.file in data.files){
                     file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
                   }
-                  #config$logger.info("Copying data local file(s): zipping files as archive into job data directory")
+                  #config$logger$INFO("Copying data local file(s): zipping files as archive into job data directory")
                   #data.files <- list.files(pattern = basefilename)
                   #if(length(data.files)>0) zip::zipr(zipfile = paste0(basefilename,".zip"), files = data.files)
                 }else{
-                  config$logger.warn(sprintf("Source type: %s", data_object$sourceType))
+                  config$logger$WARN(sprintf("Source type: %s", data_object$sourceType))
                   if(data_object$sourceType == "other") {
                     #copy files only
-                    config$logger.info("Copying data local file(s): copying zip files to job data directory")
+                    config$logger$INFO("Copying data local file(s): copying zip files to job data directory")
                     for(data.file in data.files){
                       file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
                     }
                   }else{
                     #unzip files to copy
-                    config$logger.info("Copying data local file(s): copying unzipped files to job data directory")
+                    config$logger$INFO("Copying data local file(s): copying unzipped files to job data directory")
                     data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
                     if(length(data.files)>0){
                       for(data.file in data.files){
@@ -531,7 +533,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 }
               }else{
                 errMsg <- sprintf("Copying data local file(s): no files found for source '%s' (%s)", datasource_uri, datasource_name)
-                config$logger.error(errMsg)
+                config$logger$ERROR(errMsg)
                 stop(errMsg)
               }
             }
@@ -568,20 +570,20 @@ geoflow_entity <- R6Class("geoflow_entity",
         #special case of other types to zip all into a single file
         #deprecate sourceZip/sourceZipOnly (see #344)
         #if(data_object$sourceType == "other" & data_object$sourceZip){
-        #  config$logger.info("sourceZip = TRUE: Zip sources into single data file")
+        #  config$logger$INFO("sourceZip = TRUE: Zip sources into single data file")
         #  data.files <- list.files()
         #  print(data.files)
         #  zip::zipr(zipfile = paste0(self$identifiers$id, "_files_for_source_", k, ".zip"), files = data.files)
         #  if(data_object$sourceZipOnly){
-        #    config$logger.info("sourceZipOnly = TRUE: deleting zipped, they will not be uploaded")
+        #    config$logger$INFO("sourceZipOnly = TRUE: deleting zipped, they will not be uploaded")
         #    for(data.file in data.files){
         #      unlink(data.file, force = TRUE)
         #    }
         #  }else{
-        #    config$logger.info("sourceZipOnly = FALSE: both zip and zipped files will be uploaded")
+        #    config$logger$INFO("sourceZipOnly = FALSE: both zip and zipped files will be uploaded")
         #  }
         #}else{
-        #  config$logger.info("sourceZip = FALSE: source files will be uploaded")
+        #  config$logger$INFO("sourceZip = FALSE: source files will be uploaded")
         #}
       }
       
@@ -599,7 +601,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         for(i in 1:nrow(styles)){
           style = styles[i,]
           sld_filename = paste0(style$stylename, ".sld")
-          config$logger.info(sprintf("Write SLD style '%s'", sld_filename))
+          config$logger$INFO("Write SLD style '%s'", sld_filename)
           XML::saveXML(XML::xmlParse(style$stylesld), sld_filename)
         }
       }
@@ -644,7 +646,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           }
           
           if(data_object$sourceType == "other"){
-            config$logger.warn("Metadata dynamic handling based on 'data' not implemented for source type 'other'")
+            config$logger$WARN("Metadata dynamic handling based on 'data' not implemented for source type 'other'")
             #setwd(wd)
             #return(NULL)
           }
@@ -655,7 +657,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           datasource_file_needed <- !(data_object$sourceType %in% types_without_file)
           if(datasource_file_needed && is.null(datasource_file)){
             warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
-            config$logger.warn(warnMsg)
+            config$logger$WARN(warnMsg)
             #setwd(wd)
             #return(NULL)
           }
@@ -685,7 +687,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                   }else if(any(endsWith(zip_files$filename, ".parquet"))){
                     srcType = "parquet"
                   }
-                  config$logger.info(sprintf("Resolving sourceType from zip list: '%s'", srcType))
+                  config$logger$INFO("Resolving sourceType from zip list: '%s'", srcType)
                 }
                 srcType
               },
@@ -698,7 +700,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             )
             #additional rule for uploadType
             if(datasource_ext == "zip") if(!is.null(data_object$uploadType)) if(data_object$uploadType == "other"){
-              config$logger.info(sprintf("Zip data archived scanned, setting uploadType based on sourceType '%s'", data_object$sourceType))
+              config$logger$INFO("Zip data archived scanned, setting uploadType based on sourceType '%s'", data_object$sourceType)
               data_object$setUploadType(data_object$sourceType)
               if(data_object$uploadType == "geotiff") data_object$setSpatialRepresentationType("grid")
             }
@@ -770,7 +772,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           }
           
           if(data_object$sourceType == "other"){
-            config$logger.warn("Metadata dynamic handling based on 'data' not implemented for source type 'other'")
+            config$logger$WARN("Metadata dynamic handling based on 'data' not implemented for source type 'other'")
             #setwd(wd)
             #return(NULL)
           }
@@ -781,7 +783,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           datasource_file_needed <- !(data_object$sourceType %in% types_without_file)
           if(datasource_file_needed && is.null(datasource_file)){
             warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
-            config$logger.warn(warnMsg)
+            config$logger$WARN(warnMsg)
             #setwd(wd)
             #return(NULL)
           }
@@ -807,13 +809,13 @@ geoflow_entity <- R6Class("geoflow_entity",
                  shps <- list.files(path = getwd(), pattern = ".shp", full.names = T)
                  if(length(shps)==0){
                    warnMsg <- "No readable Shapefile source"
-                   config$logger.warn(warnMsg)
+                   config$logger$WARN(warnMsg)
                  }
                  trgShp <- shps[1]
                }
                if(file.exists(trgShp)){
                  #read shapefile
-                 config$logger.info("Read Shapefiles from geoflow temporary data directory")
+                 config$logger$INFO("Read Shapefiles from geoflow temporary data directory")
                  sf.data <- sf::st_read(trgShp, options = sprintf("ENCODING=%s",st_encoding))
                  if(!is.null(sf.data)){
                    #we try to apply the cql filter specified as data property
@@ -843,11 +845,11 @@ geoflow_entity <- R6Class("geoflow_entity",
   
                  }else{
                    warnMsg <- sprintf("Cannot read Shapefile data source '%s'. Dynamic metadata computation aborted!", trgShp)
-                   config$logger.warn(warnMsg)
+                   config$logger$WARN(warnMsg)
                  }
                }else{
                  warnMsg <- sprintf("No readable Shapefile source '%s'. Dynamic metadata computation aborted!", datasource_file)
-                 config$logger.warn(warnMsg)
+                 config$logger$WARN(warnMsg)
                }
              },
              #csv - CSV file - operated through 
@@ -858,7 +860,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                trgCsv <- file.path(getwd(), paste0(basefilename,".csv"))
                if(file.exists(trgCsv)){
                  #read CSV
-                 config$logger.info("Read CSV file from geoflow temporary data directory")
+                 config$logger$INFO("Read CSV file from geoflow temporary data directory")
                  
                  sf.data <- sf::st_read(trgCsv, options = c(sprintf("GEOM_POSSIBLE_NAMES=%s", paste0(data_object$getAllowedGeomPossibleNames(),collapse=",")),
                                                             sprintf("X_POSSIBLE_NAMES=%s", paste0(data_object$getAllowedXPossibleNames(),collapse=",")),
@@ -907,11 +909,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                    
                  }else{
                    warnMsg <- sprintf("Cannot read CSV data source '%s'. Dynamic metadata computation aborted!", trgCsv)
-                   config$logger.warn(warnMsg)
+                   config$logger$WARN(warnMsg)
                  }
                }else{
                  warnMsg <- sprintf("No readable CSV source '%s'. Dynamic metadata computation aborted!", datasource_file)
-                 config$logger.warn(warnMsg)
+                 config$logger$WARN(warnMsg)
                }
                
              },
@@ -921,7 +923,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                trgGpkg <- file.path(getwd(), paste0(basefilename,".gpkg"))
                if(file.exists(trgGpkg)){
                  #read GeoPackage
-                 config$logger.info("Read GPKG file from geoflow temporary data directory")
+                 config$logger$INFO("Read GPKG file from geoflow temporary data directory")
                  if(!is.null(data_object$sourceSql)){
                    sf.data <- sf::st_read(trgGpkg, query = data_object$sourceSql)
                  }else{
@@ -952,11 +954,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                    
                  }else{
                    warnMsg <- sprintf("Cannot read GeoPackage data source '%s'. Dynamic metadata computation aborted!", trgGpkg)
-                   config$logger.warn(warnMsg)
+                   config$logger$WARN(warnMsg)
                  }
                }else{
                  warnMsg <- sprintf("No readable GeoPackage source '%s'. Dynamic metadata computation aborted!", datasource_file)
-                 config$logger.warn(warnMsg)
+                 config$logger$WARN(warnMsg)
                }
                
              },
@@ -966,7 +968,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                trgParquet <- file.path(getwd(), paste0(basefilename,".parquet"))
                if(file.exists(trgParquet)){
                  #read GeoParquet
-                 config$logger.info("Read Parquet file from geoflow temporary data directory")
+                 config$logger$INFO("Read Parquet file from geoflow temporary data directory")
                  if(!is.null(data_object$sourceSql)){
                    warnings("'sourceSql' is ignored in reading Parquet file!")
                    sf.data <- sfarrow::st_read_parquet(trgParquet)
@@ -998,11 +1000,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                    
                  }else{
                    warnMsg <- sprintf("Cannot read GeoPackage data source '%s'. Dynamic metadata computation aborted!", trgGpkg)
-                   config$logger.warn(warnMsg)
+                   config$logger$WARN(warnMsg)
                  }
                }else{
                  warnMsg <- sprintf("No readable GeoPackage source '%s'. Dynamic metadata computation aborted!", datasource_file)
-                 config$logger.warn(warnMsg)
+                 config$logger$WARN(warnMsg)
                }
                
              },
@@ -1033,21 +1035,21 @@ geoflow_entity <- R6Class("geoflow_entity",
                      }
                      
                      #dynamic spatial extent
-                     config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
+                     config$logger$INFO("Overwriting entity bounding box with DB spatial table bounding box")
                      if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                    }else{
                      warnMsg <- sprintf("DB table '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
-                     config$logger.warn(warnMsg)
+                     config$logger$WARN(warnMsg)
                    }
                    
                  }else{
                    warnMsg <- sprintf("Cannot get results from DB table '%s'. Dynamic metadata computation aborted!", datasource_name)
-                   config$logger.warn(warnMsg)
+                   config$logger$WARN(warnMsg)
                  }
                  
                }else{
                  warnMsg <- sprintf("No database configured to read DB table '%s'. Dynamic metadata computation aborted!", datasource_name)
-                 config$logger.warn(warnMsg)
+                 config$logger$WARN(warnMsg)
                }
              },
              #dbview
@@ -1076,21 +1078,21 @@ geoflow_entity <- R6Class("geoflow_entity",
                      }
                      
                      #dynamic spatial extent
-                     config$logger.info("Overwriting entity bounding box with DB spatial view bounding box")
+                     config$logger$INFO("Overwriting entity bounding box with DB spatial view bounding box")
                      if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                    }else{
                      warnMsg <- sprintf("DB view '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_name)
-                     config$logger.warn(warnMsg)
+                     config$logger$WARN(warnMsg)
                    }
                    
                  }else{
                    warnMsg <- sprintf("Cannot get results from DB view '%s'. Dynamic metadata computation aborted!", datasource_name)
-                   config$logger.warn(warnMsg)
+                   config$logger$WARN(warnMsg)
                  }
                  
                }else{
                  warnMsg <- sprintf("No database configured to read DB view '%s'. Dynamic metadata computation aborted!", datasource_name)
-                 config$logger.warn(warnMsg)
+                 config$logger$WARN(warnMsg)
                }
              },
              #dbquery
@@ -1099,14 +1101,14 @@ geoflow_entity <- R6Class("geoflow_entity",
                
                 sqlfile <- file.path(getwd(), paste0(basefilename,".sql"))
                 if(file.exists(sqlfile)){
-                  config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
+                  config$logger$INFO("Reading SQL query from file '%s'", sqlfile)
                   sql <- paste(readLines(sqlfile), collapse="")
-                  config$logger.info(sql)
+                  config$logger$INFO(sql)
                   data_object$setSourceSql(sql)
                 }else{
                   if(is.null(data_object$sourceSql)){
                     warnMsg <- sprintf("No SQL file provided as 'source' nor 'sourceSql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
-                    config$logger.warn(warnMsg)
+                    config$logger$WARN(warnMsg)
                     setwd(wd)
                     return(data_object)
                   }
@@ -1118,7 +1120,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                   if(!is.null(sf.data)){
                     if(class(sf.data)[1]=="try-error"){
                       errMsg <- sprintf("Error while executing SQL query [%s]. Please check the SQL query! Dynamic data handling aborted!", data_object$sourceSql)
-                      config$logger.error(errMsg)
+                      config$logger$ERROR(errMsg)
                       setwd(wd)
                       return(data_object)
                     }
@@ -1136,7 +1138,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                       }
                       
                       #dynamic spatial extent
-                      config$logger.info("Overwriting entity bounding box with SQL query output bounding box")
+                      config$logger$INFO("Overwriting entity bounding box with SQL query output bounding box")
                       if(!skipDynamicBbox) self$setSpatialBbox(data = sf.data)
                       #dynamic view properties required
                       
@@ -1147,24 +1149,24 @@ geoflow_entity <- R6Class("geoflow_entity",
                         "LINESTRING" = "LineString", "MULTILINESTRING" = "MultiLineString",
                         "POLYGON" = "Polygon", "MULTIPOLYGON" = "MultiPolygon"
                       )
-                      config$logger.info(sprintf("Setting entity geometry type '%s'", gsGeomType))
+                      config$logger$INFO("Setting entity geometry type '%s'", gsGeomType)
                       data_object$setGeometryType(gsGeomType)
                       geomField <- colnames(sf.data)[sapply(colnames(sf.data), function(x){(is(sf.data[[x]],"sfc"))})][1]
-                      config$logger.info(sprintf("Setting entity geometry field '%s'",geomField))
+                      config$logger$INFO("Setting entity geometry field '%s'",geomField)
                       data_object$setGeometryField(geomField)
                     }else{
                       warnMsg <- sprintf("Result of SQL query file '%s' is not spatialized. Dynamic metadata computation aborted!", datasource_file)
-                      config$logger.warn(warnMsg)
+                      config$logger$WARN(warnMsg)
                     }
                     
                   }else{
                     warnMsg <- sprintf("Cannot get results from SQL query file '%s'. Dynamic metadata computation aborted!", datasource_file)
-                    config$logger.warn(warnMsg)
+                    config$logger$WARN(warnMsg)
                   }
                   
                 }else{
                   warnMsg <- sprintf("No database configured to execute SQL query file '%s'. Dynamic metadata computation aborted!", datasource_file)
-                  config$logger.warn(warnMsg)
+                  config$logger$WARN(warnMsg)
                 }
                 
               },
@@ -1174,7 +1176,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                trgGeotiff <- file.path(getwd(), paste0(basefilename,".tif"))
                if(file.exists(trgGeotiff)){
                  #read GeoTIFF
-                 config$logger.info(sprintf("Read GeoTIFF '%s'", trgGeotiff))
+                 config$logger$INFO("Read GeoTIFF '%s'", trgGeotiff)
                  cov.data <- terra::rast(trgGeotiff)
                  if(!is.null(cov.data)){
                    data_object$setCoverages(cov.data)
@@ -1185,21 +1187,21 @@ geoflow_entity <- R6Class("geoflow_entity",
                      data_srids <<- c(data_srids, as.integer(cov.crs$code))
                    }
                    #dynamic spatial extent
-                   config$logger.info("Overwriting entity bounding box with Geotiff bounding box")
+                   config$logger$INFO("Overwriting entity bounding box with Geotiff bounding box")
                    if(!skipDynamicBbox) self$setSpatialBbox(data = cov.data)
                    
                  }else{
                    warnMsg <- sprintf("Cannot read GeoTIFF data source '%s'. Dynamic metadata computation aborted!", trgGeotiff)
-                   config$logger.warn(warnMsg)
+                   config$logger$WARN(warnMsg)
                  }
                }else{
                  warnMsg <- sprintf("No readable GeoTIFF source '%s'. Dynamic metadata computation aborted!", datasource_file)
-                 config$logger.warn(warnMsg)
+                 config$logger$WARN(warnMsg)
                }
               },
               #other format handlers to come
               {
-                config$logger.warn(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", data_object$sourceType))
+                config$logger$WARN(sprintf("Metadata dynamic handling based on 'data' not implemented for type '%s'", data_object$sourceType))
               }
           )
           
@@ -1218,12 +1220,12 @@ geoflow_entity <- R6Class("geoflow_entity",
         unique_data_srids <- unique(data_srids)
         if(length(unique_data_srids)==1){
           if(srid != unique_data_srids[1]){
-            config$logger.info(sprintf("Overwriting entity srid [%s] with data srid [%s]", srid, unique_data_srids[1]))
+            config$logger$INFO("Overwriting entity srid [%s] with data srid [%s]", srid, unique_data_srids[1])
             self$srid <- unique_data_srids[1]
           }
           if(!skipDynamicBbox){
             #dynamic spatial extent
-            config$logger.info(sprintf("Overwriting entity bounding box with data bounding boxes, using '%s' strategy", enrichDataStrategy))
+            config$logger$INFO("Overwriting entity bounding box with data bounding boxes, using '%s' strategy", enrichDataStrategy)
             switch(enrichDataStrategy,
               "first" = {
                 data_obj <- NULL
@@ -1240,7 +1242,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             )
           }
         }else{
-          config$logger.warn(sprintf("Data objects with mixed SRIDs [%s], aborting overwrite of entity srid [%s] and spatial bounding box", 
+          config$logger$WARN(sprintf("Data objects with mixed SRIDs [%s], aborting overwrite of entity srid [%s] and spatial bounding box", 
                                      paste0(unique_data_srids, collapse=","), srid))
         }
       }
@@ -1289,7 +1291,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           types_without_file <- c("dbtable","dbview","dbquery")
           datasource_file_needed <- !(data_object$sourceType %in% types_without_file)
           if(datasource_file_needed){
-            config$logger.warn("Spatial metadata dynamic handling not supported without data for data file sources")
+            config$logger$WARN("Spatial metadata dynamic handling not supported without data for data file sources")
           }
           
           switch(data_object$sourceType,
@@ -1318,21 +1320,21 @@ geoflow_entity <- R6Class("geoflow_entity",
                          spatial_query = try(DBI::dbGetQuery(DBI, spatial_query_sql))
                          if(!is(spatial_query, "try-error")){
                            #dynamic spatial extent
-                           config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
+                           config$logger$INFO("Overwriting entity bounding box with DB spatial table bounding box")
                            self$setSpatialBbox(bbox = spatial_query)
                          }else{
                            warnMsg <- sprintf("Cannot interrogate DB table '%s'. Dynamic spatial metadata computation aborted!", datasource_name)
-                           config$logger.warn(warnMsg)
+                           config$logger$WARN(warnMsg)
                          }
                        }
                      }else{
                        warnMsg <- sprintf("DB table '%s' is not spatialized. Dynamic spatial metadata computation aborted!", datasource_name)
-                       config$logger.warn(warnMsg)
+                       config$logger$WARN(warnMsg)
                      }
                      
                    }else{
                      warnMsg <- sprintf("No database configured to run queries on DB table '%s'. Dynamic spatial metadata computation aborted!", datasource_name)
-                     config$logger.warn(warnMsg)
+                     config$logger$WARN(warnMsg)
                    }
                  },
                  #dbview
@@ -1360,21 +1362,21 @@ geoflow_entity <- R6Class("geoflow_entity",
                          spatial_query = try(DBI::dbGetQuery(DBI, spatial_query_sql))
                          if(!is(spatial_query, "try-error")){
                            #dynamic spatial extent
-                           config$logger.info("Overwriting entity bounding box with DB spatial view bounding box")
+                           config$logger$INFO("Overwriting entity bounding box with DB spatial view bounding box")
                            self$setSpatialBbox(bbox = spatial_query)
                          }else{
                            warnMsg <- sprintf("Cannot interrogate DB view '%s'. Dynamic spatial metadata computation aborted!", datasource_name)
-                           config$logger.warn(warnMsg)
+                           config$logger$WARN(warnMsg)
                          }
                        }
                      }else{
                        warnMsg <- sprintf("DB view '%s' is not spatialized. Dynamic spatial metadata computation aborted!", datasource_name)
-                       config$logger.warn(warnMsg)
+                       config$logger$WARN(warnMsg)
                      }
                      
                    }else{
                      warnMsg <- sprintf("No database configured to run queries on DB view '%s'. Dynamic spatial metadata computation aborted!", datasource_name)
-                     config$logger.warn(warnMsg)
+                     config$logger$WARN(warnMsg)
                    }
                  },
                  #dbquery
@@ -1383,14 +1385,14 @@ geoflow_entity <- R6Class("geoflow_entity",
                    
                    sqlfile <- file.path(getwd(), paste0(datasource_name,".sql"))
                    if(file.exists(sqlfile)){
-                     config$logger.info(sprintf("Reading SQL query from file '%s'", sqlfile))
+                     config$logger$INFO("Reading SQL query from file '%s'", sqlfile)
                      sql <- paste(readLines(sqlfile), collapse="")
-                     config$logger.info(sql)
+                     config$logger$INFO(sql)
                      data_object$setSourceSql(sql)
                    }else{
                      if(is.null(data_object$sourceSql)){
                        warnMsg <- sprintf("No SQL file provided as 'source' nor 'sourceSql' data property specified for datasource '%s'. Dynamic metadata computation aborted!", datasource_name)
-                       config$logger.warn(warnMsg)
+                       config$logger$WARN(warnMsg)
                        setwd(wd)
                        return(data_object)
                      }
@@ -1425,18 +1427,18 @@ geoflow_entity <- R6Class("geoflow_entity",
                          spatial_query = try(DBI::dbGetQuery(DBI, spatial_query_sql))
                          if(!is(spatial_query, "try-error")){
                            #dynamic spatial extent
-                           config$logger.info("Overwriting entity bounding box with DB spatial table bounding box")
+                           config$logger$INFO("Overwriting entity bounding box with DB spatial table bounding box")
                            self$setSpatialBbox(bbox = spatial_query)
                          }else{
                            warnMsg <- sprintf("Cannot interrogate DB table '%s'. Dynamic spatial metadata computation aborted!", datasource_name)
-                           config$logger.warn(warnMsg)
+                           config$logger$WARN(warnMsg)
                          }
                        }
                      }
                      
                    }else{
                      warnMsg <- sprintf("No database configured to execute SQL query file '%s'. Dynamic metadata computation aborted!", datasource_file)
-                     config$logger.warn(warnMsg)
+                     config$logger$WARN(warnMsg)
                    }
                  }
           )
@@ -1456,11 +1458,11 @@ geoflow_entity <- R6Class("geoflow_entity",
         unique_data_srids <- unique(data_srids)
         if(length(unique_data_srids)==1){
           if(srid != unique_data_srids[1]){
-            config$logger.info(sprintf("Overwriting entity srid [%s] with data srid [%s]", srid, unique_data_srids[1]))
+            config$logger$INFO("Overwriting entity srid [%s] with data srid [%s]", srid, unique_data_srids[1])
             self$srid <- unique_data_srids[1]
           }
         }else{
-          config$logger.warn(sprintf("Data objects with mixed SRIDs [%s], aborting overwrite of entity srid [%s] and spatial bounding box", 
+          config$logger$WARN(sprintf("Data objects with mixed SRIDs [%s], aborting overwrite of entity srid [%s] and spatial bounding box", 
                                      paste0(unique_data_srids, collapse=","), srid))
         }
       }
@@ -1472,7 +1474,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@param config geoflow config object
     #'@param jobdir relative path of the job directory
     enrichWithFeatures = function(config, jobdir = NULL){
-      config$logger.warn("Method 'enrichWithFeatures' is deprecated, please use 'enrichWithData' (that encompasses both 'features' and 'coverages') instead")
+      config$logger$WARN("Method 'enrichWithFeatures' is deprecated, please use 'enrichWithData' (that encompasses both 'features' and 'coverages') instead")
       self$enrichWithData(config, jobdir = jobdir)
     },
     
@@ -1482,7 +1484,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@param config geoflow config object
     #'@param jobdir relative path of the job directory
     enrichWithCoverages = function(config, jobdir = NULL){
-      config$logger.warn("Method 'enrichWithCoverages' is deprecated, please use 'enrichWithData' (that encompasses both 'features' and 'coverages') instead")
+      config$logger$WARN("Method 'enrichWithCoverages' is deprecated, please use 'enrichWithData' (that encompasses both 'features' and 'coverages') instead")
       self$enrichWithData(config, jobdir = jobdir)
     },
     
@@ -1508,7 +1510,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             
             if(data_object$sourceType != data_object$uploadType){
               
-              config$logger.info(sprintf("Conversion of source file from sourceType (%s) to uploadType (%s)",data_object$sourceType,data_object$uploadType))
+              config$logger$INFO("Conversion of source file from sourceType (%s) to uploadType (%s)",data_object$sourceType,data_object$uploadType)
               
               datasource <- data_object$source[[1]]
               datasource_parts <- unlist(strsplit(datasource, "\\.(?=[^\\.]+$)", perl=TRUE))
@@ -1528,7 +1530,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               if(!is.null(uploadSourceExt)) data_object$uploadSource<-list(paste0(datasource_name,".",uploadSourceExt))
               
             }else{
-              config$logger.info("sourceType and uploadType are identical, no conversion required")		
+              config$logger$INFO("sourceType and uploadType are identical, no conversion required")		
             }
           }
           return(data_object)
@@ -1599,7 +1601,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           data_object = data_objects[[k]]
         
           layername <- if(!is.null(data_object$layername)) data_object$layername else self$identifiers$id
-          config$logger.info(sprintf("Enrich entity with OGC relations for layer = '%s'", layername))
+          config$logger$INFO("Enrich entity with OGC relations for layer = '%s'", layername)
             
           geoserver_base_url = config$software$output$geoserver_config$parameters$url
           if(!is.null(config$software$output$geoserver_config$properties$publicUrl)){
@@ -1608,7 +1610,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           
           #Thumbnail
           if(geosapi_action$getOption("enrich_with_relation_wms_thumbnail")){
-            config$logger.info(sprintf("Enrich entity with OGC WMS thumbnail for layer = '%s'", layername))
+            config$logger$INFO("Enrich entity with OGC WMS thumbnail for layer = '%s'", layername)
             new_thumbnail <- geoflow_relation$new()
             new_thumbnail$setKey("thumbnail")
             new_thumbnail$setName(layername)
@@ -1630,11 +1632,11 @@ geoflow_entity <- R6Class("geoflow_entity",
             new_thumbnail$setLink(thumbnail_link)
             self$relations <- c(self$relations, new_thumbnail)
           }else{
-            config$logger.warn(sprintf("Skip enriching entity with OGC WMS thumbnail for layer = '%s'", layername))
+            config$logger$WARN(sprintf("Skip enriching entity with OGC WMS thumbnail for layer = '%s'", layername))
           }
           #WMS base URL
           if(geosapi_action$getOption("enrich_with_relation_wms")){
-            config$logger.info(sprintf("Enrich entity with OGC WMS base URL for layer = '%s'", layername))
+            config$logger$INFO("Enrich entity with OGC WMS base URL for layer = '%s'", layername)
             new_wms <- geoflow_relation$new()
             new_wms$setKey("wms")
             new_wms$setName(layername)
@@ -1651,14 +1653,14 @@ geoflow_entity <- R6Class("geoflow_entity",
                                     config$software$output$geoserver_config$properties$workspace))
             self$addRelation(new_wms)
           }else{
-            config$logger.warn(sprintf("Skip enriching entity with OGC WMS base URL for layer = '%s'", layername))
+            config$logger$WARN(sprintf("Skip enriching entity with OGC WMS base URL for layer = '%s'", layername))
           }
           
           #OGC WFS relations in case of spatialRepresentationType = 'vector'
           if(data_object$spatialRepresentationType == "vector"){
             #WFS base URL
             if(geosapi_action$getOption("enrich_with_relation_wfs")){
-              config$logger.info(sprintf("Enrich entity with OGC WFS base URL for layer = '%s'", layername))
+              config$logger$INFO("Enrich entity with OGC WFS base URL for layer = '%s'", layername)
               new_wfs <- geoflow_relation$new()
               new_wfs$setKey("wfs")
               new_wfs$setName(layername)
@@ -1675,11 +1677,11 @@ geoflow_entity <- R6Class("geoflow_entity",
                                       config$software$output$geoserver_config$properties$workspace))
               self$addRelation(new_wfs)
             }else{
-              config$logger.warn(sprintf("Skip enriching entity with OGC WFS base URL for layer = '%s'", layername))
+              config$logger$WARN(sprintf("Skip enriching entity with OGC WFS base URL for layer = '%s'", layername))
             }
             #WFS download links
             if(geosapi_action$getOption("enrich_with_relation_wfs_download_links")){
-              config$logger.info(sprintf("Enrich entity with OGC WFS download links for layer = '%s'", layername))
+              config$logger$INFO("Enrich entity with OGC WFS download links for layer = '%s'", layername)
               #wfs (GML)
               new_wfs_gml <- geoflow_relation$new()
               new_wfs_gml$setKey("download")
@@ -1753,14 +1755,14 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wfs_csv$setMimeType("text/csv;charset=UTF-8")
               self$addRelation(new_wfs_csv)
             }else{
-              config$logger.warn("Skip enriching entity with OGC WFS download links")
+              config$logger$WARN("Skip enriching entity with OGC WFS download links")
             }
           }
           #OGC WCS relations in case of spatialRepresentationType = 'grid'
           if(data_object$spatialRepresentationType == 'grid'){
             #WCS base URL
             if(geosapi_action$getOption("enrich_with_relation_wcs")){
-              config$logger.info(sprintf("Enrich entity with OGC WCS base URL for layer = '%s'", layername))
+              config$logger$INFO("Enrich entity with OGC WCS base URL for layer = '%s'", layername)
               new_wcs <- geoflow_relation$new()
               new_wcs$setKey("wcs")
               new_wcs$setName(layername)
@@ -1777,12 +1779,12 @@ geoflow_entity <- R6Class("geoflow_entity",
                                       config$software$output$geoserver_config$properties$workspace))
               self$addRelation(new_wcs)
             }else{
-              config$logger.warn(sprintf("Skip enriching entity with OGC WCS base URL for layer = '%s'", layername))
+              config$logger$WARN(sprintf("Skip enriching entity with OGC WCS base URL for layer = '%s'", layername))
             }
             
             #WCS download links
             if(geosapi_action$getOption("enrich_with_relation_wcs_download_links")){
-              config$logger.info(sprintf("Enrich entity with OGC WCS download links for layer = '%s'", layername))
+              config$logger$INFO("Enrich entity with OGC WCS download links for layer = '%s'", layername)
               #wcs (image/geotiff)
               new_wcs_geotiff <- geoflow_relation$new()
               new_wcs_geotiff$setKey("download")
@@ -1802,7 +1804,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               new_wcs_geotiff$setMimeType("image/tiff")
               self$addRelation(new_wcs_geotiff)
             }else{
-              config$logger.warn(sprintf("Skip enriching entity with OGC WCS download links for layer = '%s'", layername))
+              config$logger$WARN(sprintf("Skip enriching entity with OGC WCS download links for layer = '%s'", layername))
             }
           }
         }

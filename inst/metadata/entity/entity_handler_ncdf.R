@@ -1,7 +1,7 @@
 #handle_entities_ncdf
 handle_entities_ncdf <- function(handler, source, config, handle = TRUE){
   
-  config$logger.info("NCDF Handler")
+  config$logger$INFO("NCDF Handler")
   if(!requireNamespace("ncdf4", quietly = TRUE)){
     stop("The NCDF handler requires the 'ncdf4' package")
   }
@@ -11,7 +11,7 @@ handle_entities_ncdf <- function(handler, source, config, handle = TRUE){
   
   #if(!mime::guess_type(source)=="application/x-netcdf"){
   #  errMsg <- "Error in 'handle_entities_df': source parameter should be an 'netcdf' file"
-  #  config$logger.error(errMsg)
+  #  config$logger$ERROR(errMsg)
   #  stop(errMsg)
   #}
   entities<-list()

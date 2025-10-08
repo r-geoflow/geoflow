@@ -181,7 +181,7 @@ geoflow_action <- R6Class("geoflow_action",
     #'    an error is thrown and user informed of the missing packages.
     checkPackages = function(){
       #check package dependencies
-      self$INFO(sprintf("Check package dependencies for action '%s'", self$id))
+      self$INFO("Check package dependencies for action '%s'", self$id)
       out_pkgs <- try(check_packages(self$packages))
       if(is(out_pkgs,"try-error")){
         errMsg <- sprintf("One or more packages are not imported although required for action '%s'", self$id)
@@ -189,9 +189,9 @@ geoflow_action <- R6Class("geoflow_action",
         stop(errMsg)
       }else{
         if(is.null(out_pkgs)){
-          self$INFO(sprintf("No additional package required for action '%s':", self$id))
+          self$INFO("No additional package required for action '%s':", self$id)
         }else{
-          self$INFO(sprintf("The following packages have been imported for action '%s':", self$id))
+          self$INFO("The following packages have been imported for action '%s':", self$id)
           print(out_pkgs)
         }
       }
@@ -231,7 +231,7 @@ geoflow_action <- R6Class("geoflow_action",
     #'@param entities one or more objects of class \link{geoflow_entity} 
     exportPIDs = function(config, entities){
       if(!self$isPIDGenerator()) return(FALSE);
-      config$logger.info(sprintf("Exporting reference list of '%s' DOIs to job directory for action", self$pid_generator))
+      config$logger$INFO("Exporting reference list of '%s' DOIs to job directory for action", self$pid_generator)
       out_pids <- do.call("rbind", lapply(entities, function(entity){
         out_entity <- data.frame(
           Identifier = entity$identifiers[["id"]], 
@@ -245,7 +245,7 @@ geoflow_action <- R6Class("geoflow_action",
       }))
       readr::write_csv(out_pids, file.path(getwd(),self$target_dir, paste0(self$pid_generator, "_pids.csv")))
       
-      config$logger.info(sprintf("Exporting source entities table enriched with '%s' DOIs", self$pid_generator))
+      config$logger$INFO("Exporting source entities table enriched with '%s' DOIs", self$pid_generator)
       
       src_entities <- config$src_entities
       for(i in 1:length(config$src_entities)){
@@ -264,7 +264,7 @@ geoflow_action <- R6Class("geoflow_action",
         readr::write_csv(src_entities, file.path(getwd(),self$target_dir,paste0(self$pid_generator, "_entities_",i,"_with_pids_for_publication.csv")))
       }
         
-      config$logger.info(sprintf("Exporting workflow configuration for '%s' DOI publication", self$pid_generator))
+      config$logger$INFO("Exporting workflow configuration for '%s' DOI publication", self$pid_generator)
       src_config <- config$src_config
       
       

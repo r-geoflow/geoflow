@@ -20,7 +20,7 @@
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
-executeWorkflow <- function(file, dir = ".", 
+executeWorkflow <- function(file, dir, 
                             queue = NULL, 
                             on_initWorkflowJob = NULL,
                             on_initWorkflow = NULL,
@@ -40,6 +40,7 @@ executeWorkflow <- function(file, dir = ".",
   
   #1. Init the workflow based on configuration file
   wd <- getwd()
+  on.exit(setwd(wd))
   config <- list()
   jobDirPath <- initWorkflowJob(dir = dir)
   config$job <- jobDirPath
@@ -64,13 +65,13 @@ executeWorkflow <- function(file, dir = ".",
   if(!is.null(monitor)){
     if(is.function(monitor)){
       if(all(names(formals(monitor))==c("step","config","entity","action","queue"))){
-        config$logger.info("use monitor function to trace processing steps")
+        config$logger$INFO("use monitor function to trace processing steps")
       }else{
-        config$logger.info("Monitor function escaped, parameter(s) missing or in wrong order")
+        config$logger$INFO("Monitor function escaped, parameter(s) missing or in wrong order")
         monitor=NULL
       }
     }else{
-      config$logger.info("Monitor escaped, monitor must be a function")
+      config$logger$INFO("Monitor escaped, monitor must be a function")
       monitor = NULL
     }
   }

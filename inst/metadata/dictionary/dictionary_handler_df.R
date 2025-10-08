@@ -5,22 +5,22 @@ handle_dictionary_df <- function(handler, source, config){
   
   if(!is(source, "data.frame")){
     errMsg <- "Error in 'handle_dictionary_df': source parameter should be an object of class 'data.frame'"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
   dict <- geoflow::geoflow_dictionary$new()
   dict$setSource(source)
-  config$logger.info(sprintf("Parsing %s dictionary elements from tabular source", nrow(source)))
+  config$logger$INFO("Parsing %s dictionary elements from tabular source", nrow(source))
   if(!"FeatureType" %in% colnames(source)){
     errMsg <- "Error in 'handle_dictionary_df': missing 'featuretype' column"
-    config$logger.error(errMsg)
+    config$logger$ERROR(errMsg)
     stop(errMsg)
   }
   
   #feature types
   fts <- unique(source$FeatureType)
-  config$logger.info(sprintf("Loading %s feature types from data dictionnary...",length(fts)))
+  config$logger$INFO("Loading %s feature types from data dictionnary...",length(fts))
   for(ft in fts){
     ft_df <- source[source$FeatureType == ft, ]
     featuretype <- geoflow::geoflow_featuretype$new(id = ft)
@@ -77,7 +77,7 @@ handle_dictionary_df <- function(handler, source, config){
   }
   
   #registers
-  config$logger.info("Loading register scripts from data dictionnary...")
+  config$logger$INFO("Loading register scripts from data dictionnary...")
   scripts <- unique(source$RegisterScript)
   scripts <- scripts[!is.na(scripts)]
   
@@ -91,7 +91,7 @@ handle_dictionary_df <- function(handler, source, config){
     source(script)
   }))
   
-  config$logger.info("Fetching registers from data dictionnary...")
+  config$logger$INFO("Fetching registers from data dictionnary...")
   handlers <- unique(source$RegisterId)
   handlers <- handlers[!is.na(handlers)]
   for(handler in handlers){
@@ -99,12 +99,12 @@ handle_dictionary_df <- function(handler, source, config){
     fun <- eval(parse(text = handler))
     if(is(fun,"try-error")){
       errMsg <- sprintf("Error while trying to evaluate function '%s", handler)
-      config$logger.error(errMsg)
+      config$logger$ERROR(errMsg)
       stop(errMsg)
     }
     if(!is(fun,"function")){
       errMsg <- sprintf("'%s' is not a function!", handler)
-      config$logger.error(errMsg)
+      config$logger$ERROR(errMsg)
       stop(errMsg)
     }
     register_to_fetch <- geoflow::geoflow_register$new(
@@ -112,7 +112,7 @@ handle_dictionary_df <- function(handler, source, config){
       def = "", 
       fun = fun
     )
-    config$logger.info(sprintf("Fetching data for register '%s'...", handler))
+    config$logger$INFO("Fetching data for register '%s'...", handler)
     register_to_fetch$fetch(config)
     dict$addRegister(register_to_fetch)
   }
