@@ -1,5 +1,5 @@
 Package: geoflow
-Version: 0.9999.20251008
+Version: 1.0.0
 Date: 2025-10-08
 Title: Orchestrate Geospatial (Meta)Data Management Workflows and Manage FAIR Services
 Description: An engine to facilitate the orchestration and execution of metadata-driven data management workflows, in compliance with 'FAIR' 
@@ -20,10 +20,6 @@ Authors@R: c(
   person("Emmanuel", "Blondel", role = c("aut", "cre", "cph"), email = "emmanuel.blondel1@gmail.com", comment = c(ORCID = "0000-0002-5870-5762")),
   person("Julien,", "Barde", role = c("aut"), comment = c(ORCID = "0000-0002-3519-6141")),
   person("Wilfried", "Heintz", role = c("aut"), comment = c(ORCID = "0000-0002-9244-9766")),
-  person("IRD (French National Research Institute for Sustainable Development)", role = c("fnd")),
-  person("INRAE (French National Research Institute for Agriculture, Food and Environment)", role = c("fnd")),
-  person("CNRS (National Centre for Scientific Research)", role = c("fnd")),
-  person("Blue-Cloud - European Union Horizon programme call BG-07-2019-2020, topic: [A] 2019 - Blue Cloud services, Grant Agreement No.862409", role = c("fnd")),
   person("Alexandre", "Bennici", role = c("ctb")),
   person("Sylvain", "Poulain", role = c("ctb")),
   person("Bastien", "Grasset", role = c("ctb")),
