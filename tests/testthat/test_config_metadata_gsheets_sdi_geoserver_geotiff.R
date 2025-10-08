@@ -11,7 +11,7 @@ cfg_file = system.file("extdata/workflows/config_metadata_gsheets_sdi_geoserver_
 #init
 test_that("init",{
   testthat::skip_on_cran()
-  CFG <- geoflow::initWorkflow(cfg_file, dir = ".")
+  CFG <- geoflow::initWorkflow(cfg_file, dir = tempdir())
   expect_is(CFG$metadata$content, "list")
   expect_equal(length(CFG$metadata$content), 2L)
   expect_equal(names(CFG$metadata$content), c("contacts", "entities"))
@@ -29,7 +29,7 @@ test_that("init",{
 #debug
 test_that("debug",{
   testthat::skip_on_cran()
-  DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = ".")
+  DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = tempdir())
   expect_equal(names(DEBUG), c("config", "entity", "dir"))
   expect_is(DEBUG$config, "list")
   expect_is(DEBUG$entity, "geoflow_entity")
@@ -38,7 +38,7 @@ test_that("debug",{
 #execute
 test_that("execute",{
   testthat::skip_on_cran()
-  EXEC <- geoflow::executeWorkflow(cfg_file, dir = ".")
+  EXEC <- geoflow::executeWorkflow(cfg_file, dir = tempdir())
   expect_true(dir.exists(EXEC))
   expect_true(file.exists(file.path(EXEC, "job.json")))
   expect_true(file.exists(file.path(EXEC, "job-logs.txt")))
@@ -47,7 +47,7 @@ test_that("execute",{
   expect_true(dir.exists(file.path(EXEC, "entities")))
   entity_dirs <- list.dirs(path = file.path(EXEC, "entities"), full.names = F,recursive = F)
   expect_true(all(entity_dirs %in% c("my-geoflow-coverage-record1", "my-geoflow-coverage-record2")))
-  config <- geoflow::initWorkflow(cfg_file, dir = ".")
+  config <- geoflow::initWorkflow(cfg_file, dir = tempdir())
   GS <- config$software$output$geoserver
   expect_is(GS$getWorkspace("mysf"), "GSWorkspace")
   expect_is(GS$getCoverageStore("mysf", "mysfdem1"), "GSGeoTIFFCoverageStore")

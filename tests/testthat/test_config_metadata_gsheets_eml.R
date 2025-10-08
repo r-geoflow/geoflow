@@ -10,7 +10,7 @@ cfg_file = system.file("extdata/workflows/config_metadata_gsheets_eml.json", pac
 
 #init
 test_that("init",{
-  CFG <- geoflow::initWorkflow(cfg_file, dir = ".")
+  CFG <- geoflow::initWorkflow(cfg_file, dir = tempdir())
   expect_is(CFG$metadata$content, "list")
   expect_equal(length(CFG$metadata$content), 2L)
   expect_equal(names(CFG$metadata$content), c("contacts", "entities"))
@@ -27,7 +27,7 @@ test_that("init",{
 
 #debug
 test_that("debug",{
-  DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = ".")
+  DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = tempdir())
   expect_equal(names(DEBUG), c("config", "entity", "dir"))
   expect_is(DEBUG$config, "list")
   expect_is(DEBUG$entity, "geoflow_entity")
@@ -35,7 +35,7 @@ test_that("debug",{
 
 #execute
 test_that("execute",{
-  EXEC <- geoflow::executeWorkflow(cfg_file, dir = ".")
+  EXEC <- geoflow::executeWorkflow(cfg_file, dir = tempdir())
   expect_true(dir.exists(EXEC))
   expect_true(file.exists(file.path(EXEC, "job.json")))
   expect_true(file.exists(file.path(EXEC, "job-logs.txt")))

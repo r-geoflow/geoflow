@@ -12,7 +12,7 @@ require(testthat)
    cfg_file_full = system.file("extdata/workflows/config_metadata_gsheets_zenodo_full.json", package = "geoflow")
    
    #deposit
-   EXEC <- geoflow::executeWorkflow(cfg_file_full, dir = ".")
+   EXEC <- geoflow::executeWorkflow(cfg_file_full, dir = tempdir())
    expect_true(dir.exists(EXEC))
    expect_true(file.exists(file.path(EXEC, "job.json")))
    expect_true(file.exists(file.path(EXEC, "job-logs.txt")))
@@ -25,7 +25,7 @@ require(testthat)
                                 "zenodo_geoflow_config_for_publication.json",
                                 "zenodo_pids.csv"))
    
-   config <- geoflow::initWorkflow(cfg_file_full, dir = ".")
+   config <- geoflow::initWorkflow(cfg_file_full, dir = tempdir())
    zenodo = config$software$output$zenodo
    
    zenodo_records <- as.data.frame(readr::read_csv(file.path(EXEC, "zenodo", "zenodo_pids.csv")))
@@ -56,7 +56,7 @@ require(testthat)
    
    #publication
    cfg_file_publish <- "zenodo_geoflow_config_for_publication.json"
-   EXEC2 <- geoflow::executeWorkflow(cfg_file_publish, dir = ".")
+   EXEC2 <- geoflow::executeWorkflow(cfg_file_publish, dir = tempdir())
    expect_true(dir.exists(EXEC2))
    setwd(wd)
    

@@ -10,7 +10,7 @@ require(testthat)
 test_that("init",{
   testthat::skip_on_cran()
   cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo.json", package = "geoflow")
-  CFG <- geoflow::initWorkflow(cfg_file, dir = ".")
+  CFG <- geoflow::initWorkflow(cfg_file, dir = tempdir())
   expect_is(CFG$metadata$content, "list")
   expect_equal(length(CFG$metadata$content), 2L)
   expect_equal(names(CFG$metadata$content), c("contacts", "entities"))
@@ -30,7 +30,7 @@ test_that("init",{
 test_that("debug",{
   testthat::skip_on_cran()
   cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo.json", package = "geoflow")
-  DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = ".")
+  DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = tempdir())
   expect_equal(names(DEBUG), c("config", "entity", "dir"))
   expect_is(DEBUG$config, "list")
   expect_is(DEBUG$entity, "geoflow_entity")
@@ -42,7 +42,7 @@ test_that("execute",{
   testthat::skip_on_cran()
   cfg_file = system.file("extdata/workflows/config_metadata_gsheets_zenodo.json", package = "geoflow")
   #deposit
-  EXEC <- geoflow::executeWorkflow(cfg_file, dir = ".")
+  EXEC <- geoflow::executeWorkflow(cfg_file, dir = tempdir())
   expect_true(dir.exists(EXEC))
   expect_true(file.exists(file.path(EXEC, "job.json")))
   expect_true(file.exists(file.path(EXEC, "job-logs.txt")))
@@ -55,7 +55,7 @@ test_that("execute",{
                                "zenodo_geoflow_config_for_publication.json",
                                "zenodo_pids.csv"))
  
-  config <- geoflow::initWorkflow(cfg_file, dir = ".")
+  config <- geoflow::initWorkflow(cfg_file, dir = tempdir())
   zenodo = config$software$output$zenodo
   
   zenodo_records <- as.data.frame(readr::read_csv(file.path(EXEC, "zenodo", "zenodo_pids.csv")))
