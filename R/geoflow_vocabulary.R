@@ -84,7 +84,9 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
           req = httr::GET(file)
           if(httr::status_code(req) == 200){
             destfile = file.path(tempdir(), basename(file))
-            writeBin(httr::content(req, "raw"), destfile)
+            dest = file(destfile, "wb")
+            writeBin(httr::content(req, "raw"), dest)
+            close(dest)
             file = file.path(tempdir(), basename(file))
           }else{
             file = NULL
