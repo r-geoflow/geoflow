@@ -28,7 +28,7 @@ debugWorkflow <- function(file, dir = NULL, entityIndex = 1,
                           runLocalActions = TRUE){
   
   wd <- getwd()
-  on.exit(wd)
+  on.exit(setwd(wd))
   if(!is.null(dir)) setwd(dir)
   
   #options
