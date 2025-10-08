@@ -693,20 +693,20 @@ register_software <- function(){
     #-------------------------------------------------------------------------------------------------------
     #WORLDBANK METADATA EDITOR CLIENT
     #-------------------------------------------------------------------------------------------------------
-    geoflow_software$new(
-      software_type = "metadataeditr",
-      definition = "World Bank metadata editor client powered by 'metadataeditr' package",
-      packages = list("metadataeditr"),
-      handler = try(metadataeditr:::set_api, silent = TRUE),
-      arguments = list(
-        api_url = list(label = "API URL", def = "Metadata editor API endpoint URL", class = "character"),
-        api_key = list(label = "API key", def = "An API user authorization key (to be generated in the Metadata editor)", class = "character"),
-        verbose = list(label = "verbose", def = "Whether messages should be displayed or not", class = "logical", default = FALSE)
-      ),
-      attributes = list(
-        collection_names = list(label = "Collection_names", def = "A coma-separated list of collection names where projects will be associated with", class = "character")
-      )
-    ),
+    # geoflow_software$new(
+    #   software_type = "metadataeditr",
+    #   definition = "World Bank metadata editor client powered by 'metadataeditr' package",
+    #   packages = list("metadataeditr"),
+    #   handler = try(metadataeditr:::set_api, silent = TRUE),
+    #   arguments = list(
+    #     api_url = list(label = "API URL", def = "Metadata editor API endpoint URL", class = "character"),
+    #     api_key = list(label = "API key", def = "An API user authorization key (to be generated in the Metadata editor)", class = "character"),
+    #     verbose = list(label = "verbose", def = "Whether messages should be displayed or not", class = "logical", default = FALSE)
+    #   ),
+    #   attributes = list(
+    #     collection_names = list(label = "Collection_names", def = "A coma-separated list of collection names where projects will be associated with", class = "character")
+    #   )
+    # ),
     #-------------------------------------------------------------------------------------------------------
     #SMTP CLIENT
     #-------------------------------------------------------------------------------------------------------

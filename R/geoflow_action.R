@@ -38,6 +38,8 @@ geoflow_action <- R6Class("geoflow_action",
   public = list(
     #'@field id action ID
     id = NA,
+    #'@field enabled enabled
+    enabled = TRUE,
     #'@field funders funders
     funders = list(),
     #'@field authors authors
@@ -78,6 +80,7 @@ geoflow_action <- R6Class("geoflow_action",
     #'@description Initialize a \link{geoflow_action}
     #'@param yaml a yaml file
     #'@param id action id
+    #'@param enabled enabled
     #'@param funders funders
     #'@param authors authors
     #'@param maintainer maintainer
@@ -97,7 +100,7 @@ geoflow_action <- R6Class("geoflow_action",
     #'@param status status of the action (experimental, stable, deprecated, superseded)
     #'@param notes notes
     initialize = function(yaml = NULL,
-                          id = NULL, 
+                          id = NULL, enabled = TRUE,
                           funders = list(), authors = list(), maintainer = NULL,
                           scope = "global", types = list(), def = "", 
                           target = NA, target_dir = NA,
@@ -112,6 +115,7 @@ geoflow_action <- R6Class("geoflow_action",
         self$fromYAML(yaml) 
       }else{
         self$id <- id
+        self$enabled <- enabled
         self$funders = funders
         self$authors = authors
         self$maintainer = maintainer
@@ -142,6 +146,8 @@ geoflow_action <- R6Class("geoflow_action",
     fromYAML = function(file){
       yml = yaml::read_yaml(file)
       self$id = yml$id
+      self$enabled = yml$enabled
+      if(is.null(yml$enabled)) self$enabled = TRUE
       self$funders = yml$funders
       self$authors = yml$authors
       self$maintainer = yml$maintainer
@@ -320,7 +326,7 @@ register_actions <- function(){
   objs <- lapply(yml_files, function(file){
     geoflow_action$new(yaml = system.file("actions", file, package = "geoflow"))
   })
-  .geoflow$actions <- objs
+  .geoflow$actions <- objs[sapply(objs, function(x){x$enabled})]
 }
 
 #' @name list_actions
