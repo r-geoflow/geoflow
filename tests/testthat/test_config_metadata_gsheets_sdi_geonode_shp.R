@@ -10,7 +10,7 @@ cfg_file = system.file("extdata/workflows/config_metadata_gsheets_sdi_geonode_sh
 
 #init
 test_that("init",{
-  # CFG <- geoflow::initWorkflow(cfg_file)
+  # CFG <- geoflow::initWorkflow(cfg_file, dir = ".")
   # expect_is(CFG$metadata$content, "list")
   # expect_equal(length(CFG$metadata$content), 2L)
   # expect_equal(names(CFG$metadata$content), c("contacts", "entities"))
@@ -28,7 +28,7 @@ test_that("init",{
 #debug
 test_that("debug",{
   # DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = ".")
-  # expect_equal(names(DEBUG), c("config", "entity"))
+  # expect_equal(names(DEBUG), c("config", "entity", "dir"))
   # expect_is(DEBUG$config, "list")
   # expect_is(DEBUG$entity, "geoflow_entity")
 })
@@ -44,7 +44,7 @@ test_that("execute",{
   # expect_true(dir.exists(file.path(EXEC, "entities")))
   # entity_dirs <- list.dirs(path = file.path(EXEC, "entities"), full.names = F,recursive = F)
   # expect_true(all(entity_dirs %in% c("my-geoflow-shapefile-record1")))
-  # config <- geoflow::initWorkflow(cfg_file)
+  # config <- geoflow::initWorkflow(cfg_file, dir = ".")
   # GEONODE <- config$software$output$geonode
   #TODO
 })

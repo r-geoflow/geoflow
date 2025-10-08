@@ -12,7 +12,7 @@ if(T){
 #init
 test_that("init",{
   testthat::skip_on_cran()
-  CFG <- geoflow::initWorkflow(cfg_file)
+  CFG <- geoflow::initWorkflow(cfg_file, dir = ".")
   expect_is(CFG$metadata$content, "list")
   expect_equal(length(CFG$metadata$content), 2L)
   expect_equal(names(CFG$metadata$content), c("contacts", "entities"))
@@ -31,7 +31,7 @@ test_that("init",{
 test_that("debug",{
   testthat::skip_on_cran()
   DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = ".")
-  expect_equal(names(DEBUG), c("config", "entity"))
+  expect_equal(names(DEBUG), c("config", "entity", "dir"))
   expect_is(DEBUG$config, "list")
   expect_is(DEBUG$entity, "geoflow_entity")
 })
@@ -47,7 +47,7 @@ test_that("execute",{
   expect_true(file.exists(file.path(EXEC, "config_copyof_entities_1.csv")))
   expect_true(dir.exists(file.path(EXEC, "entities")))
   
-  config <- geoflow::initWorkflow(cfg_file)
+  config <- geoflow::initWorkflow(cfg_file, dir = ".")
   geonetwork <- config$software$output$geonetwork
   
   entity_dirs <- list.dirs(path = file.path(EXEC, "entities"), full.names = F,recursive = F)

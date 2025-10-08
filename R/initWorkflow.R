@@ -56,8 +56,8 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
     cat("Session info\n")
     config$logger$separator("=")
     print(sessionInfo())
-    print(paste("* RAM:", round(benchmarkme::get_ram()/1e9,1),"GB"))
-    print(paste("* CPU:", benchmarkme::get_cpu()$no_of_cores,"cores"))
+    cat(paste("* RAM:", round(benchmarkme::get_ram()/1e9,1),"GB\n"))
+    cat(paste("* CPU:", benchmarkme::get_cpu()$no_of_cores,"cores\n"))
     config$logger$separator("=")
     cat("Workflow initialization\n")
     config$logger$separator("=")
@@ -188,6 +188,7 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
   }
   
   #load environment
+  config$logger$INFO("Load workflow environment")
   config <- load_workflow_environment(config, session)
   
   #set profile (R6)

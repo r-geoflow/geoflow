@@ -12,7 +12,7 @@ if(T){
   #init
   test_that("init",{
     testthat::skip_on_cran()
-    CFG <- geoflow::initWorkflow(cfg_file)
+    CFG <- geoflow::initWorkflow(cfg_file, dir = ".")
     expect_is(CFG$metadata$content, "list")
     expect_equal(length(CFG$metadata$content), 1L)
     expect_equal(names(CFG$metadata$content), c("entities"))
@@ -29,7 +29,7 @@ if(T){
   test_that("debug",{
     testthat::skip_on_cran()
     DEBUG <- geoflow::debugWorkflow(cfg_file, entityIndex = 1, dir = ".")
-    expect_equal(names(DEBUG), c("config", "entity"))
+    expect_equal(names(DEBUG), c("config", "entity", "dir"))
     expect_is(DEBUG$config, "list")
     expect_is(DEBUG$entity, "geoflow_entity")
     expect_equal(DEBUG$entity$identifiers$id, "cwp-grid-map-30deg_x_30deg")
