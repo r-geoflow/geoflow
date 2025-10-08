@@ -520,6 +520,7 @@ add_config_logger <- function(config){
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 load_workflow_environment <- function(config, session = NULL){
+  config$logger = NULL
   config_str <- jsonlite::toJSON(config, auto_unbox = TRUE)
   
   #grab shiny session userData if any session specified
