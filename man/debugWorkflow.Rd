@@ -22,8 +22,9 @@ Default is \code{TRUE}.}
 Default is \code{TRUE}}
 }
 \value{
-a named list including the workflow \code{config}, the selected \code{entity} and
-the eventual \code{options} associated to the entity.
+a named list including the workflow \code{config}, the selected \code{entity}, 
+the eventual \code{options} associated to the entity, and the output entity \code{dir} path 
+of the selected entity.
 }
 \description{
 \code{debugWorkflow} allows to initiate a workflow job for

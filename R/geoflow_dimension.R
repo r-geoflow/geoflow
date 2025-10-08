@@ -8,8 +8,8 @@
 #' @title Geoflow dimension class
 #' @description This class models a dimension
 #' @keywords dimension
-#' @return Object of \code{\link{R6Class}} for modelling a dimension
-#' @format \code{\link{R6Class}} object.
+#' @return Object of \code{\link[R6]{R6Class}} for modelling a dimension
+#' @format \code{\link[R6]{R6Class}} object.
 #' 
 #' @examples
 #'  \dontrun{

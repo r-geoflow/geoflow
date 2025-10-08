@@ -8,8 +8,8 @@
 #' @title Geoflow software class
 #' @description This class models a software to be used by geoflow
 #' @keywords software
-#' @return Object of \code{\link{R6Class}} for modelling a software
-#' @format \code{\link{R6Class}} object.
+#' @return Object of \code{\link[R6]{R6Class}} for modelling a software
+#' @format \code{\link[R6]{R6Class}} object.
 #' 
 #' @examples
 #' \dontrun{

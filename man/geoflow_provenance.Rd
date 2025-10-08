@@ -5,10 +5,10 @@
 \alias{geoflow_provenance}
 \title{Geoflow provenance class}
 \format{
-\code{\link{R6Class}} object.
+\code{\link[R6]{R6Class}} object.
 }
 \value{
-Object of \code{\link{R6Class}} for modelling an provenance
+Object of \code{\link[R6]{R6Class}} for modelling an provenance
 }
 \description{
 This class models an provenance

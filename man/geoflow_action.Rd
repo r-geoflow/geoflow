@@ -5,10 +5,10 @@
 \alias{geoflow_action}
 \title{Geoflow action class}
 \format{
-\code{\link{R6Class}} object.
+\code{\link[R6]{R6Class}} object.
 }
 \value{
-Object of \code{\link{R6Class}} for modelling an action
+Object of \code{\link[R6]{R6Class}} for modelling an action
 }
 \description{
 This class models an action to be executed by geoflow
@@ -48,6 +48,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
 \item{\code{id}}{action ID}
+
+\item{\code{enabled}}{enabled}
 
 \item{\code{funders}}{funders}
 
@@ -121,6 +123,7 @@ Initialize a \link{geoflow_action}
 \if{html}{\out{<div class="r">}}\preformatted{geoflow_action$new(
   yaml = NULL,
   id = NULL,
+  enabled = TRUE,
   funders = list(),
   authors = list(),
   maintainer = NULL,
@@ -148,6 +151,8 @@ Initialize a \link{geoflow_action}
 \item{\code{yaml}}{a yaml file}
 
 \item{\code{id}}{action id}
+
+\item{\code{enabled}}{enabled}
 
 \item{\code{funders}}{funders}
 

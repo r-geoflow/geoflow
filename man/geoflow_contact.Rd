@@ -5,10 +5,10 @@
 \alias{geoflow_contact}
 \title{Geoflow contact class}
 \format{
-\code{\link{R6Class}} object.
+\code{\link[R6]{R6Class}} object.
 }
 \value{
-Object of \code{\link{R6Class}} for modelling a contact
+Object of \code{\link[R6]{R6Class}} for modelling a contact
 }
 \description{
 This class models a contact to be executed by geoflow

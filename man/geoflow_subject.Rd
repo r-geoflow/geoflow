@@ -5,10 +5,10 @@
 \alias{geoflow_subject}
 \title{Geoflow subject class}
 \format{
-\code{\link{R6Class}} object.
+\code{\link[R6]{R6Class}} object.
 }
 \value{
-Object of \code{\link{R6Class}} for modelling a subject
+Object of \code{\link[R6]{R6Class}} for modelling a subject
 }
 \description{
 This class models a subject

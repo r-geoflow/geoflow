@@ -8,8 +8,8 @@
 #' @title Geoflow feature type class
 #' @description This class models a feature type to be executed by geoflow
 #' @keywords contact
-#' @return Object of \code{\link{R6Class}} for modelling a dictionary feature type
-#' @format \code{\link{R6Class}} object.
+#' @return Object of \code{\link[R6]{R6Class}} for modelling a dictionary feature type
+#' @format \code{\link[R6]{R6Class}} object.
 #' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'

@@ -5,10 +5,10 @@
 \alias{geoflow_process}
 \title{Geoflow process class}
 \format{
-\code{\link{R6Class}} object.
+\code{\link[R6]{R6Class}} object.
 }
 \value{
-Object of \code{\link{R6Class}} for modelling an process
+Object of \code{\link[R6]{R6Class}} for modelling an process
 }
 \description{
 This class models an process

@@ -920,7 +920,7 @@ create_object_identification_id = function(prefix, str){
 #'@aliases precompute_relationships
 #'@title precompute_relationships
 #'
-#'@usage precompute_relationships(data, parent_key, child_key)
+#'@usage precompute_relationships(data, parent_key, child_key, child_label)
 #'
 #'@param data data
 #'@param parent_key parent_key
@@ -948,7 +948,7 @@ precompute_relationships <- function (data, parent_key, child_key, child_label) 
 #'@aliases build_hierarchical_list
 #'@title build_hierarchical_list
 #'
-#'@usage build_hierarchical_list(data, parent)
+#'@usage build_hierarchical_list(parent, relationships)
 #'
 #'@param parent parent
 #'@param relationships relationships

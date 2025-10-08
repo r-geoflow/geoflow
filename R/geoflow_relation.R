@@ -8,8 +8,8 @@
 #' @title Geoflow relation class
 #' @description This class models an relation
 #' @keywords relation
-#' @return Object of \code{\link{R6Class}} for modelling an relation
-#' @format \code{\link{R6Class}} object.
+#' @return Object of \code{\link[R6]{R6Class}} for modelling an relation
+#' @format \code{\link[R6]{R6Class}} object.
 #' 
 #' @examples
 #' \dontrun{

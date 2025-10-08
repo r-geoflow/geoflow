@@ -8,8 +8,8 @@
 #' @title Geoflow profile class
 #' @description This class models an profile
 #' @keywords profile
-#' @return Object of \code{\link{R6Class}} for modelling an profile
-#' @format \code{\link{R6Class}} object.
+#' @return Object of \code{\link[R6]{R6Class}} for modelling an profile
+#' @format \code{\link[R6]{R6Class}} object.
 #' 
 #' @examples
 #' \dontrun{

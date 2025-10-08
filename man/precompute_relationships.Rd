@@ -4,7 +4,7 @@
 \alias{precompute_relationships}
 \title{precompute_relationships}
 \usage{
-precompute_relationships(data, parent_key, child_key)
+precompute_relationships(data, parent_key, child_key, child_label)
 }
 \arguments{
 \item{data}{data}

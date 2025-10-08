@@ -5,10 +5,10 @@
 \alias{geoflow_kvp}
 \title{Geoflow kvp (Key Values pair) class}
 \format{
-\code{\link{R6Class}} object.
+\code{\link[R6]{R6Class}} object.
 }
 \value{
-Object of \code{\link{R6Class}} for modelling an kvp (Key Values pair)
+Object of \code{\link[R6]{R6Class}} for modelling an kvp (Key Values pair)
 }
 \description{
 This class models an kvp (Key Values pair)

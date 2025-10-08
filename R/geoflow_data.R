@@ -8,8 +8,8 @@
 #' @title Geoflow data class
 #' @description This class models a data object
 #' @keywords data
-#' @return Object of \code{\link{R6Class}} for modelling a data object
-#' @format \code{\link{R6Class}} object.
+#' @return Object of \code{\link[R6]{R6Class}} for modelling a data object
+#' @format \code{\link[R6]{R6Class}} object.
 #' 
 #' @author Emmanuel Blondel <emmanuel.blondel1@@gmail.com>
 #'

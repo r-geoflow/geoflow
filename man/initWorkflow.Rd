@@ -9,7 +9,7 @@ initWorkflow(file, dir, jobDirPath, handleMetadata, session)
 \arguments{
 \item{file}{a JSON or YAML configuration file}
 
-\item{dir}{a directory where to execute the workflow}
+\item{dir}{a directory where to execute the workflow.}
 
 \item{jobDirPath}{a directory set-up for the job. Default is \code{NULL} means it will be created
 during initialization of the workflow, otherwise the path provided will be used.}

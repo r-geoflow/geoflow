@@ -4,7 +4,7 @@
 \alias{build_hierarchical_list}
 \title{build_hierarchical_list}
 \usage{
-build_hierarchical_list(data, parent)
+build_hierarchical_list(parent, relationships)
 }
 \arguments{
 \item{parent}{parent}

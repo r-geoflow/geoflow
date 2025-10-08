@@ -8,8 +8,8 @@
 #' @title Geoflow provenance class
 #' @description This class models an provenance
 #' @keywords provenance
-#' @return Object of \code{\link{R6Class}} for modelling an provenance
-#' @format \code{\link{R6Class}} object.
+#' @return Object of \code{\link[R6]{R6Class}} for modelling an provenance
+#' @format \code{\link[R6]{R6Class}} object.
 #' 
 #' @examples
 #' \dontrun{
