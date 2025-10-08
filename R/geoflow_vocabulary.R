@@ -97,7 +97,9 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
             switch(mime::guess_type(file),
               "application/gzip" = {
                 trg_file = file.path(tempdir(), paste0(id, ".rdf"))
-                readr::write_lines(readLines(gzfile(file, "r"), warn = F), file = trg_file)
+                gz_file = gzfile(file, "r")
+                readr::write_lines(readLines(gz_file, warn = F), file = trg_file)
+                close(gz_file)
                 self$rdf = rdflib::rdf_parse(trg_file)
               },
               "application/zip" = {
