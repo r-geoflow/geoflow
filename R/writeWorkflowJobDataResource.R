@@ -91,6 +91,8 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
            config$logger$INFO("Format type: %s", type)
            sf::st_write(obj = obj, dsn=paste0("./data/",resourcename,".gpkg"))
            config$logger$INFO("write gpkg file to data job directory")
+           zip::zipr(zipfile = paste0("./data/",resourcename, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = resourcename)))
+           config$logger$INFO("zip datafiles for server export")
          },
          "parquet" = {
            resourcename_parts <- unlist(strsplit(resourcename, "\\."))
