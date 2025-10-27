@@ -71,7 +71,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
            config$logger$INFO("Format type: %s", type)
            sf::st_write(obj = obj, paste0("./data/",resourcename,".shp"), delete_layer = TRUE)
            config$logger$INFO("write shp file to data job directory")
-           zip::zipr(zipfile = paste0("./data/",resourcename, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = resourcename)))
+           zip::zipr(zipfile = file.path(getwd(), "data", paste0(resourcename, ".zip")), files = list.files(path= file.path(getwd(), "data"), pattern = resourcename))
            config$logger$INFO("zip datafiles for server export")
            if(useFeatures){
              config$logger$INFO("object use to data features") 
@@ -92,7 +92,7 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
            geom_colname = colnames(obj)[sapply(colnames(obj), function(x){is(obj[[x]], "sfc")})][1]
            sf::st_write(obj = obj, dsn=paste0("./data/",resourcename,".gpkg"), layer_options = paste0("GEOMETRY_NAME=",geom_colname))
            config$logger$INFO("write gpkg file to data job directory")
-           zip::zipr(zipfile = paste0("./data/",resourcename, ".zip"), files = paste0(getwd(),"./data/",list.files(path="./data",pattern = resourcename)))
+           zip::zipr(zipfile = file.path(getwd(), "data", paste0(resourcename, ".zip")), files = list.files(path= file.path(getwd(), "data"), pattern = resourcename))
            config$logger$INFO("zip datafiles for server export")
          },
          "parquet" = {
