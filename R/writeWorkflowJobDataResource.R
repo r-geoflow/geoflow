@@ -92,6 +92,13 @@ writeWorkflowJobDataResource <- function(entity, config, obj=NULL,
            geom_colname = colnames(obj)[sapply(colnames(obj), function(x){is(obj[[x]], "sfc")})][1]
            sf::st_write(obj = obj, dsn=paste0("./data/",resourcename,".gpkg"), layer_options = paste0("GEOMETRY_NAME=",geom_colname))
            config$logger$INFO("write gpkg file to data job directory")
+           print(resourcename)
+           print("test1")
+           print(list.files(path = "./data"))
+           print("test2")
+           print(list.files(path= "./data", pattern = resourcename))
+           print("test3")
+           print(list.files(path= file.path(getwd(), "data"), pattern = resourcename))
            zip::zipr(zipfile = file.path(getwd(), "data", paste0(resourcename, ".zip")), files = list.files(path= file.path(getwd(), "data"), pattern = resourcename))
            config$logger$INFO("zip datafiles for server export")
          },
