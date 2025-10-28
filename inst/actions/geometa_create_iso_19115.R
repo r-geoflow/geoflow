@@ -87,7 +87,7 @@ function(action, entity, config){
     
     if(include_object_identification_ids){
       rp_id = paste(roleId, tolower(x$email), sep = "_")
-      rp$setAttr("id", create_object_identification_id("party", rp_id))
+      rp$setAttr("id", geoflow::create_object_identification_id("party", rp_id))
     }
     return(rp)
   }
@@ -362,7 +362,7 @@ function(action, entity, config){
         fileDescription = thumbnail$description
       )
       thumbnail_id = paste(tolower(entity$identifiers[["id"]]), "thumbnail", tolower(thumbnail$link),sep="_")
-      if(include_object_identification_ids) go$setAttr("id", create_object_identification_id("browsegraphic", thumbnail_id))
+      if(include_object_identification_ids) go$setAttr("id", geoflow::create_object_identification_id("browsegraphic", thumbnail_id))
       ident$addGraphicOverview(go)
     }
   }
@@ -845,7 +845,7 @@ function(action, entity, config){
     doi_desc = set_i18n(term_key = "doi")
     doi_or$setDescription(doi_desc, locales = geoflow::get_locales_from(doi_desc))
     doi_or$setProtocol("WWW:LINK-1.0-http--link")
-    if(include_object_identification_ids) doi_or$setAttr("id", create_object_identification_id("onlineresource", the_doi))
+    if(include_object_identification_ids) doi_or$setAttr("id", geoflow::create_object_identification_id("onlineresource", the_doi))
     dto$addOnlineResource(doi_or)
   }
   
@@ -911,7 +911,7 @@ function(action, entity, config){
       
       if(include_object_identification_ids) if(any(sapply(c("wms", "wfs", "wcs","download"), function(x){startsWith(http_relation$key, x)}))) {
         resource_id = paste(tolower(entity$identifiers[["id"]]), http_relation$key, if(!is.null(mimeType)) mimeType else "", tolower(http_relation$name),sep="_")
-        or$setAttr("id", create_object_identification_id("onlineresource", resource_id))
+        or$setAttr("id", geoflow::create_object_identification_id("onlineresource", resource_id))
       }
       
       dto$onLine = c(dto$onLine,or)
