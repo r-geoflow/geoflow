@@ -1,11 +1,12 @@
 
-## [geoflow 1.0.0.9999](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-red.svg)](https://github.com/r-geoflow/geoflow)
+## [geoflow 1.0.0.9003](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-red.svg)](https://github.com/r-geoflow/geoflow)
 
 **Bug fixes**
 
 * [#418](https://github.com/r-geoflow/geoflow/issues/418) `prepareFeaturesToUpload` for GeoPackage miss default zipping
 * [#419](https://github.com/r-geoflow/geoflow/issues/419) `prepareFeaturesToUpload GeoPackage export - no geometry colum name integrity
 * [#420](https://github.com/r-geoflow/geoflow/issues/420) `unload_workflow_environment` broken since 1.0.0
+* [#422](https://github.com/r-geoflow/geoflow/issues/422) Control on dir too restrictive to detect geoflow data children
 
 **Enhancements**
 
