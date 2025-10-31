@@ -1637,6 +1637,11 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@param config geoflow config object
     enrichWithRelations = function(config){
       
+      #check for geoflow auto-set relations, if any we remove them to avoid duplicating auto-set relations
+      if(any(sapply(self$relations, function(x){x$prov == "geoflow"}))){
+        self$relations = self$relations[sapply(self$relations, function(x){x$prov != "geoflow"})]
+      }
+      
       geosapi_action <- NULL
       actions <- list()
       if(length(config$actions)>0) actions <- config$actions[sapply(config$actions, function(x){regexpr("geosapi",x$id)>0})]
@@ -1667,6 +1672,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           if(geosapi_action$getOption("enrich_with_relation_wms_thumbnail")){
             config$logger$INFO("Enrich entity with OGC WMS thumbnail for layer = '%s'", layername)
             new_thumbnail <- geoflow_relation$new()
+            new_thumbnail$setProv("geoflow")
             new_thumbnail$setKey("thumbnail")
             new_thumbnail$setName(layername)
             map_overview = set_i18n(term_key = "graphic_overview", expr = "{{layername}} - {{term}}", layername = layername)
@@ -1693,6 +1699,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           if(geosapi_action$getOption("enrich_with_relation_wms")){
             config$logger$INFO("Enrich entity with OGC WMS base URL for layer = '%s'", layername)
             new_wms <- geoflow_relation$new()
+            new_wms$setProv("geoflow")
             new_wms$setKey("wms")
             new_wms$setName(layername)
             new_wms$setDescription(
@@ -1717,6 +1724,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             if(geosapi_action$getOption("enrich_with_relation_wfs")){
               config$logger$INFO("Enrich entity with OGC WFS base URL for layer = '%s'", layername)
               new_wfs <- geoflow_relation$new()
+              new_wfs$setProv("geoflow")
               new_wfs$setKey("wfs")
               new_wfs$setName(layername)
               new_wfs$setDescription(
@@ -1739,6 +1747,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               config$logger$INFO("Enrich entity with OGC WFS download links for layer = '%s'", layername)
               #wfs (GML)
               new_wfs_gml <- geoflow_relation$new()
+              new_wfs_gml$setProv("geoflow")
               new_wfs_gml$setKey("download")
               new_wfs_gml$setName(layername)
               new_wfs_gml$setDescription(
@@ -1757,6 +1766,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               self$addRelation(new_wfs_gml)
               #wfs (GeoJSON)
               new_wfs_geojson <- geoflow_relation$new()
+              new_wfs_geojson$setProv("geoflow")
               new_wfs_geojson$setKey("download")
               new_wfs_geojson$setName(layername)
               new_wfs_geojson$setDescription(
@@ -1775,6 +1785,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               self$addRelation(new_wfs_geojson)
               #wfs (ESRI Shapefile)
               new_wfs_shp <- geoflow_relation$new()
+              new_wfs_shp$setProv("geoflow")
               new_wfs_shp$setKey("download")
               new_wfs_shp$setName(layername)
               new_wfs_shp$setDescription(
@@ -1793,6 +1804,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               self$addRelation(new_wfs_shp)
               #CSV
               new_wfs_csv <- geoflow_relation$new()
+              new_wfs_csv$setProv("geoflow")
               new_wfs_csv$setKey("download")
               new_wfs_csv$setName(layername)
               new_wfs_csv$setDescription(
@@ -1819,6 +1831,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             if(geosapi_action$getOption("enrich_with_relation_wcs")){
               config$logger$INFO("Enrich entity with OGC WCS base URL for layer = '%s'", layername)
               new_wcs <- geoflow_relation$new()
+              new_wcs$setProv("geoflow")
               new_wcs$setKey("wcs")
               new_wcs$setName(layername)
               new_wcs$setDescription(
@@ -1842,6 +1855,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               config$logger$INFO("Enrich entity with OGC WCS download links for layer = '%s'", layername)
               #wcs (image/geotiff)
               new_wcs_geotiff <- geoflow_relation$new()
+              new_wcs_geotiff$setProv("geoflow")
               new_wcs_geotiff$setKey("download")
               new_wcs_geotiff$setName(layername)
               new_wcs_geotiff$setDescription(
@@ -1883,6 +1897,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         geonetwork_base_url = config$software$output$geonetwork_config$parameters$url
         #xml metadata url
         metadata_url <- geoflow_relation$new()
+        metadata_url$setProv("geoflow")
         metadata_url$setKey("http")
         metadata_url$setName("ISO 19115 metadata (CSW GetRecordById)")
         csw_record_url = paste0(
@@ -1896,6 +1911,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         
         #html metadata url
         metadata_url_2 = geoflow_relation$new()
+        metadata_url_2$setProv("geoflow")
         metadata_url_2$setKey("http")
         metadata_url_2$setName("ISO 19115 metadata (HTML)")
         html_record_url = paste0(geonetwork_base_url, "/srv/api/records/", mdId)
@@ -1911,6 +1927,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         csw_base_url = config$software$output$csw_config$parameters$url
         #xml metadata url
         metadata_url <- geoflow_relation$new()
+        metadata_url$setProv("geoflow")
         metadata_url$setKey("http")
         metadata_url$setName("ISO 19115 metadata (CSW GetRecordById)")
         csw_record_url = paste0(
@@ -1927,6 +1944,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         if(regexpr("geonetwork", csw_base_url)>0){
           geonetwork_base_url = unlist(strsplit(csw_base_url, "/srv"))[1]
           metadata_url_2 = geoflow_relation$new()
+          metadata_url_2$setProv("geoflow")
           metadata_url_2$setKey("http")
           metadata_url_2$setName("ISO 19115 metadata (HTML)")
           html_record_url = paste0(geonetwork_base_url, "/srv/api/records/", mdId)

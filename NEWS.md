@@ -10,6 +10,8 @@
 
 **Enhancements**
 
+* [#423](https://github.com/r-geoflow/geoflow/issues/423) Capacity to update relations auto-set by geoflow with `enrichWithRelations`
+
 _nothing yet_
 
 **New features**
