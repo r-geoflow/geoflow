@@ -37,7 +37,7 @@
 #   if(fc){
 #     #manage multiple sources (supposes a common data structure to expose as FC)
 #     data_objects <- list()
-#     if(is.null(entity$data$dir)){
+#     if(length(entity$data$getData())==0){
 #       data_objects <- list(entity$data)
 #     }else{
 #       data_objects <- entity$data$getData()

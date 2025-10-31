@@ -15,7 +15,7 @@ function(action, entity, config){
   
   #TODO to check behavior of multiple objects on GeoNode, in principle not elegible to multi-upload
   data_objects <- list()
-  if(is.null(entity$data$dir)){
+  if(length(entity$data$getData())==0){
     data_objects <- list(entity$data)
   }else{
     data_objects <- entity$data$getData()

@@ -430,7 +430,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       accessors <- list_data_accessors(raw = TRUE)
       
       data_objects <- list()
-      if(is.null(self$data$dir)){
+      if(length(self$data$getData())==0){
         data_objects <- list(self$data)
       }else{
         data_objects <- self$data$getData()
@@ -618,7 +618,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       setwd("./data")
       
       data_objects <- list()
-      if(is.null(self$data$dir)){
+      if(length(self$data$getData())==0){
         data_objects <- list(self$data)
       }else{
         data_objects <- self$data$getData()
@@ -705,7 +705,7 @@ geoflow_entity <- R6Class("geoflow_entity",
               if(data_object$uploadType == "geotiff") data_object$setSpatialRepresentationType("grid")
             }
             #overwrite top sourceType
-            if(is.null(self$data$dir)){
+            if(length(self$data$getData())==0){
               self$data$sourceType = data_object$sourceType 
               self$data$uploadType = data_object$uploadType
               self$data$setSpatialRepresentationType(data_object$spatialRepresentationType)
@@ -718,7 +718,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           return(data_object)
         })
         
-        if(is.null(self$data$dir)){
+        if(length(self$data$getData())==0){
           self$data <- data_objects[[1]]
         }else{
           self$data$data <- data_objects
@@ -745,7 +745,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       computeSurfaceCrs <- if(!is.null(config$profile$options$computeSurfaceCrs)) config$profile$options$computeSurfaceCrs else "+proj=eck4"
       
       data_objects <- list()
-      if(is.null(self$data$dir)){
+      if(length(self$data$getData())==0){
         data_objects <- list(self$data)
       }else{
         data_objects <- self$data$getData()
@@ -1264,7 +1264,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           
         })
         
-        if(is.null(self$data$dir)){
+        if(length(self$data$getData())==0){
           self$data <- data_objects[[1]]
         }else{
           self$data$data <- data_objects
@@ -1312,7 +1312,7 @@ geoflow_entity <- R6Class("geoflow_entity",
     #'@param config geoflow config object
     enrichSpatialCoverageFromDB = function(config){
       data_objects <- list()
-      if(is.null(self$data$dir)){
+      if(length(self$data$getData())==0){
         data_objects <- list(self$data)
       }else{
         data_objects <- self$data$getData()
@@ -1502,7 +1502,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           
         })
         
-        if(is.null(self$data$dir)){
+        if(length(self$data$getData())==0){
           self$data <- data_objects[[1]]
         }else{
           self$data$data <- data_objects
@@ -1550,7 +1550,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       types_with_file<-c("csv","shp","gpkg","parquet")
       
       data_objects <- list()
-      if(is.null(self$data$dir)){
+      if(length(self$data$getData())==0){
         data_objects <- list(self$data)
       }else{
         data_objects <- self$data$getData()
@@ -1591,7 +1591,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           return(data_object)
         })
         
-        if(is.null(self$data$dir)){
+        if(length(self$data$getData())==0){
           self$data <- data_objects[[1]]
         }else{
           self$data$data <- data_objects
@@ -1645,7 +1645,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       if(!is.null(geosapi_action)) if(geosapi_action$getOption("enrich_with_relations")) if(!is.null(self$data)){
         
         data_objects <- list()
-        if(is.null(self$data$dir)){
+        if(length(self$data$getData())==0){
           data_objects <- list(self$data)
         }else{
           data_objects <- self$data$getData()
