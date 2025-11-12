@@ -225,6 +225,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
           gkwd = kwd
           if(is(kwd, "ISOAnchor")){
             gkwd = kwd$value
+            if(is.null(gkwd)) gkwd = ""
             attr(gkwd, "uri") = kwd$attrs[["xlink:href"]]
           }
           subject$addKeyword(gkwd)
