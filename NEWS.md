@@ -11,6 +11,7 @@
 **Enhancements**
 
 * [#423](https://github.com/r-geoflow/geoflow/issues/423) Capacity to update relations auto-set by geoflow with `enrichWithRelations`
+* [#424](https://github.com/r-geoflow/geoflow/issues/424) INSPIRE metadata validator does not need API key anymore
 
 _nothing yet_
 

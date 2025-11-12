@@ -35,16 +35,7 @@
   			"version": "4.0.5",
   			"logger": "DEBUG"
   		}
-  	},
-  	{
-      "id": "inspire",
-      "type": "output",
-  		"software_type": "inspire",
-  		"parameters": {
-        "url": "{{INSPIRE_API_ENDPOINT}}",
-        "apiKey": "{{INSPIRE_API_KEY}}"
-  		}
-    }
+  	}
    ],
   "actions": [
     {

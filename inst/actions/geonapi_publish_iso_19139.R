@@ -11,16 +11,18 @@ function(action, entity, config){
   #INSPIRE metadata validation
   geometa_inspire <- action$getOption("geometa_inspire")
   INSPIRE_VALIDATOR <- NULL
-  if(geometa_inspire){
-    #check inspire metadata validator configuration
-    INSPIRE_VALIDATOR <- config$software$output$inspire
-    if(is.null(INSPIRE_VALIDATOR)){
-      errMsg <- "This action requires a INSPIRE metadata validator software to be declared in the configuration"
-      config$logger$ERROR(errMsg)
-      stop(errMsg)
-    }
-    config$logger$INFO("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its publication")
-  }
+  #as of 2025-05-02, there is no need anymore to have an API key to validate metadata
+  #therefore the INSPIRE metadata validator software declaration is not needed
+  # if(geometa_inspire){
+  #   #check inspire metadata validator configuration
+  #   INSPIRE_VALIDATOR <- config$software$output$inspire
+  #   if(is.null(INSPIRE_VALIDATOR)){
+  #     errMsg <- "This action requires a INSPIRE metadata validator software to be declared in the configuration"
+  #     config$logger$ERROR(errMsg)
+  #     stop(errMsg)
+  #   }
+  #   config$logger$INFO("INSPIRE geometa option enabled: The record will be checked against the INSPIRE reference validator prior its publication")
+  # }
   
   #shortcut for gn config
   GN <- config$software$output$geonetwork

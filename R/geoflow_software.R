@@ -405,12 +405,12 @@ register_software <- function(){
     #-------------------------------------------------------------------------------------------------------
     geoflow_software$new(
       software_type = "inspire",
-      definition = "INSPIRE Metadata validator, powered by 'geometa' package",
+      definition = "INSPIRE Metadata validator, powered by 'geometa' package. Deprecated, not needed anymore since May 2025.",
       packages = list("geometa"),
       handler = try(geometa::INSPIREMetadataValidator$new, silent = TRUE),
       arguments = list(
         url = list(label = "INSPIRE Metadata validator URL", def = "URL of the INSPIRE metadata validator instance. By default use 'https://inspire.ec.europa.eu/validator/v2'", class = "character", default = "https://inspire.ec.europa.eu/validator/v2"),
-        apiKey = list(label = "API Key", def = "API user key to authenticate to INSPIRE API gateway", class = "character")
+        apiKey = list(label = "API Key", def = "API user key to authenticate to INSPIRE API gateway. Deprecated, not needed anymore since May 2025.", class = "character")
       )
     ),
     #-------------------------------------------------------------------------------------------------------

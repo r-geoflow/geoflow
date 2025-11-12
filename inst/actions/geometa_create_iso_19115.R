@@ -25,15 +25,17 @@ function(action, entity, config){
   include_object_identification_ids = action$getOption("include_object_identification_ids")
   
   #check inspire metadata validator configuration
-  INSPIRE_VALIDATOR <- NULL
-  if(inspire){
-    INSPIRE_VALIDATOR <- config$software$output$inspire
-    if(is.null(INSPIRE_VALIDATOR)){
-      errMsg <- "This action requires a INSPIRE metadata validator software to be declared in the configuration"
-      config$logger$ERROR(errMsg)
-      stop(errMsg)
-    }
-  }
+  #as of 2025-05-02, there is no need anymore to have an API key to validate metadata
+  #therefore the INSPIRE metadata validator software declaration is not needed
+  # INSPIRE_VALIDATOR <- NULL
+  # if(inspire){
+  #   INSPIRE_VALIDATOR <- config$software$output$inspire
+  #   if(is.null(INSPIRE_VALIDATOR)){
+  #     errMsg <- "This action requires a INSPIRE metadata validator software to be declared in the configuration"
+  #     config$logger$ERROR(errMsg)
+  #     stop(errMsg)
+  #   }
+  # }
   
   createResponsibleParty = function(x, role = NULL, roleId = NULL){
     if(is.null(role)) role <- x$role 
@@ -1005,7 +1007,7 @@ function(action, entity, config){
   #we save the metadata
   #saveRDS(md, file.path(getwd(), "metadata", paste0(entity$identifiers[["id"]], ".rds")))
   md$save(file.path(getwd(), "metadata", paste0(entity$getEntityJobDirname(), "_ISO-19115.xml")), 
-          inspire = inspire, inspireValidator = INSPIRE_VALIDATOR)
+          inspire = inspire)
   rm(md)
 
 }
