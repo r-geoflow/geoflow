@@ -13,12 +13,10 @@
 * [#423](https://github.com/r-geoflow/geoflow/issues/423) Capacity to update relations auto-set by geoflow with `enrichWithRelations`
 * [#424](https://github.com/r-geoflow/geoflow/issues/424) INSPIRE metadata validator does not need API key anymore
 
-_nothing yet_
-
 **New features**
 
 * [#417](https://github.com/r-geoflow/geoflow/issues/417) Support surface computation global option
-
+* [#425](https://github.com/r-geoflow/geoflow/issues/425) Support new Data sourceFid
 
 ## [geoflow 1.0.0](https://cran.r-project.org/package=geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://cran.r-project.org/package=geoflow)
 
