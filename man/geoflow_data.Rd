@@ -31,6 +31,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{source}}{source}
 
+\item{\code{sourceFid}}{sourceFid}
+
 \item{\code{sourceSql}}{sourceSql}
 
 \item{\code{sourceType}}{source type}
@@ -121,6 +123,7 @@ layeruri layer URI}
 \item \href{#method-geoflow_data-getAllowedYPossibleNames}{\code{geoflow_data$getAllowedYPossibleNames()}}
 \item \href{#method-geoflow_data-addSource}{\code{geoflow_data$addSource()}}
 \item \href{#method-geoflow_data-setSource}{\code{geoflow_data$setSource()}}
+\item \href{#method-geoflow_data-setSourceFid}{\code{geoflow_data$setSourceFid()}}
 \item \href{#method-geoflow_data-setSourceSql}{\code{geoflow_data$setSourceSql()}}
 \item \href{#method-geoflow_data-setSourceZip}{\code{geoflow_data$setSourceZip()}}
 \item \href{#method-geoflow_data-setSourceZipOnly}{\code{geoflow_data$setSourceZipOnly()}}
@@ -354,6 +357,23 @@ Set source, object of class \code{"character"} (single source), or \code{list}.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{source}}{source}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_data-setSourceFid"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_data-setSourceFid}{}}}
+\subsection{Method \code{setSourceFid()}}{
+Set source FID, object of class \code{"character"} (single source FID), or \code{list}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_data$setSourceFid(sourceFid)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sourceFid}}{sourceFid}
 }
 \if{html}{\out{</div>}}
 }
