@@ -248,7 +248,7 @@ workflows - List of actions and softwares
 | name   | label                          | definition                                                                                                   |
 |:-------|:-------------------------------|:-------------------------------------------------------------------------------------------------------------|
 | url    | INSPIRE Metadata validator URL | URL of the INSPIRE metadata validator instance. By default use ‘<https://inspire.ec.europa.eu/validator/v2>’ |
-| apiKey | API Key                        | API user key to authenticate to INSPIRE API gateway                                                          |
+| apiKey | API Key                        | API user key to authenticate to INSPIRE API gateway. Deprecated, not needed anymore since May 2025.                                                         |
 
 #### 2.1.3.2 List of inspire properties
 
