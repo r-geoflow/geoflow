@@ -834,7 +834,15 @@ geoflow_validator_entity_Data <- R6Class("geoflow_validator_entity_Data",
     #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
     #'@param str string to validate
     initialize = function(i, j, str){
-      valid_keys <- list()
+      valid_keys <- list(
+        "access", "dir", "source", "sourceFid", "sourceSql", "sourceType",
+        "upload", "uploadSource", "uploadType", "sql", "cqlfilter", 
+        "workspace", "store",
+        "layername", "layertitle", "layerdesc", "layeruri", "style", "styleUpload",
+        "featureType", "attribute", "variable",
+        "parameter", "geometry", "band",
+        "cloud_path"
+      )
       super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,FALSE, FALSE, TRUE, i, j, str)
     }
   )
