@@ -12,6 +12,7 @@
 
 * [#423](https://github.com/r-geoflow/geoflow/issues/423) Capacity to update relations auto-set by geoflow with `enrichWithRelations`
 * [#424](https://github.com/r-geoflow/geoflow/issues/424) INSPIRE metadata validator does not need API key anymore
+* [#427](https://github.com/r-geoflow/geoflow/issues/427) Define additional 'wfs' / 'wcs' source type values
 
 **New features**
 

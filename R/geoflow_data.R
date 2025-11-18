@@ -15,7 +15,7 @@
 #'
 geoflow_data <- R6Class("geoflow_data",
   private = list(
-    supportedSourceTypes = c("dbtable", "dbview", "dbquery", "zip", "shp", "csv", "gpkg", "other","nc", "geotiff","parquet"),
+    supportedSourceTypes = c("dbtable", "dbview", "dbquery", "zip", "shp", "csv", "gpkg", "other","nc", "geotiff","parquet", "wfs", "wcs"),
     supportedUploadTypes = c("dbtable", "dbview", "dbquery", "shp", "gpkg", "other","nc", "geotiff", "parquet"),
     supportedGeomPossibleNames = c("the_geom", "geom", "wkt", "geom_wkt", "wkb", "geom_wkb"),
     supportedXPossibleNames = c("x","lon","long","longitude","decimalLongitude"),

@@ -443,7 +443,7 @@ geoflow_entity <- R6Class("geoflow_entity",
       
         config$logger$INFO("Copying data to entity job data directory '%s'", getwd())
         
-        if(!data_object$sourceType %in% c("dbtable", "dbquery", "dbview")) for(i in 1:length(data_object$source)){
+        if(!data_object$sourceType %in% c("dbtable", "dbquery", "dbview", "wfs", "wcs")) for(i in 1:length(data_object$source)){
         
           datasource <- data_object$source[[i]]
           if(is.null(datasource)) next;
