@@ -26,6 +26,8 @@ If sourced files are in local directory the complete path of file must be declar
 	* *`other`* for other type of file
 * **sourceSql**: a plain SQL query to use as source
 
+* **sourceFid**: name of the source attribute used as feature identifier (eg an ID, CODE). Can be needed for processing data source.
+
 <u>Access to storage and upload data</u>
 If data must be uploaded, the target must be declared in **software** section of the JSON configuration file.
 * **upload**: a boolean argument whether the source data should be uploaded to the software output declared in the geoflow. By default it is `true` to perform upload.
