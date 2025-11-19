@@ -7,6 +7,7 @@
 * [#419](https://github.com/r-geoflow/geoflow/issues/419) `prepareFeaturesToUpload GeoPackage export - no geometry colum name integrity
 * [#420](https://github.com/r-geoflow/geoflow/issues/420) `unload_workflow_environment` broken since 1.0.0
 * [#422](https://github.com/r-geoflow/geoflow/issues/422) Control on dir too restrictive to detect geoflow data children
+* [#430](https://github.com/r-geoflow/geoflow/issues/430) Function unload_workflow_environment fails if no env was provided
 
 **Enhancements**
 

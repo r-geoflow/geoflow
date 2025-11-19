@@ -584,23 +584,25 @@ dotenv_parse_dot_line <- function (line) {
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 unload_workflow_environment <- function(config){
-  env_vars_workflow <- as.list(Sys.getenv())
-  envfile <- get_absolute_path(config$profile_config$environment$file, base = config$wd)
-  if(!is.null(envfile)){
-    tmp <- readLines(envfile)
-    tmp <- dotenv_ignore_comments(tmp)
-    tmp <- dotenv_ignore_empty_lines(tmp)
-    if (length(tmp) > 0){
-      tmp <- lapply(tmp, dotenv_parse_dot_line)
-      tmp <- structure(.Data = lapply(tmp, "[[", "value"), .Names = sapply(tmp, "[[", "key"))
-      
-      #remove env vars based on .env file
-      Sys.unsetenv(names(tmp))
-      
-      #reset env vars previously in session env
-      env_vars_before <- config$session_env
-      env_vars_to_reset <- setdiff(env_vars_before, env_vars_workflow)
-      if(length(env_vars_to_reset)>0) do.call(Sys.setenv, env_vars_to_reset)
+  if(!is.null(config$profile_config$environment$file)){
+    env_vars_workflow <- as.list(Sys.getenv())
+    envfile <- get_absolute_path(config$profile_config$environment$file, base = config$wd)
+    if(!is.null(envfile)){
+      tmp <- readLines(envfile)
+      tmp <- dotenv_ignore_comments(tmp)
+      tmp <- dotenv_ignore_empty_lines(tmp)
+      if (length(tmp) > 0){
+        tmp <- lapply(tmp, dotenv_parse_dot_line)
+        tmp <- structure(.Data = lapply(tmp, "[[", "value"), .Names = sapply(tmp, "[[", "key"))
+        
+        #remove env vars based on .env file
+        Sys.unsetenv(names(tmp))
+        
+        #reset env vars previously in session env
+        env_vars_before <- config$session_env
+        env_vars_to_reset <- setdiff(env_vars_before, env_vars_workflow)
+        if(length(env_vars_to_reset)>0) do.call(Sys.setenv, env_vars_to_reset)
+      }
     }
   }
 }
