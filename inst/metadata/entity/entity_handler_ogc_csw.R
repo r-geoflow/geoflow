@@ -415,6 +415,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     
     #provenance
     if(length(rec$dataQualityInfo)>0){
+      
       dq = rec$dataQualityInfo[[1]]
       if(is(dq$lineage, "ISOLineage")){
         prov = geoflow_provenance$new()
@@ -445,20 +446,33 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
         if(length(onLine)>0){
           onLineToDownload = onLine[sapply(onLine, function(x){x$protocol == "WWW:DOWNLOAD-1.0-http--download"})]
           if(length(onLineToDownload)>0){
-            onLineToDownload = onLineToDownload[[1]]
-            outres = onLineToDownload$name
-            attr(outres, "uri") = onLineToDownload$linkage$value
-            g_data$setSource(outres)
-            g_data$sourceType = switch(mime::guess_type(onLineToDownload$linkage$value),
-              "text/csv" = "csv",
-              "application/zip" = "zip",
-              "application/x-qgis" = "shp",
-              "application/geopackage+sqlite3" = "gpkg",
-              "application/x-netcdf" = "nc",
-              "image/tiff" = "geotiff",
-              "other"
-            )
-            g_data$uploadType = "other"
+            onLineToDownload = onLineToDownload[sapply(onLineToDownload, function(x){
+              mimetype = mime::guess_type(onLineToDownload$linkage$value)
+              mimetype %in% c(
+                "text/csv",
+                "application/zip",
+                "application/x-qgis",
+                "application/geopackage+sqlite3",
+                "application/x-netcdf",
+                "image/tiff",
+              )
+            })]
+            if(length(onLineToDownload)>0){
+              onLineToDownload = onLineToDownload[[1]]
+              outres = onLineToDownload$name
+              attr(outres, "uri") = onLineToDownload$linkage$value
+              g_data$setSource(outres)
+              g_data$sourceType = switch(mime::guess_type(onLineToDownload$linkage$value),
+                "text/csv" = "csv",
+                "application/zip" = "zip",
+                "application/x-qgis" = "shp",
+                "application/geopackage+sqlite3" = "gpkg",
+                "application/x-netcdf" = "nc",
+                "image/tiff" = "geotiff",
+                "other"
+              )
+              g_data$uploadType = "other"
+            }
           }
         }
       }
