@@ -454,7 +454,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
                 "application/x-qgis",
                 "application/geopackage+sqlite3",
                 "application/x-netcdf",
-                "image/tiff",
+                "image/tiff"
               )
             })]
             if(length(onLineToDownload)>0){
