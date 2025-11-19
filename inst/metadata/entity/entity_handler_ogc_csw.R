@@ -455,7 +455,8 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
               "application/x-qgis" = "shp",
               "application/geopackage+sqlite3" = "gpkg",
               "application/x-netcdf" = "nc",
-              "image/tiff" = "geotiff"
+              "image/tiff" = "geotiff",
+              "other"
             )
             g_data$uploadType = "other"
           }
