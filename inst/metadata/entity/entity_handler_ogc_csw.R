@@ -447,7 +447,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
           onLineToDownload = onLine[sapply(onLine, function(x){x$protocol == "WWW:DOWNLOAD-1.0-http--download"})]
           if(length(onLineToDownload)>0){
             onLineToDownload = onLineToDownload[sapply(onLineToDownload, function(x){
-              mimetype = mime::guess_type(onLineToDownload$linkage$value)
+              mimetype = mime::guess_type(x$linkage$value)
               mimetype %in% c(
                 "text/csv",
                 "application/zip",
