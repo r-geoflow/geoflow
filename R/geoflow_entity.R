@@ -653,7 +653,7 @@ geoflow_entity <- R6Class("geoflow_entity",
           
           #in case of a datasource type requiring a file we check its presence
           #if absent we abort the function enrich With features
-          types_without_file <- c("dbtable","dbview","dbquery")
+          types_without_file <- c("dbtable","dbview","dbquery","wfs","wcs")
           datasource_file_needed <- !(data_object$sourceType %in% types_without_file)
           if(datasource_file_needed && is.null(datasource_file)){
             warnMsg <- sprintf("No source file/URL for datasource '%s'. Data source copying aborted!", datasource_name)
