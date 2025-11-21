@@ -173,8 +173,7 @@ geoflow_data <- R6Class("geoflow_data",
           
         #sourceFid
         if(!is.null(data_props$sourceFid)){
-          sourceFid <- paste(data_props$sourceFid$values, collapse=",")
-          self$setSourceFid(sourceFid)
+          self$setSourceFid(data_props$sourceFid$values)
         }
         
         #sourceSql
