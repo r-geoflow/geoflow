@@ -418,7 +418,7 @@ function(action, entity, config){
       legal_constraints$addUseConstraint("license")
       for(license in licenses){
         for(value in license$values){
-          license_info = zen4R::ZenodoManager$new()$getLicenseById(value)
+          license_info = zen4R::ZenodoManager$new()$getLicenseById(URLencode(value))
           if(!is.null(license_info)){
             value = ISOAnchor$new(name = license_info$title[[1]], href = license_info$props$url)
             legal_constraints$useLimitation = c(legal_constraints$useLimitation, value)

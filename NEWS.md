@@ -8,6 +8,7 @@
 * [#420](https://github.com/r-geoflow/geoflow/issues/420) `unload_workflow_environment` broken since 1.0.0
 * [#422](https://github.com/r-geoflow/geoflow/issues/422) Control on dir too restrictive to detect geoflow data children
 * [#430](https://github.com/r-geoflow/geoflow/issues/430) Function unload_workflow_environment fails if no env was provided
+* [#431](https://github.com/r-geoflow/geoflow/issues/431) Action ISO 19115 fails with free text license instead of license Id
 
 **Enhancements**
 
