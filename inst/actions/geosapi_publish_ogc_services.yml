@@ -32,6 +32,10 @@ available_options:
     def: Create data/coverage store if not already existing
     class: logical
     default: false
+  store_basepath:
+    def: Specify a base path on the filesystem where the store should be created
+    class: character
+    default: "data"
   store_description:
     def: Specify a description for the new data/coverage store
     class: character
