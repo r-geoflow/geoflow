@@ -9,10 +9,10 @@ function(action, entity, config){
   createWorkspace <- action$getOption("createWorkspace")
   createStore <- action$getOption("createStore")
   store_basepath <- action$getOption("store_basepath")
-  store_basepath_match = gregexpr("/", store_basepath)[[1]]
-  if(all(store_basepath_match>0)){
-    if(length(store_basepath_match)<3){
-      store_basepath = paste0(rep("/",3-length(store_basepath_match)), store_basepath)
+  store_basepath_match = attr(regexpr("^/+", store_basepath), "match.length")
+  if(store_basepath_match > 0){
+    if(store_basepath_match<3){
+      store_basepath = paste0(paste0(rep("/",3-store_basepath_match),collapse=""), store_basepath)
     }else{
       store_basepath = paste0("///", substr(store_basepath, start = max(store_basepath_match)+1, nchar(store_basepath)))
     }
