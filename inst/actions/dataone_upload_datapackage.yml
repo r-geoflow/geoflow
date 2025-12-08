@@ -1,5 +1,4 @@
 id: dataone-upload-datapackage
-enabled: false
 fun: dataone_upload_datapackage.R
 funders:
   - name: Réseau Zone Ateliers
@@ -24,4 +23,5 @@ pid_types:
 packages:
   - mime
   - datapack
+  - dataone
 available_options: []
