@@ -24,6 +24,10 @@
 * [#425](https://github.com/r-geoflow/geoflow/issues/425) Support new Data sourceFid
 * [#426](https://github.com/r-geoflow/geoflow/issues/426) Enable Entity data validator
 
+**Miscs**
+
+*[#433](https://github.com/r-geoflow/geoflow/issues/433) Disable dataone action due to dataone package archiving on CRAN
+
 ## [geoflow 1.0.0](https://cran.r-project.org/package=geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://cran.r-project.org/package=geoflow)
 
 Check the full history on Github
