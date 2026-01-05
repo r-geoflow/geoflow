@@ -44,7 +44,6 @@ Imports:
   rdflib,
   curl,
   whisker,
-  mime,
   digest,
   dplyr,
   readr,
