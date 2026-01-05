@@ -153,7 +153,7 @@ function(action, entity, config){
         })]
         #manage absolute paths
         if(length(entity_thumbnails)>0) entity_thumbnails <- lapply(entity_thumbnails, function(rel){
-          if(!is_absolute_path(rel$link)) rel$link <- file.path(config$session_wd, rel$link)
+          if(!geoflow::is_absolute_path(rel$link)) rel$link <- file.path(config$session_wd, rel$link)
           return(rel)
         })
         if(length(entity_thumbnails)>0) for(entity_thumbnail in entity_thumbnails){

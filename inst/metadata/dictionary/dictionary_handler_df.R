@@ -84,7 +84,7 @@ handle_dictionary_df <- function(handler, source, config){
   invisible(lapply(as.character(scripts), function(script){
     isSourceUrl <- regexpr('(http|https)[^([:blank:]|\\\'|<|&|#\n\r)]+', script) > 0
     if(!isSourceUrl){
-      if(!is_absolute_path(script)){
+      if(!geoflow::is_absolute_path(script)){
         script<-file.path(config$session_wd,script)
       }
     }
