@@ -1302,6 +1302,20 @@ geoflow_entity <- R6Class("geoflow_entity",
         }
       }
       
+      #restricted access
+      if(!is.null(self$data$restricted)) if(self$data$restricted){
+        #enrich entity with accessconstraint restricted
+        if(any(sapply(self$rights, function(x){x$key == "accessconstraint"}))){
+          access_right_values = self$rights[sapply(self$rights, function(x){x$key = "accessconstraint"})][[1]]$values
+          self$rights[sapply(self$rights, function(x){x$key = "accessconstraint"})][[1]] = unique(c(access_right_values, "restricted"))
+        }else{
+          access_right = geoflow_right$new()
+          access_right$setKey("accessconstraint")
+          access_right$setValues(list("restricted"))
+          self$addRight(access_right)
+        }
+      }
+      
       setwd(self$getEntityJobDirPath(config, jobdir))
       
     },
@@ -2147,6 +2161,14 @@ geoflow_entity <- R6Class("geoflow_entity",
         process$description <- enrich_text_from_entity(process$description, self)
         return(process)
       })
+      
+      #enrich data with restricted access property depending on rights
+      if(any(sapply(self$rights, function(x){x$key == "accessconstraint"}))){
+        access_right = self$rights[sapply(self$rights, function(x){x$key == "accessconstraint"})][[1]]
+        if("restricted" %in% access_right$values){
+          self$data$restricted = TRUE
+        }
+      }
     },
     
     #'@description Get the entity contacts
@@ -2338,7 +2360,8 @@ geoflow_entity <- R6Class("geoflow_entity",
         SpatialCoverage = {
           outsp <- ""
           if(!is.null(self$spatial_extent)){
-            outsp <- paste(sprintf("SRID=%s",self$srid),st_as_text(self$spatial_extent),sep=";")
+            bbox = self$spatial_bbox
+            outsp <- paste(sprintf("SRID=%s",self$srid), sf::st_as_text(bbox_to_sf(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, crs = 4326)$geom),sep=";")
           }else{
             if(!is.null(self$srid)) outsp <- paste0("srid:", self$srid)
           }

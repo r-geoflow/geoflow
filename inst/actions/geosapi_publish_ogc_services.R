@@ -479,6 +479,12 @@ function(action, entity, config){
                }else{
                  infoMsg <- sprintf("Successful layer'%s' publication in Geoserver for entity '%s'!", layername, entity$identifiers[["id"]])
                }
+               
+               #if data is under restricted access, set an ACL rule to limit access to ROLE_AUTHENTICATED
+               if(out) if(entity$data$restricted) {
+                  acl_rule = GSLayerRule$new(ws = workspace, lyr = layername, permission = "r", roles = "ROLE_AUTHENTICATED")
+                  GS$addRule(acl_rule)
+               }
              },
              "grid" = {
                out <- FALSE
@@ -514,6 +520,12 @@ function(action, entity, config){
                  config$logger$ERROR(errMsg)
                }else{
                  infoMsg <- sprintf("Successful layer'%s' publication in Geoserver for entity '%s'!", layername, entity$identifiers[["id"]])
+               }
+               
+               #if data is under restricted access, set an ACL rule to limit access to ROLE_AUTHENTICATED
+               if(out) if(entity$data$restricted) {
+                 acl_rule = GSLayerRule$new(ws = workspace, lyr = layername, permission = "r", roles = "ROLE_AUTHENTICATED")
+                 GS$addRule(acl_rule)
                }
              }
       )

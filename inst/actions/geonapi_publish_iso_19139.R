@@ -84,6 +84,13 @@ function(action, entity, config){
              }
              GN$insertRecord(geometa = md, group = group, category = category,
                              uuidProcessing = "OVERWRITE", geometa_inspire = inspire, geometa_inspireValidator = INSPIRE_VALIDATOR)
+             #config privileges
+             config <- GNPrivConfiguration$new()
+             config$setPrivileges(as.character(group), privs)
+             if(entity$data$restricted){
+               config$setPrivileges("all", c("view"))
+             }
+             GN$setPrivConfiguration(id = md$fileIdentifier, config = config)
            },
            "GNLegacyAPIManager" = {
              if(category_match_col=="id"){

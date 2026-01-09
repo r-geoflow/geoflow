@@ -1,3 +1,8 @@
+## [geoflow 1.1.9000](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-red.svg)](https://github.com/r-geoflow/geoflow)
+
+**New features**
+
+* [#434](https://github.com/r-geoflow/geoflow/issues/434) Support publication of restricted OGC data layers
 
 ## [geoflow 1.1.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 

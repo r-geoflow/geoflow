@@ -27,6 +27,8 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 
 \item{\code{data}}{list of object of class \link{geoflow_data} in case we point to a data directory}
 
+\item{\code{restricted}}{indicates whether the data is under restricted access or not}
+
 \item{\code{access}}{accessor key for accessing sources. Default is 'default'}
 
 \item{\code{source}}{source}

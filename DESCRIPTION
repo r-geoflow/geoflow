@@ -1,6 +1,6 @@
 Package: geoflow
-Version: 1.1.0
-Date: 2025-12-12
+Version: 1.1.9000
+Date: 2026-01-09
 Title: Orchestrate Geospatial (Meta)Data Management Workflows and Manage FAIR Services
 Description: An engine to facilitate the orchestration and execution of metadata-driven data management workflows, in compliance with 'FAIR' 
   (Findable, Accessible, Interoperable and Reusable) data management principles. By means of a pivot metadata model, relying on the 'DublinCore' standard (<https://dublincore.org/>), 
@@ -53,6 +53,8 @@ Imports:
   uuid,
   sf,
   sfarrow,
+  lwgeom,
+  smoothr,
   terra,
   geometa (>= 0.9),
   geosapi,
@@ -85,6 +87,9 @@ Suggests:
   dataverse,
   blastula,
   waldo
+Remotes:
+  eblondel/geosapi,
+  eblondel/geonapi
 License: MIT + file LICENSE
 URL: https://github.com/r-geoflow/geoflow
 BugReports: https://github.com/r-geoflow/geoflow/issues

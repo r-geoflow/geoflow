@@ -29,6 +29,8 @@ geoflow_data <- R6Class("geoflow_data",
     dir = NULL,
     #'@field data list of object of class \link{geoflow_data} in case we point to a data directory
     data = list(),
+    #'@field restricted indicates whether the data is under restricted access or not
+    restricted = FALSE,
     
     #ACCESS / SOURCE related fields
     #----------------------------------------------------------------------------
@@ -137,6 +139,12 @@ geoflow_data <- R6Class("geoflow_data",
           return(extract_kvp(data_prop))
         })
         names(data_props) <- sapply(data_props, function(x){x$key})
+        
+        #restricted
+        if(any(sapply(data_props, function(x){x$key=="restricted"}))){
+          restricted = as.logical(data_props$restricted$values[[1]])
+          if(!is.na(restricted)) self$restricted = restricted
+        }
         
         #spatialRepresentationType
         if(!any(sapply(data_props, function(x){x$key=="spatialRepresentationType"}))){
