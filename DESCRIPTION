@@ -58,7 +58,7 @@ Imports:
   terra,
   geometa (>= 0.9),
   geosapi,
-  geonapi,
+  geonapi (>= 0.8-1),
   geonode4R,
   ows4R
 Suggests: 
@@ -88,8 +88,7 @@ Suggests:
   blastula,
   waldo
 Remotes:
-  eblondel/geosapi,
-  eblondel/geonapi
+  eblondel/geosapi
 License: MIT + file LICENSE
 URL: https://github.com/r-geoflow/geoflow
 BugReports: https://github.com/r-geoflow/geoflow/issues
