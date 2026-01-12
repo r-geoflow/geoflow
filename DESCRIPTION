@@ -59,8 +59,8 @@ Imports:
   geometa (>= 0.9),
   geosapi (>= 0.8),
   geonapi (>= 0.8-1),
-  geonode4R,
-  ows4R
+  geonode4R (>= 0.1-2),
+  ows4R (>= 0.5)
 Suggests: 
   testthat,
   readxl,
@@ -79,10 +79,10 @@ Suggests:
   datapack,
   dataone,
   rgbif,
-  ocs4R,
-  zen4R,
-  atom4R,
-  d4storagehub4R,
+  ocs4R (>= 0.3),
+  zen4R (>= 0.10.4),
+  atom4R (>= 0.3-4),
+  d4storagehub4R (>= 0.4-5),
   rmarkdown,
   dataverse,
   blastula,
