@@ -24,17 +24,21 @@ geoflow_vocabulary <- R6Class("geoflow_vocabulary",
     software_type = NA,
     #'@field software software
     software = NULL,
+    #'@field connection connection
+    connection = "unknown",
     
     #'@description Initializes a vocabulary
     #'@param id id
     #'@param def def
     #'@param uri uri
     #'@param software_type software type
-    initialize = function(id, def, uri, software_type){
+    #'@param connection connection
+    initialize = function(id, def, uri, software_type, connection = "unknown"){
       self$id = id
       self$def = def
       self$uri = uri
       self$software_type = software_type
+      self$connection = connection
     },
     
     #'@description Set software
@@ -81,14 +85,21 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
       #case of RDF resource
       if(!is.null(file)){
         if(startsWith(file, "http")){
-          req = httr::GET(file)
-          if(httr::status_code(req) == 200){
-            destfile = file.path(tempdir(), basename(file))
-            dest = file(destfile, "wb")
-            writeBin(httr::content(req, "raw"), dest)
-            close(dest)
-            file = file.path(tempdir(), basename(file))
+          req = try(httr::GET(file), silent = TRUE)
+          if(!is(req, "try-error")){
+            if(httr::status_code(req) == 200){
+              self$connection = "success"
+              destfile = file.path(tempdir(), basename(file))
+              dest = file(destfile, "wb")
+              writeBin(httr::content(req, "raw"), dest)
+              close(dest)
+              file = file.path(tempdir(), basename(file))
+            }else{
+              self$connection = "error"
+              file = NULL
+            }
           }else{
+            self$connection = "error"
             file = NULL
           }
         }
@@ -113,6 +124,11 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
           }
         }
       }
+      
+      #case of SPARQL endpoints, we ping the server to test availability
+      if(!is.null(self$endpoint)){
+        self$ping()
+      }
     },
     
     #'@description query
@@ -121,11 +137,12 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     #'@param mimetype mimetype
     #'@return the response of the SPARQL query
     query = function(str, graphUri = NULL, mimetype = "text/csv"){
+      if(self$connection == "error") return(NULL)
       if(!is.null(self$endpoint)){
         req_body = list(query = str)
         if(!is.null(graphUri)) req_body$graphUri = graphUri 
         
-        req = httr::with_verbose(httr::POST(
+        req = try(httr::POST(
           url = self$endpoint,
           encode = "form",
           body = req_body,
@@ -134,8 +151,22 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
             "User-Agent" = paste("geoflow", packageVersion("geoflow"), sep = "_"),
             "Accept" = mimetype
           )
-        ))
-        httr::content(req)
+        ), silent = TRUE)
+        
+        if(!is(req, "try-error")){
+          if(httr::status_code(req)==200){
+            self$connection = "success"
+          }else{
+            self$connection = "error"
+            return(NULL)
+          }
+        }else{
+          self$connection = "error"
+          return(NULL)
+        }
+        
+        httr::content(req, show_col_types = FALSE)
+        
       }else if(!is.null(self$rdf)){
         rdflib::rdf_query(rdf = self$rdf, query = str, data.frame = T)
       }
@@ -162,7 +193,7 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
     ping = function(){
       str = "SELECT ?s ?p ?o WHERE { 
                   	?s ?p ?o 
-                  } LIMIT 10"
+                  } LIMIT 1"
       self$query(str)
     },
     
@@ -344,6 +375,8 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
         rec = rec[,c("s", "lang", "o")]
         colnames(rec) = c("concept", "lang", "prefLabel")
         return(rec)
+      }else{
+        return(NULL)
       }
       
       str = paste0(
@@ -391,6 +424,8 @@ geoflow_skos_vocabulary <- R6Class("geoflow_skos_vocabulary",
           rec = self$query_from_uri(uri = rec[1,]$concept)
         }
         return(rec)
+      }else{
+        return(NULL)
       }
       
       str = paste0(
@@ -505,6 +540,7 @@ list_vocabularies <- function(raw = FALSE){
         def = obj$def,
         uri = obj$uri,
         endpoint = if(!is.null(obj$endpoint)) obj$endpoint else NA,
+        connection = obj$connection,
         stringsAsFactors = FALSE
       )
       return(obj.out)

@@ -2071,34 +2071,40 @@ geoflow_entity <- R6Class("geoflow_entity",
         target_vocab = vocabs[sapply(vocabs, function(vocab){vocab$id == subject$uri})]
         if(length(target_vocab)>0){
           target_vocab = target_vocab[[1]]
-          if(!is.null(target_vocab$rdf)){
-            #in case of rdf file-based vocabs, we 1st query the full dataset
-            target_vocab$query_full_dataset()
-          }
           subject$uri = target_vocab$uri #default uri
-          subject$keywords = lapply(subject$keywords, function(keyword){
-            rs = NULL
-            if(!is.null(keyword$uri)){
-              #enrich from URI to add labels
-              rs = target_vocab$query_from_uri(uri = keyword$uri)
-            }else{
-              #enrich from an existing term to get URI + other labels
-              rs = target_vocab$query_from_term(term = keyword$name)
+          
+          if(target_vocab$connection == "success"){
+            config$logger$INFO("Vocabulary '%s' is connected, enriching with vocabulary/keywords", target_vocab$id)
+            if(!is.null(target_vocab$rdf)){
+              #in case of rdf file-based vocabs, we 1st query the full dataset
+              target_vocab$query_full_dataset()
             }
-            if(!is.null(rs)) if(tibble::is_tibble(rs)) if(nrow(rs)>0){
-              keyword$uri = rs[rs$lang == "en",]$concept[1]
-              keyword$name = rs[rs$lang == "en",]$prefLabel[1]
-              for(lang in unique(rs$lang)){
-                attr(keyword$name, paste0("locale#",toupper(lang))) = rs[rs$lang == lang,]$prefLabel[1]
+            subject$keywords = lapply(subject$keywords, function(keyword){
+              rs = NULL
+              if(!is.null(keyword$uri)){
+                #enrich from URI to add labels
+                rs = target_vocab$query_from_uri(uri = keyword$uri)
+              }else{
+                #enrich from an existing term to get URI + other labels
+                rs = target_vocab$query_from_term(term = keyword$name)
               }
-              #overwrite subject uri/name if we find a collection (assuming keywords are from the same collection)
-              # if(!is.na(rs[1L,]$collection)){
-              #   subject$uri <<- rs[1L,]$collection
-              #   subject$name <<- rs[1L,]$collectionLabel
-              # }
-            }
-            return(keyword)
-          })
+              if(!is.null(rs)) if(tibble::is_tibble(rs)) if(nrow(rs)>0){
+                keyword$uri = rs[rs$lang == "en",]$concept[1]
+                keyword$name = rs[rs$lang == "en",]$prefLabel[1]
+                for(lang in unique(rs$lang)){
+                  attr(keyword$name, paste0("locale#",toupper(lang))) = rs[rs$lang == lang,]$prefLabel[1]
+                }
+                #overwrite subject uri/name if we find a collection (assuming keywords are from the same collection)
+                # if(!is.na(rs[1L,]$collection)){
+                #   subject$uri <<- rs[1L,]$collection
+                #   subject$name <<- rs[1L,]$collectionLabel
+                # }
+              }
+              return(keyword)
+            })
+          }else if(target_vocab$connection == "error"){
+            config$logger$WARN("Vocabulary '%s' is not connected, skip enriching with vocabulary/keywords...", target_vocab$id)
+          }
         }
         
         return(subject)

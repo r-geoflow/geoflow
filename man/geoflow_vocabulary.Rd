@@ -29,6 +29,8 @@ geoflow_vocabulary
 \item{\code{software_type}}{software_type}
 
 \item{\code{software}}{software}
+
+\item{\code{connection}}{connection}
 }
 \if{html}{\out{</div>}}
 }
@@ -46,7 +48,7 @@ geoflow_vocabulary
 \subsection{Method \code{new()}}{
 Initializes a vocabulary
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_vocabulary$new(id, def, uri, software_type)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{geoflow_vocabulary$new(id, def, uri, software_type, connection = NA)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -59,6 +61,8 @@ Initializes a vocabulary
 \item{\code{uri}}{uri}
 
 \item{\code{software_type}}{software type}
+
+\item{\code{connection}}{connection}
 }
 \if{html}{\out{</div>}}
 }
