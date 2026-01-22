@@ -177,7 +177,6 @@ Name|Definition|Default value
 ----|----------|-------------
 ``line_separator``|Defines the suite of characters used for splitting metadata components with a single tabular cell of an _entity_ (eg. Description field)|**_\n**
 ``skipDataDownload``|Indicates whether downloading data associated to an entity should be skipped|**false**
-``skipFileDownload``|Deprecated, use `skipDataDownload` instead.|**false**
 ``skipEnrichWithData``|Indicates whether actual data objects (features/coverages) reading and association with entity data should be skipped or not|**false**
 ``skipEnrichWithDatatypes``|Indicates whether entity data object should be enriched with data types. Applies to zip archives that are scanned to detect which file extension should be used as `sourceType` / `uploadType`|**false**
 ``skipDynamicBbox``|Indicates whether bbox inherited from data should be ignored.|**false**
