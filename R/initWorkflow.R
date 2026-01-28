@@ -38,7 +38,7 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
       config = jsonlite::read_json(file)
       config_ext = "json"
     },
-    "text/yaml" = {
+    "application/yaml" = {
       config = yaml::read_yaml(file)
       config_ext = "yml"
     },
