@@ -1,5 +1,5 @@
 Package: geoflow
-Version: 1.2.0.9999
+Version: 1.2.0.9000
 Date: 2026-01-28
 Title: Orchestrate Geospatial (Meta)Data Management Workflows and Manage FAIR Services
 Description: An engine to facilitate the orchestration and execution of metadata-driven data management workflows, in compliance with 'FAIR' 
