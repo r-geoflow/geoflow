@@ -1,9 +1,10 @@
 
-## [geoflow 1.2.9000](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-orange.svg)](https://github.com/r-geoflow/geoflow)
+## [geoflow 1.2.9001](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-orange.svg)](https://github.com/r-geoflow/geoflow)
 
 **Bug fixes**
 
 * [#436](https://github.com/r-geoflow/geoflow/issues/436) initWorkflow doesn't work for YAML configuration file : incorrect mime type
+* [#437](https://github.com/r-geoflow/geoflow/issues/437) Metadata privileges not assigned to 'all' when no restriction
 
 ## [geoflow 1.2.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 

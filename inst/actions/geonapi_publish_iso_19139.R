@@ -89,6 +89,8 @@ function(action, entity, config){
              config$setPrivileges(as.character(group), privs)
              if(entity$data$restricted){
                config$setPrivileges("all", c("view"))
+             }else{
+               config$setPrivileges("all", privs)
              }
              GN$setPrivConfiguration(id = md$fileIdentifier, config = config)
            },
@@ -103,7 +105,12 @@ function(action, entity, config){
                                            geometa_inspire = inspire, geometa_inspireValidator = INSPIRE_VALIDATOR)
                #config privileges
                config <- GNPrivConfiguration$new()
-               config$setPrivileges("all", privs)
+               config$setPrivileges(as.character(group), privs)
+               if(entity$data$restricted){
+                 config$setPrivileges("all", c("view"))
+               }else{
+                 config$setPrivileges("all", privs)
+               }
                GN$setPrivConfiguration(id = created, config = config)
              }else{
                #update a metadata
@@ -112,7 +119,12 @@ function(action, entity, config){
                
                #config privileges
                gn_config <- GNPrivConfiguration$new()
-               gn_config$setPrivileges("all", privs)
+               config$setPrivileges(as.character(group), privs)
+               if(entity$data$restricted){
+                 config$setPrivileges("all", c("view"))
+               }else{
+                 config$setPrivileges("all", privs)
+               }
                GN$setPrivConfiguration(id = metaId, config = gn_config)
              }
            }
