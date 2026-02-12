@@ -57,6 +57,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       }
     }
     contact$setRole(rp$role$attrs$codeListValue)
+    contact$setIdentifier(key = "digest", digest::digest(contact))
     return(contact$clone(deep = TRUE))
   }
   
