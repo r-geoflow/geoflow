@@ -29,13 +29,18 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     contact = geoflow_contact$new()
     if(!is.null(rp$contactInfo$address$electronicMailAddress)) if(!is.na(rp$contactInfo$address$electronicMailAddress)) contact$identifiers[["id"]] = rp$contactInfo$address$electronicMailAddress
     if(!is.null(rp$organisationName)) if(!is.na(rp$organisationName)) contact$setOrganizationName(rp$organisationName)
-    if(!is.null(rp$positionName)) if(!is.na(rp$positionName)) contact$setPositionName(rp$positionName)
     ind = rp$individualName
     if(!is.null(ind)) if(!is.na(ind)){
       ind_parts = unlist(strsplit(ind, " "))
       contact$setFirstName(ind_parts[1])
       contact$setLastName(ind_parts[2])
     }
+    
+    #we do a digest on contact to identify it, based on names, email eventually
+    contact$setIdentifier(key = "digest", digest::digest(contact))
+    
+    if(!is.null(rp$positionName)) if(!is.na(rp$positionName)) contact$setPositionName(rp$positionName)
+    
     if(length(rp$contactInfo$address)>0){
       address = rp$contactInfo$address[[1]]
       if(length(address$deliveryPoint)>0) if(!is.na(address$deliveryPoint)) contact$setPostalAddress(address$deliveryPoint)
@@ -57,7 +62,6 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       }
     }
     contact$setRole(rp$role$attrs$codeListValue)
-    contact$setIdentifier(key = "digest", digest::digest(contact))
     return(contact$clone(deep = TRUE))
   }
   
