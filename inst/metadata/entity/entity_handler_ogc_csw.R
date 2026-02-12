@@ -483,6 +483,10 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       }
     }
     entity$setData(g_data)
+    
+    #remove contacts without any role
+    if(length(entity$contacts)>0) entity$contacts = entity$contacts[sapply(entity$contacts, function(x){!is.null(x$role)})]
+    
     return(entity)
   })
   
