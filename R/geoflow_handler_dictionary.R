@@ -88,3 +88,50 @@ list_dictionary_handler_options <- function(id, raw = FALSE){
   }
   return(out)
 }
+
+#' @name get_dictionary_handler
+#' @aliases get_dictionary_handler
+#' @title get_dictionary_handler
+#' @description \code{get_dictionary_handler} allows to get a dictionary handler
+#' 
+#' @usage get_dictionary_handler(id)
+#' 
+#' @param id A dictionary handler identifier
+#' @return an object of class \link{geoflow_handler}
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+get_dictionary_handler <- function(id){
+  handlers <- list_dictionary_handlers(raw = TRUE)
+  handler <- handlers[sapply(handlers, function(x){x$id == id})]
+  if(length(handler)==0) stop(sprintf("No handler with id '%s'!", id))
+  handler <- handler[[1]]
+  return(handler)
+}
+
+#' @name read_dictionary
+#' @aliases read_dictionary
+#' @title read_dictionary
+#' @description \code{read_dictionary} allows to read a dictionary
+#' 
+#' @usage read_dictionary(id, source, config)
+#' 
+#' @param id a dictionary handler identifier
+#' @param source source
+#' @param config a geoflow config (output of \link{initWorkflow}). Default is \code{NULL}
+#' @return an object of class \link{geoflow_dictionary}
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#' 
+read_dictionary <- function(id, source, config = NULL){
+  handler <- get_dictionary_handler(id)
+  if(is.null(config)){
+    config = add_config_logger(list())
+  }
+  handler$fun(
+    handler = handler,
+    source = source,
+    config = config,
+    handle = TRUE
+  )
+}

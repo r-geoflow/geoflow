@@ -71,10 +71,7 @@ list_entity_handlers <- function(raw = FALSE){
 #'
 list_entity_handler_options <- function(id, raw = FALSE){
   out <- NULL
-  handlers <- list_entity_handlers(raw = TRUE)
-  handler <- handlers[sapply(handlers, function(x){x$id == id})]
-  if(length(handler)==0) stop(sprintf("No handler with id '%s'!", id))
-  handler <- handler[[1]]
+  handler <- get_entity_handler(id)
   if(raw) return(handler$available_options)
   if(length(handler$available_options)>0){
     out <- data.frame(
@@ -88,4 +85,51 @@ list_entity_handler_options <- function(id, raw = FALSE){
     out <- data.frame(name = character(0), definition = character(0))
   }
   return(out)
+}
+
+#' @name get_entity_handler
+#' @aliases get_entity_handler
+#' @title get_entity_handler
+#' @description \code{get_entity_handler} allows to get an entity handler
+#' 
+#' @usage get_entity_handler(id)
+#' 
+#' @param id An entity handler identifier
+#' @return an object of class \link{geoflow_handler}
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+get_entity_handler <- function(id){
+  handlers <- list_entity_handlers(raw = TRUE)
+  handler <- handlers[sapply(handlers, function(x){x$id == id})]
+  if(length(handler)==0) stop(sprintf("No handler with id '%s'!", id))
+  handler <- handler[[1]]
+  return(handler)
+}
+
+#' @name read_entities
+#' @aliases read_entities
+#' @title read_entities
+#' @description \code{read_entities} allows to read entities
+#' 
+#' @usage read_entities(id, source, config)
+#' 
+#' @param id an entity handler identifier
+#' @param source source
+#' @param config a geoflow config (output of \link{initWorkflow}). Default is \code{NULL}
+#' @return a list of object of class \link{geoflow_entity}
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#' 
+read_entities <- function(id, source, config = NULL){
+  handler <- get_entity_handler(id)
+  if(is.null(config)){
+    config = add_config_logger(list())
+  }
+  handler$fun(
+    handler = handler,
+    source = source,
+    config = config,
+    handle = TRUE
+  )
 }
