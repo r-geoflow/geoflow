@@ -43,11 +43,19 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     
     if(length(rp$contactInfo$address)>0){
       address = rp$contactInfo$address[[1]]
-      if(length(address$deliveryPoint)>0) if(!is.na(address$deliveryPoint)) contact$setPostalAddress(address$deliveryPoint)
+      if(length(address$deliveryPoint)>0) if(!is.na(address$deliveryPoint)){
+        address = address$deliveryPoint
+        if(is.list(address)) address = address[[1]]
+        contact$setPostalAddress(address)
+      }
       if(!is.null(address$postalCode)) if(!is.na(address$postalCode)) contact$setPostalCode(address$postalCode)
       if(!is.null(address$city)) if(!is.na(address$city)) contact$setCity(address$city)
       if(!is.null(address$country)) if(!is.na(address$country)) contact$setCountry(address$country)
-      if(length(address$electronicMailAddress)>0) if(!is.na(address$electronicMailAddress)) contact$setEmail(address$electronicMailAddress)
+      if(length(address$electronicMailAddress)>0) if(!is.na(address$electronicMailAddress)) {
+        email = address$electronicMailAddress
+        if(is.list(email)) email = email[[1]]
+        contact$setEmail(email)
+      }
     }
     if(length(rp$contactInfo$phone)>0){
       phone = rp$contactInfo$phone[[1]]
