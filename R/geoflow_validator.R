@@ -258,7 +258,7 @@ geoflow_validator_contact_Identifier <- R6Class("geoflow_validator_contact_Ident
      #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
      #'@param str string to validate
      initialize = function(i, j, str){
-       valid_keys <- list("id", "orcid", "ror")
+       valid_keys <- list("id", "orcid", "ror", "digest")
        super$initialize(FALSE, TRUE, TRUE, valid_keys, "id", TRUE, TRUE, TRUE, i, j, str)
      },
      
@@ -406,7 +406,13 @@ geoflow_validator_entity_Subject <- R6Class("geoflow_validator_entity_Subject",
       #Keyword topics are ISO keyword topics ?
        
        subjects <- if(!is.na(private$str)) extract_cell_components(private$str) else list()
+       
        if(length(subjects)>0){
+          if(any(sapply(subjects, endsWith, ":"))){
+            report <- rbind(report, data.frame(type = "WARNING", message = "Empty subject(s) detected, removing them!"))
+            subjects <- subjects[!sapply(subjects, endsWith, ":")]
+          }
+      
           topics<-sapply(subjects, function(subject){
              return(geoflow_subject$new(str = subject)$key)
           })
@@ -456,7 +462,7 @@ geoflow_validator_entity_Date <- R6Class("geoflow_validator_entity_Date",
      #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
      #'@param str string to validate
      initialize = function(i, j, str){
-       valid_keys <- c(geometa::ISODateType$values(),"edition","embargo")
+       valid_keys <- c(geometa::ISODateType$values(),"edition","embargo","metadata")
        super$initialize(TRUE,TRUE, TRUE, valid_keys, "creation",FALSE, TRUE, TRUE, i, j, as(str,"character"))
      },
      
@@ -667,16 +673,19 @@ geoflow_validator_entity_TemporalCoverage <- R6Class("geoflow_validator_entity_T
         if(is(tmp_cov, "character")) value <- unlist(strsplit(tmp_cov,"/"))
           if(length(value)==1){
             #check instant date
-            if(is(value, "character")){
-              value <- try(sanitize_date(value),silent=T)
-              if(!(is(value, "Date") | inherits(value, "POSIXt"))){
-                report <- rbind(report, data.frame(type = "ERROR", message = sprintf("instant date value '%s' is not a recognized date format", tmp_cov)))
+      
+            if(is(value, "character")) {
+              if(!is.na(value)){
+                value <- try(sanitize_date(value),silent=T)
+                if(!(is(value, "Date") | inherits(value, "POSIXt"))){
+                  report <- rbind(report, data.frame(type = "ERROR", message = sprintf("instant date value '%s' is not a recognized date format", tmp_cov)))
+                }
               }
             }
           }else if(length(value)==2){
             #check start date
             start<-value[1]
-            if(is(start, "character") && is.na(as(start,"numeric"))){
+            if(is(start, "character") && start != "NA" && is.na(suppressWarnings(as(start,"numeric")))){
                start<- try(sanitize_date(start),silent=T)
                if(!(is(start, "Date") | inherits(start, "POSIXt"))){
                  report <- rbind(report, data.frame(type = "ERROR", message = sprintf("start date value '%s' is not a recognized date format", value[1])))
@@ -684,7 +693,7 @@ geoflow_validator_entity_TemporalCoverage <- R6Class("geoflow_validator_entity_T
             }
             #check end date
             end<-value[2]
-            if(is(end, "character")  && is.na(as(end,"numeric"))){
+            if(is(end, "character") && end != "NA"  && is.na(suppressWarnings(as(end,"numeric")))){
               end <- try(sanitize_date(end),silent=T)
               if(!(is(end, "Date") | inherits(end, "POSIXt"))){
                 report <- rbind(report, data.frame(type = "ERROR", message = sprintf("end date value '%s' is not a recognized date format", value[2])))

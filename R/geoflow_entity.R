@@ -2405,7 +2405,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         Rights = paste0(sapply(self$rights, function(right){
           value <- right$values[[1]]
           if(!endsWith(tolower(right$key), "constraint")) value <- paste0("\"", value,"\"")
-          if(tolower(right$key) == "useconstraint") value <- paste0("\"", value,"\"")
+          if(tolower(right$key) == "otherconstraint") value <- paste0("\"", value,"\"")
           outright <- paste0(right$key, ":", value)
           return(outright)
         }),collapse = line_separator),

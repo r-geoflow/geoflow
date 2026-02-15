@@ -152,6 +152,7 @@ extract_kvp <- function(str){
 #' @export
 #'
 extract_kvps <- function(strs, collapse = NULL){
+  strs = strs[!sapply(strs, endsWith, ":")]
   kvps <- lapply(strs, function(str){
     kvp <- extract_kvp(str)
     if(!is.null(collapse)) kvp$values <- list(paste0(kvp$values, collapse = collapse))
@@ -274,9 +275,15 @@ set_i18n <- function(term_key, default = NULL, expr = "{{term}}", ...){
 #'
 str_to_posix <- function(str){
   out <- str
-  if(is(str,"character")) if(nchar(str)>7){
-    str_format <- if(nchar(str)==10) "%Y-%m-%d" else "%Y-%m-%dT%H:%M:%S"
-    out <- as.POSIXct(str, format = str_format, tz = ifelse(endsWith(str,"Z"), "UTC", ""))
+  if(is(str,"character")){
+    if(nchar(str)>7){
+      str_format <- if(nchar(str)==10) "%Y-%m-%d" else "%Y-%m-%dT%H:%M:%S"
+      out <- as.POSIXct(str, format = str_format, tz = ifelse(endsWith(str,"Z"), "UTC", ""))
+    }
+    if(str == "NA"){
+      out = NA
+      attr(out, "indeterminatePosition") <- "unknown"
+    } 
   }
   return(out)
 }
