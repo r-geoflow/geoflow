@@ -2352,7 +2352,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         }),collapse=line_separator),
         #Date
         Date = paste0(sapply(self$dates,function(x){
-          outdate <- paste(x$key, x$value,sep=":")
+          outdate <- paste(x$key, as.Date(x$value),sep=":")
           return(outdate)
         }),collapse=line_separator),
         #Type
@@ -2404,7 +2404,8 @@ geoflow_entity <- R6Class("geoflow_entity",
         #Rights
         Rights = paste0(sapply(self$rights, function(right){
           value <- right$values[[1]]
-          if(!endsWith(right$key, "Constraint")) value <- paste0("\"", value,"\"")
+          if(!endsWith(tolower(right$key), "constraint")) value <- paste0("\"", value,"\"")
+          if(tolower(right$key) == "useconstraint") value <- paste0("\"", value,"\"")
           outright <- paste0(right$key, ":", value)
           return(outright)
         }),collapse = line_separator),
@@ -2412,23 +2413,27 @@ geoflow_entity <- R6Class("geoflow_entity",
         Provenance = {
           outprov <- NA
           if(!is.null(self$provenance)){
-            outprov <- paste0("statement:", paste0("\"",self$provenance$statement,"\""))
-            if(length(self$provenance$processes)>0){
-              outprov <- paste0(outprov, line_separator)
-              processes_str <- paste0(sapply(self$provenance$processes, function(process){
-                rationale <- paste0("\"", process$rationale, "\"")
-                outproc <- paste0("process:", rationale)
-                if(!is.null(process$description)){
-                  description <- paste0("\"", process$description, "\"")
-                  outproc <- paste0(outproc, "[", description, "]")
-                }
-                return(outproc)
-              }),collapse=line_separator)
-              outprov <- paste0(outprov, processes_str)
-              #processors_str <- paste0("processor:",paste0(sapply(self$provenance$processes, function(process){
-              #  return(process$processor$id)
-              #}),collapse=","))
-              #outprov <- paste0(outprov, processors_str)
+            if(is.na(self$provenance$statement)){
+              outprov <- ""
+            }else{
+              outprov <- paste0("statement:", paste0("\"",self$provenance$statement,"\""))
+              if(length(self$provenance$processes)>0){
+                outprov <- paste0(outprov, line_separator)
+                processes_str <- paste0(sapply(self$provenance$processes, function(process){
+                  rationale <- paste0("\"", process$rationale, "\"")
+                  outproc <- paste0("process:", rationale)
+                  if(!is.null(process$description)){
+                    description <- paste0("\"", process$description, "\"")
+                    outproc <- paste0(outproc, "[", description, "]")
+                  }
+                  return(outproc)
+                }),collapse=line_separator)
+                outprov <- paste0(outprov, processes_str)
+                #processors_str <- paste0("processor:",paste0(sapply(self$provenance$processes, function(process){
+                #  return(process$processor$id)
+                #}),collapse=","))
+                #outprov <- paste0(outprov, processors_str)
+              }
             }
           }
           outprov

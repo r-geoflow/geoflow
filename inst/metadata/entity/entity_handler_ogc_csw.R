@@ -44,9 +44,9 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     if(length(rp$contactInfo$address)>0){
       address = rp$contactInfo$address[[1]]
       if(length(address$deliveryPoint)>0) if(!is.na(address$deliveryPoint)){
-        address = address$deliveryPoint
-        if(is.list(address)) address = address[[1]]
-        contact$setPostalAddress(address)
+        deliveryPoint = address$deliveryPoint
+        if(is.list(deliveryPoint)) deliveryPoint = deliveryPoint[[1]]
+        contact$setPostalAddress(deliveryPoint)
       }
       if(!is.null(address$postalCode)) if(!is.na(address$postalCode)) contact$setPostalCode(address$postalCode)
       if(!is.null(address$city)) if(!is.na(address$city)) contact$setCity(address$city)
@@ -180,7 +180,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
         }
       }
       editionDates = rec$identificationInfo[[1]]$citation$editionDate
-      if(length(editionDates)>0) for(editionDate in editionDates){
+      if(length(editionDates)>0) for(editionDate in as.Date(editionDates)){
         if(is(editionDate,"numeric")) editionDate = as.Date(editionDate, origin = "1970-01-01")
         entity$addDate("edition", editionDate)
       }
