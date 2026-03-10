@@ -1,0 +1,57 @@
+{
+  "profile": {
+    "id": "my-geoserver-shp-workflow",
+    "name": "My Geoserver shp workflow",
+	  "project": "Test geoflow project to publish shapefile in Geoserver",
+	  "organization": "My organization",
+	  "logos": [
+		  "https://via.placeholder.com/300x150.png/09f/fff?text=geometa",
+		  "https://via.placeholder.com/300x150.png/09f/fff?text=ows4R"
+	  ],
+	  "mode": "entity",
+	  "options": {
+	    "line_separator": "_\n"
+    }
+  },
+  "metadata": {
+    "entities": [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1H4tNcAzZRadVKf2BZ1C_m7DTAe22nkkXr55HCOjmLn0/edit?usp=sharing"
+      }
+    ],
+    "contacts" : [
+      {
+        "handler": "gsheet",
+        "source": "https://docs.google.com/spreadsheets/d/1BqlXwA2fKiRuozNAQhBb_PbQVSPTCfl8_Q9rfM8E2ws/edit?usp=sharing"
+      }
+    ]
+  },
+  "software": [
+	{
+		"id": "my-geoserver",
+		"type": "output",
+		"software_type": "geoserver",
+		"parameters": {
+			"url": "http://localhost:8080/geoserver",
+			"user": "admin",
+			"pwd": "geoserver",
+			"logger": "DEBUG"
+		},
+		"properties" : {
+			"workspace": "myshp"
+		}
+	}
+  ],
+  "actions": [
+	{
+	  "id": "geosapi-publish-ogc-services",
+	  "run": true,
+	  "options" : {
+	    "createWorkspace": true,
+	    "createStore": true,
+	    "map_thumbnail_template": "{geoserver_url}/{workspace}/ows?service=WMS&version=1.1.0&request=GetMap&layers={layer}&bbox={bbox}&width=600&height=300&srs=EPSG:{srid}&format=image/png"	
+	  }
+	}
+  ]
+}

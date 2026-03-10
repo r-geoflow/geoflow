@@ -92,7 +92,7 @@ function(action, entity, config){
              }else{
                config$setPrivileges("all", privs)
              }
-             GN$setPrivConfiguration(id = md$fileIdentifier, config = config)
+             GN$setPrivConfiguration(id = mdId, config = config)
            },
            "GNLegacyAPIManager" = {
              if(category_match_col=="id"){
