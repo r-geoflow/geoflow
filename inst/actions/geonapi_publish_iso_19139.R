@@ -179,7 +179,7 @@ function(action, entity, config){
           uploaded <- GN$uploadAttachment(mdId, entity_thumbnail$link)
           if(!is.null(uploaded)){
             desc <- if(!is.null(entity_thumbnail$description)) entity_thumbnail$description else ""
-            published <- GN$publishThumbnail(mdId, uploaded$url, desc)
+            published <- GN$publishThumbnail(mdId, uploaded$url, URLencode(desc))
             if(published){
               config$logger$INFO("Successfully published thumbnail '%s' to metadata '%s'",
                                          entity_thumbnail$link, mdId)

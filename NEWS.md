@@ -6,6 +6,7 @@
 * [#436](https://github.com/r-geoflow/geoflow/issues/436) initWorkflow doesn't work for YAML configuration file : incorrect mime type
 * [#437](https://github.com/r-geoflow/geoflow/issues/437) Metadata privileges not assigned to 'all' when no restriction
 * [#439](https://github.com/r-geoflow/geoflow/issues/439) Priv configuration setting broken for ISO 19110 (wrong md identifier)
+* [#440](https://github.com/r-geoflow/geoflow/issues/440) Metadata thumbnail publication fails if description includes special characters
 
 **New features**
 
