@@ -2440,10 +2440,10 @@ geoflow_entity <- R6Class("geoflow_entity",
         Provenance = {
           outprov <- NA
           if(!is.null(self$provenance)){
-            if(is.na(self$provenance$statement)){
+            if(is.null(self$provenance$statement)){
               outprov <- ""
             }else{
-              outprov <- paste0("statement:", paste0("\"",self$provenance$statement,"\""))
+              outprov <- if(is.na(self$provenance$statement)) "" else paste0("statement:", paste0("\"",self$provenance$statement,"\""))
               if(length(self$provenance$processes)>0){
                 outprov <- paste0(outprov, line_separator)
                 processes_str <- paste0(sapply(self$provenance$processes, function(process){
