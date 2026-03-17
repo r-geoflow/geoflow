@@ -11,6 +11,7 @@
 **New features**
 
 * [#438](https://github.com/r-geoflow/geoflow/issues/438) Add user functions to get metadata handlers and read metadata (contacts, entities, dictionary)
+* [#441](https://github.com/r-geoflow/geoflow/issues/441) CSV spatialization - Report on empty/invalid geometries and removing them from data
 
 ## [geoflow 1.2.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 

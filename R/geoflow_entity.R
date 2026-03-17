@@ -920,6 +920,33 @@ geoflow_entity <- R6Class("geoflow_entity",
                        if(!is.null(self$srid)) sf::st_crs(sf.data) <- self$srid 
                      }
                      
+                     #geom data quality checks
+                     if(any(sf::st_is_empty(sf.data)) | any(!sf::st_is_valid(sf.data))){
+                       tbl.spec <- readr::spec_csv(trgCsv)
+                       tbl.spec[1]$cols = sapply(tbl.spec[1]$cols, function(x){spec = x;if(is(x, "collector_logical")){spec = readr::col_character()}; return(spec)})
+                       tbl.data <- as.data.frame(readr::read_csv(trgCsv, col_types = tbl.spec))
+                       
+                       data_issues = NULL
+                       if(any(sf::st_is_empty(sf.data))){
+                         empty.sf.data = tbl.data[sf::st_is_empty(sf.data),]
+                         empty.sf.data$geometry_issue = "empty"
+                         data_issues = empty.sf.data
+                         config$logger$WARN(sprintf("CSV spatialization: %s empty geometries detected!", nrow(empty.sf.data)))
+                       }
+                       if(any(!sf::st_is_valid(sf.data))){
+                         invalid.sf.data = tbl.data[!sf::st_is_empty(sf.data) & !sf::st_is_valid(sf.data),]
+                         invalid.sf.data$geometry_issue = "invalid"
+                         data_issues = rbind(data_issues, invalid.sf.data)
+                         config$logger$WARN(sprintf("CSV spatialization: %s invalid geometries detected!", nrow(invalid.sf.data)))
+                       }
+                       if(!is.null(data_issues)){
+                         readr::write_csv(data_issues, file.path(self$getEntityJobDirPath(config, jobdir), "data", paste0(unlist(strsplit(basename(trgCsv),".csv"))[1], "__geometry_issues.csv")))
+                         config$logger$WARN(sprintf("CSV spatialization: %s geometry issues detected!", nrow(data_issues)))
+                         config$logger$WARN("Removing data with geometry issues!")
+                         sf.data = sf.data[!sf::st_is_empty(sf.data) & sf::st_is_valid(sf.data),]
+                       }
+                     }
+                     
                      #compute surface
                      if(computeSurface){
                        sf.data[[computeSurfaceField]] = as.numeric(sf::st_area(sf::st_transform(sf.data, computeSurfaceCrs)))
