@@ -1,5 +1,5 @@
 
-## [geoflow 1.2.1](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-orange.svg)](https://github.com/r-geoflow/geoflow)
+## [geoflow 1.2.1](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 
 **Bug fixes**
 
