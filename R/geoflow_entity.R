@@ -2471,12 +2471,12 @@ geoflow_entity <- R6Class("geoflow_entity",
           
           outdata <- ""
           
-          if(!is.null(self$data$dir)){
-            outdata <- paste0("dir:", self$data$dir, line_separator)
-          }
-          
           if(!is.null(self$data$access)){
             outdata <- paste0("access:", self$data$access, line_separator)
+          }
+          
+          if(!is.null(self$data$dir)){
+            outdata <- paste0(outdata, "dir:", self$data$dir, line_separator)
           }
           
           if(!is.null(self$data$source)){
