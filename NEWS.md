@@ -1,3 +1,10 @@
+## [geoflow 1.2.1.9000](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-orange.svg)](https://github.com/r-geoflow/geoflow)
+
+
+**Bug fixes**
+
+* #443(https://github.com/r-geoflow/geoflow/issues/443) Missing sourceSql export in entity$asDataFrame
+
 
 ## [geoflow 1.2.1](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 

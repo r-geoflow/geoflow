@@ -2496,6 +2496,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             outdata <- paste0(outdata, "sourceFid:", paste0(self$data$sourceFid, collapse = ","), line_separator)
           }
           if(!is.null(self$data$sourceType)) outdata <- paste0(outdata, "sourceType:", self$data$sourceType, line_separator)
+          if(!is.null(self$data$sourceSql)) outdata <- paste0(outdata, "sourceSql:", self$data$sourceSql, line_separator)
           #deprecate sourceZip/sourceZipOnly with #344
           #if(!is.null(self$data$sourceZip)) outdata <- paste0(outdata, "sourceZip:", tolower(as.character(self$data$sourceZip)), line_separator)
           #if(!is.null(self$data$sourceZipOnly)) outdata <- paste0(outdata, "sourceZipOnly:", tolower(as.character(self$data$sourceZipOnly)), line_separator)
