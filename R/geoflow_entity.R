@@ -2528,6 +2528,10 @@ geoflow_entity <- R6Class("geoflow_entity",
             out_styles <- paste0(self$data$styles, collapse=",")
             outdata <- paste0(outdata, "style:", out_styles, line_separator)
           }
+          
+          if(!is.null(self$data$geometryField) && !is.null(self$data$geometryType)){
+            outdata <- paste0(outdata, "geometry:", self$data$geometryField, ",", self$data$geometryType, line_separator)
+          }
           if(length(self$data$parameters)>0){
             out_params <- paste0(sapply(names(self$data$parameters), function(paramName){
               param <- self$data$parameters[[paramName]]
@@ -2536,9 +2540,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             }),collapse=line_separator)
             outdata <- paste0(outdata, out_params,line_separator)
           }
-          if(!is.null(self$data$geometryField) && !is.null(self$data$geometryType)){
-            outdata <- paste0(outdata, "geometry:", self$data$geometryField, ",", self$data$geometryType, line_separator)
-          }
+          
           if(length(self$data$attributes)>0) {
             out_attrs <- paste0(sapply(self$data$attributes, function(attribute){
               uri <- attr(attribute, "uri")
