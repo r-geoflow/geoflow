@@ -2392,7 +2392,7 @@ geoflow_entity <- R6Class("geoflow_entity",
         #SpatialCoverage
         SpatialCoverage = {
           outsp <- ""
-          if(!is.null(self$spatial_extent)){
+          if(!is.null(self$spatial_bbox)){
             bbox = self$spatial_bbox
             outsp <- paste(sprintf("SRID=%s",self$srid), sf::st_as_text(bbox_to_sf(bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax, crs = 4326)$geom),sep=";")
           }else{
