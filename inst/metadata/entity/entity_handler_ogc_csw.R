@@ -264,6 +264,8 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
               ), 
               crs = sf::st_crs(4326)
             )
+            entity$spatial_bbox = entity$geo_bbox
+            entity$srid = 4326
           }
         }
         #temporal coverage
