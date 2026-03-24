@@ -27,17 +27,22 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
   
   createContactFromResponsibleParty = function(rp){
     contact = geoflow_contact$new()
+    
+    digest_str = ""
     if(!is.null(rp$contactInfo$address$electronicMailAddress)) if(!is.na(rp$contactInfo$address$electronicMailAddress)) contact$identifiers[["id"]] = rp$contactInfo$address$electronicMailAddress
     if(!is.null(rp$organisationName)) if(!is.na(rp$organisationName)) contact$setOrganizationName(rp$organisationName)
     ind = rp$individualName
     if(!is.null(ind)) if(!is.na(ind)){
+      digest_str = tolower(ind)
       ind_parts = unlist(strsplit(ind, " "))
       contact$setFirstName(ind_parts[1])
       contact$setLastName(ind_parts[2])
+    }else{
+      if(!is.null(rp$organisationName)) if(!is.na(rp$organisationName)) digest_str = tolower(rp$organisationName) 
     }
     
     #we do a digest on contact to identify it, based on names, email eventually
-    contact$setIdentifier(key = "digest", digest::digest(contact))
+    contact$setIdentifier(key = "digest", digest::digest(digest_str))
     
     if(!is.null(rp$positionName)) if(!is.na(rp$positionName)) contact$setPositionName(rp$positionName)
     
