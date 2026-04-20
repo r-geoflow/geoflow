@@ -591,9 +591,9 @@ dotenv_parse_dot_line <- function (line) {
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 unload_workflow_environment <- function(config){
-  if(!is.null(config$profile_config$environment$file)){
+  if(!is.null(config$profile_config$environment[["_filepath"]])){
     env_vars_workflow <- as.list(Sys.getenv())
-    envfile <- get_absolute_path(config$profile_config$environment$file, base = config$wd)
+    envfile <- get_absolute_path(config$profile_config$environment[["_filepath"]], base = config$wd)
     if(!is.null(envfile)){
       tmp <- readLines(envfile)
       tmp <- dotenv_ignore_comments(tmp)

@@ -138,6 +138,7 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
       config$session_env <- env_vars_before
       
       filepath = config$profile$environment$file
+      config$profile$environment[["_filepath"]] = filepath
       
       #check if there is a software associated to the environment
       if(!is.null(config$profile$environment$software)){
@@ -170,6 +171,7 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
         env_tempfile = file.path(tempdir(), basename(filepath))
         env_data_accessor$download(resource = filepath, file = basename(filepath), path = env_tempfile, software = env_client)
         filepath = env_tempfile
+        config$profile$environment[["_filepath"]] = filepath
         config$logger$INFO("Remote environment file downloaded and stored at %s", filepath)
       }
       
