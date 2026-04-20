@@ -448,3 +448,25 @@ list_data_accessors <- function(raw = FALSE){
   return(data_accessors)
 }
 
+#' @name get_data_accessor
+#' @aliases get_data_accessor
+#' @title get_data_accessor
+#' @description \code{get_data_accessor} get a data accessor by ID.
+#'
+#' @usage get_data_accessor('ocs')
+#' 
+#' @param id an accessor ID
+#' 
+#' @return an object of class \link{geoflow_data_accessor}, or \code{NULL}
+#' 
+#' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
+#' @export
+#'
+get_data_accessor <- function(id){
+  selected_accessor = NULL
+  default_accessors = list_data_accessors(raw = TRUE)
+  accessor = default_accessors[sapply(default_accessors, function(x){x$id == id})]
+  if(length(accessor)>0) selected_accessor = accessor[[1]]
+  return(selected_accessor)
+}
+

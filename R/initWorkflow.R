@@ -136,9 +136,46 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
       config$logger$INFO("Loading environment from env file '%s'", basename(config$profile$environment$file))
       env_vars_before <- as.list(Sys.getenv())
       config$session_env <- env_vars_before
-      loaded <- try(dotenv::load_dot_env(file = config$profile$environment$file))
+      
+      filepath = config$profile$environment$file
+      
+      #check if there is a software associated to the environment
+      if(!is.null(config$profile$environment$software)){
+        config$logger$INFO("Remote env file, fetching it using environment software")
+        env_software = config$profile$environment$software
+        if(is.null(env_software$software_type)){
+          errMsg <- sprintf("The 'software_type' is missing for environment software '%s'", env_software$id)
+          config$logger$INFO(errMsg)
+          stop(errMsg)
+        }
+        supportedSoftware <- list_software(raw = TRUE)
+        if(!(env_software$software_type %in% sapply(supportedSoftware, function(x){x$software_type}))){
+          errMsg <- sprintf("Embedded Software type '%s' not supported by geoflow. Check the list of embedded software with R code: list_software()", env_software$software_type)
+          config$logger$ERROR(errMsg)
+          stop(errMsg)
+        }
+        env_target_software <- supportedSoftware[sapply(supportedSoftware, function(x){x$software_type == env_software$software_type})][[1]]
+        config$logger$INFO("Configuring environment software (%s)", env_software$software_type)
+        env_target_software$setId("env")
+        env_target_software$setType("input")
+        if(!is.null(env_software$parameters)) env_target_software$setParameters(env_software$parameters)
+        
+        #check software dependencies
+        env_target_software$checkPackages()
+        
+        #get handler instance
+        env_client <- env_target_software$getHandlerInstance()
+        #get data accessor
+        env_data_accessor = get_data_accessor(env_software$software_type)
+        env_tempfile = file.path(tempdir(), basename(filepath))
+        env_data_accessor$download(resource = filepath, file = basename(filepath), path = env_tempfile, software = env_client)
+        filepath = env_tempfile
+        config$logger$INFO("Remote environment file downloaded and stored at %s", filepath)
+      }
+      
+      loaded <- try(dotenv::load_dot_env(file = filepath))
       if(is(loaded,"try-error")){
-        errMsg <- sprintf("Error while trying to load environment from env file '%s'", basename(config$profile$environment$file))
+        errMsg <- sprintf("Error while trying to load environment from env file '%s'", basename(filepath))
         config$logger$ERROR(errMsg)
         stop(errMsg)
       }else{
