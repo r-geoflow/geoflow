@@ -2202,11 +2202,11 @@
     },
     "geometa": {
       "Package": "geometa",
-      "Version": "0.9.2",
-      "Source": "Repository",
+      "Version": "0.9.4",
+      "Source": "GitHub",
       "Type": "Package",
       "Title": "Tools for Reading and Writing ISO/OGC Geographic Metadata",
-      "Date": "2025-05-27",
+      "Date": "2025-11-16",
       "Authors@R": "c( person(\"Emmanuel\", \"Blondel\", role = c(\"aut\", \"cre\"), email = \"emmanuel.blondel1@gmail.com\", comment = c(ORCID = \"0000-0002-5870-5762\")), person(\"R Consortium\", role = \"fnd\"))",
       "Maintainer": "Emmanuel Blondel <emmanuel.blondel1@gmail.com>",
       "Description": "Provides facilities to read, write and validate geographic metadata  defined with ISO TC211 / OGC ISO geographic information metadata standards, and  encoded using the ISO 19139 and ISO 19115-3 (XML) standard technical specifications.  This includes ISO 19110 (Feature cataloguing), 19115 (dataset metadata), 19119 (service metadata)  and 19136 (GML). Other interoperable schemas from the OGC are progressively supported  as well, such as the Sensor Web Enablement (SWE) Common Data Model, the OGC GML  Coverage Implementation Schema (GMLCOV), or the OGC GML Referenceable Grid (GMLRGRID).",
@@ -2221,7 +2221,8 @@
         "jsonlite",
         "keyring",
         "readr",
-        "crayon"
+        "crayon",
+        "digest"
       ],
       "Suggests": [
         "sf",
@@ -2237,10 +2238,16 @@
       "BugReports": "https://github.com/eblondel/geometa/issues",
       "LazyLoad": "yes",
       "Encoding": "UTF-8",
-      "RoxygenNote": "7.3.1",
+      "RoxygenNote": "7.3.3",
+      "Roxygen": "list(r6 = TRUE)",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "geometa",
+      "RemoteUsername": "eblondel",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "c5fc0b3b1d51d532536d78e667fbfe0f5508a2fe",
       "NeedsCompilation": "no",
-      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), R Consortium [fnd]",
-      "Repository": "CRAN"
+      "Author": "Emmanuel Blondel [aut, cre] (ORCID: <https://orcid.org/0000-0002-5870-5762>), R Consortium [fnd]"
     },
     "geonapi": {
       "Package": "geonapi",
