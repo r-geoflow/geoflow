@@ -159,7 +159,7 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
         }
         
         #in case of geoflow-shiny auth context we load workflow environment for software
-        env_software = geoflow::load_workflow_environment(env_software, session)
+        env_software = load_workflow_environment(env_software, session)
         
         env_target_software <- supportedSoftware[sapply(supportedSoftware, function(x){x$software_type == env_software$software_type})][[1]]
         config$logger$INFO("Configuring environment software (%s)", env_software$software_type)
