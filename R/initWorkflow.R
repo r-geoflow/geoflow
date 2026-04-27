@@ -131,11 +131,18 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
       config$logger$WARN(warnMes)
       profile$mode <- "raw"
     }
+    
+    env_vars_before <- as.list(Sys.getenv())
+    config$session_env <- env_vars_before
+    
+    #load environment for geoflow-shiny (required to get GEOFLOW_SHINY_AUTH_* variables)
+    #and create env software
+    config$logger$INFO("Load workflow environment (for geoflow-shiny context)")
+    config <- load_workflow_environment(config, session)
+    
     #environment
     if(!is.null(config$profile$environment)) if(!is.null(config$profile$environment$file)){
       config$logger$INFO("Loading environment from env file '%s'", basename(config$profile$environment$file))
-      env_vars_before <- as.list(Sys.getenv())
-      config$session_env <- env_vars_before
       
       filepath = config$profile$environment$file
       config$profile$environment[["_filepath"]] = filepath
@@ -191,6 +198,10 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
           if(any(sapply(hide_env_vars, regexpr, env_var_name)>0)) env_var_value <- "**********"
           config$logger$INFO("* %s = %s", env_var_name, env_var_value)
         }
+        #load environment (required for env files loading)
+        #and create env software
+        config$logger$INFO("Load workflow environment (for environment variables provided in environment file)")
+        config <- load_workflow_environment(config, session)
       }
     }
     #options
@@ -225,10 +236,6 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
       source(script)
     }))
   }
-  
-  #load environment
-  config$logger$INFO("Load workflow environment")
-  config <- load_workflow_environment(config, session)
   
   #set profile (R6)
   config$profile_config <- config$profile
