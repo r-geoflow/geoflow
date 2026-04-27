@@ -135,11 +135,6 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
     env_vars_before <- as.list(Sys.getenv())
     config$session_env <- env_vars_before
     
-    #load environment for geoflow-shiny (required to get GEOFLOW_SHINY_AUTH_* variables)
-    #and create env software
-    config$logger$INFO("Load workflow environment (for geoflow-shiny context)")
-    config <- load_workflow_environment(config, session)
-    
     #environment
     if(!is.null(config$profile$environment)) if(!is.null(config$profile$environment$file)){
       config$logger$INFO("Loading environment from env file '%s'", basename(config$profile$environment$file))
@@ -162,6 +157,10 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
           config$logger$ERROR(errMsg)
           stop(errMsg)
         }
+        
+        #in case of geoflow-shiny auth context we load workflow environment for software
+        env_software = geoflow::load_workflow_environment(env_software, session)
+        
         env_target_software <- supportedSoftware[sapply(supportedSoftware, function(x){x$software_type == env_software$software_type})][[1]]
         config$logger$INFO("Configuring environment software (%s)", env_software$software_type)
         env_target_software$setId("env")
