@@ -86,6 +86,17 @@ handle_dictionary_df <- function(handler, source, config){
     if(!isSourceUrl){
       if(!geoflow::is_absolute_path(script)){
         script<-file.path(config$session_wd,script)
+      }else{
+        if(handler$id == "ocs"){
+          #get ocs client from config
+          ocs_client <- config$software$input$ocs
+          ocs_config <- config$software$input$ocs_config
+          #get ocs data accessor
+          ocs_data_accessor = get_data_accessor(ocs_config$software_type)
+          script_tempfile = file.path(tempdir(), basename(script))
+          ocs_data_accessor$download(resource = script, file = basename(script), path = script_tempfile, software = ocs_client)
+          script = script_tempfile
+        }
       }
     }
     source(script)
@@ -94,25 +105,25 @@ handle_dictionary_df <- function(handler, source, config){
   config$logger$INFO("Fetching registers from data dictionnary...")
   handlers <- unique(source$RegisterId)
   handlers <- handlers[!is.na(handlers)]
-  for(handler in handlers){
+  for(hdlr in handlers){
     
-    fun <- eval(parse(text = handler))
+    fun <- eval(parse(text = hdlr))
     if(is(fun,"try-error")){
-      errMsg <- sprintf("Error while trying to evaluate function '%s", handler)
+      errMsg <- sprintf("Error while trying to evaluate function '%s", hdlr)
       config$logger$ERROR(errMsg)
       stop(errMsg)
     }
     if(!is(fun,"function")){
-      errMsg <- sprintf("'%s' is not a function!", handler)
+      errMsg <- sprintf("'%s' is not a function!", hdlr)
       config$logger$ERROR(errMsg)
       stop(errMsg)
     }
     register_to_fetch <- geoflow::geoflow_register$new(
-      id = handler, 
+      id = hdlr, 
       def = "", 
       fun = fun
     )
-    config$logger$INFO("Fetching data for register '%s'...", handler)
+    config$logger$INFO("Fetching data for register '%s'...", hdlr)
     register_to_fetch$fetch(config)
     dict$addRegister(register_to_fetch)
   }

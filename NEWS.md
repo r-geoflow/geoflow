@@ -1,4 +1,4 @@
-## [geoflow 1.2.9000](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-orange.svg)](https://github.com/r-geoflow/geoflow)
+## [geoflow 1.2.9002](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-orange.svg)](https://github.com/r-geoflow/geoflow)
 
 
 **Bug fixes**
@@ -9,6 +9,7 @@
 **New features**
 
 * [#445](https://github.com/r-geoflow/geoflow/issues/445) Support specific software configuration for environment file remote fetching
+* [#446](https://github.com/r-geoflow/geoflow/issues/446) Support remote OCS fetching of dictionary register scripts
 
 ## [geoflow 1.2.1](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 
