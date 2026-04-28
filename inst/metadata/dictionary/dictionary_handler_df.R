@@ -89,10 +89,14 @@ handle_dictionary_df <- function(handler, source, config){
       if(handler$id == "ocs"){
         #get ocs client from config
         ocs_client <- config$software$input$ocs
+        print(ocs_client)
         ocs_config <- config$software$input$ocs_config
+        print(ocs_config)
         #get ocs data accessor
         ocs_data_accessor = get_data_accessor(ocs_config$software_type)
+        print(ocs_data_accessor)
         script_tempfile = file.path(tempdir(), basename(script))
+        print(script_tempfile)
         ocs_data_accessor$download(resource = script, file = basename(script), path = script_tempfile, software = ocs_client)
         script = script_tempfile
       }else{
