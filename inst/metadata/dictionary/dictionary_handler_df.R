@@ -84,17 +84,19 @@ handle_dictionary_df <- function(handler, source, config){
   invisible(lapply(as.character(scripts), function(script){
     isSourceUrl <- regexpr('(http|https)[^([:blank:]|\\\'|<|&|#\n\r)]+', script) > 0
     if(!isSourceUrl){
-      if(!geoflow::is_absolute_path(script)){
-        if(handler$id == "ocs"){
-          #get ocs client from config
-          ocs_client <- config$software$input$ocs
-          ocs_config <- config$software$input$ocs_config
-          #get ocs data accessor
-          ocs_data_accessor = get_data_accessor(ocs_config$software_type)
-          script_tempfile = file.path(tempdir(), basename(script))
-          ocs_data_accessor$download(resource = script, file = basename(script), path = script_tempfile, software = ocs_client)
-          script = script_tempfile
-        }else{
+      print(handler)
+      print(handler$id)
+      if(handler$id == "ocs"){
+        #get ocs client from config
+        ocs_client <- config$software$input$ocs
+        ocs_config <- config$software$input$ocs_config
+        #get ocs data accessor
+        ocs_data_accessor = get_data_accessor(ocs_config$software_type)
+        script_tempfile = file.path(tempdir(), basename(script))
+        ocs_data_accessor$download(resource = script, file = basename(script), path = script_tempfile, software = ocs_client)
+        script = script_tempfile
+      }else{
+        if(!geoflow::is_absolute_path(script)){
           script<-file.path(config$session_wd,script)
         }
       }
