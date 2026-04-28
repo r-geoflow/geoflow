@@ -85,8 +85,6 @@ handle_dictionary_df <- function(handler, source, config){
     isSourceUrl <- regexpr('(http|https)[^([:blank:]|\\\'|<|&|#\n\r)]+', script) > 0
     if(!isSourceUrl){
       if(!geoflow::is_absolute_path(script)){
-        script<-file.path(config$session_wd,script)
-      }else{
         if(handler$id == "ocs"){
           #get ocs client from config
           ocs_client <- config$software$input$ocs
@@ -96,6 +94,8 @@ handle_dictionary_df <- function(handler, source, config){
           script_tempfile = file.path(tempdir(), basename(script))
           ocs_data_accessor$download(resource = script, file = basename(script), path = script_tempfile, software = ocs_client)
           script = script_tempfile
+        }else{
+          script<-file.path(config$session_wd,script)
         }
       }
     }
