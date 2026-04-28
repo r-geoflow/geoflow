@@ -90,12 +90,8 @@ handle_dictionary_df <- function(handler, source, config){
         #get ocs client from config
         ocs_client <- config$software$input$ocs
         ocs_config <- config$software$input$ocs_config
-        #get ocs data accessor
-        print(ocs_config$software_type)
-        ocs_data_accessor = get_data_accessor(id = ocs_config$software_type)
-        print(ocs_data_accessor)
+        ocs_data_accessor = geoflow::get_data_accessor(id = ocs_config$software_type)
         script_tempfile = file.path(tempdir(), basename(script))
-        print(script_tempfile)
         ocs_data_accessor$download(resource = script, file = basename(script), path = script_tempfile, software = ocs_client)
         script = script_tempfile
       }else{
