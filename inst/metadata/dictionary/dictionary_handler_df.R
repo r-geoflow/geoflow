@@ -90,17 +90,22 @@ handle_dictionary_df <- function(handler, source, config){
         #get ocs client from config
         ocs_client <- config$software$input$ocs
         ocs_config <- config$software$input$ocs_config
-        ocs_data_accessor = geoflow::get_data_accessor(id = ocs_config$software_type)
-        script_tempfile = file.path(tempdir(), basename(script))
-        ocs_data_accessor$download(resource = script, file = basename(script), path = script_tempfile, software = ocs_client)
-        script = script_tempfile
+        if(!is.null(ocs_config)){
+          ocs_data_accessor = geoflow::get_data_accessor(id = ocs_config$software_type)
+          script_tempfile = file.path(tempdir(), basename(script))
+          ocs_data_accessor$download(resource = script, file = basename(script), path = script_tempfile, software = ocs_client)
+          script = script_tempfile
+        }else{
+          config$logger$WARN("No OCS config available to get register script")
+          script = NULL
+        }
       }else{
         if(!geoflow::is_absolute_path(script)){
           script<-file.path(config$session_wd,script)
         }
       }
     }
-    source(script)
+    if(!is.null(script)) source(script)
   }))
   
   config$logger$INFO("Fetching registers from data dictionnary...")
