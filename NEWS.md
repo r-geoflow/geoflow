@@ -1,10 +1,11 @@
-## [geoflow 1.2.9002](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-orange.svg)](https://github.com/r-geoflow/geoflow)
+## [geoflow 1.2.9004](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-orange.svg)](https://github.com/r-geoflow/geoflow)
 
 
 **Bug fixes**
 
 * [#443](https://github.com/r-geoflow/geoflow/issues/443) Missing sourceSql export in entity$asDataFrame
 * [#444](https://github.com/r-geoflow/geoflow/issues/444) Data dir is ignored with entity$asDataFrame
+* [#447](https://github.com/r-geoflow/geoflow/issues/447) Missing entity data spatialRepresentationType export as data frame
 
 **New features**
 
