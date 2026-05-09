@@ -165,11 +165,13 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       #graphic overviews
       gos = rec$identificationInfo[[1]]$graphicOverview
       for(go in gos){
-        thumbnail_rel = geoflow_relation$new()
-        thumbnail_rel$setKey("thumbnail")
-        thumbnail_rel$setName(go$fileDescription)
-        thumbnail_rel$setLink(go$fileName)
-        entity$addRelation(thumbnail_rel)
+        if(!is.na(go)){
+          thumbnail_rel = geoflow_relation$new()
+          thumbnail_rel$setKey("thumbnail")
+          thumbnail_rel$setName(go$fileDescription)
+          thumbnail_rel$setLink(go$fileName)
+          entity$addRelation(thumbnail_rel)
+        }
       }
       
       #cited responsible party
