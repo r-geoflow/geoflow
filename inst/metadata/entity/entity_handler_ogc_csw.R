@@ -48,10 +48,12 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
     
     if(length(rp$contactInfo$address)>0){
       address = rp$contactInfo$address[[1]]
-      if(length(address$deliveryPoint)>0) if(!is.na(address$deliveryPoint)){
+      if(length(address$deliveryPoint)>0){
         deliveryPoint = address$deliveryPoint
         if(is.list(deliveryPoint)) deliveryPoint = deliveryPoint[[1]]
-        contact$setPostalAddress(deliveryPoint)
+        if(!is.na(deliveryPoint)){
+          contact$setPostalAddress(deliveryPoint)
+        }
       }
       if(!is.null(address$postalCode)) if(!is.na(address$postalCode)) contact$setPostalCode(address$postalCode)
       if(!is.null(address$city)) if(!is.na(address$city)) contact$setCity(address$city)
