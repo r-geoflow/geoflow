@@ -247,7 +247,8 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
           }
         }
         kwds = dk$keyword
-        for(kwd in kwds){
+        kwds = kwds[!is.na(kwds)]
+        if(length(kwds)>0) for(kwd in kwds){
           gkwd = kwd
           if(is(kwd, "ISOAnchor")){
             gkwd = kwd$value
