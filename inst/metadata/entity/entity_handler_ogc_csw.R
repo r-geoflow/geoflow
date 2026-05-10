@@ -165,7 +165,7 @@ handle_entities_csw <- function(handler, source, config, handle = TRUE){
       #graphic overviews
       gos = rec$identificationInfo[[1]]$graphicOverview
       for(go in gos){
-        if(is.R6(go)){
+        if(R6::is.R6(go)){
           thumbnail_rel = geoflow_relation$new()
           thumbnail_rel$setKey("thumbnail")
           thumbnail_rel$setName(go$fileDescription)
