@@ -4,7 +4,7 @@
 \alias{get_data_accessor}
 \title{get_data_accessor}
 \usage{
-get_data_accessor('ocs')
+get_data_accessor(id)
 }
 \arguments{
 \item{id}{an accessor ID}

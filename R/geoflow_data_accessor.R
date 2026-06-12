@@ -453,7 +453,7 @@ list_data_accessors <- function(raw = FALSE){
 #' @title get_data_accessor
 #' @description \code{get_data_accessor} get a data accessor by ID.
 #'
-#' @usage get_data_accessor('ocs')
+#' @usage get_data_accessor(id)
 #' 
 #' @param id an accessor ID
 #' 
