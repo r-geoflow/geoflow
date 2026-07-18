@@ -352,7 +352,8 @@ filter_sf_by_cqlfilter <- function(sfdata, cqlfilter){
 #' @export
 #'
 extract_cell_components <- function(str){
-  lines <- unlist(strsplit(str, get_line_separator()))
+  separator = if(get_line_separator() == "_\n") "_\\r?\\n" else get_line_separator()
+  lines <- unlist(strsplit(str, separator))
   return(lines)
 }
 
