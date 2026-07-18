@@ -500,6 +500,10 @@ geoflow_entity <- R6Class("geoflow_entity",
                 if(!is_absolute_path(datasource_uri)) datasource_uri <- file.path(config$session_wd,datasource_uri)
               }
               config$logger$INFO("Copying data to Job data directory from local file(s)")
+              print(basename(datasource_uri))
+              print(config$wd)
+              print(get_absolute_path(dirname(datasource_uri), base = config$wd))
+              
               data.files <- list.files(path = get_absolute_path(dirname(datasource_uri), base = config$wd), pattern = basename(datasource_uri))
               if(length(data.files)>0){
                 isZipped <- any(sapply(data.files, endsWith, ".zip"))
