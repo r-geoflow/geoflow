@@ -761,7 +761,7 @@ get_config_resource_path <- function(config, path){
   is_url <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", path) > 0
   if(is_url) return(path)
   if(!is_absolute_path(path)){
-    path_root = config$root
+    path_root = config$wd
     mtch = gregexpr("\\.\\./", path)[[1]]
     mtch = mtch[mtch != -1]
     if(length(mtch)>0) for(i in 1:length(mtch)){

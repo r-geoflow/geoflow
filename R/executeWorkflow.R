@@ -8,7 +8,9 @@
 #'                        monitor, session)
 #'                 
 #' @param file a JSON geoflow configuration file
-#' @param dir a directory where to execute the workflow
+#' @param dir a directory used to execute the workflow. This is the working directory, ie where local
+#' resources (data, metadata), should be located.
+#' @param outdir a directory where the geoflow will write the job outputs.
 #' @param queue an \pkg{ipc} queue to use geoflow in \pkg{geoflow-shiny}
 #' @param on_initWorkflowJob a function to trigger once \code{initWorkflowJob} is executed
 #' @param on_initWorkflow a function to trigger once \code{initWorkflow} is executed
@@ -20,7 +22,7 @@
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
-executeWorkflow <- function(file, dir, 
+executeWorkflow <- function(file, dir, outdir = dir,
                             queue = NULL, 
                             on_initWorkflowJob = NULL,
                             on_initWorkflow = NULL,
@@ -42,7 +44,7 @@ executeWorkflow <- function(file, dir,
   wd <- getwd()
   on.exit(setwd(wd))
   config <- list()
-  jobDirPath <- initWorkflowJob(dir = dir)
+  jobDirPath <- initWorkflowJob(dir = outdir)
   config$job <- jobDirPath
   if(!is.null(on_initWorkflowJob)){
     on_initWorkflowJob(config = config, queue = queue)
@@ -50,7 +52,7 @@ executeWorkflow <- function(file, dir,
   
   capture.output({
     setwd(wd)
-    config <- try(initWorkflow(file = file, dir = dir, jobDirPath = jobDirPath, session = session))
+    config <- try(initWorkflow(file = file, dir = dir, outdir = outdir, jobDirPath = jobDirPath, session = session))
     if(is(config,"try-error")){
       stop(sprintf("Workflow failed during initialization, check logs at: %s", file.path(jobDirPath, "job-logs.txt")))
     }

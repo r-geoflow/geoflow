@@ -6,7 +6,9 @@
 #' @usage initWorkflow(file, dir, jobDirPath, handleMetadata, session)
 #'                 
 #' @param file a JSON or YAML configuration file
-#' @param dir a directory where to execute the workflow.
+#' @param dir a directory used to execute the workflow. This is the working directory, ie where local
+#' resources (data, metadata), should be located.
+#' @param outdir a directory where the geoflow will write the job outputs.
 #' @param jobDirPath a directory set-up for the job. Default is \code{NULL} means it will be created
 #'  during initialization of the workflow, otherwise the path provided will be used.
 #' @param handleMetadata Default is \code{TRUE}. Metadata contacts/entities/dictionary will be handled.
@@ -18,7 +20,7 @@
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #'
-initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, session = NULL){
+initWorkflow <- function(file, dir, outdir = dir, jobDirPath = NULL, handleMetadata = TRUE, session = NULL){
 
   wd <- getwd()
   on.exit(setwd(wd))
@@ -29,7 +31,7 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
   }
   
   #file/config
-  file <- tools::file_path_as_absolute(file)
+  file <- get_absolute_path(file, base = dir)
   config = NULL
   config_ext = NULL
   switch(
@@ -66,9 +68,8 @@ initWorkflow <- function(file, dir, jobDirPath = NULL, handleMetadata = TRUE, se
   
   config_file <- config$src
   #working dir (where jobs will be created)
-  config$root <- dirname(file)
   if(is.null(config$wd)) config$wd <- tools::file_path_as_absolute(dir)
-  if(is.null(jobDirPath)) jobDirPath <- initWorkflowJob(dir = dir)
+  if(is.null(jobDirPath)) jobDirPath <- initWorkflowJob(dir = outdir)
   config$job <- jobDirPath
   config$logger$INFO("Workflow job directory: %s", jobDirPath)
   

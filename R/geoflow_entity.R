@@ -500,13 +500,13 @@ geoflow_entity <- R6Class("geoflow_entity",
                 if(!is_absolute_path(datasource_uri)) datasource_uri <- file.path(config$session_wd,datasource_uri)
               }
               config$logger$INFO("Copying data to Job data directory from local file(s)")
-              data.files <- list.files(path = dirname(datasource_uri), pattern = basename(datasource_uri))
+              data.files <- list.files(path = get_absolute_path(dirname(datasource_uri), base = config$wd), pattern = basename(datasource_uri))
               if(length(data.files)>0){
                 isZipped <- any(sapply(data.files, endsWith, ".zip"))
                 if(!isZipped){
                   config$logger$INFO("Copying data local file(s): copying also unzipped files to job data directory")
                   for(data.file in data.files){
-                    file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
+                    file.copy(from = file.path(get_absolute_path(dirname(datasource_uri), base = config$wd), data.file), to = getwd())
                   }
                   #config$logger$INFO("Copying data local file(s): zipping files as archive into job data directory")
                   #data.files <- list.files(pattern = basefilename)
@@ -517,7 +517,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                     #copy files only
                     config$logger$INFO("Copying data local file(s): copying zip files to job data directory")
                     for(data.file in data.files){
-                      file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
+                      file.copy(from = file.path(get_absolute_path(dirname(datasource_uri), base = config$wd), data.file), to = getwd())
                     }
                   }else{
                     #unzip files to copy
@@ -525,7 +525,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                     data.files <- utils::unzip(zipfile = datasource_uri, unzip = getOption("unzip"))
                     if(length(data.files)>0){
                       for(data.file in data.files){
-                        file.copy(from = file.path(dirname(datasource_uri), data.file), to = getwd())
+                        file.copy(from = file.path(get_absolute_path(dirname(datasource_uri), base = config$wd), data.file), to = getwd())
                       }
                       zip::zipr(zipfile = file.path(getwd(), paste0(basefilename,".zip")), files = data.files)
                     }
