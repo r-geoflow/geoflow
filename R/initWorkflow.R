@@ -79,7 +79,7 @@ initWorkflow <- function(file, dir, outdir = dir, jobDirPath = NULL, handleMetad
   #rename copied file
   job_config_file = paste0("job.", config_ext)
   file.rename(from = file.path(getwd(), basename(config_file)), to = job_config_file)
-  setwd(wd)
+  setwd(dir)
   
   #profile
   profile <- NULL
