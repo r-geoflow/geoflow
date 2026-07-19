@@ -48,7 +48,7 @@ initWorkflow <- function(file, dir, outdir = dir, jobDirPath = NULL, handleMetad
   )
   
   #keep the source
-  config$src <- file
+  config$src <- get_absolute_path(file, base = dir)
   config$src_config <- config
   
   #worfklow config$loggers
@@ -222,9 +222,6 @@ initWorkflow <- function(file, dir, outdir = dir, jobDirPath = NULL, handleMetad
       profile$setOption(option_name, config$profile$options[[option_name]])
     }
   }
-  
-  #session_wd
-  config$session_wd <- getwd()
 
   #load source scripts
   #--------------------

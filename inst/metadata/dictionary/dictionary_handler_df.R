@@ -101,7 +101,7 @@ handle_dictionary_df <- function(handler, source, config){
         }
       }else{
         if(!geoflow::is_absolute_path(script)){
-          script<-file.path(config$session_wd,script)
+          script <- geoflow::get_absolute_path(script, base = config$wd)
         }
       }
     }

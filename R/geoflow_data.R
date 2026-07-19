@@ -415,7 +415,7 @@ geoflow_data <- R6Class("geoflow_data",
             isSourceUrl <- regexpr('(http|https)[^([:blank:]|\\\'|<|&|#\n\r)]+', script) > 0
             if(!isSourceUrl){
               if(!is_absolute_path(script)){
-                script_to_source<-paste0("file.path(config$session_wd,\"",script,"\")")
+                script_to_source<-paste0("geoflow::get_absolute_path(\"",script,"\", base = config$wd)")
               }else{
                 script_to_source<-paste0("\"",script,"\"")
               }
@@ -452,7 +452,7 @@ geoflow_data <- R6Class("geoflow_data",
           ext_sld_files <- list()
           all_data_files = list.files(data_dir, full.names = T)
           if(self$access == "default"){
-            if(!is_absolute_path(data_dir) && !is.null(config)) data_dir <- file.path(config$session_wd, datasource_uri)
+            if(!is_absolute_path(data_dir) && !is.null(config)) data_dir <- geoflow::get_absolute_path(datasource_uri, base = config$wd)
             if(!dir.exists(data_dir)){
               config$logger$ERROR("Data dir doesn't exist!")
             }
