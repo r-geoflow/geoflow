@@ -43,8 +43,10 @@ executeWorkflow <- function(file, dir, outdir = dir,
   #1. Init the workflow based on configuration file
   wd <- getwd()
   on.exit(setwd(wd))
+  dir = get_absolute_path(dir, base = dir)
+  outdir = get_absolute_path(outdir, base = dir)
   config <- list()
-  jobDirPath <- initWorkflowJob(dir = outdir)
+  jobDirPath <- initWorkflowJob(dir = dir)
   config$job <- jobDirPath
   if(!is.null(on_initWorkflowJob)){
     on_initWorkflowJob(config = config, queue = queue)

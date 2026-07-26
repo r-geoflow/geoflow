@@ -25,6 +25,9 @@ initWorkflow <- function(file, dir, outdir = dir, jobDirPath = NULL, handleMetad
   wd <- getwd()
   on.exit(setwd(wd))
   
+  dir = get_absolute_path(dir, base = dir)
+  outdir = get_absolute_path(outdir, base = dir)
+  
   #optional shiny session object
   if(!is.null(session)) if(!is(session, "ShinySession")){
     stop("The 'session' argument should specify an object of class 'ShinySession'")
@@ -140,7 +143,7 @@ initWorkflow <- function(file, dir, outdir = dir, jobDirPath = NULL, handleMetad
     if(!is.null(config$profile$environment)) if(!is.null(config$profile$environment$file)){
       config$logger$INFO("Loading environment from env file '%s'", basename(config$profile$environment$file))
       
-      filepath = config$profile$environment$file
+      filepath = get_absolute_path(config$profile$environment$file, base = dir)
       config$profile$environment[["_filepath"]] = filepath
       
       #check if there is a software associated to the environment
@@ -181,7 +184,7 @@ initWorkflow <- function(file, dir, outdir = dir, jobDirPath = NULL, handleMetad
         config$profile$environment[["_filepath"]] = filepath
         config$logger$INFO("Remote environment file downloaded and stored at %s", filepath)
       }
-      
+
       loaded <- try(dotenv::load_dot_env(file = filepath))
       if(is(loaded,"try-error")){
         errMsg <- sprintf("Error while trying to load environment from env file '%s'", basename(filepath))

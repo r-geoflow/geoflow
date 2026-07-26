@@ -7,7 +7,9 @@
 #' @usage debugWorkflow(file, dir, entityIndex, copyData, runSoftwareActions, runLocalActions)
 #'                 
 #' @param file configuration file
-#' @param dir directory where to debug/execute the workflow
+#' @param dir a directory used to execute the workflow. This is the working directory, ie where local
+#' resources (data, metadata), should be located.
+#' @param outdir a directory where the geoflow will write the job outputs.
 #' @param entityIndex index of the entity within the list of loaded entities. Default is 1
 #' @param copyData whether data should be downloaded/copied to job data directory.
 #' Default is \code{TRUE}.
@@ -22,14 +24,16 @@
 #' @author Emmanuel Blondel, \email{emmanuel.blondel1@@gmail.com}
 #' @export
 #' 
-debugWorkflow <- function(file, dir = NULL, entityIndex = 1, 
+debugWorkflow <- function(file, dir, outdir = dir, entityIndex = 1, 
                           copyData = TRUE, 
                           runSoftwareActions = TRUE,  
                           runLocalActions = TRUE){
   
   wd <- getwd()
   on.exit(setwd(wd))
-  if(!is.null(dir)) setwd(dir)
+  
+  dir = get_absolute_path(dir, base = dir)
+  outdir = get_absolute_path(outdir, base = dir)
   
   #options
   .defaultOptions <- options()
