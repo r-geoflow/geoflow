@@ -87,8 +87,12 @@ function(action, entity, config){
              #config privileges
              config <- GNPrivConfiguration$new()
              config$setPrivileges(as.character(group), privs)
-             if(entity$data$restricted){
-               config$setPrivileges("all", c("view"))
+             if(!is.null(entity$data)){
+               if(entity$data$restricted){
+                 config$setPrivileges("all", c("view"))
+               }else{
+                 config$setPrivileges("all", privs)
+               }
              }else{
                config$setPrivileges("all", privs)
              }
@@ -106,8 +110,12 @@ function(action, entity, config){
                #config privileges
                config <- GNPrivConfiguration$new()
                config$setPrivileges(as.character(group), privs)
-               if(entity$data$restricted){
-                 config$setPrivileges("all", c("view"))
+               if(!is.null(entity$data)){
+                 if(entity$data$restricted){
+                   config$setPrivileges("all", c("view"))
+                 }else{
+                   config$setPrivileges("all", privs)
+                 }
                }else{
                  config$setPrivileges("all", privs)
                }
