@@ -4,7 +4,11 @@
 #' @description \code{debugWorkflow} allows to initiate a workflow job for
 #' developers to work / debug on workflow actions.
 #'
-#' @usage debugWorkflow(file, dir, outdir, entityIndex, copyData, runSoftwareActions, runLocalActions)
+#' @usage debugWorkflow(
+#'   file, dir, outdir, 
+#'   entityIndex, copyData, 
+#'   runSoftwareActions, runLocalActions
+#' )
 #'                 
 #' @param file configuration file
 #' @param dir a directory used to execute the workflow. This is the working directory, ie where local

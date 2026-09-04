@@ -4,7 +4,11 @@
 \alias{debugWorkflow}
 \title{debugWorkflow}
 \usage{
-debugWorkflow(file, dir, outdir, entityIndex, copyData, runSoftwareActions, runLocalActions)
+debugWorkflow(
+  file, dir, outdir, 
+  entityIndex, copyData, 
+  runSoftwareActions, runLocalActions
+)
 }
 \arguments{
 \item{file}{configuration file}
