@@ -33,176 +33,189 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{subject}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{key}}{subject key}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{key}}{subject key}
 
-\item{\code{name}}{subject name}
+    \item{\code{name}}{subject name}
 
-\item{\code{uri}}{subject URI}
+    \item{\code{uri}}{subject URI}
 
-\item{\code{dates}}{subject date(s)}
+    \item{\code{dates}}{subject date(s)}
 
-\item{\code{keywords}}{subject keywords}
-}
-\if{html}{\out{</div>}}
+    \item{\code{keywords}}{subject keywords}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_subject-new}{\code{geoflow_subject$new()}}
-\item \href{#method-geoflow_subject-setKey}{\code{geoflow_subject$setKey()}}
-\item \href{#method-geoflow_subject-setName}{\code{geoflow_subject$setName()}}
-\item \href{#method-geoflow_subject-setUri}{\code{geoflow_subject$setUri()}}
-\item \href{#method-geoflow_subject-setDate}{\code{geoflow_subject$setDate()}}
-\item \href{#method-geoflow_subject-addKeyword}{\code{geoflow_subject$addKeyword()}}
-\item \href{#method-geoflow_subject-getKeywords}{\code{geoflow_subject$getKeywords()}}
-\item \href{#method-geoflow_subject-clone}{\code{geoflow_subject$clone()}}
-}
+  \itemize{
+    \item \href{#method-geoflow_subject-initialize}{\code{geoflow_subject$new()}}
+    \item \href{#method-geoflow_subject-setKey}{\code{geoflow_subject$setKey()}}
+    \item \href{#method-geoflow_subject-setName}{\code{geoflow_subject$setName()}}
+    \item \href{#method-geoflow_subject-setUri}{\code{geoflow_subject$setUri()}}
+    \item \href{#method-geoflow_subject-setDate}{\code{geoflow_subject$setDate()}}
+    \item \href{#method-geoflow_subject-addKeyword}{\code{geoflow_subject$addKeyword()}}
+    \item \href{#method-geoflow_subject-getKeywords}{\code{geoflow_subject$getKeywords()}}
+    \item \href{#method-geoflow_subject-clone}{\code{geoflow_subject$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_subject-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_subject-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes an object of class \link{geoflow_subject}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$new(str = NULL, kvp = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-geoflow_subject-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_subject-initialize}{}}}
+\subsection{\code{geoflow_subject$new()}}{
+  Initializes an object of class \link{geoflow_subject}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_subject$new(str = NULL, kvp = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{str}}{a character string to initialize from, using key-based syntax}
+      \item{\code{kvp}}{an object of class \link{geoflow_kvp}}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{str}}{a character string to initialize from, using key-based syntax}
-
-\item{\code{kvp}}{an object of class \link{geoflow_kvp}}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_subject-setKey"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_subject-setKey}{}}}
-\subsection{Method \code{setKey()}}{
-Sets subject key
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$setKey(key)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_subject$setKey()}}{
+  Sets subject key
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_subject$setKey(key)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{key}}{key}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{key}}{key}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_subject-setName"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_subject-setName}{}}}
-\subsection{Method \code{setName()}}{
-Sets subject name
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$setName(name)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_subject$setName()}}{
+  Sets subject name
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_subject$setName(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{name}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{name}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_subject-setUri"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_subject-setUri}{}}}
-\subsection{Method \code{setUri()}}{
-Sets subject URI
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$setUri(uri)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_subject$setUri()}}{
+  Sets subject URI
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_subject$setUri(uri)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{uri}}{uri}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{uri}}{uri}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_subject-setDate"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_subject-setDate}{}}}
-\subsection{Method \code{setDate()}}{
-Sets date
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$setDate(dateType, date)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_subject$setDate()}}{
+  Sets date
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_subject$setDate(dateType, date)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{dateType}}{type of date}
+      \item{\code{date}}{date}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{dateType}}{type of date}
-
-\item{\code{date}}{date}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_subject-addKeyword"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_subject-addKeyword}{}}}
-\subsection{Method \code{addKeyword()}}{
-Adds a keyword
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$addKeyword(keyword, uri = NULL)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_subject$addKeyword()}}{
+  Adds a keyword
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_subject$addKeyword(keyword, uri = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{keyword}}{keyword}
+      \item{\code{uri}}{keyword URI. Default is \code{NULL}}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{keyword}}{keyword}
-
-\item{\code{uri}}{keyword URI. Default is \code{NULL}}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_subject-getKeywords"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_subject-getKeywords}{}}}
-\subsection{Method \code{getKeywords()}}{
-Get keywords associated with the subject
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$getKeywords(pretty = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_subject$getKeywords()}}{
+  Get keywords associated with the subject
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_subject$getKeywords(pretty = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{pretty}}{whether the output has to prettyfied as \code{data.frame}}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    the list of keywords as \code{list} of \code{geoflow_keyword} objects or \code{data.frame}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{pretty}}{whether the output has to prettyfied as \code{data.frame}}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-the list of keywords as \code{list} of \code{geoflow_keyword} objects or \code{data.frame}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_subject-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_subject-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_subject$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_subject$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_subject$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

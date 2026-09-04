@@ -3,7 +3,7 @@
 #' @title initWorkflow
 #' @description \code{initWorkflow} allows to init a workflow
 #'
-#' @usage initWorkflow(file, dir, jobDirPath, handleMetadata, session)
+#' @usage initWorkflow(file, dir, outdir, jobDirPath, handleMetadata, session)
 #'                 
 #' @param file a JSON or YAML configuration file
 #' @param dir a directory used to execute the workflow. This is the working directory, ie where local

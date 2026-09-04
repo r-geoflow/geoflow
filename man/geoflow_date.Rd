@@ -29,82 +29,90 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{date}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{key}}{date key. Default is "creation"}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{key}}{date key. Default is "creation"}
 
-\item{\code{value}}{date value. Default is generated with \code{Sys.time()}}
-}
-\if{html}{\out{</div>}}
+    \item{\code{value}}{date value. Default is generated with \code{Sys.time()}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_date-new}{\code{geoflow_date$new()}}
-\item \href{#method-geoflow_date-setKey}{\code{geoflow_date$setKey()}}
-\item \href{#method-geoflow_date-setValue}{\code{geoflow_date$setValue()}}
-\item \href{#method-geoflow_date-clone}{\code{geoflow_date$clone()}}
-}
+  \itemize{
+    \item \href{#method-geoflow_date-initialize}{\code{geoflow_date$new()}}
+    \item \href{#method-geoflow_date-setKey}{\code{geoflow_date$setKey()}}
+    \item \href{#method-geoflow_date-setValue}{\code{geoflow_date$setValue()}}
+    \item \href{#method-geoflow_date-clone}{\code{geoflow_date$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_date-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_date-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes a \link{geoflow_date}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_date$new()}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-geoflow_date-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_date-initialize}{}}}
+\subsection{\code{geoflow_date$new()}}{
+  Initializes a \link{geoflow_date}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_date$new()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_date-setKey"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_date-setKey}{}}}
-\subsection{Method \code{setKey()}}{
-Sets the date key
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_date$setKey(key)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_date$setKey()}}{
+  Sets the date key
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_date$setKey(key)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{key}}{date key}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{key}}{date key}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_date-setValue"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_date-setValue}{}}}
-\subsection{Method \code{setValue()}}{
-Sets the date value. The method will check validity of date value.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_date$setValue(value)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_date$setValue()}}{
+  Sets the date value. The method will check validity of date value.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_date$setValue(value)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{value}}{date value}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{value}}{date value}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_date-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_date-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_date$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_date$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_date$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

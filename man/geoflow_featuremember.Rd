@@ -21,47 +21,48 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{contact}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{id}}{feature member ID}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{id}}{feature member ID}
 
-\item{\code{type}}{feature member type}
+    \item{\code{type}}{feature member type}
 
-\item{\code{code}}{feature member code}
+    \item{\code{code}}{feature member code}
 
-\item{\code{name}}{feature member name}
+    \item{\code{name}}{feature member name}
 
-\item{\code{def}}{feature member definition}
+    \item{\code{def}}{feature member definition}
 
-\item{\code{defSource}}{feature member definition source}
+    \item{\code{defSource}}{feature member definition source}
 
-\item{\code{minOccurs}}{feature member minOccurs}
+    \item{\code{minOccurs}}{feature member minOccurs}
 
-\item{\code{maxOccurs}}{feature member maxOccurs}
+    \item{\code{maxOccurs}}{feature member maxOccurs}
 
-\item{\code{uom}}{feature member unit of measure (uom)}
+    \item{\code{uom}}{feature member unit of measure (uom)}
 
-\item{\code{registerId}}{feature member register ID}
+    \item{\code{registerId}}{feature member register ID}
 
-\item{\code{registerScript}}{feature member register script}
-}
-\if{html}{\out{</div>}}
+    \item{\code{registerScript}}{feature member register script}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_featuremember-new}{\code{geoflow_featuremember$new()}}
-\item \href{#method-geoflow_featuremember-asDataFrame}{\code{geoflow_featuremember$asDataFrame()}}
-\item \href{#method-geoflow_featuremember-clone}{\code{geoflow_featuremember$clone()}}
-}
+  \itemize{
+    \item \href{#method-geoflow_featuremember-initialize}{\code{geoflow_featuremember$new()}}
+    \item \href{#method-geoflow_featuremember-asDataFrame}{\code{geoflow_featuremember$asDataFrame()}}
+    \item \href{#method-geoflow_featuremember-clone}{\code{geoflow_featuremember$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_featuremember-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_featuremember-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes a \link{geoflow_featuremember}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuremember$new(
+\if{html}{\out{<a id="method-geoflow_featuremember-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_featuremember-initialize}{}}}
+\subsection{\code{geoflow_featuremember$new()}}{
+  Initializes a \link{geoflow_featuremember}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_featuremember$new(
   type = "attribute",
   code = NULL,
   name = NULL,
@@ -72,63 +73,59 @@ Initializes a \link{geoflow_featuremember}
   uom = NULL,
   registerId = NULL,
   registerScript = NULL
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{type}}{type}
+      \item{\code{code}}{code}
+      \item{\code{name}}{name}
+      \item{\code{def}}{definition}
+      \item{\code{defSource}}{definition source. Default is \code{NULL}}
+      \item{\code{minOccurs}}{minOccurs. Default is \code{NULL}}
+      \item{\code{maxOccurs}}{maxOccurs. Default is \code{NULL}}
+      \item{\code{uom}}{unit of measure. Default is \code{NULL}}
+      \item{\code{registerId}}{ID of the register associated to the feature type. Default is \code{NULL}}
+      \item{\code{registerScript}}{source script providing the register functions. Default is \code{NULL}}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{type}}{type}
-
-\item{\code{code}}{code}
-
-\item{\code{name}}{name}
-
-\item{\code{def}}{definition}
-
-\item{\code{defSource}}{definition source. Default is \code{NULL}}
-
-\item{\code{minOccurs}}{minOccurs. Default is \code{NULL}}
-
-\item{\code{maxOccurs}}{maxOccurs. Default is \code{NULL}}
-
-\item{\code{uom}}{unit of measure. Default is \code{NULL}}
-
-\item{\code{registerId}}{ID of the register associated to the feature type. Default is \code{NULL}}
-
-\item{\code{registerScript}}{source script providing the register functions. Default is \code{NULL}}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_featuremember-asDataFrame"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_featuremember-asDataFrame}{}}}
-\subsection{Method \code{asDataFrame()}}{
-Converts as data.frame
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuremember$asDataFrame()}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_featuremember$asDataFrame()}}{
+  Converts as data.frame
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_featuremember$asDataFrame()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    an object of class \link{data.frame}
+  }
 }
 
-\subsection{Returns}{
-an object of class \link{data.frame}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_featuremember-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_featuremember-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_featuremember$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_featuremember$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_featuremember$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

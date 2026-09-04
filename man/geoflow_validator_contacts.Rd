@@ -6,59 +6,59 @@
 \title{geoflow_validator_contacts}
 \description{
 geoflow_validator_contacts
-
-geoflow_validator_contacts
 }
 \section{Super class}{
-\code{\link[geoflow:geoflow_validator]{geoflow::geoflow_validator}} -> \code{geoflow_validator_contacts}
+\code{\link[geoflow:geoflow_validator]{geoflow_validator}} -> \code{geoflow_validator_contacts}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_validator_contacts-new}{\code{geoflow_validator_contacts$new()}}
-\item \href{#method-geoflow_validator_contacts-clone}{\code{geoflow_validator_contacts$clone()}}
+  \itemize{
+    \item \href{#method-geoflow_validator_contacts-initialize}{\code{geoflow_validator_contacts$new()}}
+    \item \href{#method-geoflow_validator_contacts-clone}{\code{geoflow_validator_contacts$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
+\if{html}{\out{<details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_content"><a href='../../geoflow/html/geoflow_validator.html#method-geoflow_validator-validate_content'><code>geoflow::geoflow_validator$validate_content()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_structure"><a href='../../geoflow/html/geoflow_validator.html#method-geoflow_validator-validate_structure'><code>geoflow::geoflow_validator$validate_structure()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_content"><a href='../../geoflow/html/geoflow_validator.html#method-geoflow_validator-validate_content'><code>geoflow_validator$validate_content()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator" data-id="validate_structure"><a href='../../geoflow/html/geoflow_validator.html#method-geoflow_validator-validate_structure'><code>geoflow_validator$validate_structure()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_validator_contacts-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_validator_contacts-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes a contacts table validator
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_contacts$new(source)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-geoflow_validator_contacts-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_contacts-initialize}{}}}
+\subsection{\code{geoflow_validator_contacts$new()}}{
+  Initializes a contacts table validator
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_validator_contacts$new(source)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{source}}{an object of class \code{data.frame} handling the contacts}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{source}}{an object of class \code{data.frame} handling the contacts}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_validator_contacts-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_validator_contacts-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_validator_contacts$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_validator_contacts$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_validator_contacts$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

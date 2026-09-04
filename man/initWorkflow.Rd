@@ -4,12 +4,15 @@
 \alias{initWorkflow}
 \title{initWorkflow}
 \usage{
-initWorkflow(file, dir, jobDirPath, handleMetadata, session)
+initWorkflow(file, dir, outdir, jobDirPath, handleMetadata, session)
 }
 \arguments{
 \item{file}{a JSON or YAML configuration file}
 
-\item{dir}{a directory where to execute the workflow.}
+\item{dir}{a directory used to execute the workflow. This is the working directory, ie where local
+resources (data, metadata), should be located.}
+
+\item{outdir}{a directory where the geoflow will write the job outputs.}
 
 \item{jobDirPath}{a directory set-up for the job. Default is \code{NULL} means it will be created
 during initialization of the workflow, otherwise the path provided will be used.}

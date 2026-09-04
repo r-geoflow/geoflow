@@ -4,12 +4,15 @@
 \alias{debugWorkflow}
 \title{debugWorkflow}
 \usage{
-debugWorkflow(file, dir, entityIndex, copyData, runSoftwareActions, runLocalActions)
+debugWorkflow(file, dir, outdir, entityIndex, copyData, runSoftwareActions, runLocalActions)
 }
 \arguments{
 \item{file}{configuration file}
 
-\item{dir}{directory where to debug/execute the workflow}
+\item{dir}{a directory used to execute the workflow. This is the working directory, ie where local
+resources (data, metadata), should be located.}
+
+\item{outdir}{a directory where the geoflow will write the job outputs.}
 
 \item{entityIndex}{index of the entity within the list of loaded entities. Default is 1}
 

@@ -3,7 +3,7 @@
 #' @title executeWorkflow
 #' @description \code{executeWorkflow} allows to execute a workflow
 #'
-#' @usage executeWorkflow(file, dir, queue, 
+#' @usage executeWorkflow(file, dir, outdir, queue, 
 #'                        on_initWorkflowJob, on_initWorkflow, on_closeWorkflow, 
 #'                        monitor, session)
 #'                 

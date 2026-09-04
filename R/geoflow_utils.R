@@ -601,7 +601,7 @@ unload_workflow_environment <- function(config){
       tmp <- dotenv_ignore_empty_lines(tmp)
       if (length(tmp) > 0){
         tmp <- lapply(tmp, dotenv_parse_dot_line)
-        tmp <- structure(.Data = lapply(tmp, "[[", "value"), .Names = sapply(tmp, "[[", "key"))
+        tmp <- structure(.Data = lapply(tmp, "[[", "value"), names = sapply(tmp, "[[", "key"))
         
         #remove env vars based on .env file
         Sys.unsetenv(names(tmp))

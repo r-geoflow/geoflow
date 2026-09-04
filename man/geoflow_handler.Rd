@@ -42,53 +42,54 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{handler}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{id}}{handler id}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{id}}{handler id}
 
-\item{\code{type}}{handler type (entity,contact,dictionary)}
+    \item{\code{type}}{handler type (entity,contact,dictionary)}
 
-\item{\code{funders}}{funders}
+    \item{\code{funders}}{funders}
 
-\item{\code{authors}}{authors}
+    \item{\code{authors}}{authors}
 
-\item{\code{maintainer}}{maintainer}
+    \item{\code{maintainer}}{maintainer}
 
-\item{\code{def}}{handler definition}
+    \item{\code{def}}{handler definition}
 
-\item{\code{packages}}{handler packages}
+    \item{\code{packages}}{handler packages}
 
-\item{\code{fun}}{handler function}
+    \item{\code{fun}}{handler function}
 
-\item{\code{script}}{handler script}
+    \item{\code{script}}{handler script}
 
-\item{\code{options}}{options}
+    \item{\code{options}}{options}
 
-\item{\code{available_options}}{available options}
+    \item{\code{available_options}}{available options}
 
-\item{\code{status}}{status}
+    \item{\code{status}}{status}
 
-\item{\code{notes}}{notes}
-}
-\if{html}{\out{</div>}}
+    \item{\code{notes}}{notes}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_handler-new}{\code{geoflow_handler$new()}}
-\item \href{#method-geoflow_handler-fromYAML}{\code{geoflow_handler$fromYAML()}}
-\item \href{#method-geoflow_handler-checkPackages}{\code{geoflow_handler$checkPackages()}}
-\item \href{#method-geoflow_handler-getOption}{\code{geoflow_handler$getOption()}}
-\item \href{#method-geoflow_handler-clone}{\code{geoflow_handler$clone()}}
-}
+  \itemize{
+    \item \href{#method-geoflow_handler-initialize}{\code{geoflow_handler$new()}}
+    \item \href{#method-geoflow_handler-fromYAML}{\code{geoflow_handler$fromYAML()}}
+    \item \href{#method-geoflow_handler-checkPackages}{\code{geoflow_handler$checkPackages()}}
+    \item \href{#method-geoflow_handler-getOption}{\code{geoflow_handler$getOption()}}
+    \item \href{#method-geoflow_handler-clone}{\code{geoflow_handler$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_handler-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_handler-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes a \link{geoflow_handler}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$new(
+\if{html}{\out{<a id="method-geoflow_handler-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_handler-initialize}{}}}
+\subsection{\code{geoflow_handler$new()}}{
+  Initializes a \link{geoflow_handler}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_handler$new(
   yaml = NULL,
   id = NULL,
   type = c("entity", "contact", "dictionary"),
@@ -103,108 +104,104 @@ Initializes a \link{geoflow_handler}
   available_options = list(),
   status = "stable",
   notes = ""
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{yaml}}{a YAML file}
+      \item{\code{id}}{id}
+      \item{\code{type}}{type}
+      \item{\code{funders}}{funders}
+      \item{\code{authors}}{authors}
+      \item{\code{maintainer}}{maintainer}
+      \item{\code{def}}{def}
+      \item{\code{packages}}{list of packages required for the handler}
+      \item{\code{fun}}{the handler \code{function} having 2 arguments \code{config} and \code{source}}
+      \item{\code{script}}{a handler script}
+      \item{\code{options}}{action options}
+      \item{\code{available_options}}{available options for the action}
+      \item{\code{status}}{status (experimental/stable/deprecated/superseded)}
+      \item{\code{notes}}{notes}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{yaml}}{a YAML file}
-
-\item{\code{id}}{id}
-
-\item{\code{type}}{type}
-
-\item{\code{funders}}{funders}
-
-\item{\code{authors}}{authors}
-
-\item{\code{maintainer}}{maintainer}
-
-\item{\code{def}}{def}
-
-\item{\code{packages}}{list of packages required for the handler}
-
-\item{\code{fun}}{the handler \code{function} having 2 arguments \code{config} and \code{source}}
-
-\item{\code{script}}{a handler script}
-
-\item{\code{options}}{action options}
-
-\item{\code{available_options}}{available options for the action}
-
-\item{\code{status}}{status (experimental/stable/deprecated/superseded)}
-
-\item{\code{notes}}{notes}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_handler-fromYAML"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_handler-fromYAML}{}}}
-\subsection{Method \code{fromYAML()}}{
-Reads handler properties from YAML file
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$fromYAML(file)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_handler$fromYAML()}}{
+  Reads handler properties from YAML file
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_handler$fromYAML(file)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file}}{file}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file}}{file}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_handler-checkPackages"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_handler-checkPackages}{}}}
-\subsection{Method \code{checkPackages()}}{
-Check that all packages required for the handler are available, if yes,
+\subsection{\code{geoflow_handler$checkPackages()}}{
+  Check that all packages required for the handler are available, if yes,
    import them in the R session, and return a \code{data.frame} giving the 
    packages names and version. If one or more packages are unavailable,
    an error is thrown and user informed of the missing packages.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$checkPackages()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_handler$checkPackages()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_handler-getOption"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_handler-getOption}{}}}
-\subsection{Method \code{getOption()}}{
-Get handler option value
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$getOption(option)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_handler$getOption()}}{
+  Get handler option value
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_handler$getOption(option)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{option}}{option id}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    the option value, either specified through a workflow, or the default value
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{option}}{option id}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-the option value, either specified through a workflow, or the default value
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_handler-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_handler-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_handler$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_handler$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_handler$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

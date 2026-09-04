@@ -33,169 +33,185 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{relation}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{key}}{relation key}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{key}}{relation key}
 
-\item{\code{link}}{relation link}
+    \item{\code{link}}{relation link}
 
-\item{\code{mimeType}}{relation mime}
+    \item{\code{mimeType}}{relation mime}
 
-\item{\code{name}}{relation name}
+    \item{\code{name}}{relation name}
 
-\item{\code{description}}{relation name}
+    \item{\code{description}}{relation name}
 
-\item{\code{prov}}{provenance,}
-}
-\if{html}{\out{</div>}}
+    \item{\code{prov}}{provenance,}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_relation-new}{\code{geoflow_relation$new()}}
-\item \href{#method-geoflow_relation-setKey}{\code{geoflow_relation$setKey()}}
-\item \href{#method-geoflow_relation-setLink}{\code{geoflow_relation$setLink()}}
-\item \href{#method-geoflow_relation-setMimeType}{\code{geoflow_relation$setMimeType()}}
-\item \href{#method-geoflow_relation-setName}{\code{geoflow_relation$setName()}}
-\item \href{#method-geoflow_relation-setDescription}{\code{geoflow_relation$setDescription()}}
-\item \href{#method-geoflow_relation-setProv}{\code{geoflow_relation$setProv()}}
-\item \href{#method-geoflow_relation-clone}{\code{geoflow_relation$clone()}}
-}
+  \itemize{
+    \item \href{#method-geoflow_relation-initialize}{\code{geoflow_relation$new()}}
+    \item \href{#method-geoflow_relation-setKey}{\code{geoflow_relation$setKey()}}
+    \item \href{#method-geoflow_relation-setLink}{\code{geoflow_relation$setLink()}}
+    \item \href{#method-geoflow_relation-setMimeType}{\code{geoflow_relation$setMimeType()}}
+    \item \href{#method-geoflow_relation-setName}{\code{geoflow_relation$setName()}}
+    \item \href{#method-geoflow_relation-setDescription}{\code{geoflow_relation$setDescription()}}
+    \item \href{#method-geoflow_relation-setProv}{\code{geoflow_relation$setProv()}}
+    \item \href{#method-geoflow_relation-clone}{\code{geoflow_relation$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_relation-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_relation-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes an object of class \link{geoflow_relation}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$new(str = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-geoflow_relation-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_relation-initialize}{}}}
+\subsection{\code{geoflow_relation$new()}}{
+  Initializes an object of class \link{geoflow_relation}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_relation$new(str = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{str}}{character string to initialize from using key-based syntax}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{str}}{character string to initialize from using key-based syntax}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_relation-setKey"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_relation-setKey}{}}}
-\subsection{Method \code{setKey()}}{
-Set key
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setKey(key)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_relation$setKey()}}{
+  Set key
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_relation$setKey(key)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{key}}{key}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{key}}{key}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_relation-setLink"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_relation-setLink}{}}}
-\subsection{Method \code{setLink()}}{
-Set link
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setLink(link)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_relation$setLink()}}{
+  Set link
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_relation$setLink(link)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{link}}{link}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{link}}{link}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_relation-setMimeType"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_relation-setMimeType}{}}}
-\subsection{Method \code{setMimeType()}}{
-Set mime type
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setMimeType(mimeType)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_relation$setMimeType()}}{
+  Set mime type
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_relation$setMimeType(mimeType)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{mimeType}}{mime type}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{mimeType}}{mime type}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_relation-setName"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_relation-setName}{}}}
-\subsection{Method \code{setName()}}{
-Set name
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setName(name)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_relation$setName()}}{
+  Set name
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_relation$setName(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{name}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{name}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_relation-setDescription"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_relation-setDescription}{}}}
-\subsection{Method \code{setDescription()}}{
-Set description
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setDescription(description)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_relation$setDescription()}}{
+  Set description
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_relation$setDescription(description)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{description}}{description}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{description}}{description}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_relation-setProv"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_relation-setProv}{}}}
-\subsection{Method \code{setProv()}}{
-Set provenance
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$setProv(prov = c("user", "geoflow"))}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_relation$setProv()}}{
+  Set provenance
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_relation$setProv(prov = c("user", "geoflow"))}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{prov}}{provenance}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{prov}}{provenance}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_relation-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_relation-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_relation$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_relation$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_relation$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

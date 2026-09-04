@@ -18,87 +18,89 @@ geoflow_vocabulary
 }
 \keyword{vocabulary}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{id}}{id}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{id}}{id}
 
-\item{\code{def}}{def}
+    \item{\code{def}}{def}
 
-\item{\code{uri}}{uri}
+    \item{\code{uri}}{uri}
 
-\item{\code{software_type}}{software_type}
+    \item{\code{software_type}}{software_type}
 
-\item{\code{software}}{software}
+    \item{\code{software}}{software}
 
-\item{\code{connection}}{connection}
-}
-\if{html}{\out{</div>}}
+    \item{\code{connection}}{connection}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_vocabulary-new}{\code{geoflow_vocabulary$new()}}
-\item \href{#method-geoflow_vocabulary-setSoftware}{\code{geoflow_vocabulary$setSoftware()}}
-\item \href{#method-geoflow_vocabulary-clone}{\code{geoflow_vocabulary$clone()}}
-}
+  \itemize{
+    \item \href{#method-geoflow_vocabulary-initialize}{\code{geoflow_vocabulary$new()}}
+    \item \href{#method-geoflow_vocabulary-setSoftware}{\code{geoflow_vocabulary$setSoftware()}}
+    \item \href{#method-geoflow_vocabulary-clone}{\code{geoflow_vocabulary$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_vocabulary-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_vocabulary-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes a vocabulary
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_vocabulary$new(id, def, uri, software_type, connection = "unknown")}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-geoflow_vocabulary-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_vocabulary-initialize}{}}}
+\subsection{\code{geoflow_vocabulary$new()}}{
+  Initializes a vocabulary
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_vocabulary$new(id, def, uri, software_type, connection = "unknown")}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{id}}{id}
+      \item{\code{def}}{def}
+      \item{\code{uri}}{uri}
+      \item{\code{software_type}}{software type}
+      \item{\code{connection}}{connection}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{id}}{id}
-
-\item{\code{def}}{def}
-
-\item{\code{uri}}{uri}
-
-\item{\code{software_type}}{software type}
-
-\item{\code{connection}}{connection}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_vocabulary-setSoftware"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_vocabulary-setSoftware}{}}}
-\subsection{Method \code{setSoftware()}}{
-Set software
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_vocabulary$setSoftware(software)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_vocabulary$setSoftware()}}{
+  Set software
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_vocabulary$setSoftware(software)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{software}}{software}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{software}}{software}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_vocabulary-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_vocabulary-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_vocabulary$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_vocabulary$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_vocabulary$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

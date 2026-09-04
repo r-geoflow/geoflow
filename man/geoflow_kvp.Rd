@@ -21,113 +21,121 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{kvp}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{key}}{the KVP key}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{key}}{the KVP key}
 
-\item{\code{values}}{the KVP values}
+    \item{\code{values}}{the KVP values}
 
-\item{\code{locale}}{a locale definition for the KVP}
-}
-\if{html}{\out{</div>}}
+    \item{\code{locale}}{a locale definition for the KVP}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_kvp-new}{\code{geoflow_kvp$new()}}
-\item \href{#method-geoflow_kvp-setKey}{\code{geoflow_kvp$setKey()}}
-\item \href{#method-geoflow_kvp-setValues}{\code{geoflow_kvp$setValues()}}
-\item \href{#method-geoflow_kvp-setLocale}{\code{geoflow_kvp$setLocale()}}
-\item \href{#method-geoflow_kvp-clone}{\code{geoflow_kvp$clone()}}
-}
+  \itemize{
+    \item \href{#method-geoflow_kvp-initialize}{\code{geoflow_kvp$new()}}
+    \item \href{#method-geoflow_kvp-setKey}{\code{geoflow_kvp$setKey()}}
+    \item \href{#method-geoflow_kvp-setValues}{\code{geoflow_kvp$setValues()}}
+    \item \href{#method-geoflow_kvp-setLocale}{\code{geoflow_kvp$setLocale()}}
+    \item \href{#method-geoflow_kvp-clone}{\code{geoflow_kvp$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_kvp-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_kvp-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes a Key-Value pair (KVP)
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_kvp$new(key = NULL, values = NULL, locale = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-geoflow_kvp-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_kvp-initialize}{}}}
+\subsection{\code{geoflow_kvp$new()}}{
+  Initializes a Key-Value pair (KVP)
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_kvp$new(key = NULL, values = NULL, locale = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{key}}{key}
+      \item{\code{values}}{values}
+      \item{\code{locale}}{locale}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{key}}{key}
-
-\item{\code{values}}{values}
-
-\item{\code{locale}}{locale}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_kvp-setKey"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_kvp-setKey}{}}}
-\subsection{Method \code{setKey()}}{
-Set KVP key
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_kvp$setKey(key)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_kvp$setKey()}}{
+  Set KVP key
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_kvp$setKey(key)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{key}}{the key}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{key}}{the key}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_kvp-setValues"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_kvp-setValues}{}}}
-\subsection{Method \code{setValues()}}{
-Set KVP values
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_kvp$setValues(values)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_kvp$setValues()}}{
+  Set KVP values
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_kvp$setValues(values)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{values}}{the values}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{values}}{the values}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_kvp-setLocale"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_kvp-setLocale}{}}}
-\subsection{Method \code{setLocale()}}{
-Set KVP locale
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_kvp$setLocale(locale)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_kvp$setLocale()}}{
+  Set KVP locale
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_kvp$setLocale(locale)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{locale}}{locale}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{locale}}{locale}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_kvp-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_kvp-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_kvp$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_kvp$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_kvp$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

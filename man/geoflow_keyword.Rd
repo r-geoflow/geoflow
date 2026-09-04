@@ -29,91 +29,98 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{keyword}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{name}}{keyword}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{name}}{keyword}
 
-\item{\code{uri}}{keyword uri}
-}
-\if{html}{\out{</div>}}
+    \item{\code{uri}}{keyword uri}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_keyword-new}{\code{geoflow_keyword$new()}}
-\item \href{#method-geoflow_keyword-setName}{\code{geoflow_keyword$setName()}}
-\item \href{#method-geoflow_keyword-setUri}{\code{geoflow_keyword$setUri()}}
-\item \href{#method-geoflow_keyword-clone}{\code{geoflow_keyword$clone()}}
-}
+  \itemize{
+    \item \href{#method-geoflow_keyword-initialize}{\code{geoflow_keyword$new()}}
+    \item \href{#method-geoflow_keyword-setName}{\code{geoflow_keyword$setName()}}
+    \item \href{#method-geoflow_keyword-setUri}{\code{geoflow_keyword$setUri()}}
+    \item \href{#method-geoflow_keyword-clone}{\code{geoflow_keyword$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_keyword-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_keyword-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes a \link{geoflow_keyword}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_keyword$new(name = NULL, uri = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-geoflow_keyword-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_keyword-initialize}{}}}
+\subsection{\code{geoflow_keyword$new()}}{
+  Initializes a \link{geoflow_keyword}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_keyword$new(name = NULL, uri = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{keyword name}
+      \item{\code{uri}}{keyword URI}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{keyword name}
-
-\item{\code{uri}}{keyword URI}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_keyword-setName"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_keyword-setName}{}}}
-\subsection{Method \code{setName()}}{
-Sets keyword
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_keyword$setName(name)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_keyword$setName()}}{
+  Sets keyword
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_keyword$setName(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{keyword name}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{keyword name}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_keyword-setUri"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_keyword-setUri}{}}}
-\subsection{Method \code{setUri()}}{
-Sets keyword URI
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_keyword$setUri(uri)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_keyword$setUri()}}{
+  Sets keyword URI
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_keyword$setUri(uri)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{uri}}{keyword URI}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{uri}}{keyword URI}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_keyword-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_keyword-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_keyword$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_keyword$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_keyword$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

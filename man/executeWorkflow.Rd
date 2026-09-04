@@ -4,14 +4,17 @@
 \alias{executeWorkflow}
 \title{executeWorkflow}
 \usage{
-executeWorkflow(file, dir, queue, 
+executeWorkflow(file, dir, outdir, queue, 
                        on_initWorkflowJob, on_initWorkflow, on_closeWorkflow, 
                        monitor, session)
 }
 \arguments{
 \item{file}{a JSON geoflow configuration file}
 
-\item{dir}{a directory where to execute the workflow}
+\item{dir}{a directory used to execute the workflow. This is the working directory, ie where local
+resources (data, metadata), should be located.}
+
+\item{outdir}{a directory where the geoflow will write the job outputs.}
 
 \item{queue}{an \pkg{ipc} queue to use geoflow in \pkg{geoflow-shiny}}
 

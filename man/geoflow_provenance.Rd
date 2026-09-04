@@ -36,89 +36,97 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 }
 \keyword{provenance}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{statement}}{provenance statement}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{statement}}{provenance statement}
 
-\item{\code{processes}}{list of processes, as objects of class \link{geoflow_process}}
-}
-\if{html}{\out{</div>}}
+    \item{\code{processes}}{list of processes, as objects of class \link{geoflow_process}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_provenance-new}{\code{geoflow_provenance$new()}}
-\item \href{#method-geoflow_provenance-setStatement}{\code{geoflow_provenance$setStatement()}}
-\item \href{#method-geoflow_provenance-addProcess}{\code{geoflow_provenance$addProcess()}}
-\item \href{#method-geoflow_provenance-clone}{\code{geoflow_provenance$clone()}}
-}
+  \itemize{
+    \item \href{#method-geoflow_provenance-initialize}{\code{geoflow_provenance$new()}}
+    \item \href{#method-geoflow_provenance-setStatement}{\code{geoflow_provenance$setStatement()}}
+    \item \href{#method-geoflow_provenance-addProcess}{\code{geoflow_provenance$addProcess()}}
+    \item \href{#method-geoflow_provenance-clone}{\code{geoflow_provenance$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_provenance-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_provenance-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes a \link{geoflow_provenance}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_provenance$new(str = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-geoflow_provenance-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_provenance-initialize}{}}}
+\subsection{\code{geoflow_provenance$new()}}{
+  Initializes a \link{geoflow_provenance}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_provenance$new(str = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{str}}{character string to initialize a provenance using key-based syntax}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{str}}{character string to initialize a provenance using key-based syntax}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_provenance-setStatement"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_provenance-setStatement}{}}}
-\subsection{Method \code{setStatement()}}{
-Set process statement
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_provenance$setStatement(statement)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_provenance$setStatement()}}{
+  Set process statement
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_provenance$setStatement(statement)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{statement}}{process statement}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{statement}}{process statement}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_provenance-addProcess"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_provenance-addProcess}{}}}
-\subsection{Method \code{addProcess()}}{
-Adds process
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_provenance$addProcess(process)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_provenance$addProcess()}}{
+  Adds process
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_provenance$addProcess(process)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{process, }}{object of class \link{geoflow_process}}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{process, }}{object of class \link{geoflow_process}}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_provenance-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_provenance-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_provenance$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_provenance$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_provenance$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

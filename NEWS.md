@@ -5,6 +5,9 @@
 * [#381](https://github.com/r-geoflow/geoflow/issues/381) Enhance cell components extraction to manage Windows-style line endings (CRLF, i.e. \r\n)
 * [#448](https://github.com/r-geoflow/geoflow/issues/448) Add 'outdir' argument for init / executeWorkflow & rely strictly on 'dir' arg as working environment to fetch resources
 
+**Bug fixes**
+
+* [#453](https://github.com/r-geoflow/geoflow/issues/453) Error while trying to publish in geonetwork with no data associated
 
 ## [geoflow 1.3.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 

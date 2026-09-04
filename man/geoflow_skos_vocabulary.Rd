@@ -19,262 +19,265 @@ geoflow_skos_vocabulary
 \keyword{skos}
 \keyword{vocabulary}
 \section{Super class}{
-\code{\link[geoflow:geoflow_vocabulary]{geoflow::geoflow_vocabulary}} -> \code{geoflow_skos_vocabulary}
+\code{\link[geoflow:geoflow_vocabulary]{geoflow_vocabulary}} -> \code{geoflow_skos_vocabulary}
 }
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{rdf}}{rdf}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{rdf}}{rdf}
 
-\item{\code{rdf_data}}{rdf_data}
+    \item{\code{rdf_data}}{rdf_data}
 
-\item{\code{endpoint}}{endpoint}
-}
-\if{html}{\out{</div>}}
+    \item{\code{endpoint}}{endpoint}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_skos_vocabulary-new}{\code{geoflow_skos_vocabulary$new()}}
-\item \href{#method-geoflow_skos_vocabulary-query}{\code{geoflow_skos_vocabulary$query()}}
-\item \href{#method-geoflow_skos_vocabulary-query_full_dataset}{\code{geoflow_skos_vocabulary$query_full_dataset()}}
-\item \href{#method-geoflow_skos_vocabulary-ping}{\code{geoflow_skos_vocabulary$ping()}}
-\item \href{#method-geoflow_skos_vocabulary-list_collections}{\code{geoflow_skos_vocabulary$list_collections()}}
-\item \href{#method-geoflow_skos_vocabulary-get_concepts_hierarchy}{\code{geoflow_skos_vocabulary$get_concepts_hierarchy()}}
-\item \href{#method-geoflow_skos_vocabulary-list_concepts}{\code{geoflow_skos_vocabulary$list_concepts()}}
-\item \href{#method-geoflow_skos_vocabulary-query_from_uri}{\code{geoflow_skos_vocabulary$query_from_uri()}}
-\item \href{#method-geoflow_skos_vocabulary-query_from_term}{\code{geoflow_skos_vocabulary$query_from_term()}}
-\item \href{#method-geoflow_skos_vocabulary-clone}{\code{geoflow_skos_vocabulary$clone()}}
+  \itemize{
+    \item \href{#method-geoflow_skos_vocabulary-initialize}{\code{geoflow_skos_vocabulary$new()}}
+    \item \href{#method-geoflow_skos_vocabulary-query}{\code{geoflow_skos_vocabulary$query()}}
+    \item \href{#method-geoflow_skos_vocabulary-query_full_dataset}{\code{geoflow_skos_vocabulary$query_full_dataset()}}
+    \item \href{#method-geoflow_skos_vocabulary-ping}{\code{geoflow_skos_vocabulary$ping()}}
+    \item \href{#method-geoflow_skos_vocabulary-list_collections}{\code{geoflow_skos_vocabulary$list_collections()}}
+    \item \href{#method-geoflow_skos_vocabulary-get_concepts_hierarchy}{\code{geoflow_skos_vocabulary$get_concepts_hierarchy()}}
+    \item \href{#method-geoflow_skos_vocabulary-list_concepts}{\code{geoflow_skos_vocabulary$list_concepts()}}
+    \item \href{#method-geoflow_skos_vocabulary-query_from_uri}{\code{geoflow_skos_vocabulary$query_from_uri()}}
+    \item \href{#method-geoflow_skos_vocabulary-query_from_term}{\code{geoflow_skos_vocabulary$query_from_term()}}
+    \item \href{#method-geoflow_skos_vocabulary-clone}{\code{geoflow_skos_vocabulary$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
+\if{html}{\out{<details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_vocabulary" data-id="setSoftware"><a href='../../geoflow/html/geoflow_vocabulary.html#method-geoflow_vocabulary-setSoftware'><code>geoflow::geoflow_vocabulary$setSoftware()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_vocabulary" data-id="setSoftware"><a href='../../geoflow/html/geoflow_vocabulary.html#method-geoflow_vocabulary-setSoftware'><code>geoflow_vocabulary$setSoftware()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_skos_vocabulary-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes a vocabulary
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$new(id, def, uri, endpoint = NULL, file = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-geoflow_skos_vocabulary-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-initialize}{}}}
+\subsection{\code{geoflow_skos_vocabulary$new()}}{
+  Initializes a vocabulary
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_skos_vocabulary$new(id, def, uri, endpoint = NULL, file = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{id}}{id}
+      \item{\code{def}}{def}
+      \item{\code{uri}}{uri}
+      \item{\code{endpoint}}{A Sparql endpoint}
+      \item{\code{file}}{a RDF file}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{id}}{id}
-
-\item{\code{def}}{def}
-
-\item{\code{uri}}{uri}
-
-\item{\code{endpoint}}{A Sparql endpoint}
-
-\item{\code{file}}{a RDF file}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-query"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-query}{}}}
-\subsection{Method \code{query()}}{
-query
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$query(str, graphUri = NULL, mimetype = "text/csv")}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_skos_vocabulary$query()}}{
+  query
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_skos_vocabulary$query(str, graphUri = NULL, mimetype = "text/csv")}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{str}}{str}
+      \item{\code{graphUri}}{graphUri}
+      \item{\code{mimetype}}{mimetype}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    the response of the SPARQL query
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{str}}{str}
-
-\item{\code{graphUri}}{graphUri}
-
-\item{\code{mimetype}}{mimetype}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-the response of the SPARQL query
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-query_full_dataset"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-query_full_dataset}{}}}
-\subsection{Method \code{query_full_dataset()}}{
-Queries full dataset
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$query_full_dataset()}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_skos_vocabulary$query_full_dataset()}}{
+  Queries full dataset
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_skos_vocabulary$query_full_dataset()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    an object of class \link[tibble]{tibble}
+  }
 }
 
-\subsection{Returns}{
-an object of class \link[tibble]{tibble}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-ping"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-ping}{}}}
-\subsection{Method \code{ping()}}{
-Ping query
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$ping()}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_skos_vocabulary$ping()}}{
+  Ping query
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_skos_vocabulary$ping()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-list_collections"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-list_collections}{}}}
-\subsection{Method \code{list_collections()}}{
-list_collections
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$list_collections(
+\subsection{\code{geoflow_skos_vocabulary$list_collections()}}{
+  list_collections
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_skos_vocabulary$list_collections(
   mimetype = "text/csv",
   count_sub_collections = TRUE,
   count_concepts = TRUE
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{mimetype}}{mimetype}
+      \item{\code{count_sub_collections}}{count_sub_collections. Default is TRUE}
+      \item{\code{count_concepts}}{count_concepts. Default is TRUE}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    the response of the SPARQL query
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{mimetype}}{mimetype}
-
-\item{\code{count_sub_collections}}{count_sub_collections. Default is TRUE}
-
-\item{\code{count_concepts}}{count_concepts. Default is TRUE}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-the response of the SPARQL query
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-get_concepts_hierarchy"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-get_concepts_hierarchy}{}}}
-\subsection{Method \code{get_concepts_hierarchy()}}{
-list_concepts
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$get_concepts_hierarchy(
+\subsection{\code{geoflow_skos_vocabulary$get_concepts_hierarchy()}}{
+  list_concepts
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_skos_vocabulary$get_concepts_hierarchy(
   lang = "en",
   method = c("SPARQL", "R"),
   out_format = c("tibble", "list")
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{lang}}{lang}
+      \item{\code{method}}{method used to build the hierarchy, either "SPARQL" or "R"}
+      \item{\code{out_format}}{output format (tibble or list). Default is "tibble"}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    the response of the SPARQL query
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{lang}}{lang}
-
-\item{\code{method}}{method used to build the hierarchy, either "SPARQL" or "R"}
-
-\item{\code{out_format}}{output format (tibble or list). Default is "tibble"}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-the response of the SPARQL query
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-list_concepts"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-list_concepts}{}}}
-\subsection{Method \code{list_concepts()}}{
-list_concepts
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$list_concepts(lang = "en", mimetype = "text/csv")}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_skos_vocabulary$list_concepts()}}{
+  list_concepts
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_skos_vocabulary$list_concepts(lang = "en", mimetype = "text/csv")}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{lang}}{lang}
+      \item{\code{mimetype}}{mimetype}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    the response of the SPARQL query
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{lang}}{lang}
-
-\item{\code{mimetype}}{mimetype}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-the response of the SPARQL query
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-query_from_uri"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-query_from_uri}{}}}
-\subsection{Method \code{query_from_uri()}}{
-query_from_uri
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$query_from_uri(
+\subsection{\code{geoflow_skos_vocabulary$query_from_uri()}}{
+  query_from_uri
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_skos_vocabulary$query_from_uri(
   uri,
   graphUri = NULL,
   mimetype = "text/csv"
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{uri}}{uri}
+      \item{\code{graphUri}}{graphUri}
+      \item{\code{mimetype}}{mimetype}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    an object of class \link[tibble]{tibble}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{uri}}{uri}
-
-\item{\code{graphUri}}{graphUri}
-
-\item{\code{mimetype}}{mimetype}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-an object of class \link[tibble]{tibble}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-query_from_term"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-query_from_term}{}}}
-\subsection{Method \code{query_from_term()}}{
-query_from_term
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$query_from_term(
+\subsection{\code{geoflow_skos_vocabulary$query_from_term()}}{
+  query_from_term
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_skos_vocabulary$query_from_term(
   term,
   graphUri = NULL,
   mimetype = "text/csv"
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{term}}{term}
+      \item{\code{graphUri}}{graphUri}
+      \item{\code{mimetype}}{mimetype}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    an object of class \link[tibble]{tibble}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{term}}{term}
-
-\item{\code{graphUri}}{graphUri}
-
-\item{\code{mimetype}}{mimetype}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-an object of class \link[tibble]{tibble}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_skos_vocabulary-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_skos_vocabulary-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_skos_vocabulary$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_skos_vocabulary$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_skos_vocabulary$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

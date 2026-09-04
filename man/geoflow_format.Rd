@@ -33,129 +33,141 @@ Emmanuel Blondel <emmanuel.blondel1@gmail.com>
 \keyword{mime}
 \keyword{mimetype}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{key}}{format key}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{key}}{format key}
 
-\item{\code{name}}{key name}
+    \item{\code{name}}{key name}
 
-\item{\code{uri}}{key URI}
+    \item{\code{uri}}{key URI}
 
-\item{\code{description}}{key description}
-}
-\if{html}{\out{</div>}}
+    \item{\code{description}}{key description}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-geoflow_format-new}{\code{geoflow_format$new()}}
-\item \href{#method-geoflow_format-setKey}{\code{geoflow_format$setKey()}}
-\item \href{#method-geoflow_format-setName}{\code{geoflow_format$setName()}}
-\item \href{#method-geoflow_format-setUri}{\code{geoflow_format$setUri()}}
-\item \href{#method-geoflow_format-setDescription}{\code{geoflow_format$setDescription()}}
-\item \href{#method-geoflow_format-clone}{\code{geoflow_format$clone()}}
-}
+  \itemize{
+    \item \href{#method-geoflow_format-initialize}{\code{geoflow_format$new()}}
+    \item \href{#method-geoflow_format-setKey}{\code{geoflow_format$setKey()}}
+    \item \href{#method-geoflow_format-setName}{\code{geoflow_format$setName()}}
+    \item \href{#method-geoflow_format-setUri}{\code{geoflow_format$setUri()}}
+    \item \href{#method-geoflow_format-setDescription}{\code{geoflow_format$setDescription()}}
+    \item \href{#method-geoflow_format-clone}{\code{geoflow_format$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-geoflow_format-new"></a>}}
-\if{latex}{\out{\hypertarget{method-geoflow_format-new}{}}}
-\subsection{Method \code{new()}}{
-Initializes a \link{geoflow_format}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$new(str = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-geoflow_format-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_format-initialize}{}}}
+\subsection{\code{geoflow_format$new()}}{
+  Initializes a \link{geoflow_format}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_format$new(str = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{str}}{character string to initialize object using key-based syntax}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{str}}{character string to initialize object using key-based syntax}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_format-setKey"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_format-setKey}{}}}
-\subsection{Method \code{setKey()}}{
-Sets format key
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$setKey(key)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_format$setKey()}}{
+  Sets format key
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_format$setKey(key)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{key}}{key}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{key}}{key}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_format-setName"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_format-setName}{}}}
-\subsection{Method \code{setName()}}{
-Sets format name
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$setName(name)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_format$setName()}}{
+  Sets format name
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_format$setName(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{name}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{name}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_format-setUri"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_format-setUri}{}}}
-\subsection{Method \code{setUri()}}{
-Sets format URI
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$setUri(uri)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_format$setUri()}}{
+  Sets format URI
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_format$setUri(uri)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{uri}}{URI}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{uri}}{URI}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_format-setDescription"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_format-setDescription}{}}}
-\subsection{Method \code{setDescription()}}{
-Sets format description
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$setDescription(description)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_format$setDescription()}}{
+  Sets format description
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_format$setDescription(description)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{description}}{description}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{description}}{description}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-geoflow_format-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-geoflow_format-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{geoflow_format$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{geoflow_format$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_format$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
