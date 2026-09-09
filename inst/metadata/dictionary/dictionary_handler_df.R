@@ -107,7 +107,7 @@ handle_dictionary_df <- function(handler, source, config, validate = TRUE){
   handlers <- handlers[!is.na(handlers)]
   for(hdlr in handlers){
     fun_ok = TRUE
-    fun <- eval(parse(text = hdlr))
+    fun <- try(eval(parse(text = hdlr)), silent = TRUE)
     if(is(fun,"try-error")){
       errMsg <- sprintf("Error while trying to evaluate function '%s", hdlr)
       config$logger$ERROR(errMsg)
