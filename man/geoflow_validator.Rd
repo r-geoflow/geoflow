@@ -36,7 +36,7 @@ geoflow_validator
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{model}}{the data model name, eg. "entity", "contact"}
+      \item{\code{model}}{the data model name, eg. "entity", "contact" or "dictionary"}
       \item{\code{valid_columns}}{a vector of valid columns for the data model}
       \item{\code{source}}{an object of class \code{data.frame} handling the contacts}
     }

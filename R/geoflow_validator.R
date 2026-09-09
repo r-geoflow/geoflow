@@ -936,6 +936,25 @@ geoflow_validator_entity_Data <- R6Class("geoflow_validator_entity_Data",
   )
 )
 
+#' geoflow_validator_dictionary_RegisterScript
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+geoflow_validator_dictionary_RegisterScript <- R6Class("geoflow_validator_dictionary_RegisterScript",
+   inherit = geoflow_validator_cell,
+   public = list(
+     
+     #'@description Initializes an dictionary 'RegisterScript' cell
+     #'@param i row index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param j col index (internal index to be used for graphical \pkg{geoflow} validation handlers)
+     #'@param str string to validate
+     initialize = function(i, j, str){
+       super$initialize(TRUE,TRUE, TRUE, c(), NULL,FALSE, FALSE, TRUE, i, j, str)
+     }
+    )
+)
+
 #' geoflow_validator
 #'
 #' @docType class
@@ -951,7 +970,7 @@ geoflow_validator <- R6Class("geoflow_validator",
      source = NULL,
      
      #'@description Initializes a table validator for a given metadata model
-     #'@param model the data model name, eg. "entity", "contact"
+     #'@param model the data model name, eg. "entity", "contact" or "dictionary"
      #'@param valid_columns a vector of valid columns for the data model
      #'@param source an object of class \code{data.frame} handling the contacts
      initialize = function(model, valid_columns, source){
@@ -1065,4 +1084,24 @@ geoflow_validator_entities <- R6Class("geoflow_validator_entities",
       super$initialize(model = "entity", valid_columns = valid_columns, source = source)
     }
   )
+)
+
+#' geoflow_validator_dictionary
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+geoflow_validator_dictionary <- R6Class("geoflow_validator_dictionary",
+    inherit = geoflow_validator,
+    public = list(
+      
+      #'@description Initializes an entities table validator
+      #'@param source an object of class \code{data.frame} handling a dictionary
+      initialize = function(source){
+        valid_columns <- c("FeatureType","MemberCode","MemberName","MemberType",
+                           "MinOccurs","MaxOccurs","Definition","DefinitionSource",
+                           "MeasurementUnit","RegisterId","RegisterScript")
+        super$initialize(model = "dictionary", valid_columns = valid_columns, source = source)
+      }
+    )
 )

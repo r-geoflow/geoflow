@@ -4,6 +4,7 @@
 
 * [#455](https://github.com/r-geoflow/geoflow/455) Add validate argument (TRUE default) to all metadata handlers
 * [#456](https://github.com/r-geoflow/geoflow/456) Implement validator for entities/Data column
+* [#457](https://github.com/r-geoflow/geoflow/457) Implement base validator for dictionary
 
 ## [geoflow 1.4.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 
