@@ -1,3 +1,9 @@
+## [geoflow 1.4.0.9001](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-red.svg)](https://github.com/r-geoflow/geoflow)
+
+**Enhancements**
+
+*[#455](https://github.com/r-geoflow/geoflow/455) Add validate argument (TRUE default) to all metadata handlers
+
 ## [geoflow 1.4.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 
 **Enhancements**

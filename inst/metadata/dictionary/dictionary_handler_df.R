@@ -1,5 +1,5 @@
 #handle_dictionary_df
-handle_dictionary_df <- function(handler, source, config){
+handle_dictionary_df <- function(handler, source, config, validate = TRUE){
   
   source [source == ""] <- NA
   

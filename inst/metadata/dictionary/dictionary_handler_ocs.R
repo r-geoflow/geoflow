@@ -1,5 +1,5 @@
 #handle_dictionary_ocs
-handle_dictionary_ocs <- function(handler, source, config, handle = TRUE){
+handle_dictionary_ocs <- function(handler, source, config, validate = TRUE, handle = TRUE){
   
   if(!requireNamespace("ocs4R", quietly = TRUE)){
     stop("The OCS handler requires the 'ocs4R' package")
@@ -15,11 +15,11 @@ handle_dictionary_ocs <- function(handler, source, config, handle = TRUE){
   dictionary <- switch(mime::guess_type(dict_file),
                        "text/csv" = {
                          handle_dictionary_csv <- source(system.file("metadata/dictionary", "dictionary_handler_csv.R", package = "geoflow"))$value
-                         handle_dictionary_csv(handler = handler, source = dict_file, config = config, handle = handle)
+                         handle_dictionary_csv(handler = handler, source = dict_file, config = config, validate = validate, handle = handle)
                         },
                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = {
                          handle_dictionary_excel <- source(system.file("metadata/dictionary", "dictionary_handler_excel.R", package = "geoflow"))$value
-                         handle_dictionary_excel(handler = handler, source = dict_file, config = config, handle = handle)
+                         handle_dictionary_excel(handler = handler, source = dict_file, config = config, validate = validate, handle = handle)
                        }
   )
   return(dictionary)

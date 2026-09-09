@@ -1,5 +1,5 @@
 #handle_entities_dbi_gsheet
-handle_entities_dbi_gsheet <- function(handler, source, config, handle = TRUE){
+handle_entities_dbi_gsheet <- function(handler, source, config, validate = TRUE, handle = TRUE){
   
   #read excel TODO -> options management: sep, encoding etc  #read gsheet URL
   source <- as.data.frame(gsheet::gsheet2tbl(source))
@@ -7,6 +7,6 @@ handle_entities_dbi_gsheet <- function(handler, source, config, handle = TRUE){
   
   #apply generic handler
   handle_entities_dbi_df <- source(system.file("metadata/entity", "entity_handler_dbi_df.R", package = "geoflow"))$value
-  entities <- handle_entities_dbi_df(handler, source, config)
+  entities <- handle_entities_dbi_df(handler, source, config, validate)
   return(entities)
 }

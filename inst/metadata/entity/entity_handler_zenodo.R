@@ -1,5 +1,5 @@
 #handle_entities_zenodo
-handle_entities_zenodo <- function(handler, source, config, handle = TRUE){
+handle_entities_zenodo <- function(handler, source, config, validate = TRUE, handle = TRUE){
   
   if(!requireNamespace("zen4R", quietly = TRUE)){
     stop("The ZENODo handler requires the 'zen4R' package")

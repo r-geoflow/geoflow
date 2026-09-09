@@ -1,5 +1,5 @@
 #handle_entities_dataverse
-handle_entities_dataverse <- function(handler, source, config, handle = TRUE){
+handle_entities_dataverse <- function(handler, source, config, validate = TRUE, handle = TRUE){
   
   if(!requireNamespace("dataverse", quietly = TRUE)){
     stop("The Dataverse handler requires the 'dataverse' package")

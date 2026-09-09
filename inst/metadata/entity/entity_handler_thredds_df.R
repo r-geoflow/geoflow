@@ -1,5 +1,5 @@
 #handle_entities_thredds_df
-handle_entities_thredds_df = function(handler, source, config){
+handle_entities_thredds_df = function(handler, source, config, validate = TRUE){
   
   entities <- handle_entities_df(handler, source, config)
   

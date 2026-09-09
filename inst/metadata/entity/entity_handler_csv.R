@@ -1,5 +1,5 @@
 #handle_entities_csv
-handle_entities_csv <- function(handler, source, config, handle = TRUE){
+handle_entities_csv <- function(handler, source, config, validate = TRUE, handle = TRUE){
   
   #read csv TODO -> options management: sep, encoding etc
   #source <- read.csv(source,stringsAsFactors = F)
@@ -11,6 +11,6 @@ handle_entities_csv <- function(handler, source, config, handle = TRUE){
   #apply generic handler
   handler_script = if(handler$getOption("enrich_from_dbi")) "entity_handler_dbi_df.R" else "entity_handler_df.R"
   handle_entities_df <- source(system.file("metadata/entity", handler_script, package = "geoflow"))$value
-  entities <- handle_entities_df(handler, source, config)
+  entities <- handle_entities_df(handler, source, config, validate)
   return(entities)
 }

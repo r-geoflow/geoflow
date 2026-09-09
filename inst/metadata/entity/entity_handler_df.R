@@ -1,5 +1,5 @@
 #handle_entities_df
-handle_entities_df <- function(handler, source, config){
+handle_entities_df <- function(handler, source, config, validate = TRUE){
   
   if(!is(source, "data.frame")){
     errMsg <- "Error in 'handle_entities_df': source parameter should be an object of class 'data.frame'"
@@ -8,22 +8,24 @@ handle_entities_df <- function(handler, source, config){
   }
   
   #validation
-  config$logger$INFO("Validating entities")
-  validation_report <- geoflow::geoflow_validator_entities$new(source = source)$validate_content()
-  if(is.null(validation_report)){
-    errMsg <- "Error of metadata structure for entities"
-    config$logger$ERROR(errMsg)
-    stop(errMsg)
-  }
-  if(nrow(validation_report)==0){
-    config$logger$INFO("No validation issue detected!")
-  }else{
-    config$logger$INFO("Validation issues -->")
-    print(validation_report)
-    if(any(validation_report$type == "ERROR")){
-      errMsg <- "At least one error of metadata syntax has been detected, aborting..."
+  if(validate){
+    config$logger$INFO("Validating entities")
+    validation_report <- geoflow::geoflow_validator_entities$new(source = source)$validate_content()
+    if(is.null(validation_report)){
+      errMsg <- "Error of metadata structure for entities"
       config$logger$ERROR(errMsg)
       stop(errMsg)
+    }
+    if(nrow(validation_report)==0){
+      config$logger$INFO("No validation issue detected!")
+    }else{
+      config$logger$INFO("Validation issues -->")
+      print(validation_report)
+      if(any(validation_report$type == "ERROR")){
+        errMsg <- "At least one error of metadata syntax has been detected, aborting..."
+        config$logger$ERROR(errMsg)
+        stop(errMsg)
+      }
     }
   }
   

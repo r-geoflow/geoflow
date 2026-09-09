@@ -1,5 +1,5 @@
 #handle_entities_dbi_df
-handle_entities_dbi_df = function(handler, source, config){
+handle_entities_dbi_df = function(handler, source, config, validate = TRUE){
   
   dbi <- config$software$input$dbi
   dbi_config <- config$software$input$dbi_config
@@ -8,7 +8,7 @@ handle_entities_dbi_df = function(handler, source, config){
   }
   
   handle_entities_df <- source(system.file("metadata/entity", "entity_handler_df.R", package = "geoflow"))$value
-  entities <- handle_entities_df(handler, source, config)
+  entities <- handle_entities_df(handler, source, config, validate)
   
   enriched_entities <- lapply(entities, function(entity){
     expected_table_id = entity$identifiers$id
