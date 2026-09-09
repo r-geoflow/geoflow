@@ -2,7 +2,8 @@
 
 **Enhancements**
 
-*[#455](https://github.com/r-geoflow/geoflow/455) Add validate argument (TRUE default) to all metadata handlers
+* [#455](https://github.com/r-geoflow/geoflow/455) Add validate argument (TRUE default) to all metadata handlers
+* [#456](https://github.com/r-geoflow/geoflow/456) Implement validator for entities/Data column
 
 ## [geoflow 1.4.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 

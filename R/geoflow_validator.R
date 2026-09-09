@@ -853,6 +853,85 @@ geoflow_validator_entity_Data <- R6Class("geoflow_validator_entity_Data",
         "cloud_path"
       )
       super$initialize(TRUE,TRUE, TRUE, valid_keys, NULL,FALSE, FALSE, TRUE, i, j, str)
+    },
+    
+    #'@description Validates a Data Proceeds with syntactic validation and content validation.
+    #'@return an validation report, as object of class \code{data.frame}  
+    validate = function(){
+      report <- super$validate()
+      if(is.na(private$str)) return(report)
+  
+      data_props <- extract_cell_components(sanitize_str(private$str))
+      data_props <- lapply(data_props, function(data_prop){
+        return(extract_kvp(data_prop))
+      })
+      names(data_props) <- sapply(data_props, function(x){x$key})
+      
+      #access
+      if(!is.null(data_props$access)){
+        access <- data_props$access$values[[1]]
+        if(!access %in% list_data_accessors()$id){
+          report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Value '%s' does not match any valid data accessor id. 
+                         See valid values with geoflow::list_data_accessors()", access)))
+        }
+      }
+      
+      #source
+      if(!data_props$sourceType$values[[1]] %in% c("dbtable", "dbquery", "dbview")){
+        if(!any(sapply(data_props, function(x){x$key=="source"})) && !any(sapply(data_props, function(x){x$key=="dir"}))){
+          report <- rbind(report, data.frame(type = "ERROR", message = "One or more data 'source' (or 'dir', as directory for sources) is mandatory"))
+        }
+      }
+      
+      #parameters
+      params <- data_props[sapply(data_props, function(x){x$key=="parameter"})]
+      if(length(params)>0){
+        for(param in params){
+          if(!length(param$values) %in% c(2,3)){
+            report <- rbind(report, data.frame(type = "ERROR", message = sprintf("Parameter '%s' definition should be compound by 3 elements: fieldname, regexp and default value", param$values[[1]])))
+          }
+        }
+        #check compliance of dbquery
+        if(!is.null(data_props$sql)){
+          sqlquery <- data_props$sql
+          #with fieldnames
+          if(!all(sapply(params, function(x){regexpr(x$values[[1]],sqlquery)>0}))){
+            report <- rbind(report, data.frame(type = "WARNING", message = "At least one parameter fieldname declared is not used in the data source query!"))
+          }
+          #with param aliases
+          if(!all(sapply(params, function(x){
+            fieldname = x$values[[1]]
+            param_alias <- attr(fieldname, "description")
+            attr(fieldname, "description") <- NULL
+            if(is.null(param_alias)) param_alias <- fieldname
+            regexpr(paste0("%",param_alias,"%"),sqlquery)>0
+            }))){
+            report <- rbind(report, data.frame(type = "WARNING", message = "At least one parameter name declared is not used in the data source query!"))
+          }
+        }else{
+          report <- rbind(report, data.frame(type = "WARNING", message = "At least one parameter is defined with no SQL query defined"))
+        }
+      }
+      
+      #bands
+      bands <- data_props[sapply(data_props, function(x){x$key=="band"})]
+      if(length(bands)>0){
+        if(data_props$spatialRepresentationType$values[[1]] != "grid"){
+          report <- rbind(report, data.frame(type = "WARNING", message = "The specification of bands is only possible for a grid spatial representation!"))
+        }
+        if(data_props$uploadType$values[[1]] != "geotiff"){ #TODO to extend to other coverage formats
+          report <- rbind(report, data.frame(type = "WARNING", message = "The specification of bands is only possible for a 'geotiff' upload type"))
+        }
+        #check and set parameter
+        for(band in bands){
+          covname <- band$values[[1]]
+          if(length(band$values) != 2){
+            report <- rbind(report, data.frame(type = "WARNING", message = sprintf("Band '%s' definition should be compound by 2 elements: name (coverage name), index", covname)))
+          }
+          index <- band$values[[2]]
+        }
+      }
+      return(report)
     }
   )
 )

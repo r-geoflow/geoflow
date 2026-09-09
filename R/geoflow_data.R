@@ -156,10 +156,6 @@ geoflow_data <- R6Class("geoflow_data",
         #access to use for reaching sources
         if(!is.null(data_props$access)){
           access <- data_props$access$values[[1]]
-          if(!access %in% list_data_accessors()$id){
-            stop(sprintf("Value '%s' does not match any valid data accessor id. 
-                         See valid values with geoflow::list_data_accessors()", access))
-          }
           self$setAccess(access) 
         }
         
@@ -172,11 +168,6 @@ geoflow_data <- R6Class("geoflow_data",
         }
         
         #source
-        if(!self$sourceType %in% c("dbtable", "dbquery", "dbview")){
-          if(!any(sapply(data_props, function(x){x$key=="source"})) && !any(sapply(data_props, function(x){x$key=="dir"}))){
-            stop("One or more data 'source' (or 'dir', as directory for sources) is mandatory")
-          }
-        }
         if(any(sapply(data_props, function(x){x$key=="source"}))) self$setSource(data_props$source$values)
           
         #sourceFid
@@ -275,9 +266,6 @@ geoflow_data <- R6Class("geoflow_data",
         if(length(params)>0){
           #check and set parameter
           for(param in params){
-            if(!length(param$values) %in% c(2,3)){
-              stop("Parameter definition should be compound by 3 elements: fieldname, alias, regexp and default value")
-            }
             if(length(param$values)==2) param$values[[3]] <- ""
             fieldname <- param$values[[1]]
             param_alias <- attr(fieldname, "description")
@@ -286,16 +274,6 @@ geoflow_data <- R6Class("geoflow_data",
             regexp <- param$values[[2]]
             defaultvalue <- param$values[[3]]
             self$setParameter(param_alias, fieldname, regexp, defaultvalue)
-          }
-          #check compliance of dbquery
-          sqlquery <- self$sql
-          #with fieldnames
-          if(!all(sapply(self$parameters, function(x){regexpr(x$fieldname,sqlquery)>0}))){
-            stop("At least one parameter fieldname declared is not used in the data source query!")
-          }
-          #with param aliases
-          if(!all(sapply(self$parameters, function(x){regexpr(paste0("%",x$name,"%"),sqlquery)>0}))){
-            stop("At least one parameter name declared is not used in the data source query!")
           }
         }
         
@@ -319,17 +297,8 @@ geoflow_data <- R6Class("geoflow_data",
         }
         bands <- data_props[sapply(data_props, function(x){x$key=="band"})]
         if(length(bands)>0){
-          if(self$spatialRepresentationType != "grid"){
-            stop("The specification of bands is only possible for a grid spatial representation!")
-          }
-          if(self$uploadType != "geotiff"){ #TODO to extend to other coverage formats
-            stop(" The specification of bands is only possible for a 'geotiff' upload type")
-          }
           #check and set parameter
           for(band in bands){
-            if(length(band$values) != 2){
-              stop("Band definition should be compound by 2 elements: name (coverage name), index")
-            }
             covname <- band$values[[1]]
             index <- band$values[[2]]
             self$setBand(covname, index)

@@ -14,6 +14,7 @@ geoflow_validator_entity_Data
 \subsection{Public methods}{
   \itemize{
     \item \href{#method-geoflow_validator_entity_Data-initialize}{\code{geoflow_validator_entity_Data$new()}}
+    \item \href{#method-geoflow_validator_entity_Data-validate}{\code{geoflow_validator_entity_Data$validate()}}
     \item \href{#method-geoflow_validator_entity_Data-clone}{\code{geoflow_validator_entity_Data$clone()}}
   }
 }
@@ -27,7 +28,6 @@ geoflow_validator_entity_Data
   <li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isKeySynthaxUser"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-isKeySynthaxUser'><code>geoflow_validator_cell$isKeySynthaxUser()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isMultiple"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-isMultiple'><code>geoflow_validator_cell$isMultiple()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="isNaAuthorized"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-isNaAuthorized'><code>geoflow_validator_cell$isNaAuthorized()</code></a></span></li>
-  <li><span class="pkg-link" data-pkg="geoflow" data-topic="geoflow_validator_cell" data-id="validate"><a href='../../geoflow/html/geoflow_validator_cell.html#method-geoflow_validator_cell-validate'><code>geoflow_validator_cell$validate()</code></a></span></li>
 </ul>
 </details>}}
 \if{html}{\out{<hr>}}
@@ -48,6 +48,21 @@ geoflow_validator_entity_Data
       \item{\code{str}}{string to validate}
     }
     \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-geoflow_validator_entity_Data-validate"></a>}}
+\if{latex}{\out{\hypertarget{method-geoflow_validator_entity_Data-validate}{}}}
+\subsection{\code{geoflow_validator_entity_Data$validate()}}{
+  Validates a Data Proceeds with syntactic validation and content validation.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{geoflow_validator_entity_Data$validate()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    an validation report, as object of class \code{data.frame}
   }
 }
 
