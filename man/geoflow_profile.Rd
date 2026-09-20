@@ -23,7 +23,7 @@ geoflow_profile
   profile$setName("Workflow 1")
   profile$setProject("My project")
   profile$setOrganization("My organization")
-  provfile$addLogo("https://via.placeholder.com/300x150.png/09f/fff?text=geoflow")
+  provfile$addLogo("https://raw.githubusercontent.com/r-geoflow/geoflow-logos/main/geoflow_square.png")
 }
 
 }

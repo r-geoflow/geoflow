@@ -5,7 +5,7 @@
     "project": "Test geoflow project",
     "organization": "My organization",
     "logos": [
-      "https://via.placeholder.com/300x150.png/09f/fff?text=geoflow"
+      "https://raw.githubusercontent.com/r-geoflow/geoflow-logos/main/geoflow_square.png"
     ],
     "mode": "entity"
   },
