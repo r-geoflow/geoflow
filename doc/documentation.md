@@ -251,8 +251,8 @@ JSON snippet of *profile*:
     "project": "Test geoflow project",
     "organization": "My organization",
     "logos": [
-        "https://via.placeholder.com/300x150.png/09f/fff?text=geometa",
-        "https://via.placeholder.com/300x150.png/09f/fff?text=ows4R"
+        "https://github.com/r-geoflow/geoflow-logos/raw/main/geoflow_square.png?raw=true",
+        "https://github.com/eblondel/geometa/raw/master/inst/extdata/resources/geometa.png?raw=true"
     ],
   "mode": "entity",
   "options": {
@@ -273,8 +273,8 @@ profile:
   project: Test geoflow project
   organization: My organization
   logos:
-    - https://via.placeholder.com/300x150.png/09f/fff?text=geometa
-    - https://via.placeholder.com/300x150.png/09f/fff?text=ows4R
+    - https://github.com/r-geoflow/geoflow-logos/raw/main/geoflow_square.png?raw=true
+    - https://github.com/eblondel/geometa/raw/master/inst/extdata/resources/geometa.png?raw=true
   mode: entity
   options:
     line_separator: "_\n"
