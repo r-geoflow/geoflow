@@ -64,7 +64,7 @@ function(action, entity, config){
     }
     
     if(is.null(deposits)){
-      deposits <- ZENODO$getDepositions(q = entity$identifiers[["id"]], size = 1000L)
+      deposits <- ZENODO$getDepositions(q = entity$identifiers[["id"]], size = 100L)
     }
     #check related identifier
     if(length(deposits)>0){
