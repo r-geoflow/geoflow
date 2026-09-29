@@ -149,7 +149,7 @@ function(action, entity, config){
                    config$logger$ERROR(errMsg)
                    stop(errMsg)   
                  }
-                 Postgres<-dbi$parameters$drv %in% c("Postgres","PostreSQL")
+                 Postgres<-dbi$parameters$drv %in% c("Postgres","PostgreSQL")
                  if(!Postgres){
                    errMsg <- sprintf("Error during Geoserver '%s' datastore creation, the DBI software declared in the configuration is not a PostGis database", store)
                    config$logger$ERROR(errMsg)
