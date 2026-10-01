@@ -54,8 +54,9 @@ handle_entities_dbi <- function(handler, source, config, validate = TRUE, handle
   }else{
     config$logger$INFO("Use default tabular entity handler")
     #use the df entity handler based on the SQL query/table specified as source (with DBI data enricher)
-    handle_entities_dbi_df <- source(system.file("metadata/entity", "entity_handler_dbi_df.R", package = "geoflow"))$value
-    handle_entities_dbi_df(handler, source = out_query, config, validate)
+    handler_script = if(handler$getOption("enrich_from_dbi")) "entity_handler_dbi_df.R" else "entity_handler_df.R" 
+    handle_entities_df <- source(system.file("metadata/entity", handler_script, package = "geoflow"))$value 
+    handle_entities_df(handler, source = out_query, config, validate)
   }
   return(entities)
 }
