@@ -28,6 +28,7 @@ handle_entities_dbi_df = function(handler, source, config, validate = TRUE){
     }
     return(entity)
   })
+  attr(enriched_entities, "source") <- attr(entities, "source")
   
   return(enriched_entities)
 }
