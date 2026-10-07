@@ -891,7 +891,7 @@ geoflow_validator_entity_Data <- R6Class("geoflow_validator_entity_Data",
         }
         #check compliance of dbquery
         if(!is.null(data_props$sql)){
-          sqlquery <- data_props$sql
+          sqlquery <- paste(data_props$sql$values, collapse=",")
           #with fieldnames
           if(!all(sapply(params, function(x){regexpr(x$values[[1]],sqlquery)>0}))){
             report <- rbind(report, data.frame(type = "WARNING", message = "At least one parameter fieldname declared is not used in the data source query!"))
