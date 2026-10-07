@@ -135,9 +135,7 @@ geoflow_data <- R6Class("geoflow_data",
     initialize = function(str = NULL, config = NULL){
       if(!is.null(str)){
         data_props <-  extract_cell_components(sanitize_str(str))
-        data_props <- lapply(data_props, function(data_prop){
-          return(extract_kvp(data_prop))
-        })
+        data_props <- extract_kvps(data_props)
         names(data_props) <- sapply(data_props, function(x){x$key})
         
         #restricted

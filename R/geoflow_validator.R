@@ -862,9 +862,7 @@ geoflow_validator_entity_Data <- R6Class("geoflow_validator_entity_Data",
       if(is.na(private$str)) return(report)
   
       data_props <- extract_cell_components(sanitize_str(private$str))
-      data_props <- lapply(data_props, function(data_prop){
-        return(extract_kvp(data_prop))
-      })
+      data_props <- extract_kvps(data_props)
       names(data_props) <- sapply(data_props, function(x){x$key})
       
       #access
