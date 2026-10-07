@@ -143,6 +143,7 @@ initWorkflow <- function(file, dir, outdir = dir, jobDirPath = NULL, handleMetad
     if(!is.null(config$profile$environment)) if(!is.null(config$profile$environment$file)){
       config$logger$INFO("Loading environment from env file '%s'", basename(config$profile$environment$file))
       
+      filepath = config$profile$environment$file
       if(is.null(config$profile$environment$software)) filepath = get_absolute_path(config$profile$environment$file, base = dir)
       config$profile$environment[["_filepath"]] = filepath
       
