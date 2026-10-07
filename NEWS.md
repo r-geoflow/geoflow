@@ -1,4 +1,4 @@
-## [geoflow 1.4.0.9003](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-red.svg)](https://github.com/r-geoflow/geoflow)
+## [geoflow 1.4.0.9004](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-red.svg)](https://github.com/r-geoflow/geoflow)
 
 **Enhancements**
 
@@ -10,6 +10,8 @@
 
 * [#459](https://github.com/r-geoflow/geoflow/459) Missing `enrich_from_dbi` option implementation in `entity_handler_dbi`
 * [#460](https://github.com/r-geoflow/geoflow/460) handle_entities_dbi_df drops the "source" attribute of entities, breaking exportPIDs()
+* [#464](https://github.com/r-geoflow/geoflow/464) Wrong absolute path processing for cloud environment variables files
+* Small bug fixes on entity `asDataFrame` function and entity data validator
 
 ## [geoflow 1.4.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
 
