@@ -2491,7 +2491,7 @@ geoflow_entity <- R6Class("geoflow_entity",
                 out_sources <- c(out_sources, src)
               }
             }
-            outdata <- paste0(outdata, "source:", paste0(out_sources, collapse=","), line_separator)
+            if(length(out_sources)>0) outdata <- paste0(outdata, "source:", paste0(out_sources, collapse=","), line_separator)
           }
           if(!is.null(self$data$sourceFid)){
             outdata <- paste0(outdata, "sourceFid:", paste0(self$data$sourceFid, collapse = ","), line_separator)
