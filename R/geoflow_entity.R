@@ -2476,12 +2476,12 @@ geoflow_entity <- R6Class("geoflow_entity",
             outdata <- paste0("access:", self$data$access, line_separator)
           }
           
-          if(!is.null(self$data$dir)){
+          if(!is.null(self$data$dir)) if(nzchar(self$data$dir)){
             outdata <- paste0(outdata, "dir:", self$data$dir, line_separator)
           }
           
           if(!is.null(self$data$source)){
-            for(src in self$data$source){
+            for(src in self$data$source) if(nzchar(src)){
               src_uri <- attr(src,"uri")
               attributes(src) <- NULL
               if(is.null(out_sources)) out_sources <- ""
