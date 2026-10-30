@@ -2519,7 +2519,7 @@ geoflow_entity <- R6Class("geoflow_entity",
             outdata <- paste0(outdata, "spatialRepresentationType:", tolower(as.character(self$data$spatialRepresentationType)), line_separator)
           }
           if(!is.null(self$data$featureType)){
-            outdata <- paste0(outdata, "featureType:", tolower(as.character(self$data$featureType)), line_separator)
+            outdata <- paste0(outdata, "featureType:", as.character(self$data$featureType), line_separator)
           }
           
           if(!is.null(self$data$sql)) outdata <- paste0(outdata, "sql:", self$data$sql, line_separator)

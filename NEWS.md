@@ -1,16 +1,17 @@
-## [geoflow 1.4.0.9004](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-red.svg)](https://github.com/r-geoflow/geoflow)
+## [geoflow 1.4.0.9005](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-red.svg)](https://github.com/r-geoflow/geoflow)
 
 **Enhancements**
 
-* [#455](https://github.com/r-geoflow/geoflow/455) Add validate argument (TRUE default) to all metadata handlers
-* [#456](https://github.com/r-geoflow/geoflow/456) Implement validator for entities/Data column
-* [#457](https://github.com/r-geoflow/geoflow/457) Implement base validator for dictionary
+* [#455](https://github.com/r-geoflow/geoflow/issues/455) Add validate argument (TRUE default) to all metadata handlers
+* [#456](https://github.com/r-geoflow/geoflow/issues/456) Implement validator for entities/Data column
+* [#457](https://github.com/r-geoflow/geoflow/issues/457) Implement base validator for dictionary
 
 **Bug fixes**
 
-* [#459](https://github.com/r-geoflow/geoflow/459) Missing `enrich_from_dbi` option implementation in `entity_handler_dbi`
-* [#460](https://github.com/r-geoflow/geoflow/460) handle_entities_dbi_df drops the "source" attribute of entities, breaking exportPIDs()
-* [#464](https://github.com/r-geoflow/geoflow/464) Wrong absolute path processing for cloud environment variables files
+* [#459](https://github.com/r-geoflow/geoflow/issues/459) Missing `enrich_from_dbi` option implementation in `entity_handler_dbi`
+* [#460](https://github.com/r-geoflow/geoflow/issues/460) handle_entities_dbi_df drops the "source" attribute of entities, breaking exportPIDs()
+* [#464](https://github.com/r-geoflow/geoflow/issues/464) Wrong absolute path processing for cloud environment variables files
+* [#466](https://github.com/r-geoflow/geoflow/issues/466) asDataFrame / Data / featureType should not be forced to lowercase
 * Small bug fixes on entity `asDataFrame` function and entity data validator
 
 ## [geoflow 1.4.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
