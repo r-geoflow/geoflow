@@ -51,10 +51,13 @@ loadMetadataHandler <- function(config, element, type){
     h_script <- element$script
     if(!is.null(config)) config$logger$INFO("Try to use custom handler '%s' from script '%s'", h, h_script)
     isScriptUrl <- regexpr("(http|https)[^([:blank:]|\\\"|<|&|#\n\r)]+", h_script) > 0
-    if(!isScriptUrl) if(!file.exists(h_script)){
-      errMsg <- sprintf("File '%s' does not exist in current directory!", h_script)
-      if(!is.null(config)) config$logger$ERROR(errMsg)
-      stop(errMsg)
+    if(!isScriptUrl){
+      h_script <- get_absolute_path(h_script, base = config$wd)
+      if(!file.exists(h_script)){
+        errMsg <- sprintf("File '%s' does not exist in current directory!", h_script)
+        if(!is.null(config)) config$logger$ERROR(errMsg)
+        stop(errMsg)
+      }
     }
     source(h_script) #load script
     md_handler_fun <- try(eval(parse(text = h)))

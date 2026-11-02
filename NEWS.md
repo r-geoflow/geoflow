@@ -1,4 +1,4 @@
-## [geoflow 1.4.0.9005](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-red.svg)](https://github.com/r-geoflow/geoflow)
+## [geoflow 1.4.0.9006](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-unavailable-red.svg)](https://github.com/r-geoflow/geoflow)
 
 **Enhancements**
 
@@ -12,6 +12,7 @@
 * [#460](https://github.com/r-geoflow/geoflow/issues/460) handle_entities_dbi_df drops the "source" attribute of entities, breaking exportPIDs()
 * [#464](https://github.com/r-geoflow/geoflow/issues/464) Wrong absolute path processing for cloud environment variables files
 * [#466](https://github.com/r-geoflow/geoflow/issues/466) asDataFrame / Data / featureType should not be forced to lowercase
+* [#467](https://github.com/r-geoflow/geoflow/issues/467) loadMetadataHandler can't find custom script
 * Small bug fixes on entity `asDataFrame` function and entity data validator
 
 ## [geoflow 1.4.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)
