@@ -405,8 +405,8 @@ geoflow_entity <- R6Class("geoflow_entity",
       directories <- unique(c("data","metadata", unlist(entity_targets)))
       directories <- directories[!is.na(directories)]
       for(directory in directories){
-        if (!file.exists(directory)){
-          dir_name <- file.path(self$getEntityJobDirPath(config, jobdir), directory)
+        dir_name <- file.path(self$getEntityJobDirPath(config, jobdir), directory)
+        if (!dir.exists(dir_name)){
           config$logger$INFO("Creating '%s' directory: %s",directory, dir_name)
           dir.create(dir_name)
         }
