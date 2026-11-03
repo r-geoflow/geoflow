@@ -13,6 +13,7 @@
 * [#464](https://github.com/r-geoflow/geoflow/issues/464) Wrong absolute path processing for cloud environment variables files
 * [#466](https://github.com/r-geoflow/geoflow/issues/466) asDataFrame / Data / featureType should not be forced to lowercase
 * [#467](https://github.com/r-geoflow/geoflow/issues/467) loadMetadataHandler can't find custom script
+* [#468](https://github.com/r-geoflow/geoflow/issues/468) Missing control in executeWorkflowJob in case no action is listed
 * Small bug fixes on entity `asDataFrame` function and entity data validator
 
 ## [geoflow 1.4.0](https://github.com/r-geoflow/geoflow) | [![CRAN_Status_Badge](https://img.shields.io/badge/CRAN-published-blue.svg)](https://github.com/r-geoflow/geoflow)

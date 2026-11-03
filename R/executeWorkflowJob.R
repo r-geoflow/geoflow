@@ -69,10 +69,13 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
     config$logger$separator("-")
     config$logger$INFO("Executing entity actions ...")
     actions <- config$actions
+    has_actions <- TRUE
     if(is.null(actions)){
+      has_actions <- FALSE
       config$logger$WARN("No actions enabled for this workflow!")
     }else{
       if(length(actions)==0){
+        has_actions <- FALSE
         config$logger$WARN("No actions enabled for this workflow!")
       }else{
         config$logger$INFO("Workflow mode: %s", config$profile$mode)
@@ -81,7 +84,7 @@ executeWorkflowJob <- function(config, jobdir = NULL, queue = NULL, monitor = NU
       }
     }
     
-    if(config$profile$mode == "entity"){
+    if(has_actions) if(config$profile$mode == "entity"){
      
       #execute entity-based actions
       entities <- config$metadata$content$entities
